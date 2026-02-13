@@ -1,0 +1,31 @@
+.custom_input_large_design {
+    @apply bg-white rounded-full border-1 border-borderDark px-[20px];
+}
+
+.custom_input_large_design input::placeholder {
+    @apply text-base text-placeHolderText;
+}
+
+.custom_label_text {
+    @apply capitalize text-[13px]/[19.5px] xl:text-base text-fontBlack;
+}
+
+.custom_input_design {
+    @apply bg-white rounded-[12px] border-1 border-borderDark py-[17px] 2xl:py-6 px-[19px] mt-[6px];
+}
+
+.custom_input_design input::placeholder {
+    @apply text-[13px] text-placeHolderText;
+}
+
+.custom_label_text_light {
+    @apply capitalize text-[13px]/[19.5px] xl:text-base text-darkSilver;
+}
+
+.custom_input_design_dark {
+    @apply rounded-[12px] border-1 border-borderDark py-[17px] 2xl:py-6 px-[19px] mt-4 bg-white;
+}
+
+.custom_input_design_dark input::placeholder {
+    @apply text-[13px] text-fontBlack;
+}

@@ -1,0 +1,272 @@
+"use client"
+
+import ImageComponent from "@/components/library/ImageComponent"
+import { RootState } from "@/redux/appStore"
+import { openModal } from "@/redux/slices/allModalSlice"
+import { Button, Checkbox, Input } from "@heroui/react"
+import { useFormik } from "formik"
+import Link from "next/link"
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import PhoneInput from "react-phone-input-2"
+import "react-phone-input-2/lib/style.css"
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
+import * as Yup from "yup"
+import { BiArrowBack } from "react-icons/bi"
+
+export interface VendorSignupFormValues {
+    firstName: string
+    lastName: string
+    email: string
+    phoneNumber: string
+    password: string
+    agreeToTerms: boolean
+}
+
+const vendorSignupValidationSchema = Yup.object({
+    firstName: Yup.string().trim().required("This field is required"),
+    lastName: Yup.string().trim().required("This field is required"),
+    email: Yup.string().trim().email("Enter a valid email").required("This field is required"),
+    phoneNumber: Yup.string().trim().required("This field is required"),
+    password: Yup.string().trim().required("This field is required"),
+    agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the terms").required(),
+})
+
+const initialValues: VendorSignupFormValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    agreeToTerms: true,
+}
+
+const VendorSignupDetails = () => {
+    const dispatch = useDispatch()
+    const { data } = useSelector((state: RootState) => state.allCommonModal)
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+
+    const formik = useFormik<VendorSignupFormValues>({
+        initialValues: {
+            ...initialValues,
+            ...(data?.userData as Partial<VendorSignupFormValues> | undefined),
+        },
+        enableReinitialize: true,
+        validationSchema: vendorSignupValidationSchema,
+        onSubmit: (values) => {
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "VendorOtpVerification",
+                        userData: { ...values },
+                    },
+                    modalSize: "full",
+                })
+            )
+        },
+    })
+
+    const { values, touched, errors, handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched } = formik
+
+    return (
+        <>
+            <div className="space-y-10 w-11/12">
+                <div className="space-y-3 xl:space-y-6 w-full">
+                    <h1 className="header_text flex items-center gap-0.5">
+                        <BiArrowBack
+                            className="modal_back_icon"
+                            onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'SelectUserType' }, modalSize: 'full' }))}
+                            role="button"
+                            aria-label="Go back"
+                        />
+                        Sign up <span className="text-darkSilver ml-1"> now</span>
+                    </h1>
+                    <p className="text-fontBlack text-base">
+                        By creating an account, I am also consenting to receive SMS messages and emails.
+                    </p>
+                </div>
+
+                <div className="space-y-4 w-full">
+                    {/* Continue with Google */}
+                    <Button
+                        type="button"
+                        className="btn_bg_white btn_radius btn_padding w-full font-medium"
+                        onPress={() => {
+                            dispatch(
+                                openModal({
+                                    componentName: "MobileOtpVerification",
+                                    data: {
+                                        callBackModal: "VendorServiceListPage"
+                                    },
+                                    modalSize: "lg",
+                                })
+                            )
+                        }}
+                    >
+                        <span className="size-4.5">
+                            <ImageComponent url="/images/signup/google_icon.png" img_title="Google login icon" />
+                        </span>
+                        Continue with Google
+                    </Button>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 w-full">
+                        <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
+                        <span className="text-darkSilver text-sm font-medium">or</span>
+                        <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
+                    </div>
+
+                    {/* Form fields */}
+                    <form id="vendor-signup-form" onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <Input
+                                name="firstName"
+                                variant="bordered"
+                                label="First name"
+                                labelPlacement="outside"
+                                placeholder="First name"
+                                value={values.firstName}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.firstName && errors.firstName)}
+                                errorMessage={touched.firstName && errors.firstName}
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
+                            <Input
+                                name="lastName"
+                                variant="bordered"
+                                label="Last name"
+                                labelPlacement="outside"
+                                placeholder="Last name"
+                                value={values.lastName}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.lastName && errors.lastName)}
+                                errorMessage={touched.lastName && errors.lastName}
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
+                        </div>
+                        <Input
+                            name="email"
+                            variant="bordered"
+                            label="Email address"
+                            labelPlacement="outside"
+                            placeholder="example@xyz.com"
+                            type="email"
+                            value={values.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!(touched.email && errors.email)}
+                            errorMessage={touched.email && errors.email}
+                            classNames={{
+                                inputWrapper: ["custom_input_design_dark"],
+                                label: ["custom_label_text_light"],
+                            }}
+                        />
+
+                        <div className="w-full relative z-100">
+                            <p className="custom_label_text_light mb-1.5">Phone number</p>
+                            <div className="mt-[6px]">
+                                <PhoneInput
+                                    country="us"
+                                    value={values.phoneNumber}
+                                    onChange={(value) => setFieldValue("phoneNumber", value)}
+                                    onBlur={() => setFieldTouched("phoneNumber", true)}
+                                    inputProps={{
+                                        name: "phoneNumber",
+                                        "aria-label": "Phone number",
+                                    }}
+                                    containerClass="!w-full"
+                                    inputClass="!w-full !rounded-[12px] !border-borderDark"
+                                    inputStyle={{ height: "52px" }}
+                                />
+                            </div>
+                            {touched.phoneNumber && errors.phoneNumber && (
+                                <p className="text-danger text-tiny mt-1">{errors.phoneNumber}</p>
+                            )}
+                        </div>
+
+                        <Input
+                            name="password"
+                            variant="bordered"
+                            label="Password"
+                            labelPlacement="outside"
+                            placeholder="Password"
+                            type={isPasswordVisible ? "text" : "password"}
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!(touched.password && errors.password)}
+                            errorMessage={touched.password && errors.password}
+                            endContent={
+                                <button
+                                    type="button"
+                                    className="focus:outline-none text-lg text-placeHolderText"
+                                    onClick={() => setIsPasswordVisible((prev) => !prev)}
+                                    aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                                >
+                                    {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                                </button>
+                            }
+                            classNames={{
+                                inputWrapper: ["custom_input_design_dark"],
+                                label: ["custom_label_text_light"],
+                            }}
+                        />
+                    </form>
+                </div>
+            </div>
+
+            <div className="space-y-[25px] w-11/12">
+                <div className="mx-auto">
+                    <Checkbox
+                        name="agreeToTerms"
+                        isSelected={values.agreeToTerms}
+                        onValueChange={(checked) => setFieldValue("agreeToTerms", checked)}
+                        onBlur={handleBlur}
+                        classNames={{
+                            wrapper: "before:border-borderDark",
+                        }}
+                    >
+                        <span className="text-fontBlack text-sm">
+                            By creating an account, I agree to our{" "}
+                            <Link href="/terms" className="text-primaryColor underline underline-offset-2">
+                                Terms of use
+                            </Link>{" "}
+                            and{" "}
+                            <Link href="/privacy" className="text-primaryColor underline underline-offset-2">
+                                Privacy Policy
+                            </Link>
+                        </span>
+                    </Checkbox>
+                    {touched.agreeToTerms && errors.agreeToTerms && (
+                        <p className="text-danger text-tiny mt-1">{errors.agreeToTerms}</p>
+                    )}
+                </div>
+                <Button
+                    type="submit"
+                    form="vendor-signup-form"
+                    className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
+                    onPress={() => handleSubmit()}
+                >
+                    Continue
+                </Button>
+                <p className="text-base text-fontBlack text-center">
+                    Already have an account?{" "}
+                    <Link href="/login" className="text-primaryColor cursor-pointer underline underline-offset-2">
+                        Sign In
+                    </Link>
+                </p>
+            </div>
+        </>
+    )
+}
+
+export default VendorSignupDetails

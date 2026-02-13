@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@plugin './hero.ts';
+@import '../styles/scss/common.scss';
+@import '../styles/scss/btn_style.scss';
+@import '../styles/scss/form_style.scss';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+* {
+  @apply box-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: var(--font-sans), serif;
+}
+
+@theme{
+  --color-navBgColor : #2C4A6814;
+  --color-fontBlack : #231E2D;
+  --color-customWhite: #FAFAFA;
+  --color-primaryColor: #407CE9;
+  --color-borderColor: #D9DFE8;
+  --color-lightBlack: #8B8F98;
+  --color-borderDark: #EDEDED;
+  --color-placeHolderText: #95979D;
+  --color-darkSilver: #888888;
+  --color-pinkBlack: #12141D;
+  --color-footerSilver: #B9B3B3;
+  --color-danger: #C10007;
+}
+
+/* Testimonial card box-shadow */
+.testimonial-card-shadow {
+  box-shadow: 0px 28.72px 14.36px -3.75px #27282A03, 0px 17.55px 8.77px -3.13px #27282A03, 0px 10.87px 5.43px -2.5px #27282A03, 0px 6.54px 3.27px -1.88px #27282A03, 0px 3.58px 1.79px -1.25px #27282A03, 0px 1.51px 0.76px -0.63px #27282A03, 0px 1px 6px -4px #0F193D29;
+}
+
+/* HomeBanner responsive background (vw fallback for Safari) */
+.home-banner-bg {
+  background-image: url(/images/home/banner_gradient.png);
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: 70vw 350px;
+}
+@supports (width: 1svw) {
+  .home-banner-bg {
+    background-size: 70svw 350px;
+  }
+}
+
+/* Phone Input Custom Styles */
+.react-tel-input .form-control {
+  height: 40px !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.react-tel-input .flag-dropdown {
+  border-radius: 8px 0 0 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  background-color: #f8f9fa !important;
+}
+
+.react-tel-input .country-list {
+  z-index: 9999 !important;
+}

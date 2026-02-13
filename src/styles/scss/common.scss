@@ -1,0 +1,51 @@
+.body_x_axis_padding{
+    @apply p-4 md:px-[70px]
+}
+
+.navbar_x_axis_padding{
+    @apply px-4 md:px-[70px] xl:px-[120px]
+}
+
+.main_body_margin_top{
+    @apply mt-30;
+}
+
+.navbar_y_axis_padding{
+    @apply py-4;
+}
+
+.container_y_padding{
+    @apply py-10 lg:py-20;
+}
+
+.space_y_header_paragraph{
+    @apply space-y-2.5 xl:space-y-4;
+}
+
+.space_y_header_body{
+    @apply space-y-5 md:space-y-10 lg:space-y-20;
+}
+
+.header_text{
+    @apply font-bold text-[27.3px]/[38px] xl:text-[42.3px]/[54px] tracking-[-2px];
+}
+
+.footer_nav_heading{
+    @apply font-medium text-xl/[24px] text-white;
+}
+
+.footer_nav_item{
+    @apply text-footerSilver text-sm xl:text-[15px]/[25.5px] font-normal flex flex-col max-w-[250px];
+}
+
+.footer_icons{
+    @apply bg-[#4B4B4B] rounded-full h-9 w-9 flex items-center justify-center text-white;
+}
+
+.custom_border_1px{
+    @apply border border-borderDark;
+}
+
+.modal_back_icon{
+    @apply text-3xl cursor-pointer hover:-translate-x-1 transition-transform;
+}
