@@ -14,6 +14,9 @@
     @apply py-4;
 }
 
+.container_y_padding_lg{
+    @apply py-10 lg:py-30;
+}
 .container_y_padding{
     @apply py-10 lg:py-20;
 }
@@ -28,6 +31,9 @@
 
 .header_text{
     @apply font-bold text-[27.3px]/[38px] xl:text-[42.3px]/[54px] tracking-[-2px];
+}
+.header_text_md{
+    @apply font-bold text-2xl;
 }
 
 .footer_nav_heading{
@@ -48,4 +54,7 @@
 
 .modal_back_icon{
     @apply text-3xl cursor-pointer hover:-translate-x-1 transition-transform;
+}
+.custom_hr{
+    @apply border-borderDark my-7;
 }

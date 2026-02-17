@@ -12,6 +12,9 @@
 .btn_bg_blue{
     @apply bg-primaryColor text-customWhite;
 }
+.btn_bg_transparent{
+    @apply bg-transparent text-fontBlack border-none;
+}
 
 .btn_bg_white{
     @apply border border-borderDark text-fontBlack bg-white 

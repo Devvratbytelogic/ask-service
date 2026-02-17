@@ -7,6 +7,8 @@ interface AllCommonModalState {
     data?: any;
     endPoint: string | null;
     modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
+    modalPadding?: string;
+    hideCloseButton?: boolean;
 }
 
 interface OpenModalPayload {
@@ -14,6 +16,8 @@ interface OpenModalPayload {
     data?: any;
     modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
     endPoint?: string | null;
+    modalPadding?: string;
+    hideCloseButton?: boolean;
 }
 
 const initialState: AllCommonModalState = {
@@ -21,7 +25,9 @@ const initialState: AllCommonModalState = {
     componentName: null,
     data: null,
     endPoint: null,
-    modalSize:'xl',
+    modalSize: 'xl',
+    modalPadding: 'px-8 py-6.5',
+    hideCloseButton: false,
 };
 
 const allCommonModalSlice = createSlice({
@@ -33,7 +39,8 @@ const allCommonModalSlice = createSlice({
             state.componentName = action.payload.componentName;
             state.data = action.payload.data;
             state.modalSize = action.payload.modalSize
-            // state.endPoint = action.payload.endPoint;
+            state.modalPadding = action.payload.modalPadding
+            state.hideCloseButton = action.payload.hideCloseButton
         },
         closeModal: (state) => {
             state.isOpen = false;

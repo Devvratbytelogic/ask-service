@@ -18,13 +18,13 @@ const HomeBanner = () => {
 
     const dispatch = useDispatch()
 
-    const startServiceRegisterationRequest = ()=>{
+    const startServiceRegisterationRequest = () => {
         dispatch(openModal({
-            componentName:'RequestServiceFlowIndex',
-            data:{
-                pincode:selectedPinCode
+            componentName: 'RequestServiceFlowIndex',
+            data: {
+                pincode: selectedPinCode
             },
-            modalSize:'lg'
+            modalSize: 'lg'
         }))
     }
 
@@ -91,7 +91,7 @@ const HomeBanner = () => {
                         </DropdownMenu>
                     </Dropdown>
                 </span>
-                <Button className="size-15 min-w-14 min-h-14 p-0! rounded-full! bg-primaryColor flex items-center justify-center text-white shrink-0" onPress={()=>startServiceRegisterationRequest()}>
+                <Button className="size-15 min-w-14 min-h-14 p-0! rounded-full! bg-primaryColor flex items-center justify-center text-white shrink-0" onPress={() => startServiceRegisterationRequest()}>
                     <BiSearch className="text-xl" />
                 </Button>
             </div>
