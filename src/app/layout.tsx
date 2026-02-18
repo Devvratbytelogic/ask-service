@@ -29,11 +29,13 @@ export default function RootLayout({
         className={` ${inter.variable} antialiased`}
       >
         <AppProviders>
-          <Header />
-          <div className="min-h-screen">
-            {children}
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            {/* <div className="min-h-0 flex-1"> */}
+              {children}
+            {/* </div> */}
+            <Footer />
           </div>
-          <Footer />
         </AppProviders >
       </body>
     </html>

@@ -3,7 +3,8 @@
 }
 
 .navbar_x_axis_padding{
-    @apply px-4 md:px-[70px] xl:px-[120px]
+    /* @apply px-4 md:px-[70px] xl:px-[120px] */
+    @apply p-4 md:px-[70px]
 }
 
 .main_body_margin_top{
