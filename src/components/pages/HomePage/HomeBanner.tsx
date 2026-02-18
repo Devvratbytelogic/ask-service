@@ -70,7 +70,7 @@ const HomeBanner = () => {
                     <Dropdown>
                         <DropdownTrigger>
                             <Button
-                                className="btn_radius text-placeHolderText capitalize text-base bg-white! border-1 border-borderDark h-[60px]! w-full"
+                                className="btn_radius text-placeHolderText capitalize text-base bg-white! border-1 border-borderDark h-15! w-full"
                                 endContent={<MdKeyboardArrowDown className="text-xl text-fontBlack ml-10" />}
                                 startContent={<FaLocationDot className="text-xl text-primaryColor " />}
                             >

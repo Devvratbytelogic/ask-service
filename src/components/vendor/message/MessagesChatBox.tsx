@@ -69,7 +69,7 @@ export default function MessagesChatBox() {
                             {msg.initial}
                         </div>
                         <div className="flex max-w-[85%] sm:max-w-[75%] flex-col items-end">
-                            <span className="mb-1 flex items-center gap-2 text-xs text-darkSilver">
+                            <span className="text-sm font-semibold text-fontBlack">
                                 {msg.time}
                                 <span className="font-medium text-fontBlack">{msg.sender}</span>
                             </span>
@@ -85,7 +85,7 @@ export default function MessagesChatBox() {
                         </div>
                         <div className="flex max-w-[85%] sm:max-w-[75%] flex-col">
                             <span className="mb-1 flex items-center gap-2 text-xs text-darkSilver">
-                                <span className="mb-1 text-sm font-semibold flex items-center gap-2 text-darkSilver">
+                                <span className="text-sm font-semibold text-fontBlack">
                                     {msg.sender}
                                 </span>
                                 {msg.time}
