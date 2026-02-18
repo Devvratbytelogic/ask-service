@@ -10,6 +10,9 @@ import SubmissionSuccess from "../pages/RequestServiceFlow/SubmissionSuccess";
 import ViewQuoteModal from "../pages/my-request/ViewQuoteModal";
 import QuoteDetailModal from "../pages/my-request/QuoteDetailModal";
 import CloseRequestModal from "../pages/my-request/CloseRequestModal";
+import LeaveReviewModal from "../vendor/profile/LeaveReviewModal";
+import ReportProfileModal from "../vendor/profile/ReportProfileModal";
+import ReportSubmittedModal from "../vendor/profile/ReportSubmittedModal";
 
 const CommonModal = () => {
 
@@ -47,6 +50,15 @@ const CommonModal = () => {
 
             case "CloseRequestModal":
                 return <CloseRequestModal />
+
+            case "LeaveReviewModal":
+                return <LeaveReviewModal />
+
+            case "ReportProfileModal":
+                return <ReportProfileModal />
+
+            case "ReportSubmittedModal":
+                return <ReportSubmittedModal />
 
             default:
                 return null;
