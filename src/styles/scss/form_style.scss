@@ -29,3 +29,6 @@
 .custom_input_design_dark input::placeholder {
     @apply text-[13px] text-fontBlack;
 }
+.account_input_design {
+    @apply rounded-xl border border-borderDark bg-white! shadow-none min-h-11;
+}
