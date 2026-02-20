@@ -4,3 +4,6 @@ export function generateLeadDetailRoutePath(id: string) {
 export function getVendorDashboardRoutePath() {
     return `/vendor/dashboard`;
 }
+export function getCreditsRoutePath() {
+    return `/vendor/credits`;
+}

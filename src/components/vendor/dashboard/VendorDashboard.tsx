@@ -1,7 +1,7 @@
 'use client'
 
-import { CheckGreenIconSVG, ChevronDownIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
-import { generateLeadDetailRoutePath } from '@/routes/routes'
+import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
+import { generateLeadDetailRoutePath, getCreditsRoutePath } from '@/routes/routes'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -134,21 +134,23 @@ export default function VendorDashboard() {
                         </div>
                         <p className="text-2xl font-bold text-fontBlack">3</p>
                         <p className="text-sm text-darkSilver mt-0.5">Purchased Leads</p>
-                        <Link href="#" className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
+                        <Link href={generateLeadDetailRoutePath('345')} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
                             View leads →
                         </Link>
                     </div>
 
-                    <div className="rounded-2xl border border-borderDark bg-[#FFF8F0] p-5">
-                        <div className="flex size-10 items-center justify-center rounded-full bg-[#FFE4CC] mb-3">
-                            <CreditCardIconSVG className="size-5 text-[#E17100]" />
+                    <Link href={getCreditsRoutePath()} className="block cursor-pointer">
+                        <div className="rounded-2xl border border-borderDark bg-[#FFF8F0] p-5">
+                            <div className="flex size-10 items-center justify-center rounded-full bg-[#FFE4CC] mb-3">
+                                <CreditCardIconSVG className="size-5 text-[#E17100]" />
+                            </div>
+                            <p className="text-2xl font-bold text-fontBlack">150 credits</p>
+                            <p className="text-sm text-darkSilver mt-0.5">Credit Balance</p>
+                            <span className="inline-block mt-2 text-sm font-medium text-[#E17100] hover:underline">
+                                Buy credits →
+                            </span>
                         </div>
-                        <p className="text-2xl font-bold text-fontBlack">150 credits</p>
-                        <p className="text-sm text-darkSilver mt-0.5">Credit Balance</p>
-                        <Link href="#" className="inline-block mt-2 text-sm font-medium text-[#E17100] hover:underline">
-                            Buy credits →
-                        </Link>
-                    </div>
+                    </Link>
 
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <div className="flex size-10 items-center justify-center rounded-full bg-[#F3E5F5] mb-3">
@@ -298,14 +300,12 @@ export default function VendorDashboard() {
                                                     </p>
                                                     <p className="text-xs text-darkSilver">to unlock</p>
                                                 </div>
-                                                <Link href={`/vendor/dashboard/lead/${lead.id}`}>
                                                     <Button
                                                         className="btn_radius btn_bg_blue font-medium"
                                                         startContent={<LockPrimaryColorSVG className="size-4 text-white" />}
                                                     >
                                                         Unlock Lead
                                                     </Button>
-                                                </Link>
                                                 <p className="text-xs text-darkSilver">
                                                     Full details available after unlocking
                                                 </p>

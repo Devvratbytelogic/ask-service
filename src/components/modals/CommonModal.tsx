@@ -13,6 +13,7 @@ import CloseRequestModal from "../pages/my-request/CloseRequestModal";
 import LeaveReviewModal from "../vendor/profile/LeaveReviewModal";
 import ReportProfileModal from "../vendor/profile/ReportProfileModal";
 import ReportSubmittedModal from "../vendor/profile/ReportSubmittedModal";
+import PurchaseCreditsModal from "../vendor/credits/PurchaseCreditsModal";
 
 const CommonModal = () => {
 
@@ -59,6 +60,9 @@ const CommonModal = () => {
 
             case "ReportSubmittedModal":
                 return <ReportSubmittedModal />
+
+            case "PurchaseCreditsModal":
+                return <PurchaseCreditsModal />
 
             default:
                 return null;
