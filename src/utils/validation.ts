@@ -21,6 +21,12 @@ export const securitySettingsValidationSchema = Yup.object({
     confirmNewPassword: Yup.string().required('Confirm new password is required'),
 })
 
+export const contactFormValidationSchema = Yup.object({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    message: Yup.string().required('Message is required'),
+})
+
 export const vendorProfileInfoValidationSchema = Yup.object({
     businessName: Yup.string().required('Business name is required'),
     ownerName: Yup.string().required('Owner name is required'),
