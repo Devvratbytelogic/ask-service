@@ -7,7 +7,7 @@ export default function MyAccountPage() {
         <div className="min-h-screen body_x_axis_padding container_y_padding_lg">
             {/* Header - centered */}
             <div className="text-center mb-10 lg:mb-12">
-                <h1 className="text-2xl md:text-3xl font-bold text-fontBlack mb-2">
+                <h1 className="text-2xl md:text-5xl font-bold text-fontBlack mb-2">
                     Account Settings
                 </h1>
                 <p className="text-sm md:text-base text-darkSilver">

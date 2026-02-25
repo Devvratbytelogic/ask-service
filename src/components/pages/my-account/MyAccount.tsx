@@ -1,10 +1,13 @@
 'use client'
 import React, { useState } from 'react'
-import AccountSidebar from '@/components/pages/my-account/AccountSidebar'
+import AccountSidebar, { type NavId, vendorNavItems } from '@/components/pages/my-account/AccountSidebar'
 import AccountDetails from '@/components/pages/my-account/AccountDetails'
 
-type NavId = 'profile' | 'security' | 'notifications'
-export default function MyAccount() {
+interface MyAccountProps {
+    variant?: 'default' | 'vendor'
+}
+
+export default function MyAccount({ variant = 'default' }: MyAccountProps) {
     const [activeSection, setActiveSection] = useState<NavId>('profile')
     return (
         <>
@@ -12,10 +15,11 @@ export default function MyAccount() {
                 <AccountSidebar
                     activeSection={activeSection}
                     onSectionChange={setActiveSection}
+                    navItems={variant === 'vendor' ? vendorNavItems : undefined}
                 />
             </aside>
             <section className="relative flex-1 min-w-0">
-                <AccountDetails activeSection={activeSection} />
+                <AccountDetails activeSection={activeSection} variant={variant} />
             </section>
         </>
     )

@@ -20,3 +20,19 @@ export const securitySettingsValidationSchema = Yup.object({
     newPassword: Yup.string().required('New password is required'),
     confirmNewPassword: Yup.string().required('Confirm new password is required'),
 })
+
+export const vendorProfileInfoValidationSchema = Yup.object({
+    businessName: Yup.string().required('Business name is required'),
+    ownerName: Yup.string().required('Owner name is required'),
+    serviceCategory: Yup.string().required('Service category is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    phone: Yup.string().required('Phone number is required'),
+    businessAddress: Yup.string().required('Business address is required'),
+    postcode: Yup.string().required('Postcode is required'),
+    city: Yup.string().required('City is required'),
+    vatNumber: Yup.string().required('VAT number is required'),
+    companyRegistrationNumber: Yup.string().required('Company registration number is required'),
+    yearsOfActivity: Yup.string().required('Years of activity is required'),
+    companySize: Yup.string().required('Company size is required'),
+    aboutCompany: Yup.string().required('About company is required'),
+})

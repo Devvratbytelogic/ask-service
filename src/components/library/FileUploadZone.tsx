@@ -21,6 +21,8 @@ export interface FileUploadZoneProps {
     browseLabel?: string
     /** Aria label for file input */
     ariaLabel?: string
+    /** Optional class for the browse/upload button (e.g. primary blue style) */
+    buttonClassName?: string
 }
 
 const formatFileSize = (bytes: number) => {
@@ -37,6 +39,7 @@ export default function FileUploadZone({
     dragLabel = "Drag and drop your file here",
     browseLabel = "Browse files",
     ariaLabel = "Upload file",
+    buttonClassName,
 }: FileUploadZoneProps) {
     const inputRef = useRef<HTMLInputElement>(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -116,8 +119,8 @@ export default function FileUploadZone({
             <p className="text-placeHolderText text-xs">or</p>
             <Button
                 type="button"
-                variant="bordered"
-                className="rounded-xl border-borderDark text-fontBlack bg-white"
+                variant={buttonClassName ? "solid" : "bordered"}
+                className={buttonClassName ?? "rounded-xl border-borderDark text-fontBlack bg-white"}
                 onPress={() => inputRef.current?.click()}
             >
                 {browseLabel}

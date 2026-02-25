@@ -1,22 +1,43 @@
 'use client'
 
-import { NotificationsIconSVG, ProfileIconSVG, SecurityIconSVG } from '@/components/library/AllSVG'
+import { NotificationsIconSVG, ProfileIconSVG, SecurityIconSVG, VendorDocumentIconSVG, VendorPaymentHistoryIconSVG, VendorReviewIconSVG } from '@/components/library/AllSVG'
 import React from 'react'
 
-type NavId = 'profile' | 'security' | 'notifications'
+export type NavId =
+    | 'profile'
+    | 'security'
+    | 'notifications'
+    | 'documents'
+    | 'reviews'
+    | 'payment-history'
 
-const navItems: { id: NavId; label: string; icon: React.ReactNode }[] = [
+export type NavItem = { id: NavId; label: string; icon: React.ReactNode }
+
+const defaultNavItems: NavItem[] = [
     { id: 'profile', label: 'Profile', icon: <ProfileIconSVG /> },
     { id: 'security', label: 'Security', icon: <SecurityIconSVG /> },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG /> },
 ]
 
+export const vendorNavItems: NavItem[] = [
+    ...defaultNavItems,
+    { id: 'documents', label: 'My Documents', icon: <VendorDocumentIconSVG /> },
+    { id: 'reviews', label: 'My Reviews', icon: <VendorReviewIconSVG /> },
+    { id: 'payment-history', label: 'Payment History', icon: <VendorPaymentHistoryIconSVG /> },
+]
+
 interface AccountSidebarProps {
     activeSection?: NavId
     onSectionChange?: (id: NavId) => void
+    navItems?: NavItem[]
 }
 
-export default function AccountSidebar({ activeSection = 'profile', onSectionChange }: AccountSidebarProps) {
+export default function AccountSidebar({
+    activeSection = 'profile',
+    onSectionChange,
+    navItems: customNavItems,
+}: AccountSidebarProps) {
+    const navItems = customNavItems ?? defaultNavItems
     return (
         <div className="rounded-2xl border border-borderDark p-4">
             <nav className="flex flex-col gap-0.5">

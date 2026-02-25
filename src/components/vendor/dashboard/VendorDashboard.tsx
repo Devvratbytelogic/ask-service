@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { MdKeyboardArrowDown } from 'react-icons/md'
+import SupportAlert from './SupportAlert'
 
 type LeadStatus = 'locked' | 'unlocked'
 
@@ -328,20 +329,7 @@ export default function VendorDashboard() {
                 </div>
 
                 {/* Support Banner */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-primaryColor/10 border border-primary/50 p-5">
-                    <div className="flex items-center gap-3">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primaryColor/20 text-primaryColor">
-                            <InfoBlueIconSVG />
-                        </span>
-                        <div className="flex flex-col gap-1">
-                            <p className="text-sm font-bold text-fontBlack">Need help?</p>
-                            <p className="text-sm text-darkSilver">Contact vendor support for assistance with leads, quotes, or your account </p>
-                        </div>
-                    </div>
-                    <Button className="btn_radius btn_bg_blue font-medium shrink-0">
-                        Contact Support
-                    </Button>
-                </div>
+                <SupportAlert title="Need help?" content={`Contact vendor support for assistance with leads, quotes, or your account`} />
             </div>
         </>
     )
