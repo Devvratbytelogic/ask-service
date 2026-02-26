@@ -4,7 +4,6 @@ import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
-import Link from "next/link"
 import { useMemo, useState } from "react"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
@@ -253,9 +252,24 @@ const CustomerSignInDetails = () => {
                                 >
                                     <span className="text-fontBlack text-sm">Remember me</span>
                                 </Checkbox>
-                                <Link href="/forgot-password" className="text-primaryColor text-sm underline underline-offset-2">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        dispatch(
+                                            openModal({
+                                                componentName: "LoginSignupIndex",
+                                                data: {
+                                                    componentName: "ForgotPasswordEnterIdentifier",
+                                                    userData: { recoveryType: signInType === "phoneNumber" ? "phoneNumber" : "email" },
+                                                },
+                                                modalSize: "full",
+                                            })
+                                        )
+                                    }
+                                    className="text-primaryColor text-sm underline underline-offset-2 cursor-pointer"
+                                >
                                     Forgot password?
-                                </Link>
+                                </button>
                             </div>
 
                             {signInType === "email" && (

@@ -11,6 +11,9 @@ import VendorSignupDetails from "./VendorSignupFlow/VendorSignupDetails";
 import VendorOtpVerification from "./VendorSignupFlow/VendorOtpVerification";
 import VendorServiceListPage from "./VendorSignupFlow/VendorServiceListPage";
 import ApplicationSuccessfull from "./VendorSignupFlow/ApplicationSuccessfull";
+import ForgotPasswordEnterIdentifier from "./ForgotPasswordFlow/ForgotPasswordEnterIdentifier";
+import ForgotPasswordOtpVerify from "./ForgotPasswordFlow/ForgotPasswordOtpVerify";
+import ForgotPasswordSetNew from "./ForgotPasswordFlow/ForgotPasswordSetNew";
 
 const LoginSignupIndex = () => {
 
@@ -40,6 +43,12 @@ const LoginSignupIndex = () => {
                 return <VendorServiceListPage />
             case "ApplicationSuccessfull":
                 return <ApplicationSuccessfull />
+            case "ForgotPasswordEnterIdentifier":
+                return <ForgotPasswordEnterIdentifier />
+            case "ForgotPasswordOtpVerify":
+                return <ForgotPasswordOtpVerify />
+            case "ForgotPasswordSetNew":
+                return <ForgotPasswordSetNew />
 
             default:
                 return <SelectUserType />;

@@ -129,7 +129,7 @@ const MobileOtpVerification = () => {
 
                 <div className="space-y-2">
                     <p className="custom_label_text_light">Phone number</p>
-                    <div className="mt-[6px]">
+                    <div className="mt-1.5">
                         <PhoneInput
                             country="us"
                             value={phoneNumber}
