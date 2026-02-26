@@ -1,24 +1,30 @@
-.btn_radius{
+.btn_radius {
     @apply rounded-full
 }
 
-.btn_padding{
+.btn_padding {
     @apply xl:px-5 xl:py-6;
 }
 
-.btn_bg_whiteSilver{
+.btn_bg_whiteSilver {
     @apply bg-customWhite text-fontBlack;
 }
-.btn_bg_blue{
+.btn_bg_whiteSilver_border {
+    @apply bg-customWhite border border-borderDark text-fontBlack;
+}
+
+.btn_bg_blue {
     @apply bg-primaryColor text-customWhite;
 }
-.btn_outline_blue{
-    @apply border border-primaryColor text-primaryColor bg-transparent ;
+
+.btn_outline_blue {
+    @apply border border-primaryColor text-primaryColor bg-transparent;
 }
-.btn_bg_transparent{
+
+.btn_bg_transparent {
     @apply bg-transparent text-fontBlack border-none;
 }
 
-.btn_bg_white{
-    @apply border border-borderDark text-fontBlack bg-white 
+.btn_bg_white {
+    @apply border border-borderDark text-fontBlack bg-white
 }

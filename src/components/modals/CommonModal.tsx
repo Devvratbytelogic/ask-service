@@ -14,6 +14,7 @@ import LeaveReviewModal from "../vendor/profile/LeaveReviewModal";
 import ReportProfileModal from "../vendor/profile/ReportProfileModal";
 import ReportSubmittedModal from "../vendor/profile/ReportSubmittedModal";
 import PurchaseCreditsModal from "../vendor/credits/PurchaseCreditsModal";
+import VerifyEmailOtpModal from "./VerifyEmailOtpModal";
 
 const CommonModal = () => {
 
@@ -63,6 +64,9 @@ const CommonModal = () => {
 
             case "PurchaseCreditsModal":
                 return <PurchaseCreditsModal />
+
+            case "VerifyEmailOtpModal":
+                return <VerifyEmailOtpModal />
 
             default:
                 return null;

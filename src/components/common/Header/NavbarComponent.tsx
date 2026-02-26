@@ -13,7 +13,7 @@ const NavbarComponent = () => {
         dispatch(openModal({
             componentName: 'LoginSignupIndex',
             data: {
-                singupModal:'SelectUserType'
+                singupModal: 'SelectUserType'
             },
             modalSize: 'full'
         }))
@@ -27,7 +27,7 @@ const NavbarComponent = () => {
                 </span>
             }
                 className="text-base/[22px] font-medium btn_bg_whiteSilver btn_radius btn_padding"
-                onPress={()=>signupSiginModal()}
+                onPress={() => signupSiginModal()}
             >
                 Login/ Register
             </Button>

@@ -112,7 +112,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                 </div>
             </div>
 
-            <div className="space-y-[25px] w-11/12">
+            <div className="space-y-6.25 w-11/12">
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
@@ -131,11 +131,11 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                 >
                     Verify & Sign Up
                 </Button>
-                <p className="text-base text-fontBlack text-center">
+                <p className="text-base text-fontBlack text-center flex justify-center gap-1">
                     Already have an account?{" "}
-                    <Link href="/login" className="text-primaryColor cursor-pointer underline underline-offset-2">
+                    <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
                         Sign In
-                    </Link>
+                    </p>
                 </p>
             </div>
         </>

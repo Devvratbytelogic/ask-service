@@ -5,6 +5,8 @@ import SelectUserType from "./SelectUserType";
 import CustomerSignupIndex from "./CustomerSignupFlow/CustomerSignupIndex";
 import CustomerSignupDetails from "./CustomerSignupFlow/CustomerSignupDetails";
 import VerifyEmailPhoneNumberWithOtp from "./CustomerSignupFlow/VerifyEmailPhoneNumberWithOtp";
+import CustomerSignInIndex from "./CustomerSignInFlow/CustomerSignInIndex";
+import CustomerSignInDetails from "./CustomerSignInFlow/CustomerSignInDetails";
 import VendorSignupDetails from "./VendorSignupFlow/VendorSignupDetails";
 import VendorOtpVerification from "./VendorSignupFlow/VendorOtpVerification";
 import VendorServiceListPage from "./VendorSignupFlow/VendorServiceListPage";
@@ -26,6 +28,10 @@ const LoginSignupIndex = () => {
                 return <CustomerSignupDetails />
             case "VerifyEmailPhoneNumberWithOtp":
                 return <VerifyEmailPhoneNumberWithOtp />
+            case "CustomerSignInIndex":
+                return <CustomerSignInIndex />
+            case "CustomerSignInDetails":
+                return <CustomerSignInDetails />
             case "VendorSignupDetails":
                 return <VendorSignupDetails />
             case "VendorOtpVerification":
@@ -33,7 +39,7 @@ const LoginSignupIndex = () => {
             case "VendorServiceListPage":
                 return <VendorServiceListPage />
             case "ApplicationSuccessfull":
-                return <ApplicationSuccessfull/>
+                return <ApplicationSuccessfull />
 
             default:
                 return <SelectUserType />;
@@ -42,7 +48,7 @@ const LoginSignupIndex = () => {
 
     return (
         <div className="relative flex flex-col md:flex-row h-full p-0 md:p-6">
-            <div className="flex flex-col h-full items-start justify-between w-full md:w-[45%] mt-0 gap-10 xl:gap-auto max-h-[95svh] overflow-y-auto">
+            <div className="flex flex-col h-full items-start justify-between w-full md:w-[45%] mt-0 gap-10 xl:gap-auto max-h-[95svh] overflow-y-auto pe-10">
                 <div className="h-12 w-50 shrink-0 inline-flex items-center justify-start">
                     <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" />
                 </div>
@@ -51,7 +57,7 @@ const LoginSignupIndex = () => {
                 }
             </div>
             <div
-                className="hidden md:block relative flex-1 h-[100px] md:h-full overflow-hidden rounded-[40px] bg-[#F2F3F4] bg-cover bg-center bg-no-repeat"
+                className="hidden md:block relative flex-1 h-25 md:h-full overflow-hidden rounded-[40px] bg-[#F2F3F4] bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: "url(/images/signup/SignupModal_bg.png)" }}
             >
                 <div className="absolute inset-0 flex flex-col justify-end p-5">

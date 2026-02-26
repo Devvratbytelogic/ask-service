@@ -6,24 +6,28 @@ import { BiArrowBack, BiPhone } from "react-icons/bi"
 import { CgMail } from "react-icons/cg"
 import { useDispatch, useSelector } from "react-redux"
 
-const CustomerSignupIndex = () => {
+const CustomerSignInIndex = () => {
 
     const { data } = useSelector((state: RootState) => state.allCommonModal);
 
     const dispatch = useDispatch();
 
-    const signupForUserWith = (userSignupType: string) => {
+    const signInWith = (signInType: string) => {
         dispatch(openModal({
             componentName: 'LoginSignupIndex',
             data: {
-                componentName: 'CustomerSignupDetails',
+                componentName: 'CustomerSignInDetails',
                 userData: {
                     ...data?.userData,
-                    userSignupType,
+                    signInType,
                 }
             },
             modalSize: 'full'
         }))
+    }
+
+    const goToSignup = () => {
+        dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'SelectUserType' }, modalSize: 'full' }))
     }
 
     return (
@@ -36,10 +40,10 @@ const CustomerSignupIndex = () => {
                         role="button"
                         aria-label="Go back"
                     />
-                    Sign up <span className="text-darkSilver ml-1"> now</span>
+                    Sign In <span className="text-darkSilver ml-1">now</span>
                 </h1>
                 <p className="text-fontBlack text-base">
-                    By creating an account, I am also consenting to receive SMS messages and emails.
+                    Sign in to access Ask Service, manage your requests, and connect with the right support quickly and securely.
                 </p>
             </div>
             <div className="w-full space-y-4.5">
@@ -53,27 +57,27 @@ const CustomerSignupIndex = () => {
                 {/* Divider */}
                 <div className="flex items-center gap-3 w-11/12">
                     <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
-                    <span className="text-darkSilver text-sm font-medium">or</span>
+                    <span className="text-darkSilver text-sm font-medium">Or</span>
                     <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
                 </div>
 
                 {/* Email & Mobile options */}
                 <section className="space-y-2.5 w-11/12">
-                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('email')}>
+                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signInWith('email')}>
                         <span><CgMail className="text-lg" /></span>Email
                     </Button>
-                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('phoneNumber')}>
+                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signInWith('phoneNumber')}>
                         <span><BiPhone className="text-lg" /></span>Mobile Number
                     </Button>
                 </section>
             </div>
             <div className="w-11/12 space-y-6.25">
                 <p className="text-base text-fontBlack text-center">
-                    Already have an account? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} onKeyDown={(e) => e.key === 'Enter' && dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} role="button" tabIndex={0}>Sign In</span>
+                    Don&apos;t have an account? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={goToSignup} onKeyDown={(e) => e.key === 'Enter' && goToSignup()} role="button" tabIndex={0}>Sign up</span>
                 </p>
             </div>
         </>
     )
 }
 
-export default CustomerSignupIndex
+export default CustomerSignInIndex

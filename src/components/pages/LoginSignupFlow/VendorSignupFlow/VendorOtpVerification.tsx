@@ -170,7 +170,7 @@ const VendorOtpVerification = () => {
                 </div>
             </div>
 
-            <div className="space-y-[25px] w-11/12">
+            <div className="space-y-6.25 w-11/12">
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
@@ -201,12 +201,12 @@ const VendorOtpVerification = () => {
                 </Button>
                 <p className="text-base text-fontBlack text-center">
                     Don&apos;t have an account?{" "}
-                    <Link
-                        href="/login"
+                    <p
+                        onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))}
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                     >
                         Sign up
-                    </Link>
+                    </p>
                 </p>
             </div>
         </>

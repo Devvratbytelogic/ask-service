@@ -110,8 +110,8 @@ const CustomerSignupDetails = () => {
                             onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignupIndex' }, modalSize: 'full' }))}
                             role="button"
                             aria-label="Go back"
-                        /> 
-                        Sign up <span className="text-darkSilver ml-1">{' '+'now'} </span>
+                        />
+                        Sign up <span className="text-darkSilver ml-1">{' ' + 'now'} </span>
                     </h1>
                     <p className="text-fontBlack text-base">
                         By creating an account, I am also consenting to receive SMS messages and emails.
@@ -177,7 +177,7 @@ const CustomerSignupDetails = () => {
                     {userSignupType === "phoneNumber" && (
                         <div className="w-full relative z-100">
                             <p className="custom_label_text_light mb-1.5">Phone number</p>
-                            <div className="mt-[6px]">
+                            <div className="mt-1.5">
                                 <PhoneInput
                                     country="us"
                                     value={values.phoneNumber}
@@ -230,7 +230,7 @@ const CustomerSignupDetails = () => {
                 </div>
             </div>
 
-            <div className="space-y-[25px] w-11/12">
+            <div className="space-y-6.25 w-11/12">
                 <div className="mx-auto">
                     <Checkbox
                         name="agreeToTerms"
@@ -265,11 +265,11 @@ const CustomerSignupDetails = () => {
                         Continue
                     </Button>
                 </div>
-                <p className="text-base text-fontBlack text-center">
+                <p className="text-base text-fontBlack text-center flex justify-center gap-1">
                     Already have an account?{" "}
-                    <Link href="/login" className="text-primaryColor cursor-pointer underline underline-offset-2">
+                    <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
                         Sign In
-                    </Link>
+                    </p>
                 </p>
             </div>
         </>
