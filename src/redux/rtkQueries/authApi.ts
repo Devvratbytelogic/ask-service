@@ -6,7 +6,7 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
         // Customer auth APIs
         login: builder.mutation({
             query: (formData) => ({
-                url: `/login`,
+                url: `/user/login`,
                 method: 'POST',
                 body: formData,
             }),
@@ -14,7 +14,7 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
 
         signup: builder.mutation({
             query: (formData) => ({
-                url: `/signup`,
+                url: `/user/signup`,
                 method: 'POST',
                 body: formData,
             }),
@@ -30,7 +30,7 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
 
         resendPhoneOtp: builder.mutation({
             query: (formData) => ({
-                url: `/resend-phone-otp`,
+                url: `/user/resend-phone-otp`,
                 method: 'POST',
                 body: formData,
             }),
@@ -38,7 +38,83 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
 
         resendEmailVerification: builder.mutation({
             query: (formData) => ({
-                url: `/resend-email-verification`,
+                url: `/user/resend-email-verification`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+
+
+
+        // Vendor auth APIs
+        vendorRegister: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/register`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorVerifyOtp: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/verify-otp`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorResendOtp: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/resend-otp`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorLogin: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/login`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorVerifyForgotPasswordOtp: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/verify-forgot-password-otp`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorForgotPassword: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/forgot-password`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorResendPhoneEmailOtp: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/resend-phone-email-otp`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorResetPassword: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/reset-password`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        vendorChangePassword: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/change-password`,
                 method: 'POST',
                 body: formData,
             }),
@@ -52,4 +128,18 @@ export const {
     useVerifyPhoneLoginMutation,
     useResendPhoneOtpMutation,
     useResendEmailVerificationMutation,
+
+
+
+
+    // Vendor auth APIs
+    useVendorRegisterMutation,
+    useVendorVerifyOtpMutation,
+    useVendorResendOtpMutation,
+    useVendorLoginMutation,
+    useVendorVerifyForgotPasswordOtpMutation,
+    useVendorForgotPasswordMutation,
+    useVendorResendPhoneEmailOtpMutation,
+    useVendorResetPasswordMutation,
+    useVendorChangePasswordMutation,
 } = authApi;
