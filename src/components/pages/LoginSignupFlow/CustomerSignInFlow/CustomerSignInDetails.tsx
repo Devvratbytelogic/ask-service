@@ -87,7 +87,7 @@ const CustomerSignInDetails = () => {
                     setAuthCookies(responseData as AuthResponseData)
                 }
                 addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
-                // dispatch(closeModal())
+                dispatch(closeModal())
             } catch {
                 // Error toast from rtkQuerieSetup
             }
