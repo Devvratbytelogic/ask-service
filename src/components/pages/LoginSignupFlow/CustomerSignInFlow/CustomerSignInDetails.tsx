@@ -82,8 +82,7 @@ const CustomerSignInDetails = () => {
             if (!identifier || !values.password) return
             try {
                 const res = await login({ identifier, password: values.password }).unwrap()
-                const responseData = (res as { data?: unknown })?.data
-                console.log("responseData", responseData)
+                const responseData = res?.data
                 if (responseData && typeof responseData === 'object') {
                     setAuthCookies(responseData as AuthResponseData)
                 }

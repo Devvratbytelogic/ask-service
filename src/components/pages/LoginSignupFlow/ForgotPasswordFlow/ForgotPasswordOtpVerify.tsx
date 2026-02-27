@@ -9,6 +9,7 @@ import {
     useVerifyEmailMutation,
     useVerifyPhoneMutation,
 } from "@/redux/rtkQueries/authApi"
+import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -84,7 +85,11 @@ const ForgotPasswordOtpVerify = () => {
             } else if (!isEmail && phone) {
                 res = await verifyPhone({ phone, otp: otpValue }).unwrap()
             } else return
-            const roleName = res?.data?.role?.name ?? ""
+            const responseData = res?.data
+            if (responseData && typeof responseData === "object") {
+                setAuthCookies(responseData as AuthResponseData)
+            }
+            const roleName = responseData?.role?.name ?? ""
             const isVendor = roleName.toLowerCase() === "vendor"
             dispatch(
                 openModal({

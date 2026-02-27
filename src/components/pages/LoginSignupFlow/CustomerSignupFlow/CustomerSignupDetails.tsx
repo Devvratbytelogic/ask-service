@@ -2,7 +2,8 @@
 
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { Button, Checkbox, Input } from "@heroui/react"
+import { useSignupMutation } from "@/redux/rtkQueries/authApi"
+import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import Link from "next/link"
 import { useMemo, useState } from "react"
@@ -53,7 +54,8 @@ const getSignupValidationSchema = (userSignupType: string | undefined) => {
 const CustomerSignupDetails = () => {
 
     const { data } = useSelector((state: RootState) => state.allCommonModal)
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
+    const [signup, { isLoading: isSigningUp }] = useSignupMutation()
 
     const userSignupType = data?.userData?.userSignupType as string | undefined
 
@@ -80,20 +82,43 @@ const CustomerSignupDetails = () => {
         initialValues: initialValuesFromData,
         enableReinitialize: true,
         validationSchema: signupValidationSchema,
-        onSubmit: (values) => {
-            console.log("Signup submit", values)
-
-            dispatch(openModal({
-                componentName: 'LoginSignupIndex',
-                data: {
-                    componentName: 'VerifyEmailPhoneNumberWithOtp',
-                    userData: {
-                        ...data?.userData,
-                        ...values
-                    }
-                },
-                modalSize: 'full'
-            }))
+        onSubmit: async (values) => {
+            const isEmail = userSignupType === "email"
+            const payload = isEmail
+                ? {
+                    first_name: values.firstName.trim(),
+                    last_name: values.lastName.trim(),
+                    email: values.email.trim(),
+                    password: values.password,
+                }
+                : {
+                    first_name: values.firstName.trim(),
+                    last_name: values.lastName.trim(),
+                    phone: values.phoneNumber,
+                    password: values.password,
+                }
+            try {
+                await signup(payload).unwrap()
+                addToast({
+                    title: "Verification code sent",
+                    description: isEmail ? "Check your email." : "Check your phone.",
+                    color: "success",
+                    timeout: 2000,
+                })
+                dispatch(openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "VerifyEmailPhoneNumberWithOtp",
+                        userData: {
+                            ...data?.userData,
+                            ...values,
+                        },
+                    },
+                    modalSize: "full",
+                }))
+            } catch {
+                // Error toast from rtkQuerieSetup
+            }
         },
     })
 
@@ -261,6 +286,8 @@ const CustomerSignupDetails = () => {
                         type="submit"
                         className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                         onPress={() => handleSubmit()}
+                        isLoading={isSigningUp}
+                        isDisabled={isSigningUp}
                     >
                         Continue
                     </Button>
