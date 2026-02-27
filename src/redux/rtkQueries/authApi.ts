@@ -100,6 +100,7 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
                 body: formData,
             }),
         }),
+        
         vendorNewPassword: builder.mutation({
             query: (formData) => ({
                 url: `/vendor/new-password`,

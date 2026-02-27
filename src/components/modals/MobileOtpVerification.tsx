@@ -3,7 +3,9 @@
 import OtpInput from "@/components/library/OtpInput"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { addToast, Button, toast } from "@heroui/react"
+import { useResendPhoneOtpMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
+import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import PhoneInput from "react-phone-input-2"
@@ -24,36 +26,48 @@ const MobileOtpVerification = () => {
 
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
-
-    console.log("data : ",data)
+    const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
+    const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
 
     const initialPhone = (data?.phoneNumber as string) || ""
+    const skipToCodeEntry = !!(data as { skipToCodeEntry?: boolean })?.skipToCodeEntry
+    const otpType = (data as { otpType?: string })?.otpType ?? "SERVICE_REQUEST"
 
     const [phoneNumber, setPhoneNumber] = useState(initialPhone)
-    const [codeSent, setCodeSent] = useState(false)
+    const [codeSent, setCodeSent] = useState(skipToCodeEntry)
     const [otpValue, setOtpValue] = useState("")
-    const [resendCooldown, setResendCooldown] = useState(0)
-    const [otpExpirySeconds, setOtpExpirySeconds] = useState(0)
+    const [resendCooldown, setResendCooldown] = useState(skipToCodeEntry ? RESEND_COOLDOWN_SEC : 0)
+    const [otpExpirySeconds, setOtpExpirySeconds] = useState(skipToCodeEntry ? OTP_EXPIRY_SEC : 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const isPhoneValid = phoneNumber.length >= 10
 
-    const handleSendCode = useCallback(() => {
+    const handleSendCode = useCallback(async () => {
         if (!isPhoneValid) return
-        setCodeSent(true)
-        setOtpExpirySeconds(OTP_EXPIRY_SEC)
-        setResendCooldown(RESEND_COOLDOWN_SEC)
         setErrorMessage(null)
-        // TODO: call send OTP API
-    }, [isPhoneValid])
+        try {
+            await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            setCodeSent(true)
+            setOtpExpirySeconds(OTP_EXPIRY_SEC)
+            setResendCooldown(RESEND_COOLDOWN_SEC)
+        } catch (err: unknown) {
+            const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to send code."
+            setErrorMessage(message)
+        }
+    }, [isPhoneValid, phoneNumber, otpType, resendPhoneOtp])
 
-    const handleResend = useCallback(() => {
+    const handleResend = useCallback(async () => {
         if (resendCooldown > 0) return
-        setResendCooldown(RESEND_COOLDOWN_SEC)
-        setOtpExpirySeconds(OTP_EXPIRY_SEC)
         setErrorMessage(null)
-        // TODO: call resend OTP API
-    }, [resendCooldown])
+        try {
+            await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            setResendCooldown(RESEND_COOLDOWN_SEC)
+            setOtpExpirySeconds(OTP_EXPIRY_SEC)
+        } catch (err: unknown) {
+            const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to resend code."
+            setErrorMessage(message)
+        }
+    }, [resendCooldown, phoneNumber, otpType, resendPhoneOtp])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -81,35 +95,39 @@ const MobileOtpVerification = () => {
         setOtpExpirySeconds(0)
     }
 
-    const handleVerify = () => {
+    const handleVerify = useCallback(async () => {
         setErrorMessage(null)
-        // TODO: call verify OTP API
-        const isValid = true // replace with API response
-        if (!isValid) {
-            setErrorMessage("The code you entered is incorrect. Please try again.")
-            return
+        try {
+            const res = await verifyPhone({ phone: phoneNumber, otp: otpValue }).unwrap()
+            const responseData = (res as { data?: unknown })?.data ?? res
+            if (responseData && typeof responseData === "object") {
+                setAuthCookies(responseData as AuthResponseData)
+            }
+            if (data?.callBackModal || data?.parentCallBackModal) {
+                dispatch(
+                    openModal({
+                        componentName: data?.parentCallBackModal ? data?.parentCallBackModal : "LoginSignupIndex",
+                        data: {
+                            ...data,
+                            componentName: data?.callBackModal ? data?.callBackModal : null,
+                        },
+                        modalSize: data?.nextModalSize ? data?.nextModalSize : "full",
+                    })
+                )
+            } else {
+                dispatch(closeModal())
+            }
+            addToast({
+                title: "Success",
+                description: "OTP Verification completed.",
+                color: "success",
+                timeout: 3000,
+            })
+        } catch (err: unknown) {
+            const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "The code you entered is incorrect. Please try again."
+            setErrorMessage(message)
         }
-        if (data?.callBackModal || data?.parentCallBackModal) {
-            dispatch(
-                openModal({
-                    componentName:  data?.parentCallBackModal ?  data?.parentCallBackModal :  "LoginSignupIndex",
-                    data: {
-                        ...data,
-                        componentName: data?.callBackModal ? data?.callBackModal : null,
-                    },
-                    modalSize: data?.nextModalSize ? data?.nextModalSize : "full",
-                })
-            )
-        } else {
-            dispatch(closeModal())
-        }
-        addToast({
-            title: "Success",
-            description: "OTP Verification completed.",
-            color: "success",
-            timeout: 3000,
-        })
-    }
+    }, [phoneNumber, otpValue, data, dispatch, verifyPhone])
 
     const canVerify = otpValue.length === OTP_LENGTH
 
@@ -153,7 +171,8 @@ const MobileOtpVerification = () => {
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm xl:text-base w-full"
-                    isDisabled={!isPhoneValid}
+                    isDisabled={!isPhoneValid || isResendingPhone}
+                    isLoading={isResendingPhone}
                     onPress={handleSendCode}
                 >
                     Send code
@@ -217,9 +236,10 @@ const MobileOtpVerification = () => {
                             <button
                                 type="button"
                                 onClick={handleResend}
-                                className="text-primaryColor cursor-pointer underline underline-offset-2"
+                                disabled={isResendingPhone}
+                                className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Send a new code
+                                {isResendingPhone ? "Sending…" : "Send a new code"}
                             </button>
                         )}
                     </li>
@@ -241,7 +261,8 @@ const MobileOtpVerification = () => {
             <Button
                 type="button"
                 className="btn_bg_blue btn_radius btn_padding font-medium text-sm xl:text-base w-full"
-                isDisabled={!canVerify}
+                isDisabled={!canVerify || isVerifyingPhone}
+                isLoading={isVerifyingPhone}
                 onPress={handleVerify}
             >
                 Continue

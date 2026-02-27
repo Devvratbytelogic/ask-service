@@ -2,7 +2,7 @@
 
 import OtpInput from "@/components/library/OtpInput"
 import { RootState } from "@/redux/appStore"
-import { closeModal } from "@/redux/slices/allModalSlice"
+import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useResendEmailVerificationMutation, useVerifyEmailMutation } from "@/redux/rtkQueries/authApi"
 import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
@@ -17,6 +17,8 @@ export default function VerifyEmailOtpModal() {
     const dispatch = useDispatch()
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const email = (data?.email as string) || ""
+    const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
+    const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
     const [verifyEmail, { isLoading: isVerifying }] = useVerifyEmailMutation()
     const [resendEmailVerification, { isLoading: isResending }] = useResendEmailVerificationMutation()
@@ -33,11 +35,20 @@ export default function VerifyEmailOtpModal() {
                 setAuthCookies(responseData as AuthResponseData)
             }
             addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
-            dispatch(closeModal())
+            if (returnToRequestFlow && requestFlowData) {
+                dispatch(closeModal())
+                dispatch(openModal({
+                    componentName: "RequestServiceFlowIndex",
+                    data: requestFlowData,
+                    modalSize: "lg",
+                }))
+            } else {
+                dispatch(closeModal())
+            }
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [email, otpValue, verifyEmail, dispatch])
+    }, [email, otpValue, verifyEmail, dispatch, returnToRequestFlow, requestFlowData])
 
     const handleResend = useCallback(async () => {
         if (resendCooldown > 0 || !email) return

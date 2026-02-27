@@ -1,19 +1,21 @@
 
 import { SERVICE_FREQUENCY_TYPE } from "@/utils/constant_var"
-import { SERVICE_LIST } from "@/utils/serviceList"
 import { Button, Input, Select, SelectItem } from "@heroui/react"
 import { FormikProps } from "formik"
+import { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
 
 interface ServiceAndLocationProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
+  childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
 }
 
 const STEP1_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = ["parentServiceName", "serviceFrequency", "pincode"]
 
-const ServiceAndLocation = ({ formik, setStepCount }: ServiceAndLocationProps) => {
+const ServiceAndLocation = ({ formik, setStepCount, childServices = [] }: ServiceAndLocationProps) => {
   const { values, setFieldValue, touched, errors, handleBlur, handleChange, validateForm, setTouched } = formik
+  
 
   const isOtherSelected = values.parentServiceName === "other"
   const step1FieldsToValidate = isOtherSelected
@@ -66,7 +68,9 @@ const ServiceAndLocation = ({ formik, setStepCount }: ServiceAndLocationProps) =
             isRequired
           >
             <>
-              {SERVICE_LIST?.map((curr) => <SelectItem key={String(curr?._id)}>{curr?.service_name}</SelectItem>)}
+              {(childServices ?? []).map((curr) => (
+                <SelectItem key={String(curr?._id)}>{curr?.title}</SelectItem>
+              ))}
               <SelectItem key="other">Other</SelectItem>
             </>
           </Select>

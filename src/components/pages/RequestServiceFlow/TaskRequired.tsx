@@ -1,18 +1,27 @@
 "use client"
 
-import { CHILD_SERVICE_LIST } from "@/utils/serviceList"
 import { Button, Checkbox } from "@heroui/react"
 import { FormikProps } from "formik"
+import { useMemo } from "react"
+import { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
 
 interface TaskRequiredProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
+  childCategories?: IAllServiceCategoriesChildCategoriesEntity[] | null
 }
 
-const TaskRequired = ({ formik, setStepCount }: TaskRequiredProps) => {
+const TaskRequired = ({ formik, setStepCount, childCategories = [] }: TaskRequiredProps) => {
   const { values, setFieldValue } = formik
   const selectedIds = values.childServiceIds ?? []
+  console.log('values', values);
+  
+  const selectedChild = useMemo(
+    () => (childCategories ?? []).find((c) => c._id === values.parentServiceName),
+    [childCategories, values.parentServiceName]
+  )
+  const optionsList = selectedChild?.options ?? []
 
   const handleToggle = (id: string) => {
     const next = selectedIds.includes(id)
@@ -35,8 +44,8 @@ const TaskRequired = ({ formik, setStepCount }: TaskRequiredProps) => {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-        {CHILD_SERVICE_LIST.map((item) => {
-          const id = String(item._id)
+        {optionsList.map((item, index) => {
+          const id = item.label ?? `option-${index}`
           const isSelected = selectedIds.includes(id)
           return (
             <label
@@ -55,10 +64,10 @@ const TaskRequired = ({ formik, setStepCount }: TaskRequiredProps) => {
                   base: "max-w-full",
                   wrapper: "rounded-md",
                 }}
-                aria-label={item.service_name}
+                aria-label={item.label}
               />
               <span className="text-fontBlack text-sm xl:text-base truncate">
-                {item.service_name}
+                {item.label}
               </span>
             </label>
           )

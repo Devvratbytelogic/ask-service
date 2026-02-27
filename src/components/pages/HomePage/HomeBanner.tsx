@@ -1,7 +1,7 @@
 "use client"
 import ImageComponent from "@/components/library/ImageComponent"
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@heroui/react"
-import { useState } from "react"
+import { Autocomplete, AutocompleteItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@heroui/react"
+import { useMemo, useState } from "react"
 import { BiSearch } from "react-icons/bi"
 import { FiArrowRight } from "react-icons/fi"
 import { FaLocationDot } from "react-icons/fa6"
@@ -9,20 +9,40 @@ import { MdKeyboardArrowDown } from "react-icons/md"
 import { useDispatch } from "react-redux"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { SERVICE_LIST } from "@/utils/serviceList"
+import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis"
 
 const PIN_CODES = ["10001", "10002", "10003", "10004", "10005"]
 
 const HomeBanner = () => {
 
     const [selectedPinCode, setSelectedPinCode] = useState("10001")
+    const { data } = useGetServiceCategoriesQuery();
+    const grandParentServicesList = data?.data ?? [];
+    const [searchValue, setSearchValue] = useState("");
+    const [selectedServiceKey, setSelectedServiceKey] = useState<string | null>(null);
+
+    const filteredServicesList = useMemo(() => {
+        if (!searchValue.trim()) return grandParentServicesList;
+        const query = searchValue.toLowerCase().trim();
+        return grandParentServicesList.filter((item) =>
+            item.title.toLowerCase().includes(query)
+        );
+    }, [grandParentServicesList, searchValue]);
 
     const dispatch = useDispatch()
+
+    const selectedService = selectedServiceKey
+        ? grandParentServicesList.find((c) => c._id === selectedServiceKey)
+        : null;
 
     const startServiceRegisterationRequest = () => {
         dispatch(openModal({
             componentName: 'RequestServiceFlowIndex',
             data: {
-                pincode: selectedPinCode
+                pincode: selectedPinCode,
+                grandParentServiceId: selectedService?._id ?? '',
+                grandParentServiceName: selectedService?.title ?? '',
+                child_services: selectedService?.child_categories ?? [],
             },
             modalSize: 'lg'
         }))
@@ -56,15 +76,39 @@ const HomeBanner = () => {
             </p>
             <div className="flex gap-2 flex-wrap justify-center">
                 <div className="w-[90vw] md:w-[30vw] max-w-full mx-auto">
-                    <Input
-                        type="text"
-                        name="name"
+                    <Autocomplete
                         variant="bordered"
-                        classNames={{
-                            inputWrapper: ['custom_input_large_design btn_radius h-[60px]!'],
+                        placeholder="What service do you need?"
+                        allowsCustomValue
+                        items={filteredServicesList}
+                        inputValue={searchValue}
+                        onInputChange={setSearchValue}
+                        selectedKey={selectedServiceKey}
+                        onSelectionChange={(key) => {
+                            const keyStr = key != null ? String(key) : null;
+                            setSelectedServiceKey(keyStr);
+                            const item = keyStr ? grandParentServicesList.find((c) => c._id === keyStr) : null;
+                            setSearchValue(item?.title ?? '');
                         }}
-                        placeholder="What service do you need?..."
-                    />
+                        classNames={{
+                            base: "w-full",
+                            listboxWrapper: "max-h-[200px]",
+                        }}
+                        listboxProps={{
+                            emptyContent: searchValue.trim() ? "No data found" : "No items.",
+                        }}
+                        inputProps={{
+                            classNames: {
+                                inputWrapper: ['custom_input_large_design btn_radius h-[60px]!'],
+                            },
+                        }}
+                    >
+                        {(item) => (
+                            <AutocompleteItem key={item._id} textValue={item.title}>
+                                {item.title}
+                            </AutocompleteItem>
+                        )}
+                    </Autocomplete>
                 </div>
                 <span className="w-[50vw] md:w-auto max-w-full">
                     <Dropdown>

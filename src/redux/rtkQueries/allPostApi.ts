@@ -9,10 +9,18 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         body: value,
       }),
     }),
-    
+    createServiceRequest: builder.mutation({
+      query: (value) => ({
+        url: `/user/service-request`,
+        method: 'POST',
+        body: value,
+      }),
+    }),
+
   }),
 });
 
 export const {
   useUploadPrescriptionMutation,
+  useCreateServiceRequestMutation,
 } = postApi;

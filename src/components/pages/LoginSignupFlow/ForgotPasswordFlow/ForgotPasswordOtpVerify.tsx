@@ -24,6 +24,8 @@ const ForgotPasswordOtpVerify = () => {
     const userData = data?.userData as Record<string, unknown> | undefined
     const recoveryType = data?.userData?.recoveryType as string | undefined
     const isEmail = recoveryType === "email"
+    const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
+    const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
     const email = (userData?.email as string) || ""
     const phone = (userData?.phoneNumber as string) || ""
@@ -70,6 +72,9 @@ const ForgotPasswordOtpVerify = () => {
                 data: {
                     componentName: "ForgotPasswordEnterIdentifier",
                     userData: { ...userData },
+                    ...(returnToRequestFlow && requestFlowData
+                        ? { returnToRequestFlow: true, requestFlowData }
+                        : {}),
                 },
                 modalSize: "full",
             })
@@ -97,6 +102,9 @@ const ForgotPasswordOtpVerify = () => {
                     data: {
                         componentName: "ForgotPasswordSetNew",
                         userData: { ...userData, isVendor },
+                        ...(returnToRequestFlow && requestFlowData
+                            ? { returnToRequestFlow: true, requestFlowData }
+                            : {}),
                     },
                     modalSize: "full",
                 })
@@ -104,7 +112,7 @@ const ForgotPasswordOtpVerify = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, isEmail, email, phone, verifyEmail, verifyPhone, userData, dispatch])
+    }, [otpValue, isEmail, email, phone, verifyEmail, verifyPhone, userData, dispatch, returnToRequestFlow, requestFlowData])
 
     const canVerify = otpValue.length === OTP_LENGTH
     const isVerifying = isVerifyingEmail || isVerifyingPhone
@@ -182,6 +190,9 @@ const ForgotPasswordOtpVerify = () => {
                                     data: {
                                         componentName: "CustomerSignInDetails",
                                         userData: { signInType: recoveryType ?? "email" },
+                                        ...(returnToRequestFlow && requestFlowData
+                                            ? { returnToRequestFlow: true, requestFlowData }
+                                            : {}),
                                     },
                                     modalSize: "full",
                                 })

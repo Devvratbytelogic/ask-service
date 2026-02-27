@@ -1,7 +1,7 @@
 "use client"
 
 import { RootState } from "@/redux/appStore"
-import { closeModal, openModal } from "@/redux/slices/allModalSlice"
+import { openModal } from "@/redux/slices/allModalSlice"
 import { useNewPasswordMutation, useVendorNewPasswordMutation } from "@/redux/rtkQueries/authApi"
 import { addToast, Button, Input } from "@heroui/react"
 import { useFormik } from "formik"
@@ -31,6 +31,8 @@ const ForgotPasswordSetNew = () => {
     const dispatch = useDispatch()
     const userData = data?.userData as Record<string, unknown> | undefined
     const isVendor = Boolean(userData?.isVendor)
+    const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
+    const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
     const [newPassword, { isLoading: isSubmittingUser }] = useNewPasswordMutation()
     const [vendorNewPassword, { isLoading: isSubmittingVendor }] = useVendorNewPasswordMutation()
@@ -56,7 +58,7 @@ const ForgotPasswordSetNew = () => {
                     color: "success",
                     timeout: 3000,
                 })
-                dispatch(closeModal())
+                openSignIn()
             } catch {
                 // Error toast from rtkQuerieSetup
             }
@@ -66,13 +68,32 @@ const ForgotPasswordSetNew = () => {
     const { values, touched, errors, handleChange, handleBlur, handleSubmit } = formik
 
     const openSignIn = () => {
-        dispatch(
-            openModal({
-                componentName: "LoginSignupIndex",
-                data: { componentName: "CustomerSignInIndex" },
-                modalSize: "full",
-            })
-        )
+        if (returnToRequestFlow && requestFlowData) {
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "CustomerSignInDetails",
+                        userData: {
+                            signInType: (userData?.recoveryType as string) ?? "email",
+                            email: userData?.email,
+                            phoneNumber: userData?.phoneNumber,
+                        },
+                        returnToRequestFlow: true,
+                        requestFlowData,
+                    },
+                    modalSize: "full",
+                })
+            )
+        } else {
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: { componentName: "CustomerSignInIndex" },
+                    modalSize: "full",
+                })
+            )
+        }
     }
 
     return (

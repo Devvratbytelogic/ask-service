@@ -23,7 +23,7 @@ interface ContactInformationProps {
 }
 
 const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) => {
-  
+
   const { values, setFieldValue, setFieldTouched, touched, errors, handleBlur, handleChange, setTouched, validateForm } = formik
 
   const isStep4Valid = STEP4_REQUIRED_FIELDS.every(
@@ -127,7 +127,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <p className="custom_label_text mb-1.5">
             Phone number <span className="text-danger">*</span>
           </p>
-          <div className="mt-[6px]">
+          <div className="mt-1.5">
             <PhoneInput
               country="us"
               value={values.customerPhoneNumber}

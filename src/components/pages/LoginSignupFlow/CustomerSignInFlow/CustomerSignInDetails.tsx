@@ -87,7 +87,16 @@ const CustomerSignInDetails = () => {
                     setAuthCookies(responseData as AuthResponseData)
                 }
                 addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
-                dispatch(closeModal())
+                if (returnToRequestFlow && requestFlowData) {
+                    dispatch(closeModal())
+                    dispatch(openModal({
+                        componentName: 'RequestServiceFlowIndex',
+                        data: requestFlowData,
+                        modalSize: 'lg',
+                    }))
+                } else {
+                    dispatch(closeModal())
+                }
             } catch {
                 // Error toast from rtkQuerieSetup
             }
@@ -96,9 +105,19 @@ const CustomerSignInDetails = () => {
 
     const { values, touched, errors, handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched } = formik
 
+    const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
+    const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
+
     const goToSignInIndex = () => {
         if (showOtpView && signInType === "email") {
             setShowOtpView(false)
+        } else if (returnToRequestFlow && requestFlowData) {
+            dispatch(closeModal())
+            dispatch(openModal({
+                componentName: 'RequestServiceFlowIndex',
+                data: requestFlowData,
+                modalSize: 'lg',
+            }))
         } else {
             dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))
         }
@@ -121,7 +140,12 @@ const CustomerSignInDetails = () => {
             dispatch(
                 openModal({
                     componentName: "VerifyEmailOtpModal",
-                    data: { email: values.email.trim() },
+                    data: {
+                        email: values.email.trim(),
+                        ...(returnToRequestFlow && requestFlowData
+                            ? { returnToRequestFlow: true, requestFlowData }
+                            : {}),
+                    },
                     modalSize: "md",
                     modalPadding: "px-6 py-8",
                 })
@@ -282,7 +306,14 @@ const CustomerSignInDetails = () => {
                                                 componentName: "LoginSignupIndex",
                                                 data: {
                                                     componentName: "ForgotPasswordEnterIdentifier",
-                                                    userData: { recoveryType: signInType === "phoneNumber" ? "phoneNumber" : "email" },
+                                                    userData: {
+                                                        recoveryType: signInType === "phoneNumber" ? "phoneNumber" : "email",
+                                                        email: values.email?.trim() || undefined,
+                                                        phoneNumber: values.phoneNumber || undefined,
+                                                    },
+                                                    ...(returnToRequestFlow && requestFlowData
+                                                        ? { returnToRequestFlow: true, requestFlowData }
+                                                        : {}),
                                                 },
                                                 modalSize: "full",
                                             })
@@ -317,12 +348,14 @@ const CustomerSignInDetails = () => {
                     )}
                 </form>
             </div>
-            <div className="w-11/12 space-y-6.25">
-                <p className="text-base text-fontBlack text-center">
-                    Don&apos;t have an account?{" "}
-                    <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={goToSignup} onKeyDown={(e) => e.key === 'Enter' && goToSignup()} role="button" tabIndex={0}>Sign up</span>
-                </p>
-            </div>
+            {!returnToRequestFlow && (
+                <div className="w-11/12 space-y-6.25">
+                    <p className="text-base text-fontBlack text-center">
+                        Don&apos;t have an account?{" "}
+                        <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={goToSignup} onKeyDown={(e) => e.key === 'Enter' && goToSignup()} role="button" tabIndex={0}>Sign up</span>
+                    </p>
+                </div>
+            )}
         </>
     )
 }

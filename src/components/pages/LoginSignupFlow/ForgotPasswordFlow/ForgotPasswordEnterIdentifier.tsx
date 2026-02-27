@@ -46,8 +46,8 @@ const ForgotPasswordEnterIdentifier = () => {
     const initialValues: ForgotPasswordIdentifierValues = useMemo(() => {
         const ud = data?.userData as Record<string, unknown> | undefined
         return {
-            email: (ud?.email as string) ?? "",
-            phoneNumber: (ud?.phoneNumber as string) ?? "",
+            email: ud?.email != null ? String(ud.email).trim() : "",
+            phoneNumber: ud?.phoneNumber != null ? String(ud.phoneNumber) : "",
         }
     }, [data?.userData])
 
@@ -77,6 +77,9 @@ const ForgotPasswordEnterIdentifier = () => {
                                 recoveryType,
                                 ...submitValues,
                             },
+                            ...(returnToRequestFlow && requestFlowData
+                                ? { returnToRequestFlow: true, requestFlowData }
+                                : {}),
                         },
                         modalSize: "full",
                     })
@@ -89,6 +92,9 @@ const ForgotPasswordEnterIdentifier = () => {
 
     const { values, touched, errors, handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched } = formik
 
+    const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
+    const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
+
     const goBack = () => {
         dispatch(
             openModal({
@@ -96,6 +102,9 @@ const ForgotPasswordEnterIdentifier = () => {
                 data: {
                     componentName: "CustomerSignInDetails",
                     userData: { signInType: recoveryType },
+                    ...(returnToRequestFlow && requestFlowData
+                        ? { returnToRequestFlow: true, requestFlowData }
+                        : {}),
                 },
                 modalSize: "full",
             })
@@ -106,7 +115,12 @@ const ForgotPasswordEnterIdentifier = () => {
         dispatch(
             openModal({
                 componentName: "LoginSignupIndex",
-                data: { componentName: "CustomerSignInIndex" },
+                data: {
+                    componentName: "CustomerSignInIndex",
+                    ...(returnToRequestFlow && requestFlowData
+                        ? { returnToRequestFlow: true, requestFlowData }
+                        : {}),
+                },
                 modalSize: "full",
             })
         )
