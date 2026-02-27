@@ -2,7 +2,8 @@
 
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { Button, Input } from "@heroui/react"
+import { useNewPasswordMutation, useVendorNewPasswordMutation } from "@/redux/rtkQueries/authApi"
+import { addToast, Button, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useState } from "react"
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
@@ -28,16 +29,37 @@ const validationSchema = Yup.object({
 const ForgotPasswordSetNew = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const userData = data?.userData as Record<string, unknown> | undefined
+    const isVendor = Boolean(userData?.isVendor)
+
+    const [newPassword, { isLoading: isSubmittingUser }] = useNewPasswordMutation()
+    const [vendorNewPassword, { isLoading: isSubmittingVendor }] = useVendorNewPasswordMutation()
+
+    const isSubmitting = isSubmittingUser || isSubmittingVendor
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const [isConfirmVisible, setIsConfirmVisible] = useState(false)
 
     const formik = useFormik<ForgotPasswordSetNewValues>({
         initialValues: { password: "", confirmPassword: "" },
         validationSchema,
-        onSubmit: (values) => {
-            // TODO: call reset password API with values.password and token/identifier from data?.userData
-            console.log("Reset password", values.password)
-            dispatch(closeModal())
+        onSubmit: async (values) => {
+            const payload = { password: values.password, confirm_password: values.confirmPassword }
+            try {
+                if (isVendor) {
+                    await vendorNewPassword(payload).unwrap()
+                } else {
+                    await newPassword(payload).unwrap()
+                }
+                addToast({
+                    title: "Password updated",
+                    description: "You can sign in with your new password.",
+                    color: "success",
+                    timeout: 3000,
+                })
+                dispatch(closeModal())
+            } catch {
+                // Error toast from rtkQuerieSetup
+            }
         },
     })
 
@@ -123,8 +145,10 @@ const ForgotPasswordSetNew = () => {
                         type="submit"
                         className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                         onPress={() => handleSubmit()}
+                        isLoading={isSubmitting}
+                        isDisabled={isSubmitting}
                     >
-                        Next
+                        Reset password
                     </Button>
                 </form>
             </div>

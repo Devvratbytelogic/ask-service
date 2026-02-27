@@ -3,7 +3,7 @@ import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
 
 export const authApi = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
-        // Customer auth APIs
+        // Shared login / forgot-password flow (customers and vendors)
         login: builder.mutation({
             query: (formData) => ({
                 url: `/user/login`,
@@ -12,17 +12,25 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
             }),
         }),
 
-        signup: builder.mutation({
+        loginPhoneEmail: builder.mutation({
             query: (formData) => ({
-                url: `/user/signup`,
+                url: `/user/login-phone-email`,
                 method: 'POST',
                 body: formData,
             }),
         }),
 
-        verifyPhoneLogin: builder.mutation({
+        verifyPhone: builder.mutation({
             query: (formData) => ({
-                url: `/user/verify-phone-login`,
+                url: `/user/verify-phone`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
+        verifyEmail: builder.mutation({
+            query: (formData) => ({
+                url: `/user/verify-email`,
                 method: 'POST',
                 body: formData,
             }),
@@ -44,10 +52,31 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
             }),
         }),
 
+        forgotPassword: builder.mutation({
+            query: (formData) => ({
+                url: `/user/forgot-password`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
 
+        newPassword: builder.mutation({
+            query: (formData) => ({
+                url: `/user/new-password`,
+                method: 'PUT',
+                body: formData,
+            }),
+        }),
 
+        signup: builder.mutation({
+            query: (formData) => ({
+                url: `/user/signup`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
 
-        // Vendor auth APIs
+        // Vendor signup (login/forgot use user APIs above)
         vendorRegister: builder.mutation({
             query: (formData) => ({
                 url: `/vendor/register`,
@@ -71,51 +100,10 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
                 body: formData,
             }),
         }),
-
-        vendorLogin: builder.mutation({
+        vendorNewPassword: builder.mutation({
             query: (formData) => ({
-                url: `/vendor/login`,
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-
-        vendorVerifyForgotPasswordOtp: builder.mutation({
-            query: (formData) => ({
-                url: `/vendor/verify-forgot-password-otp`,
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-
-        vendorForgotPassword: builder.mutation({
-            query: (formData) => ({
-                url: `/vendor/forgot-password`,
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-
-        vendorResendPhoneEmailOtp: builder.mutation({
-            query: (formData) => ({
-                url: `/vendor/resend-phone-email-otp`,
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-
-        vendorResetPassword: builder.mutation({
-            query: (formData) => ({
-                url: `/vendor/reset-password`,
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-
-        vendorChangePassword: builder.mutation({
-            query: (formData) => ({
-                url: `/vendor/change-password`,
-                method: 'POST',
+                url: `/vendor/new-password`,
+                method: 'PUT',
                 body: formData,
             }),
         }),
@@ -124,22 +112,17 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
 
 export const {
     useLoginMutation,
-    useSignupMutation,
-    useVerifyPhoneLoginMutation,
+    useLoginPhoneEmailMutation,
+    useVerifyPhoneMutation,
+    useVerifyEmailMutation,
     useResendPhoneOtpMutation,
     useResendEmailVerificationMutation,
+    useForgotPasswordMutation,
+    useNewPasswordMutation,
+    useSignupMutation,
 
-
-
-
-    // Vendor auth APIs
     useVendorRegisterMutation,
     useVendorVerifyOtpMutation,
     useVendorResendOtpMutation,
-    useVendorLoginMutation,
-    useVendorVerifyForgotPasswordOtpMutation,
-    useVendorForgotPasswordMutation,
-    useVendorResendPhoneEmailOtpMutation,
-    useVendorResetPasswordMutation,
-    useVendorChangePasswordMutation,
+    useVendorNewPasswordMutation,
 } = authApi;

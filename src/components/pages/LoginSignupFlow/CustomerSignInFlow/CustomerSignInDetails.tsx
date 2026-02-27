@@ -1,8 +1,10 @@
 "use client"
 
 import { RootState } from "@/redux/appStore"
-import { openModal } from "@/redux/slices/allModalSlice"
-import { Button, Checkbox, Input } from "@heroui/react"
+import { closeModal, openModal } from "@/redux/slices/allModalSlice"
+import { useLoginMutation, useLoginPhoneEmailMutation } from "@/redux/rtkQueries/authApi"
+import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useMemo, useState } from "react"
 import PhoneInput from "react-phone-input-2"
@@ -46,11 +48,12 @@ const getSignInValidationSchema = (signInType: string | undefined) => {
 }
 
 const CustomerSignInDetails = () => {
-
     const { data } = useSelector((state: RootState) => state.allCommonModal)
-    const dispatch = useDispatch();
-
+    const dispatch = useDispatch()
     const signInType = data?.userData?.signInType as string | undefined
+
+    const [login, { isLoading: isLoggingIn }] = useLoginMutation()
+    const [loginPhoneEmail, { isLoading: isSendingOtp }] = useLoginPhoneEmailMutation()
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const [showOtpView, setShowOtpView] = useState(false)
@@ -74,9 +77,21 @@ const CustomerSignInDetails = () => {
         initialValues: initialValuesFromData,
         enableReinitialize: true,
         validationSchema: signInValidationSchema,
-        onSubmit: (values) => {
-            console.log("Sign in submit", values)
-            // TODO: integrate auth API
+        onSubmit: async (values) => {
+            const identifier = signInType === "email" ? values.email.trim() : values.phoneNumber
+            if (!identifier || !values.password) return
+            try {
+                const res = await login({ identifier, password: values.password }).unwrap()
+                const responseData = (res as { data?: unknown })?.data
+                console.log("responseData", responseData)
+                if (responseData && typeof responseData === 'object') {
+                    setAuthCookies(responseData as AuthResponseData)
+                }
+                addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
+                // dispatch(closeModal())
+            } catch {
+                // Error toast from rtkQuerieSetup
+            }
         },
     })
 
@@ -96,7 +111,25 @@ const CustomerSignInDetails = () => {
 
     const handleSendOtp = () => {
         setShowOtpView(true)
-        // TODO: trigger OTP on email when Continue is clicked
+    }
+
+    const handleContinueWithEmailOtp = async () => {
+        setFieldTouched("email", true)
+        if (errors.email || !values.email?.trim()) return
+        try {
+            await loginPhoneEmail({ email: values.email.trim() }).unwrap()
+            addToast({ title: "Verification code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            dispatch(
+                openModal({
+                    componentName: "VerifyEmailOtpModal",
+                    data: { email: values.email.trim() },
+                    modalSize: "md",
+                    modalPadding: "px-6 py-8",
+                })
+            )
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
     }
 
     return (
@@ -152,19 +185,9 @@ const CustomerSignInDetails = () => {
                             <Button
                                 type="button"
                                 className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
-                                onPress={() => {
-                                    setFieldTouched("email", true)
-                                    if (errors.email || !values.email?.trim()) return
-                                    // TODO: call send OTP API for values.email
-                                    dispatch(
-                                        openModal({
-                                            componentName: "VerifyEmailOtpModal",
-                                            data: { email: values.email.trim() },
-                                            modalSize: "md",
-                                            modalPadding: "px-6 py-8",
-                                        })
-                                    )
-                                }}
+                                isLoading={isSendingOtp}
+                                isDisabled={isSendingOtp}
+                                onPress={handleContinueWithEmailOtp}
                             >
                                 Continue
                             </Button>
@@ -286,6 +309,8 @@ const CustomerSignInDetails = () => {
                                 type="submit"
                                 className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                                 onPress={() => handleSubmit()}
+                                isLoading={isLoggingIn}
+                                isDisabled={isLoggingIn}
                             >
                                 Sign In
                             </Button>

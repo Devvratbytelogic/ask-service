@@ -1,9 +1,10 @@
 "use client"
 
 import ImageComponent from "@/components/library/ImageComponent"
+import { useVendorRegisterMutation } from "@/redux/rtkQueries/authApi"
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { Button, Checkbox, Input } from "@heroui/react"
+import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import Link from "next/link"
 import { useState } from "react"
@@ -45,6 +46,7 @@ const VendorSignupDetails = () => {
     const dispatch = useDispatch()
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+    const [vendorRegister, { isLoading: isRegistering }] = useVendorRegisterMutation()
 
     const formik = useFormik<VendorSignupFormValues>({
         initialValues: {
@@ -53,17 +55,34 @@ const VendorSignupDetails = () => {
         },
         enableReinitialize: true,
         validationSchema: vendorSignupValidationSchema,
-        onSubmit: (values) => {
-            dispatch(
-                openModal({
-                    componentName: "LoginSignupIndex",
-                    data: {
-                        componentName: "VendorOtpVerification",
-                        userData: { ...values },
-                    },
-                    modalSize: "full",
+        onSubmit: async (values) => {
+            try {
+                await vendorRegister({
+                    first_name: values.firstName,
+                    last_name: values.lastName,
+                    email: values.email,
+                    phone: values.phoneNumber,
+                    password: values.password,
+                }).unwrap()
+                addToast({
+                    title: "Verification code sent",
+                    description: "Check your email and phone for OTP.",
+                    color: "success",
+                    timeout: 3000,
                 })
-            )
+                dispatch(
+                    openModal({
+                        componentName: "LoginSignupIndex",
+                        data: {
+                            componentName: "VendorOtpVerification",
+                            userData: { ...values },
+                        },
+                        modalSize: "full",
+                    })
+                )
+            } catch {
+                // Error toast is shown by rtkQuerieSetup
+            }
         },
     })
 
@@ -255,6 +274,8 @@ const VendorSignupDetails = () => {
                     form="vendor-signup-form"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     onPress={() => handleSubmit()}
+                    isLoading={isRegistering}
+                    isDisabled={isRegistering}
                 >
                     Continue
                 </Button>

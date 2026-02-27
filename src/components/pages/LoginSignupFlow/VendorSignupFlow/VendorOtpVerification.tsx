@@ -1,10 +1,13 @@
 "use client"
 
 import OtpInput from "@/components/library/OtpInput"
+import {
+    useVendorResendOtpMutation,
+    useVendorVerifyOtpMutation,
+} from "@/redux/rtkQueries/authApi"
 import { RootState } from "@/redux/appStore"
-import { closeModal, openModal } from "@/redux/slices/allModalSlice"
+import { openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
-import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -24,17 +27,71 @@ const VendorOtpVerification = () => {
     const [emailResendCooldown, setEmailResendCooldown] = useState(0)
     const [phoneResendCooldown, setPhoneResendCooldown] = useState(0)
 
-    const handleEmailResend = useCallback(() => {
-        if (emailResendCooldown > 0) return
-        setEmailResendCooldown(RESEND_COOLDOWN_SEC)
-        // TODO: call resend email OTP API
-    }, [emailResendCooldown])
+    const [vendorVerifyOtp, { isLoading: isVerifying }] = useVendorVerifyOtpMutation()
+    const [vendorResendOtp, { isLoading: isResendingOtp }] = useVendorResendOtpMutation()
 
-    const handlePhoneResend = useCallback(() => {
-        if (phoneResendCooldown > 0) return
-        setPhoneResendCooldown(RESEND_COOLDOWN_SEC)
-        // TODO: call resend phone OTP API
-    }, [phoneResendCooldown])
+    const handleEmailResend = useCallback(async () => {
+        if (emailResendCooldown > 0 || !email) return
+        try {
+            await vendorResendOtp({
+                identifier: email,
+                identifierType: "EMAIL",
+                type: "SIGNUP",
+            }).unwrap()
+            setEmailResendCooldown(RESEND_COOLDOWN_SEC)
+            addToast({ title: "Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
+    }, [emailResendCooldown, email, vendorResendOtp])
+
+    const handlePhoneResend = useCallback(async () => {
+        if (phoneResendCooldown > 0 || !phoneNumber) return
+        try {
+            await vendorResendOtp({
+                identifier: phoneNumber,
+                identifierType: "PHONE",
+                type: "SIGNUP",
+            }).unwrap()
+            setPhoneResendCooldown(RESEND_COOLDOWN_SEC)
+            addToast({ title: "Code sent", description: "Check your phone.", color: "success", timeout: 2000 })
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
+    }, [phoneResendCooldown, phoneNumber, vendorResendOtp])
+
+    const canVerify =
+        emailOtp.length === OTP_LENGTH && phoneOtp.length === OTP_LENGTH
+
+    const handleVerifyOtp = useCallback(async () => {
+        if (!canVerify || !email) return
+        try {
+            await vendorVerifyOtp({
+                type: "SIGNUP",
+                email,
+                otp_phone: phoneOtp,
+                ...(emailOtp && { otp_email: emailOtp }),
+            }).unwrap()
+            addToast({
+                title: "Success",
+                description: "OTP verification complete. You're signed up!",
+                color: "success",
+                timeout: 3000,
+            })
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "VendorServiceListPage",
+                        userData: { ...userSignupData },
+                    },
+                    modalSize: "full",
+                })
+            )
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
+    }, [canVerify, email, emailOtp, phoneOtp, userSignupData, vendorVerifyOtp, dispatch])
 
     useEffect(() => {
         if (emailResendCooldown <= 0) return
@@ -66,9 +123,6 @@ const VendorOtpVerification = () => {
             })
         )
     }
-
-    const canVerify =
-        emailOtp.length === OTP_LENGTH && phoneOtp.length === OTP_LENGTH
 
     return (
         <>
@@ -115,9 +169,10 @@ const VendorOtpVerification = () => {
                                     <button
                                         type="button"
                                         onClick={handleEmailResend}
-                                        className="text-primaryColor cursor-pointer underline underline-offset-2"
+                                        disabled={isResendingOtp}
+                                        className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                                     >
-                                        Send a new code
+                                        {isResendingOtp ? "Sending…" : "Send a new code"}
                                     </button>
                                 )}
                             </p>
@@ -159,9 +214,10 @@ const VendorOtpVerification = () => {
                                     <button
                                         type="button"
                                         onClick={handlePhoneResend}
-                                        className="text-primaryColor cursor-pointer underline underline-offset-2"
+                                        disabled={isResendingOtp}
+                                        className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                                     >
-                                        Send a new code
+                                        {isResendingOtp ? "Sending…" : "Send a new code"}
                                     </button>
                                 )}
                             </p>
@@ -174,28 +230,9 @@ const VendorOtpVerification = () => {
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
-                    isDisabled={!canVerify}
-                    onPress={() => {
-                        // TODO: verify both OTPs via API then sign up
-                        console.log("Verify vendor OTPs", { emailOtp, phoneOtp })
-                        addToast({
-                            title: "Success",
-                            description:
-                                "OTP Verification complete. You're signed up!",
-                            color: "success",
-                            timeout: 3000,
-                        })
-                        dispatch(
-                            openModal({
-                                componentName: "LoginSignupIndex",
-                                data: {
-                                    componentName: "VendorServiceListPage",
-                                    userData: { ...userSignupData },
-                                },
-                                modalSize: "full",
-                            })
-                        )
-                    }}
+                    isDisabled={!canVerify || isVerifying}
+                    isLoading={isVerifying}
+                    onPress={handleVerifyOtp}
                 >
                     Continue
                 </Button>

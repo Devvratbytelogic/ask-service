@@ -3,7 +3,13 @@
 import OtpInput from "@/components/library/OtpInput"
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { Button } from "@heroui/react"
+import {
+    useResendEmailVerificationMutation,
+    useResendPhoneOtpMutation,
+    useVerifyEmailMutation,
+    useVerifyPhoneMutation,
+} from "@/redux/rtkQueries/authApi"
+import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -18,22 +24,37 @@ const ForgotPasswordOtpVerify = () => {
     const recoveryType = data?.userData?.recoveryType as string | undefined
     const isEmail = recoveryType === "email"
 
+    const email = (userData?.email as string) || ""
+    const phone = (userData?.phoneNumber as string) || ""
+
+    const [verifyEmail, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation()
+    const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
+    const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
+    const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
+
     const [otpValue, setOtpValue] = useState("")
     const [resendCooldown, setResendCooldown] = useState(0)
 
-    const displayValue = isEmail
-        ? (userData?.email as string) || ""
-        : (userData?.phoneNumber as string) || ""
+    const displayValue = isEmail ? email : phone
 
     const instructionText = isEmail
         ? "We've sent a Verification Code to the email address above. Please enter the complete verification."
         : "We've sent a Verification Code to the mobile number above. Please enter the complete verification."
 
-    const handleResend = useCallback(() => {
+    const handleResend = useCallback(async () => {
         if (resendCooldown > 0) return
-        setResendCooldown(RESEND_COOLDOWN_SEC)
-        // TODO: call resend OTP API
-    }, [resendCooldown])
+        try {
+            if (isEmail && email) {
+                await resendEmailVerification({ email }).unwrap()
+            } else if (!isEmail && phone) {
+                await resendPhoneOtp({ phone, type: "FORGOT_PASSWORD" }).unwrap()
+            } else return
+            setResendCooldown(RESEND_COOLDOWN_SEC)
+            addToast({ title: "Code sent", color: "success", timeout: 2000 })
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
+    }, [resendCooldown, isEmail, email, phone, resendEmailVerification, resendPhoneOtp])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -54,21 +75,34 @@ const ForgotPasswordOtpVerify = () => {
         )
     }
 
-    const handleVerify = () => {
+    const handleVerify = useCallback(async () => {
         if (otpValue.length !== OTP_LENGTH) return
-        dispatch(
-            openModal({
-                componentName: "LoginSignupIndex",
-                data: {
-                    componentName: "ForgotPasswordSetNew",
-                    userData: { ...userData },
-                },
-                modalSize: "full",
-            })
-        )
-    }
+        try {
+            let res: { data?: { role?: { name?: string } } }
+            if (isEmail && email) {
+                res = await verifyEmail({ email, otp: otpValue }).unwrap()
+            } else if (!isEmail && phone) {
+                res = await verifyPhone({ phone, otp: otpValue }).unwrap()
+            } else return
+            const roleName = res?.data?.role?.name ?? ""
+            const isVendor = roleName.toLowerCase() === "vendor"
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "ForgotPasswordSetNew",
+                        userData: { ...userData, isVendor },
+                    },
+                    modalSize: "full",
+                })
+            )
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
+    }, [otpValue, isEmail, email, phone, verifyEmail, verifyPhone, userData, dispatch])
 
     const canVerify = otpValue.length === OTP_LENGTH
+    const isVerifying = isVerifyingEmail || isVerifyingPhone
 
     return (
         <>
@@ -112,9 +146,10 @@ const ForgotPasswordOtpVerify = () => {
                             <button
                                 type="button"
                                 onClick={handleResend}
-                                className="text-primaryColor cursor-pointer underline underline-offset-2"
+                                disabled={isResendingEmail || isResendingPhone}
+                                className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                             >
-                                Send a new code
+                                {isResendingEmail || isResendingPhone ? "Sending…" : "Send a new code"}
                             </button>
                         )}
                     </p>
@@ -125,7 +160,8 @@ const ForgotPasswordOtpVerify = () => {
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
-                    isDisabled={!canVerify}
+                    isDisabled={!canVerify || isVerifying}
+                    isLoading={isVerifying}
                     onPress={handleVerify}
                 >
                     Verify

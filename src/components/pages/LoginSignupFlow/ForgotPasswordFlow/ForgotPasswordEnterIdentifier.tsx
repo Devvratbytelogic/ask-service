@@ -2,7 +2,8 @@
 
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { Button, Input } from "@heroui/react"
+import { useForgotPasswordMutation } from "@/redux/rtkQueries/authApi"
+import { addToast, Button, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useMemo } from "react"
 import PhoneInput from "react-phone-input-2"
@@ -35,6 +36,7 @@ const getValidationSchema = (recoveryType: string | undefined) => {
 const ForgotPasswordEnterIdentifier = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const [forgotPassword, { isLoading: isSending }] = useForgotPasswordMutation()
 
     const recoveryType = (data?.userData?.recoveryType as string | undefined) ?? "email"
     const isEmail = recoveryType === "email"
@@ -53,21 +55,35 @@ const ForgotPasswordEnterIdentifier = () => {
         initialValues,
         enableReinitialize: true,
         validationSchema,
-        onSubmit: (submitValues) => {
-            dispatch(
-                openModal({
-                    componentName: "LoginSignupIndex",
-                    data: {
-                        componentName: "ForgotPasswordOtpVerify",
-                        userData: {
-                            ...data?.userData,
-                            recoveryType,
-                            ...submitValues,
-                        },
-                    },
-                    modalSize: "full",
+        onSubmit: async (submitValues) => {
+            const payload = isEmail
+                ? { email: submitValues.email.trim() }
+                : { phone: submitValues.phoneNumber }
+            try {
+                await forgotPassword(payload).unwrap()
+                addToast({
+                    title: "Verification code sent",
+                    description: isEmail ? "Check your email." : "Check your phone.",
+                    color: "success",
+                    timeout: 2000,
                 })
-            )
+                dispatch(
+                    openModal({
+                        componentName: "LoginSignupIndex",
+                        data: {
+                            componentName: "ForgotPasswordOtpVerify",
+                            userData: {
+                                ...data?.userData,
+                                recoveryType,
+                                ...submitValues,
+                            },
+                        },
+                        modalSize: "full",
+                    })
+                )
+            } catch {
+                // Error toast from rtkQuerieSetup
+            }
         },
     })
 
@@ -162,6 +178,8 @@ const ForgotPasswordEnterIdentifier = () => {
                         type="submit"
                         className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                         onPress={() => handleSubmit()}
+                        isLoading={isSending}
+                        isDisabled={isSending}
                     >
                         Next
                     </Button>
