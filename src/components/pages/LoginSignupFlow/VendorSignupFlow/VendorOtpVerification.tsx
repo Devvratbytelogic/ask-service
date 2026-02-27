@@ -5,6 +5,7 @@ import {
     useVendorResendOtpMutation,
     useVendorVerifyOtpMutation,
 } from "@/redux/rtkQueries/authApi"
+import { setAuthCookies } from "@/utils/authCookies"
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
@@ -66,12 +67,20 @@ const VendorOtpVerification = () => {
     const handleVerifyOtp = useCallback(async () => {
         if (!canVerify || !email) return
         try {
-            await vendorVerifyOtp({
+            const response = await vendorVerifyOtp({
                 type: "SIGNUP",
                 email,
                 otp_phone: phoneOtp,
                 ...(emailOtp && { otp_email: emailOtp }),
             }).unwrap()
+            const data = (response).data
+            setAuthCookies({
+                token: data.token,
+                user: data.userData,
+                role: data.userData.role
+                    ? data.userData.role
+                    : '',
+            })
             addToast({
                 title: "Success",
                 description: "OTP verification complete. You're signed up!",

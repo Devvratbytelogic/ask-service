@@ -1,4 +1,7 @@
-import Image from 'next/image'
+'use client';
+
+import Image from 'next/image';
+import { useState } from 'react';
 
 interface ImageComponentProps {
   url?: string;
@@ -8,36 +11,38 @@ interface ImageComponentProps {
   imgPriority?: boolean;
 }
 
-const sanitizeUrl = (url?: string) => {
-  if (!url || url.trim() === '') return '/images/ask_service_logo.png';
-
-  if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) {
-    return url;
-  }
-
-  try {
-    const parsed = new URL(url);
-    return parsed.href;
-  } catch {
-    return '/images/navbar/nav_logo.png';
-  }
-};
-
 export default function ImageComponent({ url, img_title, object_cover = true, object_contain = false }: ImageComponentProps) {
-  const safeUrl = sanitizeUrl(url);
-
-  const isLocalPath = safeUrl.startsWith('/');
+  const [hasError, setHasError] = useState(false);
 
   const objectFitClass = object_contain ? 'object-contain' : object_cover ? 'object-cover' : '';
 
+  const fallbackLetters = img_title
+    ? img_title
+        .replace(/\s+/g, '')
+        .slice(0, 2)
+        .toUpperCase()
+    : '??';
+
+  if (hasError || !url) {
+    return (
+      <div
+        className={`w-full h-full flex items-center justify-center text-gray-600 font-semibold ${objectFitClass}`}
+        aria-label={img_title || 'Image unavailable'}
+      >
+        {fallbackLetters}
+      </div>
+    );
+  }
+
   return (
     <Image
-      src={safeUrl}
+      src={url}
       width={1000}
       height={1000}
       alt={img_title || 'title not found'}
       className={`w-full h-full ${objectFitClass}`}
-      unoptimized={isLocalPath}
+      unoptimized={true}
+      onError={() => setHasError(true)}
     />
   );
 }

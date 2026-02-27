@@ -1,42 +1,24 @@
 "use client"
 
 import ImageComponent from "@/components/library/ImageComponent"
+import { useGetAllServicesQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { RootState } from "@/redux/appStore"
-import { closeModal, openModal } from "@/redux/slices/allModalSlice"
+import { openModal } from "@/redux/slices/allModalSlice"
 import { Button, Checkbox } from "@heroui/react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineExternalLink } from "react-icons/hi"
-
-const SERVICES = [
-    {
-        id: "security",
-        title: "Security services",
-        subtitle: "Security services",
-        icon: "/images/home/Security.png",
-    },
-    {
-        id: "gardening",
-        title: "Gardening",
-        subtitle: "Garden maintenance",
-        icon: "/images/home/Gardening.png",
-    },
-    {
-        id: "house-cleaning",
-        title: "House cleaning",
-        subtitle: "Cleaning services",
-        icon: "/images/home/house_cleaning.png",
-    },
-] as const
-
-type ServiceId = (typeof SERVICES)[number]["id"]
+import { useUpdateVendorServicesMutation } from "@/redux/rtkQueries/allPostApi"
 
 const VendorServiceListPage = () => {
     const dispatch = useDispatch()
-    const { data } = useSelector((state: RootState) => state.allCommonModal)
-    const [selectedIds, setSelectedIds] = useState<Set<ServiceId>>(new Set())
+    const { data: modalData } = useSelector((state: RootState) => state.allCommonModal)
+    const { data: servicesResponse, isLoading, isError } = useGetAllServicesQuery()
+    const services = servicesResponse?.data ?? []
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+    const [updateVendorServices, { isLoading: isUpdatingServices }] = useUpdateVendorServicesMutation()
 
-    const toggleService = (id: ServiceId) => {
+    const toggleService = (id: string) => {
         setSelectedIds((prev) => {
             const next = new Set(prev)
             if (next.has(id)) next.delete(id)
@@ -44,18 +26,22 @@ const VendorServiceListPage = () => {
             return next
         })
     }
+    const handleContinue = async () => {
+        const singleSelectedId = selectedIds.size > 0 ? Array.from(selectedIds)[0] : null
+        if (!singleSelectedId) return
 
-    const handleContinue = () => {
-        // TODO: save selected services via API (e.g. with data?.userData), then next step
-        const selected = SERVICES.filter((s) => selectedIds.has(s.id))
-        console.log("Selected services", selected, data)
-
-        dispatch(
-            openModal({
-            componentName: "VendorDocumentVerification",
-            data: null,
-            modalSize: "full",
-        }))
+        try {
+            await updateVendorServices({ service: singleSelectedId }).unwrap()
+            dispatch(
+                openModal({
+                    componentName: "VendorDocumentVerification",
+                    data: null,
+                    modalSize: "full",
+                }),
+            )
+        } catch (err) {
+            console.error("Failed to update vendor services", err)
+        }
     }
 
     return (
@@ -70,11 +56,17 @@ const VendorServiceListPage = () => {
                     </p>
                 </div>
 
+                {isLoading && (
+                    <p className="text-darkSilver text-sm">Loading services...</p>
+                )}
+                {isError && (
+                    <p className="text-red-500 text-sm">Failed to load services. Please try again.</p>
+                )}
                 <ul className="space-y-4 list-none p-0 m-0">
-                    {SERVICES.map((service) => {
-                        const isSelected = selectedIds.has(service.id)
+                    {services && services?.length > 0 && services?.map((service) => {
+                        const isSelected = selectedIds.has(service._id)
                         return (
-                            <li key={service.id}>
+                            <li key={service._id}>
                                 <label
                                     className={`
                                         flex items-center justify-between gap-4 w-full p-4 rounded-2xl border cursor-pointer
@@ -82,9 +74,9 @@ const VendorServiceListPage = () => {
                                     `}
                                 >
                                     <div className="flex flex-col gap-5">
-                                        <span className="size-11 shrink-0 flex items-center justify-center overflow-hidden rounded-xl bg-white p-1">
+                                        <span className="size-11 shrink-0 flex items-center justify-center overflow-hidden rounded-xl bg-customWhite p-1">
                                             <ImageComponent
-                                                url={service.icon}
+                                                url={service.image}
                                                 img_title={service.title}
                                                 object_contain
                                             />
@@ -94,14 +86,14 @@ const VendorServiceListPage = () => {
                                                 {service.title}
                                             </span>
                                             <span className="flex items-center gap-1 text-darkSilver text-sm mt-0.5">
-                                                {service.subtitle}
+                                                {service.description}
                                                 <HiOutlineExternalLink className="size-3.5 shrink-0" aria-hidden />
                                             </span>
                                         </span>
                                     </div>
                                     <Checkbox
                                         isSelected={isSelected}
-                                        onValueChange={() => toggleService(service.id)}
+                                        onValueChange={() => toggleService(service._id)}
                                         onPointerDown={(e) => e.preventDefault()}
                                         classNames={{
                                             wrapper: "shrink-0 before:border-borderDark",
@@ -115,11 +107,13 @@ const VendorServiceListPage = () => {
                 </ul>
             </div>
 
-            <div className="space-y-[25px] w-11/12">
+            <div className="space-y-6.25 w-11/12">
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     onPress={handleContinue}
+                    isLoading={isUpdatingServices}
+                    isDisabled={selectedIds.size === 0 || isUpdatingServices}
                 >
                     Continue
                 </Button>

@@ -10,6 +10,7 @@ export interface IAllServiceCategoriesDataEntity {
     _id: string;
     title: string;
     description: string;
+    image: string;
     options?: (IAllServiceCategoriesOptionsEntity)[] | null;
     child_categories?: (IAllServiceCategoriesChildCategoriesEntity)[] | null;
 }
