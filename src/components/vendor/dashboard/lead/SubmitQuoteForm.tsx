@@ -1,10 +1,11 @@
 'use client'
 
 import { InfoBlueIconSVG } from '@/components/library/AllSVG'
+import { useSubmitQuoteMutation } from '@/redux/rtkQueries/allPostApi'
 import { submitQuoteValidationSchema } from '@/utils/validation'
-import { Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
+import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import { useFormik } from 'formik'
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 import { FiUploadCloud } from 'react-icons/fi'
 
 const QUOTE_VALID_OPTIONS = [
@@ -20,19 +21,48 @@ const initialValues = {
     quoteValidFor: '7',
 }
 
+function toApiDate(dateStr: string): string {
+    if (!dateStr.trim()) return ''
+    const trimmed = dateStr.trim()
+    const match = trimmed.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/)
+    if (match) {
+        const [, d, m, y] = match
+        return `${y}-${m!.padStart(2, '0')}-${d!.padStart(2, '0')}`
+    }
+    return trimmed
+}
+
 interface SubmitQuoteFormProps {
+    leadId: string
     onCancel: () => void
 }
 
-export default function SubmitQuoteForm({ onCancel }: SubmitQuoteFormProps) {
+export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [attachment, setAttachment] = useState<File | null>(null)
+    const [submitQuote, { isLoading }] = useSubmitQuoteMutation()
 
     const { values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue } =
         useFormik({
             initialValues,
             validationSchema: submitQuoteValidationSchema,
-            onSubmit: (vals) => {
-                console.log('Submit quote:', vals)
+            onSubmit: async (vals) => {
+                const formData = new FormData()
+                formData.append('quote_price', vals.quotePrice)
+                formData.append('service_description', vals.serviceDescription)
+                formData.append('available_start_date', toApiDate(vals.availableStartDate))
+                formData.append('quote_valid_days', vals.quoteValidFor)
+                if (attachment) {
+                    formData.append('attachment', attachment)
+                }
+
+                try {
+                    await submitQuote({ leadId, formData }).unwrap()
+                    addToast({ title: 'Quote submitted successfully', color: 'success', timeout: 2000 })
+                    onCancel()
+                } catch {
+                    // Error toast handled by base query
+                }
             },
         })
 
@@ -41,7 +71,7 @@ export default function SubmitQuoteForm({ onCancel }: SubmitQuoteFormProps) {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            // TODO: handle file upload
+            setAttachment(file)
         }
         e.target.value = ''
     }
@@ -164,6 +194,9 @@ export default function SubmitQuoteForm({ onCancel }: SubmitQuoteFormProps) {
                     >
                         Tap to Upload Document
                     </Button>
+                    {attachment && (
+                        <p className="mt-1.5 text-sm text-fontBlack">{attachment.name}</p>
+                    )}
                     <input
                         ref={fileInputRef}
                         type="file"
@@ -179,12 +212,15 @@ export default function SubmitQuoteForm({ onCancel }: SubmitQuoteFormProps) {
                         type="button"
                         className="btn_radius btn_bg_white w-full"
                         onPress={onCancel}
+                        isDisabled={isLoading}
                     >
                         Cancel
                     </Button>
                     <Button
                         type="submit"
                         className="btn_radius btn_bg_blue w-full"
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
                     >
                         Submit Quote
                     </Button>

@@ -90,6 +90,21 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorReviews'],
     }),
+    unlockLead: builder.mutation({
+      query: (leadId: string) => ({
+        url: `/vendor/leads/${leadId}/unlock`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['VendorAvailableLeads'],
+    }),
+    submitQuote: builder.mutation({
+      query: ({ leadId, formData }: { leadId: string; formData: FormData }) => ({
+        url: `/vendor/leads/${leadId}/quotes`,
+        method: 'POST',
+        body: formData,
+      }),
+      invalidatesTags: ['VendorAvailableLeads'],
+    }),
   }),
 });
 
@@ -106,4 +121,6 @@ export const {
   useVendorNotificationPreferencesMutation,
   useUserNotificationPreferencesMutation,
   useVendorLeaveReviewMutation,
+  useUnlockLeadMutation,
+  useSubmitQuoteMutation,
 } = postApi;

@@ -3,6 +3,8 @@ import { IAllTransactionHistoryAPIResponse } from '@/types/allTransactionHistory
 import { IAllServicesDocumentsRequiredAPIResponse } from '@/types/requiredDocument';
 import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
+import { ISingleLeadAPIResponse } from '@/types/singleLead';
+import { IVendorAvailableLeadsAPIResponse, IVendorDashboardDataAPIResponse } from '@/types/vendorDashboard';
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
 import { IVendorProfileInfoAPIResponse } from '@/types/vendorProfile';
 
@@ -70,6 +72,26 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
         }),
+        getVendorDashboardData: builder.query<IVendorDashboardDataAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/dashboard`,
+                method: 'GET',
+            }),
+        }),
+        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { location?: string; sort?: string; page?: number; limit?: number } | void>({
+            query: (arg) => ({
+                url: `/vendor/available-leads`,
+                method: 'GET',
+                ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
+            }),
+            providesTags: ['VendorAvailableLeads'],
+        }),
+        getSingleLead: builder.query<ISingleLeadAPIResponse, { id: string }>({
+            query: ({ id }) => ({
+                url: `/vendor/leads/${id}`,
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
@@ -85,4 +107,7 @@ export const {
     useGetTransactionHistoryExportPDFQuery,
     useLazyGetTransactionHistoryExportCSVQuery,
     useLazyGetTransactionHistoryExportPDFQuery,
+    useGetVendorDashboardDataQuery,
+    useGetVendorAvailableLeadsQuery,
+    useGetSingleLeadQuery,
 } = clientSideGetApis;

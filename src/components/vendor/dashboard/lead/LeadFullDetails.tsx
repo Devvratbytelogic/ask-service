@@ -1,65 +1,81 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { LocationSVG } from '@/components/library/AllSVG'
 import LeadHeader from './LeadHeader'
 import LeadSidebar from './LeadSidebar'
 import SubmitQuoteForm from './SubmitQuoteForm'
-
+import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import type { ISingleLead } from '@/types/singleLead'
 
 export interface LeadFullDetailsData {
-    id?: string
     title?: string
+    id?: string
     postedAt?: string
     creditsToUnlock?: number
-    clientName?: string
-    clientInitials?: string
-    memberSince?: string
-    businessType?: string
-    phoneMasked?: string
-    emailMasked?: string
-    location?: string
-    serviceType?: string
-    frequency?: string
-    clientType?: string
-    tasks?: string[]
-    preferredStartDate?: string
-    preferredTime?: string
-}
-
-const defaultLead: LeadFullDetailsData = {
-    id: 'L1',
-    title: 'House Cleaning Request',
-    postedAt: 'Posted 8 hours ago',
-    creditsToUnlock: 3,
-    clientName: 'Sarah Johnson',
-    clientInitials: 'SJ',
-    memberSince: 'Jan 2024',
-    businessType: 'B2C',
-    phoneMasked: '09XXXXXXXX',
-    emailMasked: 'eXXXXXX@example.com',
-    location: 'East London • E14 9XX',
-    serviceType: 'Residential cleaning',
-    frequency: 'Weekly',
-    clientType: 'Individual',
-    tasks: ['General cleaning', 'Floor cleaning', 'Kitchen / breakroom'],
-    preferredStartDate: '1 February 2026',
-    preferredTime: 'Morning (8am-12pm)',
+    unlocked?: boolean
 }
 
 interface LeadFullDetailsProps {
-    lead?: LeadFullDetailsData | null
+    id: string
 }
 
-export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps) {
-    const lead = leadProp ?? defaultLead
-    const tasks = lead?.tasks ?? defaultLead.tasks ?? []
+function formatLocation(lead: ISingleLead | undefined): string {
+    if (!lead) return ''
+    const parts = [lead.address_1, lead.address_2, lead.city, lead.state, lead.country, lead.pincode].filter(Boolean)
+    return parts.join(', ')
+}
+
+export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
+    const { data: leadData, isLoading: leadLoading } = useGetSingleLeadQuery({ id })
+    const lead = leadData?.data
     const [showSubmitQuoteForm, setShowSubmitQuoteForm] = useState(false)
+
+    const headerData = useMemo((): LeadFullDetailsData | null => {
+        if (!lead) return null
+        return {
+            title: lead.service_category?.title || lead.child_category,
+            id: lead.reference_no,
+            postedAt: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : undefined,
+            creditsToUnlock: (lead as ISingleLead & { creditsToUnlock?: number }).creditsToUnlock ?? 0,
+            unlocked: lead.unlocked,
+        }
+    }, [lead])
+
+    const displayData = useMemo(() => {
+        if (!lead) return null
+        const contact = lead.contact_details
+        const clientName = [contact?.first_name, contact?.last_name].filter(Boolean).join(' ') || [lead.user?.first_name, lead.user?.last_name].filter(Boolean).join(' ')
+        const clientInitials = clientName ? clientName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'N/A'
+        return {
+            clientInitials,
+            clientName: clientName || 'N/A',
+            businessType: lead.service_category?.title || lead.child_category || 'N/A',
+            memberSince: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : 'N/A',
+            phoneMasked: contact?.phone || lead.user?.phone || 'N/A',
+            emailMasked: contact?.email || lead.user?.email || 'N/A',
+            location: formatLocation(lead),
+            serviceType: lead.service_category?.title || lead.child_category || 'N/A',
+            frequency: lead.frequency || 'N/A',
+            clientType: lead.contact_details?.client_type || 'N/A',
+            preferredStartDate: lead.preferred_start_date || 'N/A',
+            preferredTime: lead.preferred_time_of_day || 'N/A',
+            tasks: lead.selected_options ?? [],
+        }
+    }, [lead])
+
+    if (leadLoading || !displayData) {
+        return (
+            <div className="flex items-center justify-center min-h-50">
+                <p className="text-darkSilver">{leadLoading ? 'Loading lead details...' : 'No lead data found.'}</p>
+            </div>
+        )
+    }
 
     return (
         <>
             {/* Header */}
-            <LeadHeader data={lead} />
+            <LeadHeader data={headerData ?? {}} />
             <div className="flex flex-col lg:flex-row gap-6 mt-6">
                 {/* Main Content */}
                 <div className="flex-1 min-w-0 space-y-4">
@@ -67,28 +83,28 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <div className="flex items-start gap-4">
                             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primaryColor text-base font-bold text-white">
-                                {lead?.clientInitials ?? defaultLead.clientInitials}
+                                {displayData.clientInitials}
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h3 className="font-bold text-fontBlack">
-                                        {lead?.clientName ?? defaultLead.clientName}
+                                        {displayData.clientName}
                                     </h3>
                                     <span className="inline-flex rounded-full bg-[#E8F4FD] px-2.5 py-0.5 text-xs font-medium text-primaryColor">
-                                        {lead?.businessType ?? defaultLead.businessType}
+                                        {displayData.businessType}
                                     </span>
                                 </div>
                                 <p className="text-sm text-darkSilver mt-0.5">
-                                    Member since {lead?.memberSince ?? defaultLead.memberSince}
+                                    Member since {displayData.memberSince}
                                 </p>
                                 <div className="border-t border-borderDark space-y-1 mt-4 pt-4">
                                     <div className='flex items-center justify-between gap-2'>
                                         <p className='text-sm text-darkSilver'>Phone</p>
-                                        <p className='text-sm text-fontBlack'>{lead?.phoneMasked ?? defaultLead.phoneMasked}</p>
+                                        <p className='text-sm text-fontBlack'>{displayData.phoneMasked}</p>
                                     </div>
                                     <div className='flex items-center justify-between gap-2'>
                                         <p className='text-sm text-darkSilver'>Email</p>
-                                        <p className='text-sm text-fontBlack'>{lead?.emailMasked ?? defaultLead.emailMasked}</p>
+                                        <p className='text-sm text-fontBlack'>{displayData.emailMasked}</p>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +120,7 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
                             <h3 className="font-bold text-fontBlack">Service Location</h3>
                         </div>
                         <p className="text-fontBlack">
-                            {lead?.location ?? defaultLead.location}
+                            {displayData.location}
                         </p>
                     </div>
 
@@ -115,19 +131,19 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
                             <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Service Type</p>
                                 <p className="text-sm font-medium text-fontBlack">
-                                    {lead?.serviceType ?? defaultLead.serviceType}
+                                    {displayData.serviceType}
                                 </p>
                             </div>
                             <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Frequency</p>
                                 <p className="text-sm font-medium text-fontBlack">
-                                    {lead?.frequency ?? defaultLead.frequency}
+                                    {displayData.frequency}
                                 </p>
                             </div>
                             <div className="rounded-xl border border-borderDark px-4 py-3 sm:col-span-2">
                                 <p className="text-xs text-darkSilver mb-1">Client Type</p>
                                 <p className="text-sm font-medium text-fontBlack">
-                                    {lead?.clientType ?? defaultLead.clientType}
+                                    {displayData.clientType}
                                 </p>
                             </div>
                         </div>
@@ -137,7 +153,7 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <h3 className="font-bold text-fontBlack mb-4">Requested Tasks</h3>
                         <div className="flex flex-wrap gap-2">
-                            {tasks.map((task: string, i: number) => (
+                            {displayData.tasks.map((task: string, i: number) => (
                                 <span
                                     key={i}
                                     className="inline-flex items-center rounded-full border border-primaryColor bg-primaryColor/5 px-3 py-1.5 text-sm font-medium text-primaryColor"
@@ -155,13 +171,13 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
                             <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Preferred Start Date</p>
                                 <p className="text-sm font-medium text-fontBlack">
-                                    {lead?.preferredStartDate ?? defaultLead.preferredStartDate}
+                                    {displayData.preferredStartDate}
                                 </p>
                             </div>
                             <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Preferred Time</p>
                                 <p className="text-sm font-medium text-fontBlack">
-                                    {lead?.preferredTime ?? defaultLead.preferredTime}
+                                    {displayData.preferredTime}
                                 </p>
                             </div>
                         </div>
@@ -169,12 +185,12 @@ export default function LeadFullDetails({ lead: leadProp }: LeadFullDetailsProps
 
                     {/* Submit Quote Form - shown when Send Quote is clicked */}
                     {showSubmitQuoteForm && (
-                        <SubmitQuoteForm onCancel={() => setShowSubmitQuoteForm(false)} />
+                        <SubmitQuoteForm leadId={id} onCancel={() => setShowSubmitQuoteForm(false)} />
                     )}
                 </div>
 
                 {/* Sidebar */}
-                <LeadSidebar showSubmitQuoteForm={showSubmitQuoteForm} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} />
+                <LeadSidebar leadId={id} showSubmitQuoteForm={showSubmitQuoteForm} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} />
             </div>
         </>
     )

@@ -1,4 +1,7 @@
+'use client'
+
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { LightningIconSVG, TipCheckedIconSVG } from '@/components/library/AllSVG'
 import { Button } from '@heroui/react'
 
@@ -9,11 +12,18 @@ const TIPS = [
     "Keep pricing competitive but fair",
 ]
 interface LeadSidebarProps {
-    onSendQuoteClick?: () => void;
+    leadId?: string
+    onSendQuoteClick?: () => void
     showSubmitQuoteForm?: boolean
 }
 
-export default function LeadSidebar({ onSendQuoteClick, showSubmitQuoteForm }: LeadSidebarProps) {
+export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteForm }: LeadSidebarProps) {
+    const router = useRouter()
+
+    const handleMessageCustomer = () => {
+        const url = leadId ? `/vendor/message?leadId=${leadId}` : '/vendor/message'
+        router.push(url)
+    }
     return (
         <>
             <aside className="w-full lg:w-[320px] shrink-0 space-y-4">
@@ -27,7 +37,7 @@ export default function LeadSidebar({ onSendQuoteClick, showSubmitQuoteForm }: L
                         >
                             Send Quote
                         </Button>}
-                        <Button className="btn_radius btn_bg_white w-full">
+                        <Button className="btn_radius btn_bg_white w-full" onPress={handleMessageCustomer}>
                             Message Customer
                         </Button>
                     </div>
