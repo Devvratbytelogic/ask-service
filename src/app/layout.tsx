@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import "../styles/globals.css";
 import Header from "@/components/common/Header/Header";
 import Footer from "@/components/common/Footer/Footer";
@@ -18,11 +19,15 @@ export const metadata: Metadata = {
   description: "Ask for help and let us handle than - Ask Service",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("auth_token")?.value;
+  const initialIsAuthenticated = !!authToken;
+
   return (
     <html lang="en">
       <body
@@ -30,7 +35,7 @@ export default function RootLayout({
       >
         <AppProviders>
           <div className="flex min-h-screen flex-col">
-            <Header />
+            <Header initialIsAuthenticated={initialIsAuthenticated} />
             {/* <div className="min-h-0 flex-1"> */}
               {children}
             {/* </div> */}

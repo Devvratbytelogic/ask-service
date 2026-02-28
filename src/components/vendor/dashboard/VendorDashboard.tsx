@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
-import { generateLeadDetailRoutePath, getCreditsRoutePath } from '@/routes/routes'
+import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -159,7 +159,7 @@ export default function VendorDashboard() {
                         </div>
                         <p className="text-2xl font-bold text-fontBlack">8</p>
                         <p className="text-sm text-darkSilver mt-0.5">Quotes Sent</p>
-                        <Link href="#" className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
+                        <Link href={getVendorDashboardRoutePath()} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
                             View all →
                         </Link>
                     </div>

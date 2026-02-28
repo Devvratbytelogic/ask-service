@@ -3,6 +3,7 @@
 import { closeModal } from "@/redux/slices/allModalSlice"
 import { Button } from "@heroui/react"
 import Link from "next/link"
+import { getVendorSupportRoutePath } from "@/routes/routes"
 import { useDispatch } from "react-redux"
 import { FiInfo } from "react-icons/fi"
 import { FaCheck } from "react-icons/fa6"
@@ -66,7 +67,7 @@ const ApplicationSuccessfull = () => {
                 <p className="text-base text-fontBlack text-center">
                     Have questions?{" "}
                     <Link
-                        href="/vendor-support"
+                        href={getVendorSupportRoutePath()}
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                     >
                         Contact vendor support

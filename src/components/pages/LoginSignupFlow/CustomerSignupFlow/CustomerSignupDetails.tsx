@@ -6,6 +6,7 @@ import { useSignupMutation } from "@/redux/rtkQueries/authApi"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import Link from "next/link"
+import { getTermsRoutePath, getPrivacyRoutePath } from "@/routes/routes"
 import { useMemo, useState } from "react"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
@@ -268,11 +269,11 @@ const CustomerSignupDetails = () => {
                     >
                         <span className="text-fontBlack text-sm">
                             By creating an account, I agree to our{" "}
-                            <Link href="/terms" className="text-primaryColor underline underline-offset-2">
+                            <Link href={getTermsRoutePath()} className="text-primaryColor underline underline-offset-2">
                                 Terms of use
                             </Link>{" "}
                             and{" "}
-                            <Link href="/privacy" className="text-primaryColor underline underline-offset-2">
+                            <Link href={getPrivacyRoutePath()} className="text-primaryColor underline underline-offset-2">
                                 Privacy Policy
                             </Link>
                         </span>

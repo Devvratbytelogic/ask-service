@@ -4,6 +4,7 @@ import { Button } from "@heroui/react"
 import { useRouter } from "next/navigation"
 import { FiCheck, FiMail } from "react-icons/fi"
 import { useDispatch, useSelector } from "react-redux"
+import { getHomeRoutePath } from "@/routes/routes"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { RootState } from "@/redux/appStore"
 
@@ -41,7 +42,7 @@ const SubmissionSuccess = () => {
 
   const handleReturnHome = () => {
     dispatch(closeModal())
-    router.push("/")
+    router.push(getHomeRoutePath())
   }
 
   const handleSubmitAnother = () => {

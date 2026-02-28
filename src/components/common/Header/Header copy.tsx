@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import {
+    getHomeRoutePath,
+    getMyRequestRoutePath,
+    getVendorMessageRoutePath,
+} from "@/routes/routes"
 import ImageComponent from "../../library/ImageComponent"
 import NavbarComponent from "./NavbarComponent"
 import { BellIconSVG, ChevronDownIconSVG, LightningIconSVG } from "@/components/library/AllSVG"
@@ -58,7 +63,7 @@ const Header = () => {
                 }}
             >
                 <div className="flex items-center justify-between h-14 ">
-                    <Link href="/" className="flex items-center gap-2 shrink-0">
+                    <Link href={getHomeRoutePath()} className="flex items-center gap-2 shrink-0">
                         <span className="h-9 w-9 rounded-full bg-primaryColor flex items-center justify-center shrink-0">
                             <LightningIconSVG />
                         </span>
@@ -66,13 +71,13 @@ const Header = () => {
                     </Link>
                     <nav className="hidden md:flex items-center gap-6">
                         <Link
-                            href="/my-request"
+                            href={getMyRequestRoutePath()}
                             className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                         >
                             My Requests
                         </Link>
                         <Link
-                            href="/vendor/message"
+                            href={getVendorMessageRoutePath()}
                             className="relative inline-flex items-center gap-1.5 text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                         >
                             Messages
@@ -111,7 +116,7 @@ const Header = () => {
                         </Dropdown>
                     </nav>
                     <div className="flex md:hidden items-center gap-2">
-                        <Link href="/vendor/message" className="relative p-2">
+                        <Link href={getVendorMessageRoutePath()} className="relative p-2">
                             <BellIconSVG />
                             <span className="absolute top-1 right-1 min-w-3.5 h-3.5 rounded-full bg-primaryColor text-white text-[10px] font-medium flex items-center justify-center">
                                 2
@@ -124,8 +129,8 @@ const Header = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="User menu">
-                                <DropdownItem key="my-requests" href="/my-request">My Requests</DropdownItem>
-                                <DropdownItem key="messages" href="/vendor/message">Messages</DropdownItem>
+                                <DropdownItem key="my-requests" href={getMyRequestRoutePath()}>My Requests</DropdownItem>
+                                <DropdownItem key="messages" href={getVendorMessageRoutePath()}>Messages</DropdownItem>
                                 <DropdownItem key="profile">Profile</DropdownItem>
                                 <DropdownItem key="logout" color="danger">Log out</DropdownItem>
                             </DropdownMenu>
