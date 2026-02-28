@@ -1,13 +1,19 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Input } from '@heroui/react'
-import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
+import { useRouter } from 'next/navigation'
+import { addToast, Button, Input } from '@heroui/react'
 import { DeleteIconSVG, LockPrimaryColorSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { securitySettingsValidationSchema } from '@/utils/validation'
-
-
+import {
+    useChangeVendorPasswordMutation,
+    useChangeUserPasswordMutation,
+    useDeleteVendorAccountMutation,
+    useDeleteUserAccountMutation,
+} from '@/redux/rtkQueries/allPostApi'
+import { clearAuthCookies } from '@/utils/authCookies'
+import { getHomeRoutePath } from '@/routes/routes'
 
 const inputClasses = {
     inputWrapper: 'account_input_design',
@@ -19,13 +25,56 @@ const initialValues = {
     confirmNewPassword: '',
 }
 
-export default function SecuritySettings() {
+interface SecuritySettingsProps {
+    variant?: 'default' | 'vendor'
+}
+
+export default function SecuritySettings({ variant = 'default' }: SecuritySettingsProps) {
+    const router = useRouter()
     const [isChangingPassword, setIsChangingPassword] = useState(false)
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+    const [changeVendorPassword, { isLoading: isChangingVendor }] = useChangeVendorPasswordMutation()
+    const [changeUserPassword, { isLoading: isChangingUser }] = useChangeUserPasswordMutation()
+    const [deleteVendorAccount, { isLoading: isDeletingVendor }] = useDeleteVendorAccountMutation()
+    const [deleteUserAccount, { isLoading: isDeletingUser }] = useDeleteUserAccountMutation()
+
+    const isChanging = variant === 'vendor' ? isChangingVendor : isChangingUser
+    const isDeleting = variant === 'vendor' ? isDeletingVendor : isDeletingUser
+
+    const handleDeleteAccount = async () => {
+        if (!window.confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) {
+            return
+        }
+        try {
+            if (variant === 'vendor') {
+                await deleteVendorAccount({}).unwrap()
+            } else {
+                await deleteUserAccount({}).unwrap()
+            }
+            addToast({ title: 'Account deleted successfully', color: 'success', timeout: 2000 })
+            clearAuthCookies()
+            router.push(getHomeRoutePath())
+        } catch {
+            // Error is handled by RTK Query / toast
+        }
+    }
+
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm } = useFormik({
         initialValues,
         validationSchema: securitySettingsValidationSchema,
-        onSubmit: (values) => {
-            console.log(values)
+        onSubmit: async (formValues) => {
+            const payload = { old_password: formValues.currentPassword, new_password: formValues.newPassword }
+            try {
+                if (variant === 'vendor') {
+                    await changeVendorPassword(payload).unwrap()
+                } else {
+                    await changeUserPassword(payload).unwrap()
+                }
+                addToast({ title: 'Password updated successfully', color: 'success', timeout: 2000 })
+                resetForm()
+                setIsChangingPassword(false)
+            } catch {
+                // Error is handled by RTK Query / toast
+            }
         },
     })
 
@@ -114,6 +163,8 @@ export default function SecuritySettings() {
                             <Button
                                 className="btn_radius btn_bg_blue w-full"
                                 onPress={() => handleSubmit()}
+                                isLoading={isChanging}
+                                isDisabled={isChanging}
                             >
                                 Update password
                             </Button>
@@ -135,7 +186,12 @@ export default function SecuritySettings() {
                                 </p>
                             </div>
                         </div>
-                        <Button className='btn_radius btn_bg_white text-red-500!'>
+                        <Button
+                            className="btn_radius btn_bg_white text-red-500!"
+                            onPress={handleDeleteAccount}
+                            isLoading={isDeleting}
+                            isDisabled={isDeleting}
+                        >
                             Delete
                         </Button>
                     </div>

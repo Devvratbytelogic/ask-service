@@ -5,12 +5,15 @@ import { Button } from '@heroui/react'
 import {
   ActionRequiredIconSVG,
   CheckGreenIconSVG,
-  DocumentIconSVG,
   UploadFileIconSVG,
   VerificationPendingIconSVG,
 } from '@/components/library/AllSVG'
 import FileUploadZone from '@/components/library/FileUploadZone'
 import SupportAlert from '@/components/vendor/dashboard/SupportAlert'
+import { useGetAllVendorDocumentsQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useUploadVendorDocumentsMutation } from '@/redux/rtkQueries/allPostApi'
+import { addToast } from '@heroui/react'
+import type { IAllVendorDocumentsDocumentsEntity } from '@/types/vendorDocuments'
 
 type DocStatus = 'verified' | 'pending' | 'action_required'
 
@@ -22,6 +25,7 @@ interface DocumentItem {
   uploadedOn?: string
   fileName?: string
   fileSizeBytes?: number
+  downloadUrl?: string
 }
 
 const formatFileSize = (bytes: number) => {
@@ -30,50 +34,25 @@ const formatFileSize = (bytes: number) => {
   return `${mb.toFixed(2)} MB`
 }
 
-const DOCUMENTS: DocumentItem[] = [
-  {
-    id: 'identity',
-    title: 'Identity Proof',
-    description: 'Valid passport, driver\'s license, or national ID card',
-    status: 'verified',
-    uploadedOn: '15 Jan 2024',
-    fileName: 'Identity proof.pdf',
-    fileSizeBytes: 419430,
-  },
-  {
-    id: 'trade-license',
-    title: 'Trade License',
-    description: 'Relevant professional licenses for your service category',
-    status: 'verified',
-    uploadedOn: '15 Jan 2024',
-    fileName: 'Trade License.pdf',
-    fileSizeBytes: 419430,
-  },
-  {
-    id: 'compliance',
-    title: 'Compliance Declaration',
-    description: 'Relevant professional licenses for your service category',
-    status: 'verified',
-    uploadedOn: '15 Jan 2024',
-    fileName: 'Compliance Declaration.pdf',
-    fileSizeBytes: 419430,
-  },
-  {
-    id: 'insurance',
-    title: 'Insurance Documents',
-    description: 'Relevant professional licenses for your service category',
-    status: 'pending',
-    uploadedOn: '15 Jan 2024',
-    fileName: 'Insurance Doc.pdf',
-    fileSizeBytes: 419430,
-  },
-  {
-    id: 'business-registration',
-    title: 'Business Registration Certificate',
-    description: 'Certificate of incorporation or business registration',
-    status: 'action_required',
-  },
-]
+function mapApiStatusToDocStatus(status: string): DocStatus {
+  const s = (status || '').toLowerCase()
+  if (s === 'verified' || s === 'approved') return 'verified'
+  if (s === 'pending' || s === 'under_review') return 'pending'
+  return 'action_required'
+}
+
+function mapApiDocumentToItem(entity: IAllVendorDocumentsDocumentsEntity): DocumentItem {
+  const file = entity.file as { file_name?: string; path?: string; url?: string } | null | undefined
+  return {
+    id: entity.document_id,
+    title: entity.name,
+    description: entity.description ?? '',
+    status: mapApiStatusToDocStatus(entity.status),
+    uploadedOn: entity.uploadedAt ?? undefined,
+    fileName: file?.file_name,
+    downloadUrl: file?.url,
+  }
+}
 
 function DownloadIconSVG({ className }: { className?: string }) {
   return (
@@ -109,8 +88,57 @@ function StatusBadge({ status }: { status: DocStatus }) {
   )
 }
 
+const FALLBACK_DOCUMENTS: DocumentItem[] = [
+  {
+    id: 'identity',
+    title: 'Identity Proof',
+    description: 'Valid passport, driver\'s license, or national ID card',
+    status: 'action_required',
+  },
+  {
+    id: 'trade-license',
+    title: 'Trade License',
+    description: 'Relevant professional licenses for your service category',
+    status: 'action_required',
+  },
+  {
+    id: 'compliance',
+    title: 'Compliance Declaration',
+    description: 'Relevant professional licenses for your service category',
+    status: 'action_required',
+  },
+]
+
 export default function VendorDocuments() {
-  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [filesByDocId, setFilesByDocId] = useState<Record<string, File | null>>({})
+  const { data, isLoading } = useGetAllVendorDocumentsQuery()
+  const [uploadVendorDocuments, { isLoading: isUploading }] = useUploadVendorDocumentsMutation()
+
+  const documents: DocumentItem[] =
+    data?.data?.documents?.length
+      ? data.data.documents.map(mapApiDocumentToItem)
+      : FALLBACK_DOCUMENTS
+
+  const setFileForDoc = (docId: string, file: File | null) => {
+    setFilesByDocId((prev) => ({ ...prev, [docId]: file }))
+  }
+
+  const hasAnyFile = Object.values(filesByDocId).some(Boolean)
+
+  const handleUpload = async () => {
+    const formData = new FormData()
+    Object.entries(filesByDocId).forEach(([docId, file]) => {
+      if (file) formData.append(docId, file)
+    })
+    if (formData.entries().next().done) return
+    try {
+      await uploadVendorDocuments(formData).unwrap()
+      addToast({ title: 'Document(s) uploaded successfully', color: 'success', timeout: 2000 })
+      setFilesByDocId({})
+    } catch {
+      // Error handled by RTK Query / toast
+    }
+  }
 
   return (
     <>
@@ -121,8 +149,11 @@ export default function VendorDocuments() {
         </p>
       </div>
 
+      {isLoading ? (
+        <p className="text-sm text-darkSilver">Loading documents...</p>
+      ) : (
       <div className="space-y-4">
-        {DOCUMENTS.map((doc) => (
+        {documents.map((doc) => (
           <div
             key={doc.id}
             className="rounded-2xl border border-borderDark bg-white p-4 sm:p-5"
@@ -168,7 +199,19 @@ export default function VendorDocuments() {
                   <Button
                     className="btn_bg_white border-none"
                     startContent={<DownloadIconSVG />}
-                    onPress={() => { }}
+                    onPress={() => {
+                      if (doc.downloadUrl) {
+                        const link = document.createElement('a')
+                        link.href = doc.downloadUrl
+                        link.download = doc.fileName ?? doc.title
+                        link.target = '_blank'
+                        link.rel = 'noopener noreferrer'
+                        document.body.appendChild(link)
+                        link.click()
+                        document.body.removeChild(link)
+                      }
+                    }}
+                    isDisabled={!doc.downloadUrl}
                   >
                     Download
                   </Button>
@@ -176,16 +219,16 @@ export default function VendorDocuments() {
               </div>
             )}
 
-            {doc.status === 'action_required' && doc.id === 'business-registration' && (
+            {doc.status === 'action_required' && (
               <div className="mt-4">
                 <FileUploadZone
-                  value={uploadFile}
-                  onChange={setUploadFile}
+                  value={filesByDocId[doc.id] ?? null}
+                  onChange={(file) => setFileForDoc(doc.id, file)}
                   accept=".pdf,.jpg,.jpeg,.png"
                   maxSizeBytes={5 * 1024 * 1024}
                   dragLabel="Drag and drop your file here"
                   browseLabel="Re-upload Document"
-                  ariaLabel="Upload Business Registration Certificate"
+                  ariaLabel={`Upload ${doc.title}`}
                   buttonClassName="btn_radius btn_bg_blue text-white"
                 />
               </div>
@@ -193,8 +236,22 @@ export default function VendorDocuments() {
           </div>
         ))}
 
+        {hasAnyFile && (
+          <div className="flex justify-end">
+            <Button
+              className="btn_radius btn_bg_blue text-white"
+              onPress={handleUpload}
+              isLoading={isUploading}
+              isDisabled={isUploading}
+            >
+              Upload documents
+            </Button>
+          </div>
+        )}
+
         <SupportAlert title="Need help with document verification?" content={`If you have questions about document requirements or need assistance, please contact our vendor support team.`} />
       </div>
+      )}
       
     </>
   )

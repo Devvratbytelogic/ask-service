@@ -18,10 +18,10 @@ export default function AccountDetails({ activeSection = 'profile', variant = 'd
             <div className="rounded-2xl border border-borderDark p-4">
                 {activeSection === 'profile' && variant === 'default' && <ProfileInfo />}
                 {activeSection === 'profile' && variant === 'vendor' && <VendorProfileInfo />}
-                {activeSection === 'security' && <SecuritySettings />}
-                {activeSection === 'notifications' && <NotificationPreferences />}
+                {activeSection === 'security' && <SecuritySettings variant={variant} />}
+                {activeSection === 'notifications' && <NotificationPreferences variant={variant} />}
                 {variant === 'vendor' && activeSection === 'documents' && <VendorDocuments />}
-                {variant === 'vendor' && activeSection === 'reviews' && <VendorReviews />}
+                {variant === 'vendor' && activeSection === 'reviews' && <VendorReviews hideLeaveReviewButton={variant === 'vendor'} />}
                 {variant === 'vendor' && activeSection === 'payment-history' && <VendorPaymentHistory />}
             </div>
         </>

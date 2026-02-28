@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, PhoneIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
+import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
+import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 const COMPANY_SIZE_OPTIONS = [
     '1 - 10 employees',
@@ -14,39 +16,141 @@ const COMPANY_SIZE_OPTIONS = [
     '201+ employees',
 ]
 
-const initialValues = {
-    businessName: 'Premium Home Service Ltd',
-    ownerName: 'John Smith',
-    serviceCategory: 'House Cleaning',
-    email: 'sarah.johnson@example.com',
-    phone: '07700 900123',
-    businessAddress: '12 Rue de la République',
-    postcode: '75001',
-    city: 'Paris',
-    vatNumber: 'GB123456789',
-    companyRegistrationNumber: '12345678',
-    yearsOfActivity: '2 years',
-    companySize: '2 - 10 employees',
-    aboutCompany:
-        'Securatim is a leading private security and guarding company, offering a full range of security services for businesses. Our security officers are trained to handle all emergency situations, and we are committed to providing our clients with superior security solutions.',
+
+const defaultInitialValues = {
+    businessName: '',
+    ownerName: '',
+    serviceCategory: '',
+    email: '',
+    phone: '',
+    businessAddress: '',
+    postcode: '',
+    city: '',
+    vatNumber: '',
+    companyRegistrationNumber: '',
+    yearsOfActivity: '',
+    companySize: '',
+    aboutCompany: '',
 }
+
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export default function VendorProfileInfo() {
     const [isEditing, setIsEditing] = useState(false)
+    const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
+    const profilePicInputRef = useRef<HTMLInputElement>(null)
+    const [updateVendorProfileInfo, { isLoading: isUpdating }] = useUpdateVendorProfileInfoMutation()
+    const { data } = useGetVendorProfileInfoQuery()
+
+    const profileData = data?.data
+    const initialValues = {
+        businessName: profileData?.business_name ?? defaultInitialValues.businessName,
+        ownerName: [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' '),
+        serviceCategory: profileData?.service?.title ?? defaultInitialValues.serviceCategory,
+        email: profileData?.email ?? defaultInitialValues.email,
+        phone: profileData?.phone ?? defaultInitialValues.phone,
+        businessAddress: profileData?.address ?? defaultInitialValues.businessAddress,
+        postcode: profileData?.postal_code ?? defaultInitialValues.postcode,
+        city: profileData?.city ?? defaultInitialValues.city,
+        vatNumber: profileData?.vat_number ?? defaultInitialValues.vatNumber,
+        companyRegistrationNumber: profileData?.company_registration_number ?? defaultInitialValues.companyRegistrationNumber,
+        yearsOfActivity: profileData?.years_of_activity ?? defaultInitialValues.yearsOfActivity,
+        companySize: profileData?.company_size ?? defaultInitialValues.companySize,
+        aboutCompany: profileData?.about_company ?? defaultInitialValues.aboutCompany,
+    }
 
     const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue } = useFormik({
         initialValues,
+        enableReinitialize: true,
         validationSchema: vendorProfileInfoValidationSchema,
-        onSubmit: (values) => {
-            console.log(values)
-            setIsEditing(false)
+        onSubmit: async (formValues) => {
+            const [firstName, ...lastNameParts] = (formValues.ownerName || '').trim().split(/\s+/)
+            const lastName = lastNameParts.join(' ') || ''
+
+            const formData = new FormData()
+            formData.append('first_name', firstName)
+            formData.append('last_name', lastName)
+            formData.append('email', formValues.email)
+            formData.append('phone', formValues.phone)
+            formData.append('business_name', formValues.businessName)
+            formData.append('address', formValues.businessAddress)
+            formData.append('postal_code', formValues.postcode)
+            formData.append('city', formValues.city)
+            formData.append('vat_number', formValues.vatNumber)
+            formData.append('company_registration_number', formValues.companyRegistrationNumber)
+            formData.append('years_of_activity', formValues.yearsOfActivity)
+            formData.append('company_size', formValues.companySize)
+            formData.append('about_company', formValues.aboutCompany)
+
+            if (profilePicFile) {
+                formData.append('profile_pic', profilePicFile)
+            }
+
+            try {
+                await updateVendorProfileInfo(formData).unwrap()
+                addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
+                setProfilePicFile(null)
+                setIsEditing(false)
+            } catch {
+                // Error is handled by RTK Query / toast
+            }
         },
     })
 
     const handleCancel = () => {
         resetForm()
+        setProfilePicFile(null)
         setIsEditing(false)
     }
+
+    const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file && ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+            setProfilePicFile(file)
+        }
+        e.target.value = ''
+    }
+
+    const profilePicPreviewUrl = useMemo(
+        () => (profilePicFile ? URL.createObjectURL(profilePicFile) : null),
+        [profilePicFile]
+    )
+    useEffect(() => {
+        return () => {
+            if (profilePicPreviewUrl) URL.revokeObjectURL(profilePicPreviewUrl)
+        }
+    }, [profilePicPreviewUrl])
+
+    const existingProfilePicUrl =
+        typeof profileData?.profile_pic === 'string' && profileData.profile_pic
+            ? profileData.profile_pic
+            : null
+    const avatarSrc = profilePicPreviewUrl ?? existingProfilePicUrl
+
+    const hasBusinessDetails = !!(
+        profileData?.business_name ||
+        profileData?.address ||
+        profileData?.vat_number ||
+        profileData?.about_company
+    )
+
+    const displayName = hasBusinessDetails
+        ? (values.businessName || profileData?.business_name || '')
+        : (values.ownerName || [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' '))
+
+    const avatarInitials = hasBusinessDetails
+        ? (displayName?.charAt(0) || 'P').toUpperCase()
+        : [
+              profileData?.first_name?.charAt(0),
+              profileData?.last_name?.charAt(0),
+          ]
+              .filter(Boolean)
+              .join('')
+              .toUpperCase() || 'U'
+
+    const memberSinceDate = profileData?.createdAt
+        ? new Date(profileData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        : ''
 
     return (
         <>
@@ -68,6 +172,8 @@ export default function VendorProfileInfo() {
                         <Button
                             className="btn_radius btn_bg_blue px-6"
                             onPress={() => handleSubmit()}
+                            isLoading={isUpdating}
+                            isDisabled={isUpdating}
                         >
                             Save Changes
                         </Button>
@@ -75,15 +181,38 @@ export default function VendorProfileInfo() {
                 )}
             </div>
 
-            {/* Business header / avatar section */}
+            {/* Business / User header / avatar section */}
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
                 <div className="relative shrink-0">
-                    <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primaryColor text-lg font-bold text-white">
-                        P
-                    </div>
+                    <input
+                        ref={profilePicInputRef}
+                        type="file"
+                        accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                        onChange={handleProfilePicChange}
+                        className="hidden"
+                        aria-label="Upload profile picture"
+                    />
+                    {avatarSrc ? (
+                        <img
+                            src={avatarSrc}
+                            alt="Profile"
+                            className="size-16 shrink-0 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div
+                            className={`flex size-16 shrink-0 items-center justify-center rounded-full text-lg font-bold ${
+                                hasBusinessDetails
+                                    ? 'bg-primaryColor text-white'
+                                    : 'bg-primaryColor/20 text-primaryColor'
+                            }`}
+                        >
+                            {avatarInitials}
+                        </div>
+                    )}
                     {isEditing && (
                         <button
                             type="button"
+                            onClick={() => profilePicInputRef.current?.click()}
                             className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
                         >
                             <CameraIconSVG />
@@ -91,12 +220,19 @@ export default function VendorProfileInfo() {
                     )}
                 </div>
                 <div>
-                    <h3 className="font-bold text-fontBlack">Premium Home Services Ltd</h3>
-                    <p className="text-sm text-darkSilver">sarah.johnson@example.com</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-darkSilver">
-                        <CheckGreenIconSVG />
-                        Verified Vendor since January 2024
+                    <h3 className="font-bold text-fontBlack">
+                        {displayName || '—'}
+                    </h3>
+                    <p className="text-sm text-darkSilver">
+                        {values.email || profileData?.email || '—'}
                     </p>
+                    {memberSinceDate && (
+                        <p className={`mt-0.5 text-xs text-darkSilver ${hasBusinessDetails ? 'flex items-center gap-1.5' : ''}`}>
+                            {hasBusinessDetails && <CheckGreenIconSVG />}
+                            {hasBusinessDetails ? 'Verified Vendor since ' : 'Member since '}
+                            {memberSinceDate}
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -173,7 +309,13 @@ export default function VendorProfileInfo() {
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
                             isDisabled={!isEditing}
                             startContent={<EnvelopeIconSVG />}
-                            endContent={<Button size='sm' className='btn_radius btn_outline_blue'>Verify</Button>}
+                            endContent={
+                                !profileData?.is_email_verified && isEditing ? (
+                                    <Button size="sm" className="btn_radius btn_outline_blue">
+                                        Verify
+                                    </Button>
+                                ) : undefined
+                            }
                         />
                     </div>
                     <div>

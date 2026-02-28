@@ -18,7 +18,9 @@ export const submitQuoteValidationSchema = Yup.object({
 export const securitySettingsValidationSchema = Yup.object({
     currentPassword: Yup.string().required('Current password is required'),
     newPassword: Yup.string().required('New password is required'),
-    confirmNewPassword: Yup.string().required('Confirm new password is required'),
+    confirmNewPassword: Yup.string()
+        .required('Confirm new password is required')
+        .oneOf([Yup.ref('newPassword')], 'Passwords must match'),
 })
 
 export const contactFormValidationSchema = Yup.object({

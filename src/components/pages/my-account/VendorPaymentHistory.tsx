@@ -3,9 +3,14 @@
 import React, { useState } from 'react'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem } from '@heroui/react'
 import { CalendarSVG, CheckGreenIconSVG, CircleXmarkIconSVG } from '@/components/library/AllSVG'
-import { HiOutlineArrowDownTray } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { FiCopy } from 'react-icons/fi'
+import {
+    useGetAllTransactionHistoryQuery,
+    useLazyGetTransactionHistoryExportCSVQuery,
+    useLazyGetTransactionHistoryExportPDFQuery,
+} from '@/redux/rtkQueries/clientSideGetApis'
+import type { IAllTransactionHistoryTransactionsEntity } from '@/types/allTransactionHistory'
 
 type PaymentStatus = 'completed' | 'failed' | 'refunded'
 
@@ -32,16 +37,29 @@ const STATUS_OPTIONS = [
     { key: 'refunded', label: 'Refunded' },
 ]
 
-const PAYMENTS: PaymentRecord[] = [
-    { id: '1', transactionId: 'TXN-2026-00147', dateTime: '30 Jan 2026, 14:32', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: '+500 credits', status: 'completed' },
-    { id: '2', transactionId: 'TXN-2026-00146', dateTime: '28 Jan 2026, 11:20', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: null, status: 'failed' },
-    { id: '3', transactionId: 'TXN-2026-00145', dateTime: '25 Jan 2026, 09:15', paymentMethod: 'Mastercard **** 8821', amountPaid: '€50.00', creditAdded: '+500 credits', status: 'completed' },
-    { id: '4', transactionId: 'TXN-2026-00144', dateTime: '22 Jan 2026, 16:45', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: null, status: 'refunded' },
-    { id: '5', transactionId: 'TXN-2026-00143', dateTime: '20 Jan 2026, 10:00', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: '+500 credits', status: 'completed' },
-    { id: '6', transactionId: 'TXN-2026-00142', dateTime: '18 Jan 2026, 14:32', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: '+500 credits', status: 'completed' },
-    { id: '7', transactionId: 'TXN-2026-00141', dateTime: '15 Jan 2026, 08:22', paymentMethod: 'Mastercard **** 8821', amountPaid: '€50.00', creditAdded: null, status: 'completed' },
-    { id: '8', transactionId: 'TXN-2026-00140', dateTime: '12 Jan 2026, 17:10', paymentMethod: 'Visa **** 4532', amountPaid: '€50.00', creditAdded: '+500 credits', status: 'completed' },
-]
+function mapApiStatusToPaymentStatus(status: string): PaymentStatus {
+    const s = (status || '').toLowerCase()
+    if (s === 'completed' || s === 'success') return 'completed'
+    if (s === 'failed') return 'failed'
+    if (s === 'refunded') return 'refunded'
+    return 'completed'
+}
+
+function mapTransactionToRecord(entity: IAllTransactionHistoryTransactionsEntity): PaymentRecord {
+    const rawAmount = (entity as { amount_paid?: number | string | null }).amount_paid
+    const amount = rawAmount != null ? (typeof rawAmount === 'number' ? rawAmount.toFixed(2) : String(rawAmount)) : '—'
+    const amountPaid = entity.currency ? `${entity.currency} ${amount}` : amount
+    const paymentMethod = (entity as { payment_method?: string | null }).payment_method
+    return {
+        id: entity._id,
+        transactionId: entity.transaction_id ?? entity._id,
+        dateTime: entity.date_time ?? '—',
+        paymentMethod: paymentMethod ?? '—',
+        amountPaid,
+        creditAdded: entity.credit_added ?? null,
+        status: mapApiStatusToPaymentStatus(entity.status),
+    }
+}
 
 function DownloadIconSVG({ className }: { className?: string }) {
     return (
@@ -93,14 +111,51 @@ export default function VendorPaymentHistory() {
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState('10')
 
-    const filteredPayments = PAYMENTS.filter(
-        (p) => statusFilter === 'all' || p.status === statusFilter
-    )
-    const totalItems = filteredPayments.length
     const perPage = Number(itemsPerPage)
-    const totalPages = Math.max(1, Math.ceil(totalItems / perPage))
+    const { data, isLoading } = useGetAllTransactionHistoryQuery({
+        page,
+        limit: perPage,
+        ...(statusFilter !== 'all' && { status: statusFilter }),
+    })
+
+    const [fetchCSV] = useLazyGetTransactionHistoryExportCSVQuery()
+    const [fetchPDF] = useLazyGetTransactionHistoryExportPDFQuery()
+
+    const getExportParams = () => {
+        const days = Number(dateRange) || 30
+        const end = new Date()
+        const start = new Date()
+        start.setDate(start.getDate() - days)
+        return {
+            startDate: start.toISOString().split('T')[0],
+            endDate: end.toISOString().split('T')[0],
+            ...(statusFilter !== 'all' && { status: statusFilter }),
+        }
+    }
+
+    const handleDownload = async (format: 'csv' | 'pdf') => {
+        const params = getExportParams()
+        try {
+            const result = format === 'csv' ? await fetchCSV(params).unwrap() : await fetchPDF(params).unwrap()
+            const blob = result as Blob
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `transaction-history.${format}`
+            a.click()
+            URL.revokeObjectURL(url)
+        } catch {
+            // Error already surfaced by RTK Query / toast
+        }
+    }
+
+    const apiData = data?.data
+    const apiTransactions = apiData?.transactions ?? []
+    const payments: PaymentRecord[] = apiTransactions.map(mapTransactionToRecord)
+    const totalItems = apiData?.total ?? 0
+    const totalPages = Math.max(1, apiData?.totalPages ?? 1)
     const start = (page - 1) * perPage
-    const paginatedPayments = filteredPayments.slice(start, start + perPage)
+    const paginatedPayments = payments
 
     const handleCopyId = (text: string) => {
         void navigator.clipboard.writeText(text)
@@ -180,8 +235,12 @@ export default function VendorPaymentHistory() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Download options">
-                                <DropdownItem key="csv">Download as CSV</DropdownItem>
-                                <DropdownItem key="pdf">Download as PDF</DropdownItem>
+                                <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
+                                    Download as CSV
+                                </DropdownItem>
+                                <DropdownItem key="pdf" onPress={() => handleDownload('pdf')}>
+                                    Download as PDF
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -189,6 +248,9 @@ export default function VendorPaymentHistory() {
             </div>
 
             <div className="rounded-2xl border border-borderDark bg-white overflow-hidden">
+                {isLoading ? (
+                    <div className="p-8 text-center text-sm text-darkSilver">Loading payment history...</div>
+                ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-200">
                         <thead>
@@ -263,6 +325,7 @@ export default function VendorPaymentHistory() {
                         </tbody>
                     </table>
                 </div>
+                )}
 
                 <div className="flex flex-col gap-4 border-t border-borderDark p-4 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-darkSilver">
