@@ -12,6 +12,7 @@ import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useCreateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
 import AppLoader from "@/components/common/AppLoader"
 import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
+import { getAddressFromPincode } from "@/utils/pincodeToAddress"
 
 
 const baseInitialValues = {
@@ -122,6 +123,7 @@ const RequestServiceFlowIndex = () => {
         validate,
         onSubmit: async (values) => {
             try {
+                const pincodeAddress = await getAddressFromPincode(values.pincode ?? "")
                 const payload = {
                     service_category: data?.grandParentServiceId ?? "",
                     child_category: values.parentServiceName === "other" ? "" : (values.parentServiceName ?? ""),
@@ -131,11 +133,11 @@ const RequestServiceFlowIndex = () => {
                     preferred_start_date: values.serviceStartDate ?? "",
                     preferred_time_of_day: values.serviceTimeOfDay ?? "",
                     note: values.serviceNote ?? "",
-                    address_1: "123, Main Road",
-                    address_2: "Sector 12, Noida",
-                    city: "Noida",
-                    state: "Uttar Pradesh",
-                    country: "India",
+                    address_1: pincodeAddress.address_1,
+                    address_2: pincodeAddress.address_2,
+                    city: pincodeAddress.city,
+                    state: pincodeAddress.state,
+                    country: pincodeAddress.country,
                     pincode: values.pincode ?? "",
                     contact_details: {
                         first_name: values.customerFirstName ?? "",

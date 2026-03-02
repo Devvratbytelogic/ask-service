@@ -13,7 +13,18 @@ const NavbarComponent = () => {
         dispatch(openModal({
             componentName: 'LoginSignupIndex',
             data: {
-                singupModal: 'SelectUserType'
+                componentName: 'SelectUserType'
+            },
+            modalSize: 'full'
+        }))
+    }
+
+    const becomeAProfessionalModal = () => {
+        dispatch(openModal({
+            componentName: 'LoginSignupIndex',
+            data: {
+                componentName: 'SelectUserType',
+                preselectedUserType: 'service'
             },
             modalSize: 'full'
         }))
@@ -37,7 +48,9 @@ const NavbarComponent = () => {
                     <ImageComponent url="/images/navbar/arrow.png" img_title="login_logout" />
                 </span>
             }
-                className="text-base/[22px] font-medium btn_bg_blue btn_radius btn_padding">
+                className="text-base/[22px] font-medium btn_bg_blue btn_radius btn_padding"
+                onPress={() => becomeAProfessionalModal()}
+            >
                 Become a Professional
             </Button>
         </div>

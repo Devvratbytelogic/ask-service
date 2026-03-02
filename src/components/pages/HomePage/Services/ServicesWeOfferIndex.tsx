@@ -1,6 +1,10 @@
+"use client"
+import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis";
 import ServiceCard from "./ServiceCard"
 
 const ServicesWeOfferIndex = () => {
+    const { data } = useGetServiceCategoriesQuery();
+    const grandParentServicesList = data?.data ?? [];
     return (
         <>
             <div className="space_y_header_body container_y_padding">
@@ -13,9 +17,9 @@ const ServicesWeOfferIndex = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {
-                        ServicesDataList?.map((curr,index)=>
-                        <div className="col-span-1" key={`service_${index+1}`}><ServiceCard {...curr}/></div>
-                    )
+                        grandParentServicesList && grandParentServicesList?.length > 0 && grandParentServicesList?.map((curr, index) =>
+                            <div className="col-span-1" key={`service_${index + 1}`}><ServiceCard serviceImage={curr.image} serviceName={curr.title} serviceDescription={curr.description} /></div>
+                        )
                     }
                 </div>
             </div>
@@ -27,18 +31,18 @@ export default ServicesWeOfferIndex
 
 const ServicesDataList = [
     {
-        serviceImage:'/images/home/Security.png',
-        serviceName:'Security',
-        serviceDescription:'Trained and verified security professionals for residential, commercial, and event requirements.'
+        serviceImage: '/images/home/Security.png',
+        serviceName: 'Security',
+        serviceDescription: 'Trained and verified security professionals for residential, commercial, and event requirements.'
     },
     {
-        serviceImage:'/images/home/Gardening.png',
-        serviceName:'Gardening',
-        serviceDescription:'From regular garden maintenance to one-time landscaping work by experienced professionals.'
+        serviceImage: '/images/home/Gardening.png',
+        serviceName: 'Gardening',
+        serviceDescription: 'From regular garden maintenance to one-time landscaping work by experienced professionals.'
     },
     {
-        serviceImage:'/images/home/house_cleaning.png',
-        serviceName:'House Cleaning',
-        serviceDescription:'Reliable home and office cleaning services, available for one-time or recurring needs.'
+        serviceImage: '/images/home/house_cleaning.png',
+        serviceName: 'House Cleaning',
+        serviceDescription: 'Reliable home and office cleaning services, available for one-time or recurring needs.'
     },
 ]

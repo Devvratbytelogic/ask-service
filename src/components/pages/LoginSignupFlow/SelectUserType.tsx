@@ -1,13 +1,14 @@
 import { CustomerIconSVG, ServiceProviderIconSVG } from '@/components/library/AllSVG'
+import { RootState } from '@/redux/appStore'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { Button } from '@heroui/react'
 import { useState } from 'react'
 import { FaCheck } from 'react-icons/fa6'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const SelectUserType = () => {
-
-    const [userType, setUserType] = useState<string | null>(null);
+    const { data } = useSelector((state: RootState) => state.allCommonModal);
+    const [userType, setUserType] = useState<string | null>(data?.preselectedUserType ?? null);
 
     const dispatch = useDispatch();
 

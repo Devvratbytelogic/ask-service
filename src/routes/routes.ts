@@ -32,6 +32,12 @@ export function getMyAccountRoutePath() {
 export function getContactUsRoutePath() {
     return `/contact-us`;
 }
+export function getHelpCenterRoutePath() {
+    return `/help-center`;
+}
+export function getFaqRoutePath() {
+    return `/faq`;
+}
 export function getVendorSupportRoutePath() {
     return `/vendor-support`;
 }

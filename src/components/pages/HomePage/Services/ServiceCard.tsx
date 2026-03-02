@@ -9,8 +9,8 @@ interface IServiceCardProps{
 
 const ServiceCard = ({serviceImage,serviceName,serviceDescription}:IServiceCardProps) => {
   return (
-    <div className="rounded-2xl p-4 xl:p-6 space-y-[25px] xl:space-y-[28px] shadow-[0px_0px_0px_1px_#EBEDEF]">
-        <div className="flex gap-[15px] items-center">
+    <div className="rounded-2xl p-4 xl:p-6 space-y-6.25 xl:space-y-8 shadow-[0px_0px_0px_1px_#EBEDEF]">
+        <div className="flex gap-3.75 items-center">
             <div className="size-12 xl:size-14 rounded-full shrink-0">
                 <ImageComponent url={serviceImage} img_title={serviceName}/>
             </div>

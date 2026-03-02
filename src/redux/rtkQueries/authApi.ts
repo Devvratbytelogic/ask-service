@@ -1,5 +1,12 @@
 import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
 
+export interface IGoogleLoginAPIResponse {
+    http_status_code: number;
+    status: boolean;
+    data: unknown;
+    timestamp: string;
+    message: string;
+}
 
 export const authApi = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -108,6 +115,14 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
                 body: formData,
             }),
         }),
+
+        googleLogin: builder.mutation<IGoogleLoginAPIResponse, { idToken: string; role_type: 'User' | 'Vendor' }>({
+            query: ({ idToken, role_type }) => ({
+                url: `/user/google-login`,
+                method: 'POST',
+                body: { idToken, role_type },
+            }),
+        }),
     }),
 });
 
@@ -121,6 +136,7 @@ export const {
     useForgotPasswordMutation,
     useNewPasswordMutation,
     useSignupMutation,
+    useGoogleLoginMutation,
 
     useVendorRegisterMutation,
     useVendorVerifyOtpMutation,

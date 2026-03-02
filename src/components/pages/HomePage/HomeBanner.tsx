@@ -1,21 +1,18 @@
 "use client"
 import ImageComponent from "@/components/library/ImageComponent"
-import { Autocomplete, AutocompleteItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@heroui/react"
+import { Autocomplete, AutocompleteItem, Button, Input } from "@heroui/react"
 import { useMemo, useState } from "react"
 import { BiSearch } from "react-icons/bi"
 import { FiArrowRight } from "react-icons/fi"
 import { FaLocationDot } from "react-icons/fa6"
-import { MdKeyboardArrowDown } from "react-icons/md"
 import { useDispatch } from "react-redux"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { SERVICE_LIST } from "@/utils/serviceList"
 import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis"
 
-const PIN_CODES = ["10001", "10002", "10003", "10004", "10005"]
-
 const HomeBanner = () => {
 
-    const [selectedPinCode, setSelectedPinCode] = useState("10001")
+    const [selectedPinCode, setSelectedPinCode] = useState("75001")
     const { data } = useGetServiceCategoriesQuery();
     const grandParentServicesList = data?.data ?? [];
     const [searchValue, setSearchValue] = useState("");
@@ -35,7 +32,12 @@ const HomeBanner = () => {
         ? grandParentServicesList.find((c) => c._id === selectedServiceKey)
         : null;
 
+    const hasService = !!selectedServiceKey?.toString().trim()
+    const hasPincode = !!selectedPinCode?.toString().trim()
+    const canStartRequest = hasService && hasPincode
+
     const startServiceRegisterationRequest = () => {
+        if (!canStartRequest) return
         dispatch(openModal({
             componentName: 'RequestServiceFlowIndex',
             data: {
@@ -110,43 +112,39 @@ const HomeBanner = () => {
                         )}
                     </Autocomplete>
                 </div>
-                <span className="w-[50vw] md:w-auto max-w-full">
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button
-                                className="btn_radius text-placeHolderText capitalize text-base bg-white! border-1 border-borderDark h-15! w-full"
-                                endContent={<MdKeyboardArrowDown className="text-xl text-fontBlack ml-10" />}
-                                startContent={<FaLocationDot className="text-xl text-primaryColor " />}
-                            >
-                                {selectedPinCode}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            aria-label="Select city"
-                            items={[...PIN_CODES.map((code) => ({ key: code, label: code }))]}
-                            selectionMode="single"
-                            selectedKeys={[selectedPinCode]}
-                            onSelectionChange={(keys) => {
-                                const key = Array.from(keys as Set<string>)[0];
-                                if (key) setSelectedPinCode(key);
-                            }}
-                        >
-                            {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
-                        </DropdownMenu>
-                    </Dropdown>
+                <span className="w-[50vw] md:w-auto max-w-full min-w-0">
+                    <Input
+                        type="text"
+                        placeholder="Enter pincode"
+                        value={selectedPinCode}
+                        onValueChange={setSelectedPinCode}
+                        variant="bordered"
+                        classNames={{
+                            base: "w-full",
+                            inputWrapper: [
+                                "btn_radius h-[60px]! min-h-[60px]!",
+                                "bg-transparent",
+                                "border-borderDark border-1",
+                                "data-[hover=true]:bg-transparent",
+                                "group-data-[focus=true]:bg-transparent",
+                            ],
+                            input: "text-fontBlack text-base",
+                        }}
+                        startContent={<FaLocationDot className="text-xl text-primaryColor shrink-0" />}
+                    />
                 </span>
-                <Button className="size-15 min-w-14 min-h-14 p-0! rounded-full! bg-primaryColor flex items-center justify-center text-white shrink-0" onPress={() => startServiceRegisterationRequest()}>
+                <Button className="size-15 min-w-14 min-h-14 p-0! rounded-full! bg-primaryColor flex items-center justify-center text-white shrink-0" isDisabled={!canStartRequest} onPress={() => startServiceRegisterationRequest()}>
                     <BiSearch className="text-xl" />
                 </Button>
             </div>
             <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                {SERVICE_LIST?.map((curr) =>
+                {grandParentServicesList && grandParentServicesList.length > 0 && grandParentServicesList?.map((curr) =>
                     <Button
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
                         className="btn_radius bg-[#F2F2F21A] border border-borderColor text-darkSilver text-xs md:text-base xl:text-lg py-0! xl:py-6! px-3 md:px-4"
                         key={curr._id}
                     >
-                        {curr.service_name}
+                        {curr.title}
                     </Button>
                 )}
             </div>
