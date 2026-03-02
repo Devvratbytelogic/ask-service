@@ -5,10 +5,15 @@ import VendorAbout from './VendorAbout'
 import VendorReviews from './VendorReviews'
 import VendorLinks from './VendorLinks'
 import VendorServices from './VendorServices'
+import type { IVendorProfileInfoData } from '@/types/vendorProfile'
 
 type TabId = 'about' | 'reviews' | 'links' | 'services';
 
-export default function VendorProfileDetails() {
+interface VendorProfileDetailsProps {
+    profile?: IVendorProfileInfoData | null
+}
+
+export default function VendorProfileDetails({ profile }: VendorProfileDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>('about');
 
     return (
@@ -28,20 +33,20 @@ export default function VendorProfileDetails() {
                 >
                     <Tab key="about" title="About">
                         <div className='space-y-6'>
-                            <VendorAbout />
+                            <VendorAbout profile={profile} />
                             <VendorReviews />
-                            <VendorLinks />
-                            <VendorServices />
+                            <VendorLinks profile={profile} />
+                            <VendorServices profile={profile} />
                         </div>
                     </Tab>
                     <Tab key="reviews" title="Reviews">
                         <VendorReviews />
                     </Tab>
                     <Tab key="links" title="Links">
-                        <VendorLinks />
+                        <VendorLinks profile={profile} />
                     </Tab>
                     <Tab key="services" title="Services">
-                        <VendorServices />
+                        <VendorServices profile={profile} />
                     </Tab>
                 </Tabs>
             </div>

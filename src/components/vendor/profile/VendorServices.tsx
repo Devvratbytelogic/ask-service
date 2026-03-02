@@ -3,8 +3,9 @@
 import React from 'react'
 import { Accordion, AccordionItem } from '@heroui/react'
 import { ChevronDownIconSVG } from '@/components/library/AllSVG'
+import type { IVendorProfileInfoData } from '@/types/vendorProfile'
 
-const SERVICES = [
+const DEFAULT_SERVICES = [
     {
         key: 'private-security',
         title: 'private security guard',
@@ -27,7 +28,14 @@ const SERVICES = [
     },
 ]
 
-export default function VendorServices() {
+interface VendorServicesProps {
+    profile?: IVendorProfileInfoData | null
+}
+
+export default function VendorServices({ profile }: VendorServicesProps) {
+    const services = profile?.service
+        ? [{ key: profile.service.id, title: profile.service.title, description: profile.service.description || '' }]
+        : DEFAULT_SERVICES;
     return (
         <div className="space-y-6">
             <h2 className="text-xl font-bold text-fontBlack">Services</h2>
@@ -35,7 +43,7 @@ export default function VendorServices() {
             <Accordion
                 // variant="bordered"
                 selectionMode="single"
-                defaultExpandedKeys={['private-security']}
+                defaultExpandedKeys={services[0] ? [services[0].key] : ['private-security']}
                 showDivider={false}
                 itemClasses={{
                     base: 'rounded-xl bg-white px-4 shadow-none',
@@ -46,7 +54,7 @@ export default function VendorServices() {
                 }}
                 className="gap-3 overflow-visible p-0"
             >
-                {SERVICES.map((service) => (
+                {services.map((service) => (
                     <AccordionItem
                         key={service.key}
                         title={service.title}

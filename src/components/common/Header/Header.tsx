@@ -6,7 +6,7 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HiOutlineCog6Tooth } from "react-icons/hi2"
-import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath } from "@/routes/routes";
+import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
 import { getUserRole, clearAuthCookies, getAuthToken } from "@/utils/authCookies";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
 
@@ -194,7 +194,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                         <div className="border-t border-borderDark" />
                                         <div className="py-2 px-2">
                                             <Link
-                                                href={getVendorProfileRoutePath()}
+                                                href={getMyAccountRoutePath()}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
@@ -305,7 +305,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                         <div className="border-t border-borderDark" />
                                         <div className="py-2 px-2">
                                             <Link
-                                                href={getVendorProfileRoutePath()}
+                                                href={getMyAccountRoutePath()}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
