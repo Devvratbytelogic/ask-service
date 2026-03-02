@@ -8,6 +8,7 @@ import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
 import { IoPencilOutline } from "react-icons/io5"
@@ -23,9 +24,9 @@ const formatExpiry = (seconds: number) => {
 }
 
 const MobileOtpVerification = () => {
-
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const router = useRouter()
     const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
     const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
 
@@ -102,6 +103,7 @@ const MobileOtpVerification = () => {
             const responseData = (res as { data?: unknown })?.data ?? res
             if (responseData && typeof responseData === "object") {
                 setAuthCookies(responseData as AuthResponseData)
+                router.refresh()
             }
             if (data?.callBackModal || data?.parentCallBackModal) {
                 dispatch(

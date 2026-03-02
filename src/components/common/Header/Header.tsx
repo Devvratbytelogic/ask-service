@@ -7,10 +7,34 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath } from "@/routes/routes";
-import { getUserRole } from "@/utils/authCookies";
+import { getUserRole, clearAuthCookies, getAuthToken } from "@/utils/authCookies";
+import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
 
-const USER_NAME = "David Robinson";
-const USER_EMAIL = "david.robinson@example.com";
+/** Get initials from first + last name, or email/placeholder */
+function getInitials(firstName?: string | null, lastName?: string | null, email?: string | null): string {
+    const first = firstName?.trim();
+    const last = lastName?.trim();
+    if (first || last) {
+        return [first?.charAt(0), last?.charAt(0)].filter(Boolean).join("").toUpperCase().slice(0, 2) || "U";
+    }
+    if (email?.trim()) return email.trim().slice(0, 2).toUpperCase();
+    return "U";
+}
+
+/** Get short display name for header (e.g. "David.R") */
+function getDisplayName(firstName?: string | null, lastName?: string | null, email?: string | null): string {
+    const first = firstName?.trim();
+    const last = lastName?.trim();
+    if (first && last) return `${first}.${last.charAt(0)}`;
+    if (first) return first;
+    if (email?.trim()) return email.split("@")[0] ?? "User";
+    return "User";
+}
+
+/** Full name for popover */
+function getFullName(firstName?: string | null, lastName?: string | null): string {
+    return [firstName, lastName].filter(Boolean).join(" ").trim() || "User";
+}
 
 interface HeaderProps {
     initialIsAuthenticated?: boolean;
@@ -18,11 +42,25 @@ interface HeaderProps {
 
 const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const router = useRouter();
-    const isAuthenticated = initialIsAuthenticated;
+    const isAuthenticated = initialIsAuthenticated || !!getAuthToken();
     const role = getUserRole();
     const isVendor = role?.toLowerCase() === "vendor";
+
+    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, { skip: !isVendor });
+    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, { skip: isVendor });
+
+    const profile = isVendor ? vendorProfile?.data : userProfile?.data;
+    const firstName = profile?.first_name;
+    const lastName = profile?.last_name;
+    const email = profile?.email;
+    const displayName = getDisplayName(firstName, lastName, email);
+    const initials = getInitials(firstName, lastName, email);
+    const fullName = getFullName(firstName, lastName);
+
     const handleLogout = () => {
+        clearAuthCookies();
         router.push(getHomeRoutePath());
+        router.refresh();
     };
 
     if (!isAuthenticated) {
@@ -80,9 +118,9 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                         className="flex items-center gap-2 min-w-0 px-2 h-auto py-1.5 rounded-full hover:bg-borderDark"
                                     >
                                         <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
-                                            D.R
+                                            {initials}
                                         </span>
-                                        <span className="font-medium text-fontBlack text-sm hidden lg:inline">David.R</span>
+                                        <span className="font-medium text-fontBlack text-sm hidden lg:inline">{displayName}</span>
                                         <ChevronDownIconSVG />
                                     </Button>
                                 </PopoverTrigger>
@@ -90,8 +128,8 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                     <div className="flex flex-col">
                                         {/* User info section */}
                                         <div className="px-5 py-4">
-                                            <p className="font-bold text-base text-fontBlack">{USER_NAME}</p>
-                                            <p className="text-sm text-darkSilver mt-0.5">{USER_EMAIL}</p>
+                                            <p className="font-bold text-base text-fontBlack">{fullName}</p>
+                                            <p className="text-sm text-darkSilver mt-0.5">{email ?? "—"}</p>
                                         </div>
                                         <div className="border-t border-borderDark" />
                                         {/* Navigation items */}
@@ -134,12 +172,49 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 </PopoverContent>
                             </Popover>
                         ) : (
-                            <div className="flex items-center gap-2 min-w-0 px-2 py-1.5">
-                                <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
-                                    D.R
-                                </span>
-                                <span className="font-medium text-fontBlack text-sm hidden lg:inline">David.R</span>
-                            </div>
+                            <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
+                                <PopoverTrigger>
+                                    <Button
+                                        variant="light"
+                                        className="flex items-center gap-2 min-w-0 px-2 h-auto py-1.5 rounded-full hover:bg-borderDark"
+                                    >
+                                        <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
+                                            {initials}
+                                        </span>
+                                        <span className="font-medium text-fontBlack text-sm hidden lg:inline">{displayName}</span>
+                                        <ChevronDownIconSVG />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <div className="flex flex-col">
+                                        <div className="px-5 py-4">
+                                            <p className="font-bold text-base text-fontBlack">{fullName}</p>
+                                            <p className="text-sm text-darkSilver mt-0.5">{email ?? "—"}</p>
+                                        </div>
+                                        <div className="border-t border-borderDark" />
+                                        <div className="py-2 px-2">
+                                            <Link
+                                                href={getVendorProfileRoutePath()}
+                                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                            >
+                                                <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
+                                                My Profile
+                                            </Link>
+                                        </div>
+                                        <div className="border-t border-borderDark" />
+                                        <div className="py-2 px-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleLogout}
+                                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
+                                            >
+                                                <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         )}
                     </nav>
                     <div className="flex md:hidden items-center gap-2">
@@ -153,14 +228,14 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
                                 <PopoverTrigger>
                                     <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full bg-primaryColor/20">
-                                        <span className="text-primaryColor font-semibold text-sm">D.R</span>
+                                        <span className="text-primaryColor font-semibold text-sm">{initials}</span>
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <div className="flex flex-col">
                                         <div className="px-5 py-4">
-                                            <p className="font-bold text-base text-fontBlack">{USER_NAME}</p>
-                                            <p className="text-sm text-darkSilver mt-0.5">{USER_EMAIL}</p>
+                                            <p className="font-bold text-base text-fontBlack">{fullName}</p>
+                                            <p className="text-sm text-darkSilver mt-0.5">{email ?? "—"}</p>
                                         </div>
                                         <div className="border-t border-borderDark" />
                                         <div className="py-2 px-2">
@@ -215,9 +290,42 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 </PopoverContent>
                             </Popover>
                         ) : (
-                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primaryColor/20 shrink-0">
-                                <span className="text-primaryColor font-semibold text-sm">D.R</span>
-                            </div>
+                            <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
+                                <PopoverTrigger>
+                                    <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full bg-primaryColor/20">
+                                        <span className="text-primaryColor font-semibold text-sm">{initials}</span>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <div className="flex flex-col">
+                                        <div className="px-5 py-4">
+                                            <p className="font-bold text-base text-fontBlack">{fullName}</p>
+                                            <p className="text-sm text-darkSilver mt-0.5">{email ?? "—"}</p>
+                                        </div>
+                                        <div className="border-t border-borderDark" />
+                                        <div className="py-2 px-2">
+                                            <Link
+                                                href={getVendorProfileRoutePath()}
+                                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                            >
+                                                <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
+                                                My Profile
+                                            </Link>
+                                        </div>
+                                        <div className="border-t border-borderDark" />
+                                        <div className="py-2 px-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleLogout}
+                                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
+                                            >
+                                                <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         )}
                     </div>
                 </div>

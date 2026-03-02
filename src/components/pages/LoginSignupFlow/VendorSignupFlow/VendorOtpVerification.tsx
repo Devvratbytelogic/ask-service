@@ -11,6 +11,7 @@ import { openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -18,6 +19,7 @@ const RESEND_COOLDOWN_SEC = 59
 const VendorOtpVerification = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const router = useRouter()
 
     const userSignupData = data?.userData as Record<string, unknown> | undefined
     const email = (userSignupData?.email as string) || ""
@@ -81,6 +83,7 @@ const VendorOtpVerification = () => {
                     ? data.userData.role
                     : '',
             })
+            router.refresh()
             addToast({
                 title: "Success",
                 description: "OTP verification complete. You're signed up!",

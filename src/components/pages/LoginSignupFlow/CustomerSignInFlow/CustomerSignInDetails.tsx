@@ -13,6 +13,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
+import { useRouter } from "next/navigation"
 
 export interface CustomerSignInFormValues {
     email: string
@@ -50,6 +51,7 @@ const getSignInValidationSchema = (signInType: string | undefined) => {
 const CustomerSignInDetails = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const router = useRouter()
     const signInType = data?.userData?.signInType as string | undefined
 
     const [login, { isLoading: isLoggingIn }] = useLoginMutation()
@@ -85,6 +87,7 @@ const CustomerSignInDetails = () => {
                 const responseData = res?.data
                 if (responseData && typeof responseData === 'object') {
                     setAuthCookies(responseData as AuthResponseData)
+                    router.refresh()
                 }
                 addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
                 if (returnToRequestFlow && requestFlowData) {

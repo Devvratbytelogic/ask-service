@@ -13,6 +13,7 @@ import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -20,6 +21,7 @@ const RESEND_COOLDOWN_SEC = 59
 const VerifyEmailPhoneNumberWithOtp = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const router = useRouter()
 
     const userSignupData = data?.userData as Record<string, unknown> | undefined
     const userSignupType = data?.userData?.userSignupType as string | undefined
@@ -91,6 +93,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthCookies(responseData as AuthResponseData)
+                router.refresh()
             }
             addToast({
                 title: "Success",

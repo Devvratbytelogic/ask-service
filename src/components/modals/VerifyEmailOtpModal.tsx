@@ -8,6 +8,7 @@ import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 import ImageComponent from "../library/ImageComponent"
 
 const OTP_LENGTH = 4
@@ -15,6 +16,7 @@ const RESEND_COOLDOWN_SEC = 59
 
 export default function VerifyEmailOtpModal() {
     const dispatch = useDispatch()
+    const router = useRouter()
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const email = (data?.email as string) || ""
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
@@ -33,6 +35,7 @@ export default function VerifyEmailOtpModal() {
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthCookies(responseData as AuthResponseData)
+                router.refresh()
             }
             addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
             if (returnToRequestFlow && requestFlowData) {

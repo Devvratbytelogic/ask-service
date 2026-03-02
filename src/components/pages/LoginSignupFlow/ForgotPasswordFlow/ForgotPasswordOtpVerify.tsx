@@ -13,6 +13,7 @@ import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -20,6 +21,7 @@ const RESEND_COOLDOWN_SEC = 59
 const ForgotPasswordOtpVerify = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const router = useRouter()
 
     const userData = data?.userData as Record<string, unknown> | undefined
     const recoveryType = data?.userData?.recoveryType as string | undefined
@@ -93,6 +95,7 @@ const ForgotPasswordOtpVerify = () => {
             const responseData = res?.data
             if (responseData && typeof responseData === "object") {
                 setAuthCookies(responseData as AuthResponseData)
+                router.refresh()
             }
             const roleName = responseData?.role?.name ?? ""
             const isVendor = roleName.toLowerCase() === "vendor"
