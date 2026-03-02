@@ -4,7 +4,7 @@ import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIco
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import moment from 'moment'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -29,9 +29,15 @@ export default function VendorDashboard() {
         }),
         [locationFilter, sortFilter],
     )
+    const searchParams = useSearchParams()
+    const showPurchasedOnly = searchParams.get('leads') === 'purchased'
     const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery(leadsParams)
     const [unlockLead] = useUnlockLeadMutation()
-    const leads = leadsData?.data ?? []
+    const allLeads = leadsData?.data ?? []
+    const leads = useMemo(
+        () => (showPurchasedOnly ? allLeads.filter((l) => l?.unlocked) : allLeads),
+        [showPurchasedOnly, allLeads],
+    )
     const isLoading = dashboardLoading || leadsLoading
 
     const handleUnlockLead = async (leadId: string) => {
@@ -83,7 +89,7 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.purchasedLeadsCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Purchased Leads</p>
-                        <Link href={generateLeadDetailRoutePath('345')} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
+                        <Link href={getVendorDashboardRoutePath({ leads: 'purchased' })} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
                             View leads →
                         </Link>
                     </div>
@@ -117,13 +123,25 @@ export default function VendorDashboard() {
                     </div>
                 </div>
 
-                {/* Available Leads Section */}
+                {/* Available Leads / Purchased Leads Section */}
                 <div className="space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
-                            <h2 className="header_text_md text-fontBlack">Available Leads</h2>
+                            <h2 className="header_text_md text-fontBlack">
+                                {showPurchasedOnly ? 'Purchased Leads' : 'Available Leads'}
+                            </h2>
                             <p className="text-sm text-darkSilver mt-1">
-                                5 leads available • Unlock to view full details
+                                {showPurchasedOnly
+                                    ? `${leads.length} purchased lead${leads.length !== 1 ? 's' : ''} • View full details below`
+                                    : `${allLeads.length} leads available • Unlock to view full details`}
+                                {showPurchasedOnly && (
+                                    <>
+                                        {' • '}
+                                        <Link href={getVendorDashboardRoutePath()} className="text-primaryColor hover:underline font-medium">
+                                            View all leads
+                                        </Link>
+                                    </>
+                                )}
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
@@ -171,12 +189,20 @@ export default function VendorDashboard() {
                                     {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
                                 </DropdownMenu>
                             </Dropdown>
-                            <span className="text-sm text-darkSilver">Showing <span className='font-bold text-fontBlack'>5</span> leads</span>
+                            <span className="text-sm text-darkSilver">Showing <span className='font-bold text-fontBlack'>{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}</span>
                         </div>
                     </div>
 
                     {/* Lead Cards */}
                     <div className="flex flex-col gap-4">
+                        {showPurchasedOnly && leads.length === 0 && (
+                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                                <p className="text-darkSilver">You have no purchased leads yet. Unlock leads from Available Leads to see their full details here.</p>
+                                <Link href={getVendorDashboardRoutePath()} className="inline-block mt-3 text-sm font-medium text-[#4CAF50] hover:underline">
+                                    View available leads →
+                                </Link>
+                            </div>
+                        )}
                         {leads && leads?.length > 0 && leads?.map((lead, index) => (
                             <div
                                 key={index}

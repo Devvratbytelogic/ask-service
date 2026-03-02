@@ -1,5 +1,6 @@
 import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
 import { IAllTransactionHistoryAPIResponse } from '@/types/allTransactionHistory';
+import { IAllRequestsAPIResponse } from '@/types/allRequests';
 import { IAllServicesDocumentsRequiredAPIResponse } from '@/types/requiredDocument';
 import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
@@ -10,6 +11,8 @@ import { IVendorDashboardTransactionAPIResponse } from '@/types/vendorDashboardT
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
 import { IVendorProfileInfoAPIResponse } from '@/types/vendorProfile';
 import type { IUserNotificationAPIResponse } from '@/types/notifications';
+import { IServiceRequestQuotesAPIResponse } from '@/types/serviceRequestQuotes';
+import { IServiceRequestQuotesDetailAPIResponse } from '@/types/serviceReuestQuotesDetails';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -116,6 +119,40 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
         }),
+        getCreatedServices: builder.query<IAllRequestsAPIResponse, { search?: string | null; service?: string | null; status?: string; fromDate?: string | null; toDate?: string | null; page?: number; limit?: number } | void>({
+            query: (arg) => {
+                const params: Record<string, string | number> = {
+                    status: arg?.status ?? 'ACTIVE',
+                    page: arg?.page ?? 1,
+                    limit: arg?.limit ?? 10,
+                };
+                if (arg?.search != null && String(arg.search).trim() !== '') params.search = String(arg.search).trim();
+                if (arg?.service != null && String(arg.service).trim() !== '') params.service = String(arg.service).trim();
+                if (arg?.fromDate != null && String(arg.fromDate).trim() !== '') params.fromDate = String(arg.fromDate).trim();
+                if (arg?.toDate != null && String(arg.toDate).trim() !== '') params.toDate = String(arg.toDate).trim();
+                return {
+                    url: `/user/get-created-services`,
+                    method: 'GET',
+                    params,
+                };
+            },
+            providesTags: ['CreatedServices', 'ServiceRequestQuotes'],
+        }),
+        getServiceRequestQuotes: builder.query<IServiceRequestQuotesAPIResponse, { requestId: string; sort?: string }>({
+            query: ({ requestId, sort }) => ({
+                url: `/user/service-requests/${requestId}/quotes`,
+                method: 'GET',
+                ...(sort != null && sort !== '' && { params: { sort } }),
+            }),
+            providesTags: ['ServiceRequestQuotes'],
+        }),
+        getServiceRequestQuotesDetail: builder.query<IServiceRequestQuotesDetailAPIResponse, { requestId: string; quoteId: string }>({
+            query: ({ requestId, quoteId }) => ({
+                url: `/user/service-requests/${requestId}/quotes/${quoteId}`,
+                method: 'GET',
+            }),
+            providesTags: ['ServiceRequestQuotes'],
+        }),
     }),
 });
 
@@ -137,4 +174,7 @@ export const {
     useGetVendorAvailableLeadsQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,
+    useGetCreatedServicesQuery,
+    useGetServiceRequestQuotesQuery,
+    useGetServiceRequestQuotesDetailQuery,
 } = clientSideGetApis;

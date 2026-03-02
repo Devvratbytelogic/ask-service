@@ -1,19 +1,21 @@
 'use client'
 
 import { CalendarSVG, LocationSVG, WarningIconSVG } from '@/components/library/AllSVG'
+import { useCloseServiceRequestMutation } from '@/redux/rtkQueries/allPostApi'
 import { RootState } from '@/redux/appStore'
 import { closeModal } from '@/redux/slices/allModalSlice'
-import { Button, Checkbox } from '@heroui/react'
+import { Button, Checkbox, Spinner, Textarea } from '@heroui/react'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { IoWarning } from 'react-icons/io5'
+
+const OTHER_REASON_KEY = 'Other reason'
 
 const CLOSE_REASONS = [
-    { key: 'no_longer_need', label: 'No longer need the service' },
-    { key: 'found_elsewhere', label: 'Found a provider elsewhere' },
-    { key: 'too_expensive', label: 'Quotes are too expensive' },
-    { key: 'changed_mind', label: 'Changed my mind' },
-    { key: 'other', label: 'Other reason' },
+    { key: 'No longer need the service', label: 'No longer need the service' },
+    { key: 'Found a provider elsewhere', label: 'Found a provider elsewhere' },
+    { key: 'Quotes are too expensive', label: 'Quotes are too expensive' },
+    { key: 'Changed my mind', label: 'Changed my mind' },
+    { key: OTHER_REASON_KEY, label: 'Other reason' },
 ]
 
 const defaultRequest = {
@@ -27,14 +29,27 @@ export default function CloseRequestModal() {
     const dispatch = useDispatch()
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const request = modalData?.request ?? modalData ?? defaultRequest
+    const requestId = (request as { _id?: string; id?: string })?._id ?? (request as { id?: string })?.id
     const [selectedReason, setSelectedReason] = useState<string | null>(null)
+    const [reasonComment, setReasonComment] = useState('')
+    const [closeServiceRequest, { isLoading: isClosing }] = useCloseServiceRequestMutation()
 
     const handleCancel = () => dispatch(closeModal())
 
-    const handleCloseRequest = () => {
-        if (!selectedReason) return
-        // TODO: API call to close request, then close modal
-        dispatch(closeModal())
+    const handleCloseRequest = async () => {
+        if (!selectedReason || !requestId) return
+        try {
+            await closeServiceRequest({
+                id: requestId,
+                body: {
+                    reason: selectedReason,
+                    reason_comment: selectedReason === OTHER_REASON_KEY ? reasonComment : '',
+                },
+            }).unwrap()
+            dispatch(closeModal())
+        } catch {
+            // Error toast is handled by RTK base query
+        }
     }
 
     return (
@@ -99,6 +114,25 @@ export default function CloseRequestModal() {
                         </label>
                     ))}
                 </div>
+
+                {/* Reason comment when "Other reason" is selected */}
+                {selectedReason === OTHER_REASON_KEY && (
+                    <div className="mt-4">
+                        <label className="block text-sm font-medium text-fontBlack mb-2">
+                            Please specify (optional)
+                        </label>
+                        <Textarea
+                            placeholder="Describe your reason..."
+                            value={reasonComment}
+                            onValueChange={setReasonComment}
+                            minRows={3}
+                            classNames={{
+                                input: 'text-sm',
+                                inputWrapper: 'border border-borderDark rounded-xl bg-white',
+                            }}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Actions */}
@@ -111,8 +145,10 @@ export default function CloseRequestModal() {
                 </Button>
                 <Button
                     onPress={handleCloseRequest}
-                    isDisabled={!selectedReason}
+                    isDisabled={!selectedReason || !requestId || isClosing}
                     className={`btn_radius ${selectedReason ? 'btn_bg_blue' : 'bg-gray-200! text-gray-600!'} w-full`}
+                    isLoading={isClosing}
+                    spinner={<Spinner size="sm" color="primary" />}
                 >
                     Close request
                 </Button>

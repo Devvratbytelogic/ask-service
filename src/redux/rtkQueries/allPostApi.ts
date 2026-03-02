@@ -114,6 +114,21 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorAvailableLeads'],
     }),
+    closeServiceRequest: builder.mutation({
+      query: ({ id, body }: { id: string; body: { reason: string; reason_comment: string } }) => ({
+        url: `/user/close-service-request/${id}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['CreatedServices'],
+    }),
+    ignoreQuote: builder.mutation({
+      query: ({ requestId, quoteId }: { requestId: string; quoteId: string }) => ({
+        url: `/user/service-requests/${requestId}/quotes/${quoteId}/ignore`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['ServiceRequestQuotes'],
+    }),
   }),
 });
 
@@ -133,4 +148,6 @@ export const {
   useVendorLeaveReviewMutation,
   useUnlockLeadMutation,
   useSubmitQuoteMutation,
+  useCloseServiceRequestMutation,
+  useIgnoreQuoteMutation,
 } = postApi;
