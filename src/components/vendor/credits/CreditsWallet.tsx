@@ -1,13 +1,11 @@
 'use client'
 
-import { openModal } from '@/redux/slices/allModalSlice'
 import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
@@ -30,7 +28,6 @@ export default function CreditsWallet() {
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState('10')
     const router = useRouter()
-    const dispatch = useDispatch()
 
     const queryParams = useMemo(() => {
         const base = { page, limit: Number(itemsPerPage) }
@@ -52,15 +49,57 @@ export default function CreditsWallet() {
     const totalItems = apiData?.total ?? 0
     const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
 
-    const openPurchaseModal = (pkg: (typeof CREDIT_PACKAGES)[0]) => {
-        console.log('pkg', pkg)
-        // dispatch(openModal({
-        //     componentName: 'PurchaseCreditsModal',
-        //     data: { package: pkg },
-        //     modalSize: '4xl',
-        //     modalPadding: 'p-0',
-        //     hideCloseButton: true,
-        // }))
+    const openPurchaseModal = async (pkg: (typeof CREDIT_PACKAGES)[0]) => {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
+        if (!keyId) {
+            alert(
+                'Razorpay not configured. Add NEXT_PUBLIC_RAZORPAY_KEY_ID, RAZORPAY_KEY_ID, and RAZORPAY_KEY_SECRET to .env.local (get free test keys from Razorpay Dashboard)'
+            )
+            return
+        }
+        try {
+            const res = await fetch('/api/razorpay/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: parseFloat(pkg.price),
+                    currency: 'INR',
+                    receipt: `credits_${pkg.id}`,
+                }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error ?? 'Failed to create order')
+            const { orderId } = data
+
+            const openCheckout = () => {
+                const Razorpay = (window as unknown as { Razorpay: new (o: object) => { open: () => void } }).Razorpay
+                const options = {
+                    key: keyId,
+                    amount: Math.round(parseFloat(pkg.price) * 100),
+                    currency: 'INR',
+                    name: 'Credits Purchase',
+                    description: `${pkg.credits} credits${pkg.bonus ? ` + ${pkg.bonus} bonus` : ''}`,
+                    order_id: orderId,
+                    handler: () => {},
+                }
+                const rzp = new Razorpay(options)
+                rzp.open()
+            }
+
+            const Razorpay = (window as unknown as { Razorpay?: new (o: object) => { open: () => void } }).Razorpay
+            if (Razorpay) {
+                openCheckout()
+                return
+            }
+            const script = document.createElement('script')
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+            script.async = true
+            script.onload = openCheckout
+            document.body.appendChild(script)
+        } catch (err) {
+            console.error(err)
+            alert(err instanceof Error ? err.message : 'Failed to open payment')
+        }
     }
     return (
         <div className="space-y-8">
