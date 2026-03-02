@@ -3,13 +3,16 @@
 import ImageComponent from "@/components/library/ImageComponent"
 import { useVendorRegisterMutation } from "@/redux/rtkQueries/authApi"
 import { RootState } from "@/redux/appStore"
-import { openModal } from "@/redux/slices/allModalSlice"
+import { closeModal, openModal } from "@/redux/slices/allModalSlice"
+import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { loginWithGoogle } from "@/firebase/GoogleLogin"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import Link from "next/link"
 import { getTermsRoutePath, getPrivacyRoutePath } from "@/routes/routes"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
@@ -45,9 +48,59 @@ const initialValues: VendorSignupFormValues = {
 
 const VendorSignupDetails = () => {
     const dispatch = useDispatch()
+    const router = useRouter()
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false)
     const [vendorRegister, { isLoading: isRegistering }] = useVendorRegisterMutation()
+
+    const handleGoogleLogin = async () => {
+        setIsGoogleLoading(true)
+        try {
+            const res = await loginWithGoogle("Vendor")
+            const responseData = res?.data
+            if (responseData && typeof responseData === "object") {
+                const authData = responseData as AuthResponseData
+                if (authData.token ?? authData.access_token) {
+                    setAuthCookies(authData)
+                    router.refresh()
+                    addToast({ title: "Account created successfully", color: "success", timeout: 2000 })
+                    dispatch(closeModal())
+                    return
+                }
+            }
+            addToast({ title: "Sign up completed", color: "success", timeout: 2000 })
+            dispatch(closeModal())
+        } catch (err: unknown) {
+            const e = err as Error & {
+                responseData?: { data?: { flow?: string; phone_verified?: boolean }; message?: string }
+                googleEmail?: string
+            }
+            if (
+                e.responseData?.data?.flow === "PHONE_VERIFICATION_REQUIRED" &&
+                e.responseData?.data?.phone_verified === false &&
+                e.googleEmail
+            ) {
+                dispatch(
+                    openModal({
+                        componentName: "MobileOtpVerification",
+                        data: {
+                            email: e.googleEmail,
+                            googleLoginCompleted: true,
+                            callBackModal: "VendorServiceListPage",
+                            parentCallBackModal: "LoginSignupIndex",
+                        },
+                        modalSize: "lg",
+                    })
+                )
+                return
+            }
+            const message = e.responseData?.message ?? e.message ?? "Google sign up failed"
+            addToast({ title: message, color: "danger", timeout: 3000 })
+        } finally {
+            setIsGoogleLoading(false)
+        }
+    }
 
     const formik = useFormik<VendorSignupFormValues>({
         initialValues: {
@@ -112,17 +165,9 @@ const VendorSignupDetails = () => {
                     <Button
                         type="button"
                         className="btn_bg_white btn_radius btn_padding w-full font-medium"
-                        onPress={() => {
-                            dispatch(
-                                openModal({
-                                    componentName: "MobileOtpVerification",
-                                    data: {
-                                        callBackModal: "VendorServiceListPage"
-                                    },
-                                    modalSize: "lg",
-                                })
-                            )
-                        }}
+                        onPress={handleGoogleLogin}
+                        isLoading={isGoogleLoading}
+                        isDisabled={isGoogleLoading}
                     >
                         <span className="size-4.5">
                             <ImageComponent url="/images/signup/google_icon.png" img_title="Google login icon" />

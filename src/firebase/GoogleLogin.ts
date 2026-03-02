@@ -41,8 +41,12 @@ export const loginWithGoogle = async (
     if (!response.ok) {
       const err = new Error(data?.message ?? "Google login failed") as Error & {
         responseData?: IGoogleLoginAPIResponse & { data?: { flow?: string; phone_verified?: boolean } };
+        googleEmail?: string;
       };
       err.responseData = data as IGoogleLoginAPIResponse & { data?: { flow?: string; phone_verified?: boolean } };
+      if (response.status === 403 && (data as { data?: { flow?: string } })?.data?.flow === "PHONE_VERIFICATION_REQUIRED") {
+        err.googleEmail = user.email ?? undefined;
+      }
       throw err;
     }
     return data;

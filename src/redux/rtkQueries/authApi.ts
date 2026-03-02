@@ -51,6 +51,15 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
             }),
         }),
 
+        /** Send phone OTP when user completed Google login but phone verification is required (403 PHONE_VERIFICATION_REQUIRED). */
+        resendPhoneOtpGoogleLogin: builder.mutation({
+            query: (formData: { phone: string; email: string }) => ({
+                url: `/user/google-login-send-phone-otp`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
         resendEmailVerification: builder.mutation({
             query: (formData) => ({
                 url: `/user/resend-email-verification`,
@@ -132,6 +141,7 @@ export const {
     useVerifyPhoneMutation,
     useVerifyEmailMutation,
     useResendPhoneOtpMutation,
+    useResendPhoneOtpGoogleLoginMutation,
     useResendEmailVerificationMutation,
     useForgotPasswordMutation,
     useNewPasswordMutation,

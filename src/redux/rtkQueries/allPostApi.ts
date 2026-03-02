@@ -129,6 +129,13 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['ServiceRequestQuotes'],
     }),
+    postContactUs: builder.mutation({
+      query: (payload: { name: string; email: string; message: string }) => ({
+        url: `/user/post-contact-us`,
+        method: 'POST',
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -150,4 +157,5 @@ export const {
   useSubmitQuoteMutation,
   useCloseServiceRequestMutation,
   useIgnoreQuoteMutation,
+  usePostContactUsMutation,
 } = postApi;

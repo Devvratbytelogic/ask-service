@@ -5,6 +5,8 @@ import { Button, Input, Textarea } from '@heroui/react'
 import { useFormik } from 'formik'
 import { contactFormValidationSchema } from '@/utils/validation'
 import { ChatBubbleLeftRightIconSVG, EmailIconSVG, ProfileIconSVG, SendIconSVG } from '@/components/library/AllSVG'
+import { usePostContactUsMutation } from '@/redux/rtkQueries/allPostApi'
+import { addToast } from '@heroui/react'
 
 const initialValues = {
   name: '',
@@ -13,12 +15,19 @@ const initialValues = {
 }
 
 export default function ContactForm() {
-  const { values, errors, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+  const [postContactUs, { isLoading }] = usePostContactUsMutation()
+
+  const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm } = useFormik({
     initialValues,
     validationSchema: contactFormValidationSchema,
-    onSubmit: (values) => {
-      // TODO: wire to API or email handler
-      console.log(values)
+    onSubmit: async (payload) => {
+      try {
+        await postContactUs({ name: payload.name, email: payload.email, message: payload.message }).unwrap()
+        addToast({ title: 'Message sent successfully', color: 'success', timeout: 3000 })
+        resetForm()
+      } catch {
+        addToast({ title: 'Failed to send message. Please try again.', color: 'danger', timeout: 3000 })
+      }
     },
   })
 
@@ -94,6 +103,8 @@ export default function ContactForm() {
           type="submit"
           className="btn_radius btn_bg_blue w-full"
           endContent={<SendIconSVG />}
+          isLoading={isLoading}
+          isDisabled={isLoading}
         >
           Send Message
         </Button>

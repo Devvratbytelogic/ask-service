@@ -3,7 +3,7 @@
 import OtpInput from "@/components/library/OtpInput"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { useResendPhoneOtpMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
+import { useResendPhoneOtpMutation, useResendPhoneOtpGoogleLoginMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
 import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
@@ -29,10 +29,12 @@ const MobileOtpVerification = () => {
     const router = useRouter()
     const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
     const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
-
+    const [resendPhoneOtpGoogleLogin, { isLoading: isResendingPhoneGoogle }] = useResendPhoneOtpGoogleLoginMutation()
     const initialPhone = (data?.phoneNumber as string) || ""
     const skipToCodeEntry = !!(data as { skipToCodeEntry?: boolean })?.skipToCodeEntry
     const otpType = (data as { otpType?: string })?.otpType ?? "SERVICE_REQUEST"
+    const email = (data?.email as string) || ""
+    const googleLoginCompleted = !!(data as { googleLoginCompleted?: boolean })?.googleLoginCompleted
 
     const [phoneNumber, setPhoneNumber] = useState(initialPhone)
     const [codeSent, setCodeSent] = useState(skipToCodeEntry)
@@ -47,7 +49,11 @@ const MobileOtpVerification = () => {
         if (!isPhoneValid) return
         setErrorMessage(null)
         try {
-            await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            if (googleLoginCompleted && email) {
+                await resendPhoneOtpGoogleLogin({ phone: phoneNumber, email }).unwrap()
+            } else {
+                await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            }
             setCodeSent(true)
             setOtpExpirySeconds(OTP_EXPIRY_SEC)
             setResendCooldown(RESEND_COOLDOWN_SEC)
@@ -55,20 +61,24 @@ const MobileOtpVerification = () => {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to send code."
             setErrorMessage(message)
         }
-    }, [isPhoneValid, phoneNumber, otpType, resendPhoneOtp])
+    }, [isPhoneValid, phoneNumber, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
 
     const handleResend = useCallback(async () => {
         if (resendCooldown > 0) return
         setErrorMessage(null)
         try {
-            await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            if (googleLoginCompleted && email) {
+                await resendPhoneOtpGoogleLogin({ phone: phoneNumber, email }).unwrap()
+            } else {
+                await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+            }
             setResendCooldown(RESEND_COOLDOWN_SEC)
             setOtpExpirySeconds(OTP_EXPIRY_SEC)
         } catch (err: unknown) {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to resend code."
             setErrorMessage(message)
         }
-    }, [resendCooldown, phoneNumber, otpType, resendPhoneOtp])
+    }, [resendCooldown, phoneNumber, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -141,6 +151,11 @@ const MobileOtpVerification = () => {
                     <h2 className="text-xl font-semibold text-fontBlack">
                         Lets get you started
                     </h2>
+                    {googleLoginCompleted && email && (
+                        <p className="text-fontBlack text-sm xl:text-base">
+                            Signed in as <span className="font-medium text-primaryColor">{email}</span>
+                        </p>
+                    )}
                     <p className="text-darkSilver text-sm xl:text-base">
                         Enter your phone number and we&apos;ll send a verification
                         code to verify it.
@@ -173,8 +188,8 @@ const MobileOtpVerification = () => {
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm xl:text-base w-full"
-                    isDisabled={!isPhoneValid || isResendingPhone}
-                    isLoading={isResendingPhone}
+                    isDisabled={!isPhoneValid || isResendingPhone || isResendingPhoneGoogle}
+                    isLoading={isResendingPhone || isResendingPhoneGoogle}
                     onPress={handleSendCode}
                 >
                     Send code
@@ -190,6 +205,11 @@ const MobileOtpVerification = () => {
                 <h2 className="text-xl font-semibold text-fontBlack">
                     Enter Verification Code
                 </h2>
+                {googleLoginCompleted && email && (
+                    <p className="text-fontBlack text-sm xl:text-base">
+                        Verifying phone for <span className="font-medium text-primaryColor">{email}</span>
+                    </p>
+                )}
                 <p className="text-darkSilver text-sm xl:text-base flex items-center flex-wrap">
                     <span>Enter the {OTP_LENGTH} digit code</span>, we&apos;ve sent to your
                     phone number
@@ -238,10 +258,10 @@ const MobileOtpVerification = () => {
                             <button
                                 type="button"
                                 onClick={handleResend}
-                                disabled={isResendingPhone}
+                                disabled={isResendingPhone || isResendingPhoneGoogle}
                                 className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isResendingPhone ? "Sending…" : "Send a new code"}
+                                {isResendingPhone || isResendingPhoneGoogle ? "Sending…" : "Send a new code"}
                             </button>
                         )}
                     </li>
