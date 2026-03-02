@@ -76,7 +76,7 @@ const HomeBanner = () => {
             <p className="text-center text-lightBlack text-lg xl:text-xl w-11/12 md:w-1/2 2xl:w-[40vw] 2xl:max-w-[40svw]">
                 Tell us what you need and receive quotes from verified professionals in your area. No calls. No spam. Just the right help.
             </p>
-            <div className="flex gap-2 flex-wrap justify-center">
+            <div id="banner-search" className="flex gap-2 flex-wrap justify-center">
                 <div className="w-[90vw] md:w-[30vw] max-w-full mx-auto">
                     <Autocomplete
                         variant="bordered"
@@ -143,6 +143,18 @@ const HomeBanner = () => {
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
                         className="btn_radius bg-[#F2F2F21A] border border-borderColor text-darkSilver text-xs md:text-base xl:text-lg py-0! xl:py-6! px-3 md:px-4"
                         key={curr._id}
+                        onPress={() => {
+                            dispatch(openModal({
+                                componentName: "RequestServiceFlowIndex",
+                                data: {
+                                    pincode: selectedPinCode,
+                                    grandParentServiceId: curr._id ?? "",
+                                    grandParentServiceName: curr.title ?? "",
+                                    child_services: curr.child_categories ?? [],
+                                },
+                                modalSize: "lg",
+                            }));
+                        }}
                     >
                         {curr.title}
                     </Button>

@@ -1,8 +1,27 @@
 "use client"
 import { Button } from "@heroui/react"
 import { FiArrowRight } from "react-icons/fi"
+import { useDispatch } from "react-redux"
+import { openModal } from "@/redux/slices/allModalSlice"
 
 const CTAsectionsIndex = () => {
+    const dispatch = useDispatch()
+
+    const scrollToBannerSearch = () => {
+        document.getElementById("banner-search")?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+
+    const openJoinAsProfessionalModal = () => {
+        dispatch(openModal({
+            componentName: "LoginSignupIndex",
+            data: {
+                componentName: "SelectUserType",
+                preselectedUserType: "service",
+            },
+            modalSize: "full",
+        }))
+    }
+
     return (
         <>
             <div className="container_y_padding grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -16,6 +35,7 @@ const CTAsectionsIndex = () => {
                     <Button
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
                         className="btn_radius bg-[#ECEEF2] border border-borderColor text-fontBlack text-xs md:text-base xl:text-lg xl:py-6"
+                        onPress={scrollToBannerSearch}
                     >
                         Post a request
                     </Button>
@@ -30,6 +50,7 @@ const CTAsectionsIndex = () => {
                     <Button
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
                         className="btn_radius bg-transparent border border-borderColor text-white text-xs md:text-base xl:text-lg xl:py-6"
+                        onPress={openJoinAsProfessionalModal}
                     >
                         Join as a professional
                     </Button>

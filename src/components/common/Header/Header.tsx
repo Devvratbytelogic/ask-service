@@ -46,8 +46,8 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const role = getUserRole();
     const isVendor = role?.toLowerCase() === "vendor";
 
-    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, { skip: !isVendor });
-    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, { skip: isVendor });
+    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, { skip: !isAuthenticated || !isVendor });
+    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, { skip: !isAuthenticated || isVendor });
 
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
     const firstName = profile?.first_name;

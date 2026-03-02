@@ -5,9 +5,10 @@ interface IServiceCardProps{
     serviceImage:string,
     serviceName:string,
     serviceDescription:string
+    onPostRequestClick?: () => void
 }
 
-const ServiceCard = ({serviceImage,serviceName,serviceDescription}:IServiceCardProps) => {
+const ServiceCard = ({serviceImage,serviceName,serviceDescription, onPostRequestClick}:IServiceCardProps) => {
   return (
     <div className="rounded-2xl p-4 xl:p-6 space-y-6.25 xl:space-y-8 shadow-[0px_0px_0px_1px_#EBEDEF]">
         <div className="flex gap-3.75 items-center">
@@ -22,7 +23,13 @@ const ServiceCard = ({serviceImage,serviceName,serviceDescription}:IServiceCardP
             <p className="text-darkSilver text-sm/[22px] xl:text-lg/[24px]">
                 {serviceDescription}
             </p>
-            <div className="cursor-pointer text-fontBlack text-[15px]/[25.6px] xl:text-base/[27.6px] group flex gap-2 items-center px-4">
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={onPostRequestClick}
+                onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && onPostRequestClick) { e.preventDefault(); onPostRequestClick(); } }}
+                className="cursor-pointer text-fontBlack text-[15px]/[25.6px] xl:text-base/[27.6px] group flex gap-2 items-center px-4"
+            >
                 <span className="group-hover:opacity-75">
                     Post a request
                 </span>
