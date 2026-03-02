@@ -83,6 +83,6 @@ const baseQueryWithAuth: BaseQueryFn<
 export const rtkQuerieSetup = createApi({
     reducerPath: 'RTKServices',
     baseQuery: baseQueryWithAuth,
-    tagTypes: ['UserProfile', 'VendorProfile', 'VendorDocuments', 'VendorReviews', 'VendorAvailableLeads'],
+    tagTypes: ['UserProfile', 'UserNotification', 'VendorProfile', 'VendorDocuments', 'VendorReviews', 'VendorAvailableLeads'],
     endpoints: () => ({}),
 });

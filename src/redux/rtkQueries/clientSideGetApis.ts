@@ -4,10 +4,12 @@ import { IAllServicesDocumentsRequiredAPIResponse } from '@/types/requiredDocume
 import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
 import { ISingleLeadAPIResponse } from '@/types/singleLead';
+import { IUserProfileInfoAPIResponse } from '@/types/userProfile';
 import { IVendorAvailableLeadsAPIResponse, IVendorDashboardDataAPIResponse } from '@/types/vendorDashboard';
 import { IVendorDashboardTransactionAPIResponse } from '@/types/vendorDashboardTransaction';
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
 import { IVendorProfileInfoAPIResponse } from '@/types/vendorProfile';
+import type { IUserNotificationAPIResponse } from '@/types/notifications';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -35,6 +37,20 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
             }),
             providesTags: ['VendorProfile'],
+        }),
+        getUserProfileInfo: builder.query<IUserProfileInfoAPIResponse, void>({
+            query: () => ({
+                url: `/user/get-profile`,
+                method: 'GET',
+            }),
+            providesTags: ['UserProfile'],
+        }),
+        getUserNotification: builder.query<IUserNotificationAPIResponse, void>({
+            query: () => ({
+                url: `/user/notification`,
+                method: 'GET',
+            }),
+            providesTags: ['UserNotification'],
         }),
         getAllVendorDocuments: builder.query<IAllVendorDocumentsAPIResponse, void>({
             query: () => ({
@@ -108,6 +124,8 @@ export const {
     useGetAllServicesQuery,
     useGetAllServicesDocumentsRequiredQuery,
     useGetVendorProfileInfoQuery,
+    useGetUserProfileInfoQuery,
+    useGetUserNotificationQuery,
     useGetAllVendorDocumentsQuery,
     useGetAllVendorReviewsQuery,
     useGetAllTransactionHistoryQuery,

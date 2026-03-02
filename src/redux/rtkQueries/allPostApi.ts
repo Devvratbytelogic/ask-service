@@ -1,5 +1,5 @@
 import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
-import type { VendorNotificationPreferencesPayload } from '@/types/notifications';
+import type { UserNotificationPreferencesPayload, VendorNotificationPreferencesPayload } from '@/types/notifications';
 
 export const postApi = rtkQuerieSetup.injectEndpoints({
   endpoints: (builder) => ({
@@ -40,6 +40,14 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorProfile'],
     }),
+    updateUserProfileInfo: builder.mutation({
+      query: (formData) => ({
+        url: `/user/update-profile`,
+        method: 'PUT',
+        body: formData,
+      }),
+      invalidatesTags: ['UserProfile'],
+    }),
     changeVendorPassword: builder.mutation({
       query: (formData) => ({
         url: `/vendor/change-password`,
@@ -76,11 +84,12 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
     }),
     userNotificationPreferences: builder.mutation({
-      query: (formData) => ({
+      query: (payload: UserNotificationPreferencesPayload) => ({
         url: `/user/notification`,
         method: 'PUT',
-        body: formData,
+        body: payload,
       }),
+      invalidatesTags: ['UserNotification'],
     }),
     vendorLeaveReview: builder.mutation({
       query: (formData) => ({
@@ -114,6 +123,7 @@ export const {
   useUpdateVendorServicesMutation,
   useUploadVendorDocumentsMutation,
   useUpdateVendorProfileInfoMutation,
+  useUpdateUserProfileInfoMutation,
   useChangeVendorPasswordMutation,
   useChangeUserPasswordMutation,
   useDeleteVendorAccountMutation,

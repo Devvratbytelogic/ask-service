@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { addToast, Button, Switch } from '@heroui/react'
-import { useVendorNotificationPreferencesMutation } from '@/redux/rtkQueries/allPostApi'
-import type { VendorNotificationPreferencesPayload } from '@/types/notifications'
+import { useVendorNotificationPreferencesMutation, useUserNotificationPreferencesMutation } from '@/redux/rtkQueries/allPostApi'
+import { useGetUserNotificationQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import type { UserNotificationPreferencesPayload, VendorNotificationPreferencesPayload } from '@/types/notifications'
 
 type NotificationKey =
     | 'email_new_quotes'
@@ -96,17 +97,60 @@ const notificationItems: {
         },
     ]
 
+/** Map nested API payload to flat UI state */
+function userPayloadToPreferences(data: UserNotificationPreferencesPayload | undefined): Record<NotificationKey, boolean> {
+    if (!data?.email_notifications || !data?.push_notifications || !data?.sms_notifications) {
+        return initialPreferences
+    }
+    return {
+        email_new_quotes: data.email_notifications.new_quotes ?? initialPreferences.email_new_quotes,
+        email_messages: data.email_notifications.messages ?? initialPreferences.email_messages,
+        email_product_updates: data.email_notifications.product_updates ?? initialPreferences.email_product_updates,
+        push_new_quotes: data.push_notifications.new_quotes ?? initialPreferences.push_new_quotes,
+        push_messages: data.push_notifications.messages ?? initialPreferences.push_messages,
+        sms_important_updates: data.sms_notifications.important_updates ?? initialPreferences.sms_important_updates,
+    }
+}
+
+/** Map flat UI state to nested API payload */
+function preferencesToUserPayload(prefs: Record<NotificationKey, boolean>): UserNotificationPreferencesPayload {
+    return {
+        email_notifications: {
+            new_quotes: prefs.email_new_quotes,
+            messages: prefs.email_messages,
+            product_updates: prefs.email_product_updates,
+        },
+        push_notifications: {
+            new_quotes: prefs.push_new_quotes,
+            messages: prefs.push_messages,
+        },
+        sms_notifications: {
+            important_updates: prefs.sms_important_updates,
+        },
+    }
+}
+
 interface NotificationPreferencesProps {
     variant?: 'default' | 'vendor'
 }
 
 export default function NotificationPreferences({ variant = 'default' }: NotificationPreferencesProps) {
-    const [preferences, setPreferences] = useState(initialPreferences)
+    const { data: userNotificationData } = useGetUserNotificationQuery(undefined, { skip: variant === 'vendor' })
+    const [updateUserNotifications, { isLoading: isSavingUser }] = useUserNotificationPreferencesMutation()
     const [vendorPayload, setVendorPayload] = useState<VendorNotificationPreferencesPayload>(defaultVendorPayload)
     const [updateVendorNotifications, { isLoading: isSavingVendor }] = useVendorNotificationPreferencesMutation()
 
+    const apiPreferences = userNotificationData?.data as UserNotificationPreferencesPayload | undefined
+    const [userPreferences, setUserPreferences] = useState<Record<NotificationKey, boolean>>(initialPreferences)
+
+    useEffect(() => {
+        if (variant === 'default' && apiPreferences) {
+            setUserPreferences(userPayloadToPreferences(apiPreferences))
+        }
+    }, [variant, apiPreferences])
+
     const handleToggle = (key: NotificationKey) => {
-        setPreferences((prev) => ({ ...prev, [key]: !prev[key] }))
+        setUserPreferences((prev) => ({ ...prev, [key]: !prev[key] }))
     }
 
     const handleVendorToggle = (
@@ -131,7 +175,13 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                 // Error handled by RTK Query / toast
             }
         } else {
-            addToast({ title: 'Notification preferences saved', color: 'success', timeout: 2000 })
+            try {
+                const payload = preferencesToUserPayload(userPreferences)
+                await updateUserNotifications(payload).unwrap()
+                addToast({ title: 'Notification preferences saved', color: 'success', timeout: 2000 })
+            } catch {
+                // Error handled by RTK Query / toast
+            }
         }
     }
 
@@ -257,7 +307,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                                     <div className="shrink-0 pt-2 sm:pt-0">
                                         <Switch
                                             size="sm"
-                                            isSelected={preferences[item.key]}
+                                            isSelected={userPreferences[item.key]}
                                             onValueChange={() => handleToggle(item.key)}
                                             classNames={switchClass}
                                         />
@@ -270,7 +320,12 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
             </div>
 
             <div className="mt-8 flex justify-center">
-                <Button className="rounded-xl bg-primaryColor px-8 font-medium text-white" onPress={handleSave}>
+                <Button
+                    className="rounded-xl bg-primaryColor px-8 font-medium text-white"
+                    onPress={handleSave}
+                    isLoading={isSavingUser}
+                    isDisabled={isSavingUser}
+                >
                     Save Preference
                 </Button>
             </div>
