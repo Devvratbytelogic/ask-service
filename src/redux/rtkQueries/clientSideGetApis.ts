@@ -5,6 +5,7 @@ import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
 import { ISingleLeadAPIResponse } from '@/types/singleLead';
 import { IVendorAvailableLeadsAPIResponse, IVendorDashboardDataAPIResponse } from '@/types/vendorDashboard';
+import { IVendorDashboardTransactionAPIResponse } from '@/types/vendorDashboardTransaction';
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
 import { IVendorProfileInfoAPIResponse } from '@/types/vendorProfile';
 
@@ -92,6 +93,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
             }),
         }),
+        getVendorDashboardTransactionHistory: builder.query<IVendorDashboardTransactionAPIResponse, { page?: number; limit?: number; startDate?: string; endDate?: string } | void>({
+            query: (arg) => ({
+                url: `/vendor/transactions`,
+                method: 'GET',
+                ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
+            }),
+        }),
     }),
 });
 
@@ -110,4 +118,5 @@ export const {
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
     useGetSingleLeadQuery,
+    useGetVendorDashboardTransactionHistoryQuery,
 } = clientSideGetApis;

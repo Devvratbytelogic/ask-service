@@ -3,11 +3,12 @@
 import { openModal } from '@/redux/slices/allModalSlice'
 import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem } from '@heroui/react'
+import { useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { HiOutlineArrowDownTray } from 'react-icons/hi2'
+import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
 const CREDIT_PACKAGES = [
@@ -17,28 +18,39 @@ const CREDIT_PACKAGES = [
     { id: '500', credits: 500, bonus: 100, price: '139.99', unitPrice: '0.28', popular: false },
 ]
 
-const TRANSACTIONS = [
-    { type: 'deduction', description: 'Unlocked lead: House Cleaning in West London', credits: -3, balanceAfter: '150 credits', date: '30 Jan 2026, 14:32' },
-    { type: 'purchase', description: 'Purchased Professional Package', credits: 150, balanceAfter: '156 credits', date: '30 Jan 2026, 14:32' },
-    { type: 'deduction', description: 'Unlocked lead: Gardening in East London', credits: -5, balanceAfter: '6 credits', date: '29 Jan 2026, 10:15' },
-    { type: 'purchase', description: 'Purchased Starter Package', credits: 50, balanceAfter: '11 credits', date: '28 Jan 2026, 16:45' },
-    { type: 'deduction', description: 'Unlocked lead: House Cleaning in North London', credits: -3, balanceAfter: '6 credits', date: '27 Jan 2026, 09:22' },
-]
-
 const PERIOD_OPTIONS = [
+    { key: 'all', label: 'All time' },
     { key: '7', label: 'Last 7 days' },
     { key: '30', label: 'Last 30 days' },
     { key: '90', label: 'Last 90 days' },
 ]
 
 export default function CreditsWallet() {
-    const [period, setPeriod] = useState('30')
+    const [period, setPeriod] = useState('all')
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState('10')
-    const totalItems = 18
-    const totalPages = Math.ceil(totalItems / Number(itemsPerPage))
     const router = useRouter()
     const dispatch = useDispatch()
+
+    const queryParams = useMemo(() => {
+        const base = { page, limit: Number(itemsPerPage) }
+        if (period === 'all' || !period) return base
+        const days = Number(period) || 30
+        const end = new Date()
+        const start = new Date()
+        start.setDate(start.getDate() - days)
+        return {
+            ...base,
+            startDate: start.toISOString().split('T')[0],
+            endDate: end.toISOString().split('T')[0],
+        }
+    }, [period, page, itemsPerPage])
+
+    const { data, isLoading } = useGetVendorDashboardTransactionHistoryQuery(queryParams)
+    const apiData = data?.data
+    const transactions = apiData?.transactions ?? []
+    const totalItems = apiData?.total ?? 0
+    const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
 
     const openPurchaseModal = (pkg: (typeof CREDIT_PACKAGES)[0]) => {
         console.log('pkg', pkg)
@@ -149,7 +161,10 @@ export default function CreditsWallet() {
                                 selectionMode="single"
                                 onSelectionChange={(keys) => {
                                     const key = Array.from(keys as Set<string>)[0]
-                                    if (key) setPeriod(key)
+                                    if (key) {
+                                        setPeriod(key)
+                                        setPage(1)
+                                    }
                                 }}
                             >
                                 {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
@@ -187,36 +202,66 @@ export default function CreditsWallet() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {TRANSACTIONS.map((txn, i) => (
-                                    <tr key={i} className="border-b border-borderDark last:border-b-0">
-                                        <td className="px-4 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <span
-                                                    className={`size-2 rounded-full ${txn.type === 'purchase' ? 'bg-[#4CAF50]' : 'bg-danger'
-                                                        }`}
-                                                />
-                                                <span className="text-sm font-medium text-fontBlack capitalize">
-                                                    {txn.type}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-fontBlack">
-                                            {txn.description}
-                                        </td>
-                                        <td
-                                            className={`px-4 py-4 text-sm font-medium ${txn.credits > 0 ? 'text-[#4CAF50]' : 'text-danger'
-                                                }`}
-                                        >
-                                            {txn.credits > 0 ? `+${txn.credits}` : txn.credits}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-fontBlack">
-                                            {txn.balanceAfter}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-darkSilver">
-                                            {txn.date}
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-12 text-center">
+                                            <Spinner size="lg" color="primary" />
                                         </td>
                                     </tr>
-                                ))}
+                                ) : transactions.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-12 text-center text-sm text-darkSilver">
+                                            No transactions found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    transactions.map((txn) => {
+                                        const creditsNum = Number(txn.credits)
+                                        return (
+                                            <tr key={txn._id} className="border-b border-borderDark last:border-b-0">
+                                                <td className="px-4 py-4">
+                                                    <span
+                                                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${
+                                                            txn.type?.toLowerCase() === 'purchase'
+                                                                ? 'bg-[#E8F5E9] text-[#2E7D32]'
+                                                                : 'bg-[#FFEBEE] text-[#C62828]'
+                                                        }`}
+                                                    >
+                                                        <span
+                                                            className={`flex size-5 shrink-0 items-center justify-center rounded-full ${
+                                                                txn.type?.toLowerCase() === 'purchase'
+                                                                    ? 'bg-[#4CAF50] text-white'
+                                                                    : 'bg-danger text-white'
+                                                            }`}
+                                                        >
+                                                            {txn.type?.toLowerCase() === 'purchase' ? (
+                                                                <HiPlus className="size-3" strokeWidth={2.5} />
+                                                            ) : (
+                                                                <HiMinus className="size-3" strokeWidth={2.5} />
+                                                            )}
+                                                        </span>
+                                                        {txn.type}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 text-sm text-fontBlack">
+                                                    {txn.description}
+                                                </td>
+                                                <td
+                                                    className={`px-4 py-4 text-sm font-medium ${creditsNum > 0 ? 'text-[#4CAF50]' : 'text-danger'
+                                                        }`}
+                                                >
+                                                    {creditsNum > 0 ? `${txn.credits}` : txn.credits}
+                                                </td>
+                                                <td className="px-4 py-4 text-sm text-fontBlack">
+                                                    {txn.balanceAfter} credits
+                                                </td>
+                                                <td className="px-4 py-4 text-sm text-darkSilver">
+                                                    {txn.date}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -224,7 +269,9 @@ export default function CreditsWallet() {
                     {/* Pagination */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border-t border-borderDark">
                         <p className="text-sm text-darkSilver">
-                            1-05 of {totalItems} items
+                            {totalItems === 0
+                                ? '0 items'
+                                : `${(page - 1) * Number(itemsPerPage) + 1}-${Math.min(page * Number(itemsPerPage), totalItems)} of ${totalItems} items`}
                         </p>
                         <div className="flex items-center gap-4">
                             <Pagination
@@ -242,7 +289,10 @@ export default function CreditsWallet() {
                                 selectedKeys={[itemsPerPage]}
                                 onSelectionChange={(keys) => {
                                     const key = Array.from(keys as Set<string>)[0]
-                                    if (key) setItemsPerPage(key)
+                                    if (key) {
+                                        setItemsPerPage(key)
+                                        setPage(1)
+                                    }
                                 }}
                                 className="min-w-24"
                                 classNames={{
