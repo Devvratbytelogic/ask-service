@@ -9,13 +9,15 @@ interface ServiceAndLocationProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
   childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
+  grandParentServiceName?: string | null
 }
 
 const STEP1_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = ["parentServiceName", "serviceFrequency", "pincode"]
 
-const ServiceAndLocation = ({ formik, setStepCount, childServices = [] }: ServiceAndLocationProps) => {
+const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, childServices = [] }: ServiceAndLocationProps) => {
   const { values, setFieldValue, touched, errors, handleBlur, handleChange, validateForm, setTouched } = formik
-  
+  console.log('grandParentServiceName', grandParentServiceName);
+
 
   const isOtherSelected = values.parentServiceName === "other"
   const step1FieldsToValidate = isOtherSelected
@@ -49,7 +51,7 @@ const ServiceAndLocation = ({ formik, setStepCount, childServices = [] }: Servic
           <Select
             name="parentServiceName"
             variant="bordered"
-            label="Type of cleaning service"
+            label={`Type of ${grandParentServiceName} service`}
             labelPlacement="outside"
             placeholder="Select Service"
             selectedKeys={values.parentServiceName ? [values.parentServiceName] : []}

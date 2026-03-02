@@ -273,6 +273,7 @@ const RequestServiceFlowIndex = () => {
         },
     })
 
+console.log('data', data);
 
     return (
         <>
@@ -287,7 +288,7 @@ const RequestServiceFlowIndex = () => {
                     </div>
                 </div>
                 {
-                    getStepCount === 1 && <ServiceAndLocation formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
+                    getStepCount === 1 && <ServiceAndLocation grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
                 {
                     getStepCount === 2 && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
