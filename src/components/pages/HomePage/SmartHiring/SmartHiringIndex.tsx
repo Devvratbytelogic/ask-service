@@ -5,10 +5,10 @@ const SmartHiringIndex = () => {
         <div className="space_y_header_body container_y_padding">
             <div className="space_y_header_paragraph">
                 <h2 className="header_text text-center font-bold w-11/12 md:w-1/2 2xl:w-1/3 mx-auto">
-                    <span className="text-fontBlack">A smarter way to hire</span>
-                    <span className="text-darkSilver mx-2">trusted professionals</span>
+                    <span className="text-fontBlack">Une façon plus simple d'embaucher</span>
+                    <span className="text-darkSilver mx-2">des professionnels de confiance</span>
                 </h2>
-                <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center">No endless calls, no guesswork. Just clear requests and verified professionals competing for your job.</p>
+                <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center">Pas d'appels interminables, pas de suppositions. Des demandes claires et des professionnels vérifiés pour votre projet.</p>
             </div>
             <div className="relative px-0 xl:px-[120px]">
                 <div className="grid grid-cols-1 md:grid-cols-2">

@@ -15,12 +15,12 @@ const formatDate = (dateStr: string) => {
   if (!dateStr?.trim()) return "—"
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return dateStr
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 }
 
 const getServiceName = (value: string, otherName?: string) => {
   if (!value) return "—"
-  if (value === "other") return (otherName?.trim() || "Other")
+  if (value === "other") return (otherName?.trim() || "Autre")
   const found = SERVICE_LIST.find((s) => String(s._id) === value)
   return found?.service_name ?? value
 }
@@ -40,39 +40,39 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
 
   const summaryCards = [
     {
-      title: "Service & Frequency",
+      title: "Service et fréquence",
       step: 1,
       rows: [
         { label: "Service:", value: getServiceName(values.parentServiceName, values.otherServiceName) },
-        { label: "Cleaning frequency:", value: values.serviceFrequency || "—" },
+        { label: "Fréquence:", value: values.serviceFrequency || "—" },
       ],
     },
     {
-      title: "Tasks",
+      title: "Missions",
       step: 2,
       rows: [
-        { label: "Tasks:", value: getTaskNames(values.childServiceIds ?? []) },
+        { label: "Missions:", value: getTaskNames(values.childServiceIds ?? []) },
       ],
     },
     {
-      title: "Schedule",
+      title: "Planning",
       step: 3,
       rows: [
-        { label: "Preferred date:", value: formatDate(values.serviceStartDate) },
-        { label: "Preferred time:", value: values.serviceTimeOfDay || "—" },
-        { label: "Note:", value: values.serviceNote?.trim() || "—" },
+        { label: "Date de début:", value: formatDate(values.serviceStartDate) },
+        { label: "Moment souhaité:", value: values.serviceTimeOfDay || "—" },
+        { label: "Détails:", value: values.serviceNote?.trim() || "—" },
       ],
     },
     {
-      title: "Contact Information",
+      title: "Vos coordonnées",
       step: 4,
       rows: [
         {
-          label: "Name:",
+          label: "Nom:",
           value: [values.customerFirstName, values.customerLastName].filter(Boolean).join(" ") || "—",
         },
-        { label: "Type:", value: values.clientType || "—" },
-        { label: "Phone:", value: values.customerPhoneNumber || "—" },
+        { label: "Type:", value: (values.clientType === "Individual" ? "Particulier" : values.clientType === "Company" ? "Entreprise" : values.clientType) || "—" },
+        { label: "Téléphone:", value: values.customerPhoneNumber || "—" },
         { label: "Email:", value: values.customerEmail || "—" },
       ],
     },
@@ -82,10 +82,10 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
     <>
       <div className="space-y-1">
         <h2 className="text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">
-          Review Your Request
+          Vérifiez votre demande
         </h2>
         <p className="text-darkSilver text-sm/[18px] xl:text-base/[30px]">
-          Please review your details before submitting
+          Veuillez vérifier vos informations avant de soumettre votre demande.
         </p>
       </div>
 
@@ -102,7 +102,7 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
                 onClick={() => setStepCount(card.step)}
                 className="text-primaryColor text-sm font-medium hover:underline"
               >
-                Edit
+                Modifier
               </button>
             </div>
             <dl className="space-y-1.5">
@@ -120,7 +120,7 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
       <div className="flex items-start gap-2 rounded-lg bg-primaryColor/10 px-3 py-2 text-primaryColor mt-4">
         <FiCheck className="mt-0.5 shrink-0 text-lg" aria-hidden />
         <p className="text-sm">
-          Your details are secure and will only be shared with verified professionals
+          Vos informations sont sécurisées et ne seront partagées qu'avec des professionnels vérifiés
         </p>
       </div>
 
@@ -132,15 +132,15 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
           className="w-full font-medium btn_radius"
           onPress={() => handleSubmit()}
         >
-          Submit request & get quotes
+          Envoyer la demande et recevoir des devis
         </Button>
         <Button variant="bordered" onPress={handleBack} className="w-full btn_radius">
-          Back
+          Précédent
         </Button>
       </div>
 
       <p className="text-center text-placeHolderText text-tiny mt-4">
-        By submitting, you agree to our Terms of Service and Privacy Policy
+        En soumettant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.
       </p>
     </>
   )

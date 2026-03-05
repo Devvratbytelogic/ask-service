@@ -8,6 +8,7 @@ import "react-phone-input-2/lib/style.css"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
 
 const CLIENT_TYPES = ["Individual", "Company"] as const
+const CLIENT_TYPE_LABELS: Record<string, string> = { Individual: "Particulier", Company: "Entreprise" }
 
 const STEP4_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = [
   "customerFirstName",
@@ -47,10 +48,10 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
     <>
       <div className="space-y-1">
         <h2 className="text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">
-          Your Contact Information
+          Vos coordonnées
         </h2>
         <p className="text-darkSilver text-sm/[18px] xl:text-base/[30px]">
-          How can provider reach you?
+          Comment les prestataires peuvent-ils vous contacter ?
         </p>
       </div>
 
@@ -59,7 +60,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <Input
             name="customerFirstName"
             variant="bordered"
-            label="First name"
+            label="Prénom"
             labelPlacement="outside"
             placeholder="John"
             value={values.customerFirstName}
@@ -78,7 +79,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <Input
             name="customerLastName"
             variant="bordered"
-            label="Last name"
+            label="Nom"
             labelPlacement="outside"
             placeholder="Smith"
             value={values.customerLastName}
@@ -95,7 +96,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
         </div>
         <div className="col-span-1">
           <p className="custom_label_text mb-2">
-            Client type <span className="text-danger">*</span>
+            Type de client <span className="text-danger">*</span>
           </p>
           <div className="flex gap-3">
             {CLIENT_TYPES.map((type) => {
@@ -114,7 +115,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
                     }
                   `}
                 >
-                  {type}
+                  {CLIENT_TYPE_LABELS[type] ?? type}
                 </button>
               )
             })}
@@ -125,17 +126,17 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
         </div>
         <div className="col-span-1 w-full relative z-100">
           <p className="custom_label_text mb-1.5">
-            Phone number <span className="text-danger">*</span>
+            Numéro de téléphone <span className="text-danger">*</span>
           </p>
           <div className="mt-1.5">
             <PhoneInput
-              country="us"
+              country="fr"
               value={values.customerPhoneNumber}
               onChange={(value) => setFieldValue("customerPhoneNumber", value)}
               onBlur={() => setFieldTouched("customerPhoneNumber", true)}
               inputProps={{
                 name: "customerPhoneNumber",
-                "aria-label": "Phone number",
+                "aria-label": "Numéro de téléphone",
               }}
               containerClass="!w-full"
               inputClass="!w-full !rounded-[12px] !border-borderDark"
@@ -152,7 +153,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <Input
             name="customerEmail"
             variant="bordered"
-            label="Email address"
+            label="Adresse email"
             labelPlacement="outside"
             placeholder="email@example.com"
             type="email"
@@ -171,14 +172,14 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
         <div className="col-span-1 flex items-start gap-2 rounded-lg bg-primaryColor/10 px-3 py-2 text-primaryColor">
           <FiInfo className="mt-0.5 shrink-0 text-lg" aria-hidden />
           <p className="text-sm">
-            Privacy notice: Your contact details will be hidden from providers until they purchase this lead.
+            Avis de confidentialité : Vos coordonnées seront masquées aux prestataires jusqu'à ce qu'ils achètent ce lead.
           </p>
         </div>
       </div>
 
       <div className="flex justify-between pt-6 gap-2">
         <Button variant="bordered" className="btn_radius font-medium text-sm/[20px] leading-[-0.42px]" onPress={handleBack}>
-          Back
+          Précédent
         </Button>
         <Button
           color="primary"
@@ -186,7 +187,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           onPress={handleContinue}
           isDisabled={!isStep4Valid}
         >
-          Continue
+          Continuer
         </Button>
       </div>
     </>

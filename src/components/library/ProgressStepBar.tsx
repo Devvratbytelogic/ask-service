@@ -22,7 +22,7 @@ const ProgressStepBar = ({
       aria-valuenow={currentStep}
       aria-valuemin={1}
       aria-valuemax={totalSteps}
-      aria-label={`Step ${currentStep} of ${totalSteps}`}
+      aria-label={`Étape ${currentStep} sur ${totalSteps}`}
     >
       {/* Horizontal bar: rounded track, green fill */}
       <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">

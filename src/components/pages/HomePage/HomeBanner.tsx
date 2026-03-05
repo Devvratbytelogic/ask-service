@@ -54,10 +54,10 @@ const HomeBanner = () => {
         <div className="mx-auto w-11/12 flex flex-col items-center h-auto xl:h-[70vh] xl:min-h-[70svh] 2xl:h-[75vh] 2xl:min-h-[75svh] gap-8 relative home-banner-bg py-10">
             <div className="flex justify-center items-center flex-col text-fontBlack text-[30px] md:text-[35px]/[44px] xl:text-[54px]/[74px] font-bold tracking-[-2px]">
                 <h2 className="text-center">
-                    Find Trusted Professionals for
+                    Trouvez rapidement des professionnels de confiance pour
                 </h2>
                 <div className="flex items-center gap-4 flex-wrap justify-center">
-                    <span>any service</span>
+                    <span>tous vos besoins</span>
                     <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-white/80">
                         {/* Corner circular icons */}
                         <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
@@ -68,19 +68,19 @@ const HomeBanner = () => {
                             <ImageComponent url="/images/home/logo_light_black.png" img_title="logo_light_black" object_contain />
                         </span>
                         <span className="text-lightBlack font-semibold">
-                            super fast
+                            Rapide et simple
                         </span>
                     </span>
                 </div>
             </div>
             <p className="text-center text-lightBlack text-lg xl:text-xl w-11/12 md:w-1/2 2xl:w-[40vw] 2xl:max-w-[40svw]">
-                Tell us what you need and receive quotes from verified professionals in your area. No calls. No spam. Just the right help.
+                Indiquez votre besoin et recevez rapidement des devis de professionnels vérifiés dans votre région. Sans appels indésirables. Sans spam. Juste les bons experts.
             </p>
             <div id="banner-search" className="flex gap-2 flex-wrap justify-center">
                 <div className="w-[90vw] md:w-[30vw] max-w-full mx-auto">
                     <Autocomplete
                         variant="bordered"
-                        placeholder="What service do you need?"
+                        placeholder="Quel service recherchez-vous?"
                         allowsCustomValue
                         items={filteredServicesList}
                         inputValue={searchValue}
@@ -115,7 +115,7 @@ const HomeBanner = () => {
                 <span className="w-[50vw] md:w-auto max-w-full min-w-0">
                     <Input
                         type="text"
-                        placeholder="Enter pincode"
+                        placeholder="Code postal"
                         value={selectedPinCode}
                         onValueChange={setSelectedPinCode}
                         variant="bordered"

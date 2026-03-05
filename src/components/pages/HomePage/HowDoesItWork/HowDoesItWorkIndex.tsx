@@ -6,8 +6,7 @@ const HowDoesItWorkIndex = () => {
     return (
         <div className="space_y_header_body container_y_padding">
             <h2 className="header_text text-center font-bold">
-                <span className="text-fontBlack">How does</span>
-                <span className="text-darkSilver mx-2">it work?</span>
+                <span className="text-fontBlack">Comment ça marche?</span>
             </h2>
             <div className="space-y-7.5">
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden group cursor-pointer h-[40svh] md:h-[70svh]">
@@ -29,7 +28,7 @@ const HowDoesItWorkIndex = () => {
                     {/* Bottom-left text */}
                     <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-white">
                         <p className="text-lg md:text-[36px]/[43.2px] leading-tight w-2/3">
-                            Get the right professional in just a few simple steps.
+                            Trouvez le bon professionnel en quelques étapes simples.
                         </p>
                     </div>
                 </div>
@@ -55,17 +54,17 @@ export default HowDoesItWorkIndex
 const HowDoesItWorkData = [
     {
         stepImage:'/images/home/tell_us.png',
-        stepHeading:'Tell us what you need',
-        stepDescription:'Share your service requirement, location, and preferred timeline. The more details you provide, the better the quotes you receive.'
+        stepHeading:'Indiquez votre besoin',
+        stepDescription:'Partagez votre besoin de service, le lieu et la période souhaitée. Plus vous donnez de détails, meilleurs seront les devis.'
     },
     {
         stepImage:'/images/home/get_quotes.png',
-        stepHeading:'Get quotes',
-        stepDescription:'Verified professionals review your request and send you quotes. Your contact details remain private until you are ready to proceed.'
+        stepHeading:'Recevez des devis',
+        stepDescription:'Des professionnels vérifiés étudient votre demande et vous envoient des devis. Vos coordonnées restent confidentielles jusqu\'à ce que vous soyez prêt à continuer.'
     },
     {
         stepImage:'/images/home/choose_prof.png',
-        stepHeading:'Choose your professional',
-        stepDescription:'Compare prices, service details, and profiles. Select the professional that fits your needs and connect securely through the platform.'
+        stepHeading:'Choisissez votre professionnel',
+        stepDescription:'Comparez les tarifs, les détails des prestations et les profils. Sélectionnez le professionnel qui vous convient et échangez en toute sécurité sur la plateforme.'
     },
 ]

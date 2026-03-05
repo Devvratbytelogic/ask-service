@@ -43,17 +43,25 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
   return (
     <>
       <div className="space-y-1">
-        <h2 className=" text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">Service & Location</h2>
-        <p className="text-darkSilver text-sm/[18px]  xl:text-base/[30px]">Tell us what type of cleaning you need</p>
+        <h2 className=" text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">Service et lieu</h2>
+        <p className="text-darkSilver text-sm/[18px]  xl:text-base/[30px]">
+          {grandParentServiceName?.toLowerCase().includes("security") || grandParentServiceName?.toLowerCase().includes("sécurité")
+            ? "Quel type de service de sécurité recherchez-vous?"
+            : grandParentServiceName?.toLowerCase().includes("cleaning") || grandParentServiceName?.toLowerCase().includes("nettoyage")
+              ? "Quel type de service de nettoyage recherchez-vous ?"
+              : grandParentServiceName?.toLowerCase().includes("garden") || grandParentServiceName?.toLowerCase().includes("jardin")
+                ? "Quel type de service de jardinage recherchez-vous ?"
+                : "Quel type de service recherchez-vous ?"}
+        </p>
       </div>
       <div className="space-y-4 grid grid-cols-1">
         <div className="col-span-1">
           <Select
             name="parentServiceName"
             variant="bordered"
-            label={`Type of ${grandParentServiceName} service`}
+            label={grandParentServiceName?.toLowerCase().includes("security") || grandParentServiceName?.toLowerCase().includes("sécurité") ? "Type de service de sécurité" : grandParentServiceName?.toLowerCase().includes("cleaning") || grandParentServiceName?.toLowerCase().includes("nettoyage") ? "Type de service de nettoyage" : grandParentServiceName?.toLowerCase().includes("garden") || grandParentServiceName?.toLowerCase().includes("jardin") ? "Type de service de jardinage" : `Type de service ${grandParentServiceName ?? ""}`}
             labelPlacement="outside"
-            placeholder="Select Service"
+            placeholder="Sélectionnez un service"
             selectedKeys={values.parentServiceName ? [values.parentServiceName] : []}
             onSelectionChange={(keys) => {
               const key = Array.from(keys as Set<string>)[0]
@@ -73,7 +81,7 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
               {(childServices ?? []).map((curr) => (
                 <SelectItem key={String(curr?._id)}>{curr?.title}</SelectItem>
               ))}
-              <SelectItem key="other">Other</SelectItem>
+              <SelectItem key="other">Autre</SelectItem>
             </>
           </Select>
         </div>
@@ -100,9 +108,9 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
           <Select
             name="serviceFrequency"
             variant="bordered"
-            label="Service frequency"
+            label="Fréquence de la prestation"
             labelPlacement="outside"
-            placeholder="Select Frequency"
+            placeholder="Sélectionnez la fréquence"
             selectedKeys={values.serviceFrequency ? [values.serviceFrequency] : []}
             onSelectionChange={(keys) => {
               const key = Array.from(keys as Set<string>)[0]
@@ -128,7 +136,7 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
           isDisabled={!isStep1Valid}
           className="btn_radius flex-1 bg-primaryColor text-white font-medium text-sm/[20px] leading-[-0.42px]"
         >
-          Continue
+          Continuer
         </Button>
       </div>
     </>

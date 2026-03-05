@@ -108,11 +108,11 @@ const RequestServiceFlowIndex = () => {
         ]
         requiredFields.forEach((field) => {
             if (!values[field]?.toString().trim()) {
-                err[field] = "Required"
+                err[field] = "Requis"
             }
         })
         if (values.parentServiceName === "other" && !values.otherServiceName?.toString().trim()) {
-            err.otherServiceName = "Required"
+            err.otherServiceName = "Requis"
         }
         return err
     }
@@ -277,11 +277,11 @@ console.log('data', data);
 
     return (
         <>
-            {isLoading && <AppLoader message="Creating service request..." />}
+            {isLoading && <AppLoader message="Création de la demande en cours..." />}
             <div className="space-y-5">
                 <div className="space-y-2.5">
                     <p className="text-fontBlack text-sm/[20px] xl:text-lg/[22px] text-center">
-                        Step <span className="text-[#10B981] font-semibold">{getStepCount}</span> of 5
+                        Étape <span className="text-[#10B981] font-semibold">{getStepCount}</span> sur 5
                     </p>
                     <div className="w-full mx-auto px-4 py-6">
                         <ProgressStepBar currentStep={getStepCount} totalSteps={5} />

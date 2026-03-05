@@ -27,10 +27,9 @@ const ServicesWeOfferIndex = () => {
             <div className="space_y_header_body container_y_padding">
                 <div className="space_y_header_paragraph">
                     <h2 className="header_text text-center font-bold">
-                        <span className="text-fontBlack">Services</span>
-                        <span className="text-darkSilver mx-2">We Offer</span>
+                        <span className="text-fontBlack">Nos services</span>
                     </h2>
-                    <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center">Choose from a wide range of professionally delivered services, tailored to your needs.</p>
+                    <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center">Choisissez parmi une large gamme de services professionnels, adaptés à vos besoins.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {

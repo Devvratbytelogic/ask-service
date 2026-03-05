@@ -39,10 +39,10 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
     <>
       <div className="space-y-1">
         <h2 className="text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">
-          Desired Schedule
+          Planning souhaité
         </h2>
         <p className="text-darkSilver text-sm/[18px] xl:text-base/[30px]">
-          When would you like the service?
+          Quand souhaitez-vous l'intervention ?
         </p>
       </div>
 
@@ -52,7 +52,7 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
             name="serviceStartDate"
             type="date"
             variant="bordered"
-            label="Preferred start date"
+            label="Date de début"
             labelPlacement="outside"
             value={values.serviceStartDate}
             onChange={handleChange}
@@ -71,9 +71,9 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
           <Select
             name="serviceTimeOfDay"
             variant="bordered"
-            label="Preferred time of day"
+            label="Moment de la journée souhaité"
             labelPlacement="outside"
-            placeholder="Select time"
+            placeholder="Sélectionnez le moment"
             selectedKeys={values.serviceTimeOfDay ? [values.serviceTimeOfDay] : []}
             onSelectionChange={(keys) => {
               const key = Array.from(keys as Set<string>)[0]
@@ -95,7 +95,7 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
           <div className="mt-2 flex items-start gap-2 rounded-lg bg-primaryColor/10 px-3 py-2 text-primaryColor">
             <FiInfo className="mt-0.5 shrink-0 text-lg" aria-hidden />
             <p className="text-sm">
-              Note: Time will be confirmed with your selected provider.
+              Note : L'heure sera confirmée avec le prestataire choisi.
             </p>
           </div>
         </div>
@@ -103,9 +103,9 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
           <Textarea
             name="serviceNote"
             variant="bordered"
-            label="Note"
+            label="Donnez plus de détails"
             labelPlacement="outside"
-            placeholder="write something..."
+            placeholder="Écrivez ici..."
             value={values.serviceNote}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -120,7 +120,7 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
 
       <div className="flex justify-between pt-6 gap-2">
         <Button variant="bordered" className="btn_radius font-medium text-sm/[20px] leading-[-0.42px]" onPress={handleBack}>
-          Back
+          Précédent
         </Button>
         <Button
           color="primary"
@@ -128,7 +128,7 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
           onPress={handleContinue}
           isDisabled={!isStep3Valid}
         >
-          Continue
+          Continuer
         </Button>
       </div>
     </>

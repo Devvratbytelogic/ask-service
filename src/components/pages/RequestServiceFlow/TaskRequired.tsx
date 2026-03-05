@@ -37,10 +37,10 @@ const TaskRequired = ({ formik, setStepCount, childCategories = [] }: TaskRequir
     <>
       <div className="space-y-1">
         <h2 className="text-fontBlack text-xl/[26px] xl:text-2xl/[30px] font-semibold">
-          Cleaning tasks required
+          Missions demandées
         </h2>
         <p className="text-darkSilver text-sm/[18px] xl:text-base/[30px]">
-          Optional – Select all that apply to help providers better understand your needs
+          Optionnel – Sélectionnez tout ce qui s'applique pour aider les prestataires à mieux comprendre vos besoins
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -75,10 +75,10 @@ const TaskRequired = ({ formik, setStepCount, childCategories = [] }: TaskRequir
       </div>
       <div className="flex justify-between pt-6 gap-2">
         <Button variant="bordered" className="btn_radius font-medium text-sm/[20px] leading-[-0.42px]" onPress={handleBack}>
-          Back
+          Précédent
         </Button>
         <Button color="primary" className="btn_radius flex-1 bg-primaryColor text-white font-medium text-sm/[20px] leading-[-0.42px]" onPress={handleContinue}>
-          Continue
+          Continuer
         </Button>
       </div>
     </>

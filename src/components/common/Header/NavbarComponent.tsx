@@ -40,7 +40,7 @@ const NavbarComponent = () => {
                 className="text-base/[22px] font-medium btn_bg_whiteSilver btn_radius btn_padding"
                 onPress={() => signupSiginModal()}
             >
-                Login/ Register
+                Connexion / Inscription
             </Button>
 
             <Button endContent={
@@ -51,7 +51,7 @@ const NavbarComponent = () => {
                 className="text-base/[22px] font-medium btn_bg_blue btn_radius btn_padding"
                 onPress={() => becomeAProfessionalModal()}
             >
-                Become a Professional
+                Devenir prestataire
             </Button>
         </div>
     )
