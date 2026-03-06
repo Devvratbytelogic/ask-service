@@ -53,10 +53,10 @@ const HomeBanner = () => {
     return (
         <div className="mx-auto w-11/12 flex flex-col items-center h-auto xl:h-[70vh] xl:min-h-[70svh] 2xl:h-[75vh] 2xl:min-h-[75svh] gap-8 relative home-banner-bg py-10">
             <div className="flex justify-center items-center flex-col text-fontBlack text-[30px] md:text-[35px]/[44px] xl:text-[54px]/[74px] font-bold tracking-[-2px]">
-                <h2 className="text-center">
-                    Trouvez rapidement des professionnels de confiance pour
-                </h2>
                 <div className="flex items-center gap-4 flex-wrap justify-center">
+                    <h2 className="text-center">
+                        Trouvez rapidement des professionnels de confiance pour
+                    </h2>
                     <span>tous vos besoins</span>
                     <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-white/80">
                         {/* Corner circular icons */}

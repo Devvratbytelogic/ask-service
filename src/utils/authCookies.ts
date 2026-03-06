@@ -8,7 +8,8 @@ export interface AuthResponseData {
     token?: string
     access_token?: string
     user?: { _id?: string; id?: string; [key: string]: unknown }
-    role?: { _id?: string; id?: string; name?: string; [key: string]: unknown }
+    /** Role can be a string (e.g. "Vendor") or object with name/id/_id */
+    role?: string | { _id?: string; id?: string; name?: string; [key: string]: unknown }
 }
 
 /**
@@ -27,8 +28,8 @@ export function setAuthCookies(data: AuthResponseData): void {
     }
 
     const role = data.role
-    if (role) {
-        const roleValue = role.name ?? role.id ?? role._id
+    if (role != null && role !== '') {
+        const roleValue = typeof role === 'string' ? role : (role.name ?? role.id ?? role._id)
         if (roleValue) {
             Cookies.set('user_role', String(roleValue), { ...COOKIE_OPTIONS, expires: TOKEN_MAX_AGE_DAYS })
         }
@@ -52,4 +53,11 @@ export function clearAuthCookies(): void {
     Cookies.remove('auth_token', { path: '/' })
     Cookies.remove('userID', { path: '/' })
     Cookies.remove('user_role', { path: '/' })
+}
+
+/** Clear all cookies for the current domain and reload the page (e.g. after logout). */
+export function clearAllCookiesAndReload(homePath: string = '/'): void {
+    const all = Cookies.get()
+    Object.keys(all).forEach((name) => Cookies.remove(name, { path: '/' }))
+    window.location.href = homePath
 }

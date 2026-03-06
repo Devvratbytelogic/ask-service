@@ -1,7 +1,8 @@
 import ImageComponent from "@/components/library/ImageComponent"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import type { AuthResponseData } from "@/utils/authCookies"
 import { loginWithGoogle } from "@/firebase/GoogleLogin"
 import { addToast, Button } from "@heroui/react"
 import { useRouter } from "next/navigation"
@@ -28,7 +29,7 @@ const CustomerSignInIndex = () => {
             if (responseData && typeof responseData === "object") {
                 const authData = responseData as AuthResponseData;
                 if (authData.token ?? authData.access_token) {
-                    setAuthCookies(authData);
+                    setAuthAndRefetchProfile(authData, dispatch);
                     router.refresh();
                     addToast({ title: "Signed in successfully", color: "success", timeout: 2000 });
                     if (returnToRequestFlow && requestFlowData) {

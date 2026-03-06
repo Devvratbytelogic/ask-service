@@ -3,7 +3,8 @@
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useLoginMutation, useLoginPhoneEmailMutation } from "@/redux/rtkQueries/authApi"
-import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useMemo, useState } from "react"
@@ -86,7 +87,7 @@ const CustomerSignInDetails = () => {
                 const res = await login({ identifier, password: values.password }).unwrap()
                 const responseData = res?.data
                 if (responseData && typeof responseData === 'object') {
-                    setAuthCookies(responseData as AuthResponseData)
+                    setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                     router.refresh()
                 }
                 addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })

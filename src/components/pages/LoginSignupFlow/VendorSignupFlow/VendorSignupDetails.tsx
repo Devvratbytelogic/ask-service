@@ -4,7 +4,8 @@ import ImageComponent from "@/components/library/ImageComponent"
 import { useVendorRegisterMutation } from "@/redux/rtkQueries/authApi"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import type { AuthResponseData } from "@/utils/authCookies"
 import { loginWithGoogle } from "@/firebase/GoogleLogin"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
@@ -62,7 +63,7 @@ const VendorSignupDetails = () => {
             if (responseData && typeof responseData === "object") {
                 const authData = responseData as AuthResponseData
                 if (authData.token ?? authData.access_token) {
-                    setAuthCookies(authData)
+                    setAuthAndRefetchProfile(authData, dispatch)
                     router.refresh()
                     addToast({ title: "Account created successfully", color: "success", timeout: 2000 })
                     dispatch(closeModal())

@@ -4,7 +4,8 @@ import OtpInput from "@/components/library/OtpInput"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useResendPhoneOtpMutation, useResendPhoneOtpGoogleLoginMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
-import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -112,7 +113,7 @@ const MobileOtpVerification = () => {
             const res = await verifyPhone({ phone: phoneNumber, otp: otpValue }).unwrap()
             const responseData = (res as { data?: unknown })?.data ?? res
             if (responseData && typeof responseData === "object") {
-                setAuthCookies(responseData as AuthResponseData)
+                setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
             }
             if (data?.callBackModal || data?.parentCallBackModal) {

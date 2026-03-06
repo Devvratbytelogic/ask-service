@@ -89,7 +89,7 @@ const DesiredSchedule = ({ formik, setStepCount }: DesiredScheduleProps) => {
             isRequired
           >
             {TIME_OF_DAY_OPTIONS.map((opt) => (
-              <SelectItem key={opt}>{opt}</SelectItem>
+              <SelectItem key={opt.value}>{opt.label}</SelectItem>
             ))}
           </Select>
           <div className="mt-2 flex items-start gap-2 rounded-lg bg-primaryColor/10 px-3 py-2 text-primaryColor">

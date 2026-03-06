@@ -28,10 +28,12 @@ const baseQuery = fetchBaseQuery({
         const token = Cookies.get("auth_token") || null
         const deviceId = Cookies.get("device") || ''
         const userId = Cookies.get("userID") || ''
+        const userRole = Cookies.get("user_role") || ''
         // headers.set('clientid', API_CLIENT_ID);
         // headers.set('clientsecret', API_CLIENT_SECRET);
         headers.set('device', deviceId);
         headers.set('userID', userId);
+        if (userRole) headers.set('user_role', userRole);
         headers.set('Authorization', `Bearer ${token}`);
         return headers;
     },

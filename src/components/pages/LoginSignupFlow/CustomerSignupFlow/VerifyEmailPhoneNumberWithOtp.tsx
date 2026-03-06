@@ -9,7 +9,8 @@ import {
     useVerifyEmailMutation,
     useVerifyPhoneMutation,
 } from "@/redux/rtkQueries/authApi"
-import { setAuthCookies, type AuthResponseData } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -92,7 +93,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
             }
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
-                setAuthCookies(responseData as AuthResponseData)
+                setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
             }
             addToast({

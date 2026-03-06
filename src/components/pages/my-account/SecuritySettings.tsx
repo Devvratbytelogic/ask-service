@@ -12,7 +12,7 @@ import {
     useDeleteVendorAccountMutation,
     useDeleteUserAccountMutation,
 } from '@/redux/rtkQueries/allPostApi'
-import { clearAuthCookies } from '@/utils/authCookies'
+import { clearAllCookiesAndReload } from '@/utils/authCookies'
 import { getHomeRoutePath } from '@/routes/routes'
 
 const inputClasses = {
@@ -51,8 +51,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 await deleteUserAccount({}).unwrap()
             }
             addToast({ title: 'Account deleted successfully', color: 'success', timeout: 2000 })
-            clearAuthCookies()
-            router.push(getHomeRoutePath())
+            clearAllCookiesAndReload(getHomeRoutePath())
         } catch {
             // Error is handled by RTK Query / toast
         }

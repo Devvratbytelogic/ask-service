@@ -5,7 +5,7 @@ import {
     useVendorResendOtpMutation,
     useVendorVerifyOtpMutation,
 } from "@/redux/rtkQueries/authApi"
-import { setAuthCookies } from "@/utils/authCookies"
+import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
@@ -76,13 +76,13 @@ const VendorOtpVerification = () => {
                 ...(emailOtp && { otp_email: emailOtp }),
             }).unwrap()
             const data = (response).data
-            setAuthCookies({
+            setAuthAndRefetchProfile({
                 token: data.token,
                 user: data.userData,
                 role: data.userData.role
                     ? data.userData.role
                     : '',
-            })
+            }, dispatch)
             router.refresh()
             addToast({
                 title: "Success",

@@ -125,7 +125,9 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
             }}
             isRequired
           >
-            {SERVICE_FREQUENCY_TYPE?.map((curr) => <SelectItem key={curr}>{curr}</SelectItem>)}
+            {SERVICE_FREQUENCY_TYPE?.map((curr) => (
+              <SelectItem key={curr.value}>{curr.label}</SelectItem>
+            ))}
           </Select>
         </div>
       </div>

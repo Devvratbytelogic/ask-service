@@ -6,9 +6,11 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HiOutlineCog6Tooth } from "react-icons/hi2"
+import { useSelector } from "react-redux";
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
-import { getUserRole, clearAuthCookies, getAuthToken } from "@/utils/authCookies";
+import { getUserRole, clearAllCookiesAndReload, getAuthToken } from "@/utils/authCookies";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
+import type { RootState } from "@/redux/appStore";
 
 /** Get initials from first + last name, or email/placeholder */
 function getInitials(firstName?: string | null, lastName?: string | null, email?: string | null): string {
@@ -43,13 +45,21 @@ interface HeaderProps {
 const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const router = useRouter();
     const isAuthenticated = initialIsAuthenticated || !!getAuthToken();
-    const role = getUserRole();
+    const roleFromRedux = useSelector((state: RootState) => state.auth.userRole);
+    const roleFromCookie = getUserRole();
+    const role = roleFromRedux ?? roleFromCookie;
     const isVendor = role?.toLowerCase() === "vendor";
 
-    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, { skip: !isVendor });
-    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, { skip: isVendor });
+    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, {
+        skip: !isAuthenticated || !isVendor,
+    });
+    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, {
+        skip: !isAuthenticated || isVendor,
+    });
 
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
+    // console.log("refetchVendorProfile", refetchVendorProfile);
+    // console.log("refetchUserProfile", refetchUserProfile);
     const firstName = profile?.first_name;
     const lastName = profile?.last_name;
     const email = profile?.email;
@@ -58,9 +68,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const fullName = getFullName(firstName, lastName);
 
     const handleLogout = () => {
-        clearAuthCookies();
-        router.push(getHomeRoutePath());
-        router.refresh();
+        clearAllCookiesAndReload(getHomeRoutePath());
     };
 
     if (!isAuthenticated) {
