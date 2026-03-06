@@ -17,6 +17,9 @@ export function getHomeRoutePath() {
 export function getMyRequestRoutePath() {
     return `/my-request`;
 }
+export function getCreateRequestRoutePath() {
+    return `/create-request`;
+}
 export function getVendorMessageRoutePath() {
     return `/vendor/message`;
 }

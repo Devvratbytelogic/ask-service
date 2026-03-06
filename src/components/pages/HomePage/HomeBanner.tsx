@@ -55,9 +55,9 @@ const HomeBanner = () => {
             <div className="flex justify-center items-center flex-col text-fontBlack text-[30px] md:text-[35px]/[44px] xl:text-[54px]/[74px] font-bold tracking-[-2px]">
                 <div className="flex items-center gap-4 flex-wrap justify-center">
                     <h2 className="text-center">
-                        Trouvez rapidement des professionnels de confiance pour
+                        Trouvez rapidement des professionnels de confiance pour tous vos besoins
                     </h2>
-                    <span>tous vos besoins</span>
+                    {/* <span></span> */}
                     <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-white/80">
                         {/* Corner circular icons */}
                         <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
