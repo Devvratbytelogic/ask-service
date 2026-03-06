@@ -12,6 +12,8 @@ export interface IVendorDashboardData {
     creditBalance: number;
     quotesSentCount: number;
     kyc_status: string;
+    /** When not ACTIVE, vendor cannot purchase leads (e.g. documents under review). */
+    key_status?: string;
     canPurchaseLeads: boolean;
 }
 

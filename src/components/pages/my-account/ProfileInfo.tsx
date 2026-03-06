@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { addToast, Button, Input } from '@heroui/react'
 import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, PhoneIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useUpdateUserProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
+import { openModal } from '@/redux/slices/allModalSlice'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
@@ -21,6 +23,7 @@ const defaultInitialValues = {
 }
 
 export default function ProfileInfo() {
+    const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
@@ -96,6 +99,17 @@ export default function ProfileInfo() {
             }
         },
     })
+
+    const handleVerifyPhone = () => {
+        dispatch(
+            openModal({
+                componentName: 'MobileOtpVerification',
+                data: { phoneNumber: profileData?.phone ?? values.phone ?? '' },
+                modalSize: 'md',
+            })
+        )
+    }
+
     return (
         <>
             {/* Section header with actions */}
@@ -240,6 +254,13 @@ export default function ProfileInfo() {
                             classNames={{
                                 inputWrapper: 'account_input_design',
                             }}
+                            endContent={
+                                !profileData?.is_phone_verified && (values.phone || profileData?.phone) ? (
+                                    <Button size="sm" className="btn_radius btn_outline_blue" onPress={handleVerifyPhone}>
+                                        Verify
+                                    </Button>
+                                ) : undefined
+                            }
                         />
                     </div>
                 </div>

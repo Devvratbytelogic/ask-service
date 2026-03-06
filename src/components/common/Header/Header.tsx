@@ -95,10 +95,10 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                     </Link>
                     <nav className="hidden md:flex items-center gap-6">
                         <Link
-                            href={getMyRequestRoutePath()}
+                            href={isVendor ? getVendorDashboardRoutePath() : getMyRequestRoutePath()}
                             className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                         >
-                            My Requests
+                            {isVendor ? 'Leads' : 'My Requests'}
                         </Link>
                         <Link
                             href={getVendorMessageRoutePath()}

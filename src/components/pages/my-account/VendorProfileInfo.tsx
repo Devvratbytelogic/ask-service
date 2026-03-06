@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, PhoneIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { openModal } from '@/redux/slices/allModalSlice'
 
 const COMPANY_SIZE_OPTIONS = [
     '1 - 10 employees',
@@ -36,11 +38,22 @@ const defaultInitialValues = {
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export default function VendorProfileInfo() {
+    const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const [updateVendorProfileInfo, { isLoading: isUpdating }] = useUpdateVendorProfileInfoMutation()
     const { data } = useGetVendorProfileInfoQuery()
+
+    const handleVerifyPhone = () => {
+        dispatch(
+            openModal({
+                componentName: 'MobileOtpVerification',
+                data: { phoneNumber: profileData?.phone ?? values.phone ?? '' },
+                modalSize: 'md',
+            })
+        )
+    }
 
     const profileData = data?.data
     const initialValues = {
@@ -332,6 +345,13 @@ export default function VendorProfileInfo() {
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
                             isDisabled={!isEditing}
                             startContent={<PhoneIconSVG />}
+                            endContent={
+                                !profileData?.is_phone_verified && (values.phone || profileData?.phone) ? (
+                                    <Button size="sm" className="btn_radius btn_outline_blue" onPress={handleVerifyPhone}>
+                                        Verify
+                                    </Button>
+                                ) : undefined
+                            }
                         />
                     </div>
                 </div>
