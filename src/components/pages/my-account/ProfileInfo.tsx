@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input } from '@heroui/react'
-import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, PhoneIconSVG } from '@/components/library/AllSVG'
+import PhoneInput from 'react-phone-input-2'
+import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -63,7 +64,7 @@ export default function ProfileInfo() {
         typeof profileData?.profile_pic === 'string' && profileData.profile_pic ? profileData.profile_pic : null
     const avatarSrc = profilePicPreviewUrl ?? existingProfilePicUrl
 
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm } = useFormik({
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue } = useFormik({
         initialValues,
         enableReinitialize: true,
         validationSchema: profileInfoValidationSchema,
@@ -242,26 +243,36 @@ export default function ProfileInfo() {
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Phone Number
                         </label>
-                        <Input
-                            name="phone"
-                            value={values.phone}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isReadOnly={!isEditing}
-                            isInvalid={!!(touched.phone && errors.phone)}
-                            errorMessage={touched.phone && errors.phone}
-                            startContent={<PhoneIconSVG />}
-                            classNames={{
-                                inputWrapper: 'account_input_design',
-                            }}
-                            endContent={
-                                !profileData?.is_phone_verified && (values.phone || profileData?.phone) ? (
-                                    <Button size="sm" className="btn_radius btn_outline_blue" onPress={handleVerifyPhone}>
-                                        Verify
-                                    </Button>
-                                ) : undefined
-                            }
-                        />
+                        <div className="flex gap-2 items-start">
+                            <div className="flex-1 min-w-0">
+                                <PhoneInput
+                                    country="fr"
+                                    countryCodeEditable={false}
+                                    enableSearch
+                                    value={values.phone}
+                                    onChange={(value) => setFieldValue('phone', value)}
+                                    onBlur={() => handleBlur({ target: { name: 'phone' } })}
+                                    inputProps={{
+                                        name: 'phone',
+                                        'aria-label': 'Phone number',
+                                        readOnly: !isEditing,
+                                    }}
+                                    containerClass="!w-full"
+                                    inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
+                                    inputStyle={{ height: '52px' }}
+                                    dropdownClass="!z-[9999]"
+                                    dropdownStyle={{ zIndex: 9999 }}
+                                />
+                            </div>
+                            {!profileData?.is_phone_verified && (values.phone || profileData?.phone) && (
+                                <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
+                                    Verify
+                                </Button>
+                            )}
+                        </div>
+                        {touched.phone && errors.phone && (
+                            <p className="text-danger text-tiny mt-1">{errors.phone}</p>
+                        )}
                     </div>
                 </div>
 

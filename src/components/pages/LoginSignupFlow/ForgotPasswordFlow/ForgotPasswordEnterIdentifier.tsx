@@ -170,7 +170,9 @@ const ForgotPasswordEnterIdentifier = () => {
                             <p className="custom_label_text_light mb-1.5">Mobile number</p>
                             <div className="mt-1.5">
                                 <PhoneInput
-                                    country="us"
+                                    country="fr"
+                                    countryCodeEditable={false}
+                                    enableSearch
                                     value={values.phoneNumber}
                                     onChange={(value) => setFieldValue("phoneNumber", value)}
                                     onBlur={() => setFieldTouched("phoneNumber", true)}

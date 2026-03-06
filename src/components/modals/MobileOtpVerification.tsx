@@ -172,7 +172,9 @@ const MobileOtpVerification = () => {
                     <p className="custom_label_text_light">Phone number</p>
                     <div className="mt-1.5">
                         <PhoneInput
-                            country="us"
+                            country="fr"
+                            countryCodeEditable={false}
+                            enableSearch
                             value={phoneNumber}
                             onChange={(value) => {
                                 setPhoneNumber(value)

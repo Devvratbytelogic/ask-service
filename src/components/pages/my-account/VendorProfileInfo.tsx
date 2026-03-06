@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
-import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, PhoneIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
+import PhoneInput from 'react-phone-input-2'
+import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
@@ -335,24 +336,36 @@ export default function VendorProfileInfo() {
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Phone Number
                         </label>
-                        <Input
-                            name="phone"
-                            value={values.phone}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={!!(touched.phone && errors.phone)}
-                            errorMessage={touched.phone && errors.phone}
-                            classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
-                            startContent={<PhoneIconSVG />}
-                            endContent={
-                                !profileData?.is_phone_verified && (values.phone || profileData?.phone) ? (
-                                    <Button size="sm" className="btn_radius btn_outline_blue" onPress={handleVerifyPhone}>
-                                        Verify
-                                    </Button>
-                                ) : undefined
-                            }
-                        />
+                        <div className="flex gap-2 items-start">
+                            <div className="flex-1 min-w-0">
+                                <PhoneInput
+                                    country="fr"
+                                    countryCodeEditable={false}
+                                    enableSearch
+                                    value={values.phone}
+                                    onChange={(value) => setFieldValue('phone', value)}
+                                    onBlur={() => handleBlur({ target: { name: 'phone' } })}
+                                    inputProps={{
+                                        name: 'phone',
+                                        'aria-label': 'Phone number',
+                                        disabled: !isEditing,
+                                    }}
+                                    containerClass="!w-full"
+                                    inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
+                                    inputStyle={{ height: '52px' }}
+                                    dropdownClass="!z-[9999]"
+                                    dropdownStyle={{ zIndex: 9999 }}
+                                />
+                            </div>
+                            {!profileData?.is_phone_verified && (values.phone || profileData?.phone) && (
+                                <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
+                                    Verify
+                                </Button>
+                            )}
+                        </div>
+                        {touched.phone && errors.phone && (
+                            <p className="text-danger text-tiny mt-1">{errors.phone}</p>
+                        )}
                     </div>
                 </div>
 

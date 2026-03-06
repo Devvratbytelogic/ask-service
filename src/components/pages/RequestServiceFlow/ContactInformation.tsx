@@ -131,6 +131,8 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <div className="mt-1.5">
             <PhoneInput
               country="fr"
+              countryCodeEditable={false}
+              enableSearch
               value={values.customerPhoneNumber}
               onChange={(value) => setFieldValue("customerPhoneNumber", value)}
               onBlur={() => setFieldTouched("customerPhoneNumber", true)}
