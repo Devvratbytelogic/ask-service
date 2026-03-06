@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
 import { useRouter } from "next/navigation"
+import { getDashboardPathForRole } from "@/routes/routes"
 
 export interface CustomerSignInFormValues {
     email: string
@@ -100,6 +101,7 @@ const CustomerSignInDetails = () => {
                     }))
                 } else {
                     dispatch(closeModal())
+                    router.push(getDashboardPathForRole((responseData as AuthResponseData).role))
                 }
             } catch {
                 // Error toast from rtkQuerieSetup

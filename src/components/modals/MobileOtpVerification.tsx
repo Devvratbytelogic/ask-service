@@ -10,6 +10,7 @@ import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
+import { getDashboardPathForRole } from "@/routes/routes"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
 import { IoPencilOutline } from "react-icons/io5"
@@ -115,20 +116,24 @@ const MobileOtpVerification = () => {
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
-            }
-            if (data?.callBackModal || data?.parentCallBackModal) {
-                dispatch(
-                    openModal({
-                        componentName: data?.parentCallBackModal ? data?.parentCallBackModal : "LoginSignupIndex",
-                        data: {
-                            ...data,
-                            componentName: data?.callBackModal ? data?.callBackModal : null,
-                        },
-                        modalSize: data?.nextModalSize ? data?.nextModalSize : "full",
-                    })
-                )
-            } else {
+                const authData = responseData as AuthResponseData
                 dispatch(closeModal())
+                router.push(getDashboardPathForRole(authData.role))
+            } else {
+                if (data?.callBackModal || data?.parentCallBackModal) {
+                    dispatch(
+                        openModal({
+                            componentName: data?.parentCallBackModal ? data?.parentCallBackModal : "LoginSignupIndex",
+                            data: {
+                                ...data,
+                                componentName: data?.callBackModal ? data?.callBackModal : null,
+                            },
+                            modalSize: data?.nextModalSize ? data?.nextModalSize : "full",
+                        })
+                    )
+                } else {
+                    dispatch(closeModal())
+                }
             }
             addToast({
                 title: "Success",

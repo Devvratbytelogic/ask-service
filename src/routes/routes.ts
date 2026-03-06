@@ -29,6 +29,21 @@ export function getVendorAccountRoutePath() {
 export function getMyAccountRoutePath() {
     return `/my-account`;
 }
+
+/** Dashboard path for the given role (User → my-account, Vendor → vendor/dashboard). */
+export function getDashboardPathForRole(
+    role: string | { name?: string; id?: string; _id?: string } | undefined | null
+): string {
+    const r =
+        role == null
+            ? ''
+            : typeof role === 'string'
+              ? role
+              : String(role.name ?? role.id ?? role._id ?? '');
+    const rLower = r.toLowerCase();
+    if (rLower === 'vendor') return getVendorDashboardRoutePath();
+    return getMyAccountRoutePath();
+}
 export function getContactUsRoutePath() {
     return `/contact-us`;
 }

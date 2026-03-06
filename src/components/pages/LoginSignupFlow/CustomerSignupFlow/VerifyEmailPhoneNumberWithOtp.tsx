@@ -15,6 +15,7 @@ import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
+import { getMyAccountRoutePath } from "@/routes/routes"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -103,6 +104,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                 timeout: 3000,
             })
             dispatch(closeModal())
+            router.push(getMyAccountRoutePath())
         } catch {
             // Error toast from rtkQuerieSetup
         }

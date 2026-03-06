@@ -44,7 +44,8 @@ interface HeaderProps {
 
 const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const router = useRouter();
-    const isAuthenticated = initialIsAuthenticated || !!getAuthToken();
+    const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated);
+    const isAuthenticated = initialIsAuthenticated || !!getAuthToken() || isClientAuthenticated;
     const roleFromRedux = useSelector((state: RootState) => state.auth.userRole);
     const roleFromCookie = getUserRole();
     const role = roleFromRedux ?? roleFromCookie;

@@ -13,7 +13,7 @@ export default function Home() {
         <div className="body_x_axis_padding">
           <ServicesWeOfferIndex/>
           <HowDoesItWorkIndex/>
-          <SmartHiringIndex/>
+          {/* <SmartHiringIndex/> */}
           <RealStoriesIndex/>
           <CTAsectionsIndex/>
         </div>

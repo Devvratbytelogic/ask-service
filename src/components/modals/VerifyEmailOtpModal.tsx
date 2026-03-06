@@ -10,6 +10,7 @@ import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
+import { getMyAccountRoutePath } from "@/routes/routes"
 import ImageComponent from "../library/ImageComponent"
 
 const OTP_LENGTH = 4
@@ -48,6 +49,7 @@ export default function VerifyEmailOtpModal() {
                 }))
             } else {
                 dispatch(closeModal())
+                router.push(getMyAccountRoutePath())
             }
         } catch {
             // Error toast from rtkQuerieSetup

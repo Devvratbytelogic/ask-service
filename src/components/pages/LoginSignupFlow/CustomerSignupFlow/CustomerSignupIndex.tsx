@@ -6,6 +6,7 @@ import type { AuthResponseData } from "@/utils/authCookies"
 import { loginWithGoogle } from "@/firebase/GoogleLogin"
 import { addToast, Button } from "@heroui/react"
 import { useRouter } from "next/navigation"
+import { getDashboardPathForRole } from "@/routes/routes"
 import { useState } from "react"
 import { BiArrowBack, BiPhone } from "react-icons/bi"
 import { CgMail } from "react-icons/cg"
@@ -33,6 +34,7 @@ const CustomerSignupIndex = () => {
                     router.refresh();
                     addToast({ title: "Account created successfully", color: "success", timeout: 2000 });
                     dispatch(closeModal());
+                    router.push(getDashboardPathForRole(authData.role ?? roleType));
                     return;
                 }
             }

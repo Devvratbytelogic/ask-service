@@ -137,7 +137,7 @@ const HomeBanner = () => {
                     <BiSearch className="text-xl" />
                 </Button>
             </div>
-            <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
+            {/* <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
                 {grandParentServicesList && grandParentServicesList.length > 0 && grandParentServicesList?.map((curr) =>
                     <Button
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
@@ -159,7 +159,7 @@ const HomeBanner = () => {
                         {curr.title}
                     </Button>
                 )}
-            </div>
+            </div> */}
         </div>
     )
 }

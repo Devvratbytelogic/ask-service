@@ -12,6 +12,7 @@ import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
+import { getVendorDashboardRoutePath } from "@/routes/routes"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -90,16 +91,8 @@ const VendorOtpVerification = () => {
                 color: "success",
                 timeout: 3000,
             })
-            dispatch(
-                openModal({
-                    componentName: "LoginSignupIndex",
-                    data: {
-                        componentName: "VendorServiceListPage",
-                        userData: { ...userSignupData },
-                    },
-                    modalSize: "full",
-                })
-            )
+            dispatch(closeModal())
+            router.push(getVendorDashboardRoutePath())
         } catch {
             // Error toast from rtkQuerieSetup
         }
