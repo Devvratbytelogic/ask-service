@@ -6,6 +6,8 @@ import { FiInfo } from "react-icons/fi"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
+import { closeModal } from "@/redux/slices/allModalSlice"
+import { useDispatch } from "react-redux"
 
 const CLIENT_TYPES = ["Individual", "Company"] as const
 const CLIENT_TYPE_LABELS: Record<string, string> = { Individual: "Particulier", Company: "Entreprise" }
@@ -24,14 +26,17 @@ interface ContactInformationProps {
 }
 
 const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) => {
-
+  const dispatch = useDispatch()
   const { values, setFieldValue, setFieldTouched, touched, errors, handleBlur, handleChange, setTouched, validateForm } = formik
 
   const isStep4Valid = STEP4_REQUIRED_FIELDS.every(
     (field) => values[field]?.toString().trim() !== ""
   )
 
-  const handleBack = () => setStepCount((prev) => prev - 1)
+  const handleBack = () => {
+    // setStepCount((prev) => prev - 1)
+    dispatch(closeModal())
+  }
   const handleContinue = async () => {
     setTouched(
       STEP4_REQUIRED_FIELDS.reduce(

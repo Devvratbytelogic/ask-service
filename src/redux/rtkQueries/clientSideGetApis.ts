@@ -97,6 +97,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 url: `/vendor/dashboard`,
                 method: 'GET',
             }),
+            providesTags: ['VendorDashboard'],
         }),
         getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { location?: string; sort?: string; page?: number; limit?: number } | void>({
             query: (arg) => ({

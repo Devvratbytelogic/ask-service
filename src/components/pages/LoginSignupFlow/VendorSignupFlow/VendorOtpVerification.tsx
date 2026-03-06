@@ -6,6 +6,7 @@ import {
     useVendorVerifyOtpMutation,
 } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
+import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
@@ -24,12 +25,9 @@ const VendorOtpVerification = () => {
 
     const userSignupData = data?.userData as Record<string, unknown> | undefined
     const email = (userSignupData?.email as string) || ""
-    const phoneNumber = (userSignupData?.phoneNumber as string) || ""
 
     const [emailOtp, setEmailOtp] = useState("")
-    const [phoneOtp, setPhoneOtp] = useState("")
     const [emailResendCooldown, setEmailResendCooldown] = useState(0)
-    const [phoneResendCooldown, setPhoneResendCooldown] = useState(0)
 
     const [vendorVerifyOtp, { isLoading: isVerifying }] = useVendorVerifyOtpMutation()
     const [vendorResendOtp, { isLoading: isResendingOtp }] = useVendorResendOtpMutation()
@@ -49,23 +47,7 @@ const VendorOtpVerification = () => {
         }
     }, [emailResendCooldown, email, vendorResendOtp])
 
-    const handlePhoneResend = useCallback(async () => {
-        if (phoneResendCooldown > 0 || !phoneNumber) return
-        try {
-            await vendorResendOtp({
-                identifier: phoneNumber,
-                identifierType: "PHONE",
-                type: "SIGNUP",
-            }).unwrap()
-            setPhoneResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Code sent", description: "Check your phone.", color: "success", timeout: 2000 })
-        } catch {
-            // Error toast from rtkQuerieSetup
-        }
-    }, [phoneResendCooldown, phoneNumber, vendorResendOtp])
-
-    const canVerify =
-        emailOtp.length === OTP_LENGTH && phoneOtp.length === OTP_LENGTH
+    const canVerify = emailOtp.length === OTP_LENGTH
 
     const handleVerifyOtp = useCallback(async () => {
         if (!canVerify || !email) return
@@ -73,7 +55,6 @@ const VendorOtpVerification = () => {
             const response = await vendorVerifyOtp({
                 type: "SIGNUP",
                 email,
-                otp_phone: phoneOtp,
                 ...(emailOtp && { otp_email: emailOtp }),
             }).unwrap()
             const data = (response).data
@@ -92,11 +73,20 @@ const VendorOtpVerification = () => {
                 timeout: 3000,
             })
             router.push(getVendorDashboardRoutePath())
-            dispatch(closeModal())
+            dispatch(
+                openModal({
+                    componentName: "LoginSignupIndex",
+                    data: {
+                        componentName: "VendorServiceListPage",
+                        userData: { ...userSignupData },
+                    },
+                    modalSize: "full",
+                })
+            )
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [canVerify, email, emailOtp, phoneOtp, userSignupData, vendorVerifyOtp, dispatch])
+    }, [canVerify, email, emailOtp, vendorVerifyOtp, dispatch])
 
     useEffect(() => {
         if (emailResendCooldown <= 0) return
@@ -106,15 +96,6 @@ const VendorOtpVerification = () => {
         )
         return () => clearInterval(t)
     }, [emailResendCooldown])
-
-    useEffect(() => {
-        if (phoneResendCooldown <= 0) return
-        const t = setInterval(
-            () => setPhoneResendCooldown((c) => (c <= 0 ? 0 : c - 1)),
-            1000
-        )
-        return () => clearInterval(t)
-    }, [phoneResendCooldown])
 
     const handleChangeContact = () => {
         dispatch(
@@ -184,50 +165,6 @@ const VendorOtpVerification = () => {
                         </div>
                     )}
 
-                    {/* Phone verification */}
-                    {phoneNumber && (
-                        <div className="space-y-4">
-                            <p className="text-fontBlack text-base">
-                                {phoneNumber}{" "}
-                                <button
-                                    type="button"
-                                    onClick={handleChangeContact}
-                                    className="text-primaryColor cursor-pointer underline underline-offset-2"
-                                >
-                                    Change
-                                </button>
-                            </p>
-                            <p className="text-fontBlack text-base">
-                                We&apos;ve sent a Verification Code to the phone
-                                number above. Please enter it to complete
-                                verification.
-                            </p>
-                            <OtpInput
-                                value={phoneOtp}
-                                onChange={setPhoneOtp}
-                                length={OTP_LENGTH}
-                                classNames={{ wrapper: "flex gap-4 max-w-[280px]" }}
-                                ariaLabelPrefix="Phone digit"
-                            />
-                            <p className="text-fontBlack text-sm">
-                                Didn&apos;t get your code?{" "}
-                                {phoneResendCooldown > 0 ? (
-                                    <span className="text-primaryColor">
-                                        Send a new code in {phoneResendCooldown}s
-                                    </span>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        onClick={handlePhoneResend}
-                                        disabled={isResendingOtp}
-                                        className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
-                                    >
-                                        {isResendingOtp ? "Sending…" : "Send a new code"}
-                                    </button>
-                                )}
-                            </p>
-                        </div>
-                    )}
                 </div>
             </div>
 

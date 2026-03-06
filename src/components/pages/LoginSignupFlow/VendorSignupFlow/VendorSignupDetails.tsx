@@ -73,29 +73,7 @@ const VendorSignupDetails = () => {
             addToast({ title: "Sign up completed", color: "success", timeout: 2000 })
             dispatch(closeModal())
         } catch (err: unknown) {
-            const e = err as Error & {
-                responseData?: { data?: { flow?: string; phone_verified?: boolean }; message?: string }
-                googleEmail?: string
-            }
-            if (
-                e.responseData?.data?.flow === "PHONE_VERIFICATION_REQUIRED" &&
-                e.responseData?.data?.phone_verified === false &&
-                e.googleEmail
-            ) {
-                dispatch(
-                    openModal({
-                        componentName: "MobileOtpVerification",
-                        data: {
-                            email: e.googleEmail,
-                            googleLoginCompleted: true,
-                            callBackModal: "VendorServiceListPage",
-                            parentCallBackModal: "LoginSignupIndex",
-                        },
-                        modalSize: "lg",
-                    })
-                )
-                return
-            }
+            const e = err as Error & { responseData?: { message?: string }; message?: string }
             const message = e.responseData?.message ?? e.message ?? "Google sign up failed"
             addToast({ title: message, color: "danger", timeout: 3000 })
         } finally {
@@ -121,7 +99,7 @@ const VendorSignupDetails = () => {
                 }).unwrap()
                 addToast({
                     title: "Verification code sent",
-                    description: "Check your email and phone for OTP.",
+                    description: "Check your email for OTP.",
                     color: "success",
                     timeout: 3000,
                 })

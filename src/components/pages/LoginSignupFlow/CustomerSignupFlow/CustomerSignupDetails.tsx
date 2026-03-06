@@ -100,23 +100,40 @@ const CustomerSignupDetails = () => {
                 }
             try {
                 await signup(payload).unwrap()
-                addToast({
-                    title: "Verification code sent",
-                    description: isEmail ? "Check your email." : "Check your phone.",
-                    color: "success",
-                    timeout: 2000,
-                })
-                dispatch(openModal({
-                    componentName: "LoginSignupIndex",
-                    data: {
-                        componentName: "VerifyEmailPhoneNumberWithOtp",
-                        userData: {
-                            ...data?.userData,
-                            ...values,
+                if (isEmail) {
+                    addToast({
+                        title: "Verification code sent",
+                        description: "Check your email.",
+                        color: "success",
+                        timeout: 2000,
+                    })
+                    dispatch(openModal({
+                        componentName: "LoginSignupIndex",
+                        data: {
+                            componentName: "VerifyEmailPhoneNumberWithOtp",
+                            userData: {
+                                ...data?.userData,
+                                ...values,
+                            },
                         },
-                    },
-                    modalSize: "full",
-                }))
+                        modalSize: "full",
+                    }))
+                } else {
+                    addToast({
+                        title: "Sign up successful",
+                        description: "Please sign in with your phone and password.",
+                        color: "success",
+                        timeout: 3000,
+                    })
+                    dispatch(openModal({
+                        componentName: "LoginSignupIndex",
+                        data: {
+                            componentName: "CustomerSignInDetails",
+                            userData: { signInType: "phoneNumber", phoneNumber: values.phoneNumber },
+                        },
+                        modalSize: "full",
+                    }))
+                }
             } catch {
                 // Error toast from rtkQuerieSetup
             }

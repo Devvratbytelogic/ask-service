@@ -5,9 +5,7 @@ import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import {
     useResendEmailVerificationMutation,
-    useResendPhoneOtpMutation,
     useVerifyEmailMutation,
-    useVerifyPhoneMutation,
 } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import type { AuthResponseData } from "@/utils/authCookies"
@@ -26,43 +24,25 @@ const VerifyEmailPhoneNumberWithOtp = () => {
     const router = useRouter()
 
     const userSignupData = data?.userData as Record<string, unknown> | undefined
-    const userSignupType = data?.userData?.userSignupType as string | undefined
+
+    const displayValue = (userSignupData?.email as string) || ""
 
     const [otpValue, setOtpValue] = useState("")
     const [resendCooldown, setResendCooldown] = useState(0)
 
     const [verifyEmail, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation()
-    const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
     const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
-    const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
-
-    const isEmail = userSignupType === "email"
-    const isPhone = userSignupType === "phoneNumber"
-
-    const displayValue = isEmail
-        ? (userSignupData?.email as string) || ""
-        : isPhone
-          ? (userSignupData?.phoneNumber as string) || ""
-          : ""
-
-    const instructionText = isEmail
-        ? "We've sent a Verification Code to the email above. Please enter it to complete verification."
-        : "We've sent a Verification Code to the phone number above. Please enter it to complete verification."
 
     const handleResend = useCallback(async () => {
-        if (resendCooldown > 0) return
+        if (resendCooldown > 0 || !displayValue) return
         try {
-            if (isEmail && displayValue) {
-                await resendEmailVerification({ email: displayValue }).unwrap()
-            } else if (!isEmail && displayValue) {
-                await resendPhoneOtp({ phone: displayValue, type: "SIGNUP" }).unwrap()
-            } else return
+            await resendEmailVerification({ email: displayValue }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
             addToast({ title: "Code sent", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [resendCooldown, isEmail, displayValue, resendEmailVerification, resendPhoneOtp])
+    }, [resendCooldown, displayValue, resendEmailVerification])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -86,12 +66,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
     const handleVerify = useCallback(async () => {
         if (otpValue.length !== OTP_LENGTH || !displayValue) return
         try {
-            let res: { data?: unknown }
-            if (isEmail) {
-                res = await verifyEmail({ email: displayValue, otp: otpValue }).unwrap()
-            } else {
-                res = await verifyPhone({ phone: displayValue, otp: otpValue }).unwrap()
-            }
+            const res = await verifyEmail({ email: displayValue, otp: otpValue }).unwrap()
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -108,10 +83,10 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, isEmail, displayValue, verifyEmail, verifyPhone, dispatch])
+    }, [otpValue, displayValue, verifyEmail, dispatch])
 
     const canVerify = otpValue.length === OTP_LENGTH
-    const isVerifying = isVerifyingEmail || isVerifyingPhone
+    const isVerifying = isVerifyingEmail
 
     return (
         <>
@@ -132,7 +107,9 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                                     Change
                                 </button>
                             </p>
-                            <p className="text-fontBlack text-base">{instructionText}</p>
+                            <p className="text-fontBlack text-base">
+                                We&apos;ve sent a Verification Code to the email above. Please enter it to complete verification.
+                            </p>
                         </>
                     )}
                 </div>
@@ -155,10 +132,10 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                             <button
                                 type="button"
                                 onClick={handleResend}
-                                disabled={isResendingEmail || isResendingPhone}
+                                disabled={isResendingEmail}
                                 className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                             >
-                                {isResendingEmail || isResendingPhone ? "Sending…" : "Send a new code"}
+                                {isResendingEmail ? "Sending…" : "Send a new code"}
                             </button>
                         )}
                     </p>

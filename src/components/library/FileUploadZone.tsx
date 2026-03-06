@@ -23,6 +23,8 @@ export interface FileUploadZoneProps {
     ariaLabel?: string
     /** Optional class for the browse/upload button (e.g. primary blue style) */
     buttonClassName?: string
+    /** Called when a file is rejected (e.g. over max size) */
+    onFileRejected?: (reason: "size") => void
 }
 
 const formatFileSize = (bytes: number) => {
@@ -40,6 +42,7 @@ export default function FileUploadZone({
     browseLabel = "Browse files",
     ariaLabel = "Upload file",
     buttonClassName,
+    onFileRejected,
 }: FileUploadZoneProps) {
     const inputRef = useRef<HTMLInputElement>(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -49,7 +52,10 @@ export default function FileUploadZone({
             onChange(null)
             return
         }
-        if (file.size > maxSizeBytes) return
+        if (file.size > maxSizeBytes) {
+            onFileRejected?.("size")
+            return
+        }
         onChange(file)
     }
 

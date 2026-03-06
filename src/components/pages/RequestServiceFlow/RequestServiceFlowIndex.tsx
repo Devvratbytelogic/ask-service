@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useCreateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
+import { useGetUserProfileInfoQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import { getAuthToken } from "@/utils/authCookies"
 import AppLoader from "@/components/common/AppLoader"
 import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
 import { getAddressFromPincode } from "@/utils/pincodeToAddress"
@@ -63,6 +65,12 @@ const RequestServiceFlowIndex = () => {
     const [submissionRef, setSubmissionRef] = useState<string | null>(null)
     const dispatch = useDispatch()
     const [createServiceRequest, { isLoading }] = useCreateServiceRequestMutation()
+    const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
+    const isAuthenticated = !!getAuthToken() || isClientAuthenticated
+    const { data: profileResponse } = useGetUserProfileInfoQuery(undefined, {
+        skip: !isAuthenticated,
+    })
+    const profile = profileResponse?.data
 
     const setStepCountSafe = useCallback(
         (arg: React.SetStateAction<number>) => {
@@ -87,13 +95,23 @@ const RequestServiceFlowIndex = () => {
         [dispatch]
     )
 
-    const initialValues: RequestServiceFormValues =
-        modalData?.initialFormValues && typeof modalData.initialFormValues === "object"
-            ? { ...baseInitialValues, ...modalData.initialFormValues }
-            : {
-                ...baseInitialValues,
-                pincode: data?.pincode ?? baseInitialValues.pincode,
-            }
+    const profilePrefill: Partial<RequestServiceFormValues> = profile
+        ? {
+            customerFirstName: profile.first_name ?? "",
+            customerLastName: profile.last_name ?? "",
+            customerEmail: profile.email ?? "",
+            customerPhoneNumber: profile.phone ?? "",
+          }
+        : {}
+
+    const initialValues: RequestServiceFormValues = {
+        ...baseInitialValues,
+        pincode: data?.pincode ?? baseInitialValues.pincode,
+        ...profilePrefill,
+        ...(modalData?.initialFormValues && typeof modalData.initialFormValues === "object"
+            ? modalData.initialFormValues
+            : {}),
+    }
 
     const validate = (values: RequestServiceFormValues) => {
         const err: Partial<Record<keyof RequestServiceFormValues, string>> = {}

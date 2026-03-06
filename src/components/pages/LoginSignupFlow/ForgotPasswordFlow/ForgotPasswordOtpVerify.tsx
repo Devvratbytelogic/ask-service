@@ -5,9 +5,7 @@ import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
 import {
     useResendEmailVerificationMutation,
-    useResendPhoneOtpMutation,
     useVerifyEmailMutation,
-    useVerifyPhoneMutation,
 } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import type { AuthResponseData } from "@/utils/authCookies"
@@ -25,42 +23,27 @@ const ForgotPasswordOtpVerify = () => {
     const router = useRouter()
 
     const userData = data?.userData as Record<string, unknown> | undefined
-    const recoveryType = data?.userData?.recoveryType as string | undefined
-    const isEmail = recoveryType === "email"
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
     const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
     const email = (userData?.email as string) || ""
-    const phone = (userData?.phoneNumber as string) || ""
 
     const [verifyEmail, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation()
-    const [verifyPhone, { isLoading: isVerifyingPhone }] = useVerifyPhoneMutation()
     const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
-    const [resendPhoneOtp, { isLoading: isResendingPhone }] = useResendPhoneOtpMutation()
 
     const [otpValue, setOtpValue] = useState("")
     const [resendCooldown, setResendCooldown] = useState(0)
 
-    const displayValue = isEmail ? email : phone
-
-    const instructionText = isEmail
-        ? "We've sent a Verification Code to the email address above. Please enter the complete verification."
-        : "We've sent a Verification Code to the mobile number above. Please enter the complete verification."
-
     const handleResend = useCallback(async () => {
-        if (resendCooldown > 0) return
+        if (resendCooldown > 0 || !email) return
         try {
-            if (isEmail && email) {
-                await resendEmailVerification({ email }).unwrap()
-            } else if (!isEmail && phone) {
-                await resendPhoneOtp({ phone, type: "FORGOT_PASSWORD" }).unwrap()
-            } else return
+            await resendEmailVerification({ email }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
             addToast({ title: "Code sent", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [resendCooldown, isEmail, email, phone, resendEmailVerification, resendPhoneOtp])
+    }, [resendCooldown, email, resendEmailVerification])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -85,14 +68,9 @@ const ForgotPasswordOtpVerify = () => {
     }
 
     const handleVerify = useCallback(async () => {
-        if (otpValue.length !== OTP_LENGTH) return
+        if (otpValue.length !== OTP_LENGTH || !email) return
         try {
-            let res: { data?: { role?: { name?: string } } }
-            if (isEmail && email) {
-                res = await verifyEmail({ email, otp: otpValue }).unwrap()
-            } else if (!isEmail && phone) {
-                res = await verifyPhone({ phone, otp: otpValue }).unwrap()
-            } else return
+            const res = await verifyEmail({ email, otp: otpValue }).unwrap()
             const responseData = res?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -116,10 +94,10 @@ const ForgotPasswordOtpVerify = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, isEmail, email, phone, verifyEmail, verifyPhone, userData, dispatch, returnToRequestFlow, requestFlowData])
+    }, [otpValue, email, verifyEmail, userData, dispatch, returnToRequestFlow, requestFlowData])
 
     const canVerify = otpValue.length === OTP_LENGTH
-    const isVerifying = isVerifyingEmail || isVerifyingPhone
+    const isVerifying = isVerifyingEmail
 
     return (
         <>
@@ -128,10 +106,10 @@ const ForgotPasswordOtpVerify = () => {
                     <h1 className="header_text">
                         Authentication <br /> <span className="text-darkSilver"> required</span>
                     </h1>
-                    {displayValue && (
+                    {email && (
                         <>
                             <p className="text-fontBlack text-base">
-                                {displayValue}{" "}
+                                {email}{" "}
                                 <button
                                     type="button"
                                     onClick={handleChangeContact}
@@ -140,7 +118,9 @@ const ForgotPasswordOtpVerify = () => {
                                     Change
                                 </button>
                             </p>
-                            <p className="text-fontBlack text-base">{instructionText}</p>
+                            <p className="text-fontBlack text-base">
+                                We&apos;ve sent a Verification Code to the email address above. Please enter the complete verification.
+                            </p>
                         </>
                     )}
                 </div>
@@ -163,10 +143,10 @@ const ForgotPasswordOtpVerify = () => {
                             <button
                                 type="button"
                                 onClick={handleResend}
-                                disabled={isResendingEmail || isResendingPhone}
+                                disabled={isResendingEmail}
                                 className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                             >
-                                {isResendingEmail || isResendingPhone ? "Sending…" : "Send a new code"}
+                                {isResendingEmail ? "Sending…" : "Send a new code"}
                             </button>
                         )}
                     </p>
@@ -193,7 +173,7 @@ const ForgotPasswordOtpVerify = () => {
                                     componentName: "LoginSignupIndex",
                                     data: {
                                         componentName: "CustomerSignInDetails",
-                                        userData: { signInType: recoveryType ?? "email" },
+                                        userData: { signInType: "email" },
                                         ...(returnToRequestFlow && requestFlowData
                                             ? { returnToRequestFlow: true, requestFlowData }
                                             : {}),

@@ -1,15 +1,17 @@
 "use client"
 
 import DocumentUploadCard from "@/components/library/DocumentUploadCard"
-import { useGetAllServicesDocumentsRequiredQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import { clientSideGetApis, useGetAllServicesDocumentsRequiredQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { useUploadVendorDocumentsMutation } from "@/redux/rtkQueries/allPostApi"
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { Button } from "@heroui/react"
+import { addToast, Button } from "@heroui/react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { IoArrowBackOutline } from "react-icons/io5"
 import ImageComponent from "@/components/library/ImageComponent"
+
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
 
 const VendorDocumentVerification = () => {
     const dispatch = useDispatch()
@@ -21,6 +23,7 @@ const VendorDocumentVerification = () => {
     const [files, setFiles] = useState<Record<string, File | null>>({})
 
     const setFile = (id: string, file: File | null) => {
+        if (file && file.size > MAX_FILE_SIZE_BYTES) return // Reject files over 5 MB
         setFiles((prev) => ({ ...prev, [id]: file }))
     }
 
@@ -45,6 +48,13 @@ const VendorDocumentVerification = () => {
                     modalSize: "full",
                 })
             )
+            dispatch(
+                clientSideGetApis.util.invalidateTags([
+                    "VendorDashboard",
+                    "VendorAvailableLeads",
+                ])
+            )
+
         } catch (err) {
             console.error("Failed to upload vendor documents", err)
         }
@@ -106,6 +116,19 @@ const VendorDocumentVerification = () => {
                             allowedTypes={doc.allowed_formats}
                             value={files[doc._id] ?? null}
                             onChange={(file) => setFile(doc._id, file)}
+                            maxSizeBytes={MAX_FILE_SIZE_BYTES}
+                            onFileRejected={(reason) => {
+                                const message =
+                                    reason === "size"
+                                        ? "File size exceeds the 5 MB limit. Please choose a smaller file."
+                                        : "File was not accepted. Please try again."
+                                addToast({
+                                    title: "Upload rejected",
+                                    description: message,
+                                    color: "danger",
+                                    timeout: 3000,
+                                })
+                            }}
                         />
                     ))}
                 </div>

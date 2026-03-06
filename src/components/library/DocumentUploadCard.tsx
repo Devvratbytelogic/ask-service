@@ -20,6 +20,8 @@ export interface DocumentUploadCardProps {
     maxSizeBytes?: number
     /** Accepted input accept attribute (e.g. ".pdf,.jpg,.png") */
     accept?: string
+    /** Called when a file is rejected (e.g. over max size) */
+    onFileRejected?: (reason: "size") => void
 }
 
 export default function DocumentUploadCard({
@@ -31,6 +33,7 @@ export default function DocumentUploadCard({
     onChange,
     maxSizeBytes = 5 * 1024 * 1024,
     accept = ".pdf,.jpg,.jpeg,.png",
+    onFileRejected,
 }: DocumentUploadCardProps) {
     const uploaded = value !== null
 
@@ -65,6 +68,7 @@ export default function DocumentUploadCard({
                 onChange={onChange}
                 accept={accept}
                 maxSizeBytes={maxSizeBytes}
+                onFileRejected={onFileRejected}
                 dragLabel="Drag and drop your file here"
                 browseLabel="Browse files"
                 ariaLabel={`Upload ${title}`}

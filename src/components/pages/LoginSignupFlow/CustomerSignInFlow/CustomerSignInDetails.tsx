@@ -315,9 +315,8 @@ const CustomerSignInDetails = () => {
                                                 data: {
                                                     componentName: "ForgotPasswordEnterIdentifier",
                                                     userData: {
-                                                        recoveryType: signInType === "phoneNumber" ? "phoneNumber" : "email",
+                                                        recoveryType: "email",
                                                         email: values.email?.trim() || undefined,
-                                                        phoneNumber: values.phoneNumber || undefined,
                                                     },
                                                     ...(returnToRequestFlow && requestFlowData
                                                         ? { returnToRequestFlow: true, requestFlowData }
