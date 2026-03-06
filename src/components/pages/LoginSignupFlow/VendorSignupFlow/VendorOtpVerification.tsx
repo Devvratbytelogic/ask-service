@@ -7,7 +7,7 @@ import {
 } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import { RootState } from "@/redux/appStore"
-import { openModal } from "@/redux/slices/allModalSlice"
+import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -91,8 +91,8 @@ const VendorOtpVerification = () => {
                 color: "success",
                 timeout: 3000,
             })
-            dispatch(closeModal())
             router.push(getVendorDashboardRoutePath())
+            dispatch(closeModal())
         } catch {
             // Error toast from rtkQuerieSetup
         }
