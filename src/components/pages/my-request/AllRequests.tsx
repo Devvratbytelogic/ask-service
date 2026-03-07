@@ -74,10 +74,10 @@ export default function AllRequests() {
     return (
         <>
             <div className="grid grid-cols-6 lg:grid-cols-12 gap-4 items-center">
-                <div className="col-span-6">
+                <div className="col-span-4">
                     <h2 className='header_text_md'>Total Requests: <span className='text-primaryColor'>{totalCount}</span></h2>
                 </div>
-                <div className="col-span-6">
+                <div className="col-span-8">
                     <div className="flex flex-wrap gap-4 lg:justify-end items-center">
                         <RequestFilters
                             search={searchInput}

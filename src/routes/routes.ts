@@ -30,8 +30,9 @@ export function getVendorAccountRoutePath(params?: { section?: string }) {
     const search = params?.section ? `?section=${params.section}` : ''
     return `/vendor/account${search}`;
 }
-export function getMyAccountRoutePath() {
-    return `/my-account`;
+export function getMyAccountRoutePath(params?: { section?: string }) {
+    const search = params?.section ? `?section=${params.section}` : ''
+    return `/my-account${search}`;
 }
 
 /** Dashboard path for the given role (User → my-account, Vendor → vendor/dashboard). */
