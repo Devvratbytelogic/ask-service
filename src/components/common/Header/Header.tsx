@@ -158,7 +158,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                 My Profile
                                             </Link>
                                             <Link
-                                                href={getVendorAccountRoutePath()}
+                                                href={getVendorAccountRoutePath({ section: 'profile' })}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />

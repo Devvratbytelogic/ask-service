@@ -26,8 +26,9 @@ export function getVendorMessageRoutePath() {
 export function getVendorProfileRoutePath() {
     return `/vendor/profile`;
 }
-export function getVendorAccountRoutePath() {
-    return `/vendor/account`;
+export function getVendorAccountRoutePath(params?: { section?: string }) {
+    const search = params?.section ? `?section=${params.section}` : ''
+    return `/vendor/account${search}`;
 }
 export function getMyAccountRoutePath() {
     return `/my-account`;
