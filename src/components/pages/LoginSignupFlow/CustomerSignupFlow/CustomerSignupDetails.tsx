@@ -167,6 +167,7 @@ const CustomerSignupDetails = () => {
                             variant="bordered"
                             label="First name"
                             labelPlacement="outside"
+                            isRequired
                             placeholder="First name"
                             value={values.firstName}
                             onChange={handleChange}
@@ -183,6 +184,7 @@ const CustomerSignupDetails = () => {
                             variant="bordered"
                             label="Last name"
                             labelPlacement="outside"
+                            isRequired
                             placeholder="Last name"
                             value={values.lastName}
                             onChange={handleChange}
@@ -203,6 +205,7 @@ const CustomerSignupDetails = () => {
                                 variant="bordered"
                                 label="Email address"
                                 labelPlacement="outside"
+                                isRequired
                                 placeholder="example@xyz.com"
                                 type="email"
                                 value={values.email}
@@ -249,6 +252,7 @@ const CustomerSignupDetails = () => {
                             variant="bordered"
                             label="Password"
                             labelPlacement="outside"
+                            isRequired
                             placeholder="Password"
                             type={isPasswordVisible ? "text" : "password"}
                             value={values.password}

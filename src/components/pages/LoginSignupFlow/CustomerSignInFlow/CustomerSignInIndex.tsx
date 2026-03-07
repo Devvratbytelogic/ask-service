@@ -117,9 +117,9 @@ const CustomerSignInIndex = () => {
                     <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signInWith('email')}>
                         <span><CgMail className="text-lg" /></span>Email
                     </Button>
-                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signInWith('phoneNumber')}>
+                    {/* <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signInWith('phoneNumber')}>
                         <span><BiPhone className="text-lg" /></span>Mobile Number
-                    </Button>
+                    </Button> */}
                 </section>
             </div>
             <div className="w-11/12 space-y-6.25">
