@@ -203,7 +203,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                         <div className="border-t border-borderDark" />
                                         <div className="py-2 px-2">
                                             <Link
-                                                href={getMyAccountRoutePath()}
+                                                href={getMyAccountRoutePath({section: 'profile'})}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
@@ -277,7 +277,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                 My Profile
                                             </Link>
                                             <Link
-                                                href={getVendorAccountRoutePath()}
+                                                href={getVendorAccountRoutePath({section: 'profile'})}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
@@ -314,7 +314,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                         <div className="border-t border-borderDark" />
                                         <div className="py-2 px-2">
                                             <Link
-                                                href={getMyAccountRoutePath()}
+                                                href={getMyAccountRoutePath({section: 'profile'})}
                                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                             >
                                                 <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>

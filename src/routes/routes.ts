@@ -35,7 +35,7 @@ export function getMyAccountRoutePath(params?: { section?: string }) {
     return `/my-account${search}`;
 }
 
-/** Dashboard path for the given role (User → my-account, Vendor → vendor/dashboard). */
+/** Dashboard path for the given role (User → my-request, Vendor → vendor/dashboard). */
 export function getDashboardPathForRole(
     role: string | { name?: string; id?: string; _id?: string } | undefined | null
 ): string {
@@ -47,7 +47,7 @@ export function getDashboardPathForRole(
               : String(role.name ?? role.id ?? role._id ?? '');
     const rLower = r.toLowerCase();
     if (rLower === 'vendor') return getVendorDashboardRoutePath();
-    return getMyAccountRoutePath();
+    return getMyRequestRoutePath();
 }
 export function getContactUsRoutePath() {
     return `/contact-us`;

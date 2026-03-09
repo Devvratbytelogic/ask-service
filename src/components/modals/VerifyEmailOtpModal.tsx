@@ -49,7 +49,7 @@ export default function VerifyEmailOtpModal() {
                 }))
             } else {
                 dispatch(closeModal())
-                router.push(getMyAccountRoutePath())
+                router.push(getMyAccountRoutePath({section: 'profile'}))
             }
         } catch {
             // Error toast from rtkQuerieSetup
