@@ -96,7 +96,7 @@ export default function ProfileInfo() {
                 setProfilePicFile(null)
                 setIsEditing(false)
             } catch {
-                addToast({ title: 'Failed to update profile', color: 'danger', timeout: 2000 })
+                // addToast({ title: 'Failed to update profile', color: 'danger', timeout: 2000 })
             }
         },
     })
@@ -105,7 +105,10 @@ export default function ProfileInfo() {
         dispatch(
             openModal({
                 componentName: 'MobileOtpVerification',
-                data: { phoneNumber: profileData?.phone ?? values.phone ?? '' },
+                data: {
+                    phoneNumber: profileData?.phone ?? values.phone ?? '',
+                    otpType: 'VERIFY_PHONE',
+                },
                 modalSize: 'md',
             })
         )
@@ -264,7 +267,7 @@ export default function ProfileInfo() {
                                     dropdownStyle={{ zIndex: 9999 }}
                                 />
                             </div>
-                            {!profileData?.is_phone_verified && (values.phone || profileData?.phone) && (
+                            {profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
                                     Verify
                                 </Button>
