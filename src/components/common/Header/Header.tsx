@@ -72,7 +72,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const handleLogout = () => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };
-    checkAuthTokenAndLogoutIfInvalid();
+    // checkAuthTokenAndLogoutIfInvalid();
 
     if (!isAuthenticated) {
         return (
