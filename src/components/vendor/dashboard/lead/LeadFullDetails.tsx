@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import moment from 'moment'
 import { LocationSVG } from '@/components/library/AllSVG'
 import LeadHeader from './LeadHeader'
@@ -31,6 +31,13 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
     const { data: leadData, isLoading: leadLoading } = useGetSingleLeadQuery({ id })
     const lead = leadData?.data
     const [showSubmitQuoteForm, setShowSubmitQuoteForm] = useState(false)
+    const submitQuoteFormRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (showSubmitQuoteForm && submitQuoteFormRef.current) {
+            submitQuoteFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    }, [showSubmitQuoteForm])
 
     const headerData = useMemo((): LeadFullDetailsData | null => {
         if (!lead) return null
@@ -220,7 +227,9 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
                     {/* Submit Quote Form - shown when Send Quote is clicked */}
                     {showSubmitQuoteForm && (
-                        <SubmitQuoteForm leadId={id} onCancel={() => setShowSubmitQuoteForm(false)} />
+                        <div ref={submitQuoteFormRef}>
+                            <SubmitQuoteForm leadId={id} onCancel={() => setShowSubmitQuoteForm(false)} />
+                        </div>
                     )}
                 </div>
 

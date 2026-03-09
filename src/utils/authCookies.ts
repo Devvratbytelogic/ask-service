@@ -61,3 +61,23 @@ export function clearAllCookiesAndReload(homePath: string = '/'): void {
     Object.keys(all).forEach((name) => Cookies.remove(name, { path: '/' }))
     window.location.href = homePath
 }
+
+/**
+ * Returns true if the error indicates invalid/expired token or unauthorized access.
+ * Use this to trigger auto logout from API error handlers.
+ */
+export function isUnauthorizedError(message: string, status?: number): boolean {
+    if (status === 401) return true
+    const lower = (message || '').toLowerCase()
+    return lower.includes('unauthorized') || lower.includes('invalid token') || lower.includes('token expired')
+}
+
+/**
+ * Clear auth cookies and redirect to home. Safe to call from API error handlers.
+ * No-op when run on server (no window).
+ */
+export function logoutAndRedirectToHome(): void {
+    if (typeof window === 'undefined') return
+    clearAuthCookies()
+    window.location.href = '/'
+}

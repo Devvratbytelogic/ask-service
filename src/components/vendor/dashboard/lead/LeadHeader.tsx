@@ -52,10 +52,11 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                     </div>
                 </div>
                 {data?.unlocked ? (
-                    <Button className="btn_radius font-medium bg-[#DCFCE7] text-[#008236] hover:bg-[#7BF1A8]"
-                    startContent={<UnlockGreenIconSVG />} >
-                    View Full Details
-                </Button>
+                    //     <Button className="btn_radius font-medium bg-[#DCFCE7] text-[#008236] hover:bg-[#7BF1A8]"
+                    //     startContent={<UnlockGreenIconSVG />} >
+                    //     View Full Details
+                    // </Button>
+                    null
                 ) : (
                     <div className="flex items-center gap-4 shrink-0">
                         <div className="text-right">

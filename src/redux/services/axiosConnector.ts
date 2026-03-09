@@ -2,8 +2,9 @@
 
 import { API_BASE_URL } from "@/utils/config";
 import axios from "axios";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import { notFound } from "next/navigation";
+import { isUnauthorizedError, logoutAndRedirectToHome } from "@/utils/authCookies";
 
 export const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -14,7 +15,7 @@ export const axiosInstance = axios.create({
     },
 });
 
-axiosInstance.interceptors.request.use((config:any) => {
+axiosInstance.interceptors.request.use((config: any) => {
   const token = Cookies.get('auth_token') || '';
   const deviceId = Cookies.get('device') || '';
   const userId = Cookies.get('userID') || '';
@@ -24,9 +25,21 @@ axiosInstance.interceptors.request.use((config:any) => {
   config.headers['userID'] = userId;
 
   return config;
-}, (error:any) => {
+}, (error: any) => {
   return Promise.reject(error);
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: any) => {
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message ?? error?.message ?? '';
+    if (typeof window !== 'undefined' && isUnauthorizedError(message, status)) {
+      logoutAndRedirectToHome();
+    }
+    return Promise.reject(error);
+  }
+);
 
 
 export const axiosConnector = async (
@@ -50,17 +63,20 @@ export const axiosConnector = async (
         });
         return response?.data;
     } catch (error: any) {
-        
         // console.error(`API Error at [${method.toUpperCase()} ${end_point}]`, error?.response || error);
 
-        // Optional: Handle 404 using Next.js logic
-        if (error?.response?.status === 404) {
+        const status = error?.response?.status;
+        const message = error?.response?.data?.message ?? error?.message ?? "";
+
+        if (typeof window !== "undefined" && isUnauthorizedError(message, status)) {
+            logoutAndRedirectToHome();
+            throw error;
+        }
+
+        if (status === 404) {
             if (typeof window === "undefined") {
-                // Server-side (e.g. Next.js)
-                notFound()
-                //throw new Error("NEXT_NOT_FOUND");
+                notFound();
             } else {
-                // Client-side
                 window.location.href = "/404";
             }
         }

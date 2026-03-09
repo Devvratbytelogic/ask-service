@@ -4,6 +4,7 @@ import { Mutex } from 'async-mutex';
 import Cookies from "js-cookie";
 import { addToast } from '@heroui/react';
 import { API_BASE_URL } from '@/utils/config';
+import { isUnauthorizedError, logoutAndRedirectToHome } from '@/utils/authCookies';
 
 const mutex = new Mutex();
 
@@ -51,9 +52,14 @@ const baseQueryWithAuth: BaseQueryFn<
         const result = await baseQuery(args, api, extraOptions);
         const res = result.data as IAPIResponse;
         if (result.error) {
-            const errorData = result.error as IAPIError;
+            const errorData = result.error as IAPIError & { status?: number };
+            const message = errorData?.data?.message || "Unknown API error";
+            const status = errorData?.status;
+            if (isUnauthorizedError(message, status)) {
+                logoutAndRedirectToHome();
+            }
             console.error(`API: ${args}, Failed to fetch data`);
-            throw new Error(errorData?.data?.message || "Unknown API error");
+            throw new Error(message);
         }else{
             return { data: res };
         }
@@ -66,8 +72,9 @@ const baseQueryWithAuth: BaseQueryFn<
                 data: { message: error.message },
                 error: error.message,
             };
-
-            addToast({title:errorResponse?.error , color:'danger',timeout:2000})
+            if (!isUnauthorizedError(error.message)) {
+                addToast({ title: errorResponse?.error, color: 'danger', timeout: 2000 });
+            }
         } else {
             errorResponse = {
                 status: "CUSTOM_ERROR",

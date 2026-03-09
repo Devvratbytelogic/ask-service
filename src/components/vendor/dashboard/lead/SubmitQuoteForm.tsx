@@ -6,7 +6,7 @@ import { submitQuoteValidationSchema } from '@/utils/validation'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import { useFormik } from 'formik'
 import { useState, useRef } from 'react'
-import { FiUploadCloud } from 'react-icons/fi'
+import { FiCalendar, FiUploadCloud } from 'react-icons/fi'
 
 const QUOTE_VALID_OPTIONS = [
     { key: '7', label: '7 days' },
@@ -146,13 +146,15 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         </label>
                         <Input
                             name="availableStartDate"
+                            type="date"
                             value={values.availableStartDate}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            placeholder="dd / mm / yyyy"
+                            min={new Date().toISOString().slice(0, 10)}
                             isInvalid={!!(touched.availableStartDate && errors.availableStartDate)}
                             errorMessage={touched.availableStartDate && errors.availableStartDate}
                             classNames={{ inputWrapper: 'account_input_design' }}
+                            // endContent={<FiCalendar className="size-5 text-darkSilver shrink-0 pointer-events-none" aria-hidden />}
                         />
                     </div>
                     <div>
@@ -210,7 +212,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                 <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-center pt-2">
                     <Button
                         type="button"
-                        className="btn_radius btn_bg_white w-full"
+                        className="btn_radius btn_bg_white w-full hover:bg-gray-300!"
                         onPress={onCancel}
                         isDisabled={isLoading}
                     >
