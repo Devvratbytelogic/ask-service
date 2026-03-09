@@ -50,7 +50,10 @@ export default function VendorProfileInfo() {
         dispatch(
             openModal({
                 componentName: 'MobileOtpVerification',
-                data: { phoneNumber: profileData?.phone ?? values.phone ?? '' },
+                data: {
+                    phoneNumber: profileData?.phone ?? values.phone ?? '',
+                    otpType: 'VERIFY_PHONE',
+                },
                 modalSize: 'md',
             })
         )
@@ -155,12 +158,12 @@ export default function VendorProfileInfo() {
     const avatarInitials = hasBusinessDetails
         ? (displayName?.charAt(0) || 'P').toUpperCase()
         : [
-              profileData?.first_name?.charAt(0),
-              profileData?.last_name?.charAt(0),
-          ]
-              .filter(Boolean)
-              .join('')
-              .toUpperCase() || 'U'
+            profileData?.first_name?.charAt(0),
+            profileData?.last_name?.charAt(0),
+        ]
+            .filter(Boolean)
+            .join('')
+            .toUpperCase() || 'U'
 
     const memberSinceDate = profileData?.createdAt
         ? new Date(profileData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -214,11 +217,10 @@ export default function VendorProfileInfo() {
                         />
                     ) : (
                         <div
-                            className={`flex size-16 shrink-0 items-center justify-center rounded-full text-lg font-bold ${
-                                hasBusinessDetails
+                            className={`flex size-16 shrink-0 items-center justify-center rounded-full text-lg font-bold ${hasBusinessDetails
                                     ? 'bg-primaryColor text-white'
                                     : 'bg-primaryColor/20 text-primaryColor'
-                            }`}
+                                }`}
                         >
                             {avatarInitials}
                         </div>
@@ -357,7 +359,7 @@ export default function VendorProfileInfo() {
                                     dropdownStyle={{ zIndex: 9999 }}
                                 />
                             </div>
-                            {!profileData?.is_phone_verified && (values.phone || profileData?.phone) && (
+                            {profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
                                     Verify
                                 </Button>
