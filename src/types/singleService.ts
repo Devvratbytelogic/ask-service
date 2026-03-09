@@ -19,6 +19,7 @@ export interface ISingleServiceAPIResponse {
     deletedAt?: null;
     frequency?: (string)[] | null;
     is_frequency_visible: boolean;
+    is_tasks_required_visible: boolean;
     is_start_date_visible: boolean;
     is_start_time_visible: boolean;
     is_end_date_visible: boolean;

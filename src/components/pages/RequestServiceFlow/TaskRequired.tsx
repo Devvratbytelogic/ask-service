@@ -10,13 +10,13 @@ interface TaskRequiredProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
   childCategories?: IAllServiceCategoriesChildCategoriesEntity[] | null
+  isTasksRequiredVisible?: boolean
 }
 
-const TaskRequired = ({ formik, setStepCount, childCategories = [] }: TaskRequiredProps) => {
+const TaskRequired = ({ formik, setStepCount, childCategories = [], isTasksRequiredVisible = true }: TaskRequiredProps) => {
   const { values, setFieldValue } = formik
   const selectedIds = values.childServiceIds ?? []
-  console.log('values', values);
-  
+
   const selectedChild = useMemo(
     () => (childCategories ?? []).find((c) => c._id === values.parentServiceName),
     [childCategories, values.parentServiceName]
@@ -40,39 +40,43 @@ const TaskRequired = ({ formik, setStepCount, childCategories = [] }: TaskRequir
           Missions demandées
         </h2>
         <p className="text-darkSilver text-sm/[18px] xl:text-base/[30px]">
-          Optionnel – Sélectionnez tout ce qui s'applique pour aider les prestataires à mieux comprendre vos besoins
+          {isTasksRequiredVisible
+            ? "Optionnel – Sélectionnez tout ce qui s'applique pour aider les prestataires à mieux comprendre vos besoins"
+            : "Cette étape ne requiert pas de sélection de missions pour ce service."}
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-        {optionsList.map((item, index) => {
-          const id = item.label ?? `option-${index}`
-          const isSelected = selectedIds.includes(id)
-          return (
-            <label
-              key={id}
-              className={`
-                flex items-center gap-3 p-4 rounded-xl border cursor-pointer
-                bg-white border-borderColor hover:border-primaryColor/50
-                transition-colors
-                ${isSelected ? "border-primaryColor bg-primaryColor/5" : ""}
-              `}
-            >
-              <Checkbox
-                isSelected={isSelected}
-                onValueChange={() => handleToggle(id)}
-                classNames={{
-                  base: "max-w-full",
-                  wrapper: "rounded-md",
-                }}
-                aria-label={item.label}
-              />
-              <span className="text-fontBlack text-sm xl:text-base truncate">
-                {item.label}
-              </span>
-            </label>
-          )
-        })}
-      </div>
+      {isTasksRequiredVisible && optionsList.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          {optionsList.map((item, index) => {
+            const id = item.label ?? `option-${index}`
+            const isSelected = selectedIds.includes(id)
+            return (
+              <label
+                key={id}
+                className={`
+                  flex items-center gap-3 p-4 rounded-xl border cursor-pointer
+                  bg-white border-borderColor hover:border-primaryColor/50
+                  transition-colors
+                  ${isSelected ? "border-primaryColor bg-primaryColor/5" : ""}
+                `}
+              >
+                <Checkbox
+                  isSelected={isSelected}
+                  onValueChange={() => handleToggle(id)}
+                  classNames={{
+                    base: "max-w-full",
+                    wrapper: "rounded-md",
+                  }}
+                  aria-label={item.label}
+                />
+                <span className="text-fontBlack text-sm xl:text-base truncate">
+                  {item.label}
+                </span>
+              </label>
+            )
+          })}
+        </div>
+      )}
       <div className="flex justify-between pt-6 gap-2">
         <Button variant="bordered" className="btn_radius font-medium text-sm/[20px] leading-[-0.42px]" onPress={handleBack}>
           Précédent

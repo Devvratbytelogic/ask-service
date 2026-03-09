@@ -9,6 +9,7 @@ import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
 interface ReviewRequestProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
+  isTasksRequiredVisible?: boolean
 }
 
 const formatDate = (dateStr: string) => {
@@ -32,7 +33,7 @@ const getTaskNames = (ids: string[]) => {
     .join(", ")
 }
 
-const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
+const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true }: ReviewRequestProps) => {
   
   const { values, handleSubmit } = formik
 
@@ -47,13 +48,15 @@ const ReviewRequest = ({ formik, setStepCount }: ReviewRequestProps) => {
         { label: "Fréquence:", value: values.serviceFrequency || "—" },
       ],
     },
-    {
-      title: "Missions",
-      step: 2,
-      rows: [
-        { label: "Missions:", value: getTaskNames(values.childServiceIds ?? []) },
-      ],
-    },
+    ...(isTasksRequiredVisible
+      ? [{
+          title: "Missions",
+          step: 2,
+          rows: [
+            { label: "Missions:", value: getTaskNames(values.childServiceIds ?? []) },
+          ],
+        }]
+      : []),
     {
       title: "Planning",
       step: 3,

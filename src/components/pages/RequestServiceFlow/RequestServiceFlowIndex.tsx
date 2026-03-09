@@ -89,6 +89,7 @@ const RequestServiceFlowIndex = () => {
         { skip: !data?.grandParentServiceId }
     )
     const isFrequencyVisible = serviceCategoryResponse?.data?.is_frequency_visible ?? true
+    const isTasksRequiredVisible = serviceCategoryResponse?.data?.is_tasks_required_visible ?? true
     const scheduleVisibility: ScheduleVisibility = {
         is_preferred_date_visible: serviceCategoryResponse?.data?.is_preferred_date_visible ?? true,
         is_preferred_time_visible: serviceCategoryResponse?.data?.is_preferred_time_visible ?? true,
@@ -98,14 +99,20 @@ const RequestServiceFlowIndex = () => {
         is_end_time_visible: serviceCategoryResponse?.data?.is_end_time_visible ?? false,
     }
 
+    const totalSteps = isTasksRequiredVisible ? 5 : 4
+    const displayStep = isTasksRequiredVisible ? getStepCount : (getStepCount >= 3 ? getStepCount - 1 : getStepCount)
+
     const setStepCountSafe = useCallback(
         (arg: React.SetStateAction<number>) => {
             if (typeof arg === "function") {
                 setStepCount((prev) => {
-                    const next = arg(prev)
+                    let next = arg(prev)
                     if (next < 1) {
                         dispatch(closeModal())
                         return 1
+                    }
+                    if (!isTasksRequiredVisible && next === 2) {
+                        next = prev < 2 ? 3 : 1
                     }
                     return next
                 })
@@ -114,11 +121,11 @@ const RequestServiceFlowIndex = () => {
                     dispatch(closeModal())
                     setStepCount(1)
                 } else {
-                    setStepCount(arg)
+                    setStepCount(!isTasksRequiredVisible && arg === 2 ? 3 : arg)
                 }
             }
         },
-        [dispatch]
+        [dispatch, isTasksRequiredVisible]
     )
 
     const profilePrefill: Partial<RequestServiceFormValues> = profile
@@ -333,17 +340,17 @@ const RequestServiceFlowIndex = () => {
             <div className="space-y-5">
                 <div className="space-y-2.5">
                     <p className="text-fontBlack text-sm/[20px] xl:text-lg/[22px] text-center">
-                        Étape <span className="text-[#10B981] font-semibold">{getStepCount}</span> sur 5
+                        Étape <span className="text-[#10B981] font-semibold">{displayStep}</span> sur {totalSteps}
                     </p>
                     <div className="w-full mx-auto px-4 py-6">
-                        <ProgressStepBar currentStep={getStepCount} totalSteps={5} />
+                        <ProgressStepBar currentStep={displayStep} totalSteps={totalSteps} />
                     </div>
                 </div>
                 {
                     getStepCount === 1 && <ServiceAndLocation isFrequencyVisible={isFrequencyVisible} grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
                 {
-                    getStepCount === 2 && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
+                    getStepCount === 2 && isTasksRequiredVisible && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} isTasksRequiredVisible={isTasksRequiredVisible} />
                 }
                 {
                     getStepCount === 3 && <DesiredSchedule formik={formik} setStepCount={setStepCountSafe} scheduleVisibility={scheduleVisibility} />
@@ -352,7 +359,7 @@ const RequestServiceFlowIndex = () => {
                     getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} />
                 }
                 {
-                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} />
+                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} />
                 }
 
             </div>
