@@ -6,6 +6,7 @@ import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
 import { ISingleLeadAPIResponse } from '@/types/singleLead';
 import { IUserProfileInfoAPIResponse } from '@/types/userProfile';
+import { IAllQuotesAPIResponse } from '@/types/allquotes';
 import { IVendorAvailableLeadsAPIResponse, IVendorDashboardDataAPIResponse } from '@/types/vendorDashboard';
 import { IVendorDashboardTransactionAPIResponse } from '@/types/vendorDashboardTransaction';
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
@@ -108,6 +109,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorAvailableLeads'],
         }),
+        getVendorAllQuotes: builder.query<IAllQuotesAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/all-quotes`,
+                method: 'GET',
+            }),
+            providesTags: ['VendorAllQuotes'],
+        }),
         getSingleLead: builder.query<ISingleLeadAPIResponse, { id: string }>({
             query: ({ id }) => ({
                 url: `/vendor/leads/${id}`,
@@ -182,6 +190,7 @@ export const {
     useLazyGetTransactionHistoryExportPDFQuery,
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
+    useGetVendorAllQuotesQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,
     useGetCreditsPackagesQuery,

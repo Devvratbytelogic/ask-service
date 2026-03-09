@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
-import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
+import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
@@ -119,7 +119,7 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.quotesSentCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Quotes Sent</p>
-                        <Link href={getVendorDashboardRoutePath({ leads: 'quoted' })} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
+                        <Link href={getVendorAllQuotesRoutePath()} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
                             View all →
                         </Link>
                     </div>

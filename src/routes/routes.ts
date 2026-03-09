@@ -7,6 +7,9 @@ export function getVendorDashboardRoutePath(params?: { leads?: 'purchased' | 'qu
     const search = leadsParam ? `?leads=${leadsParam}` : ''
     return `/vendor/dashboard${search}`;
 }
+export function getVendorAllQuotesRoutePath() {
+    return `/vendor/all-quotes`;
+}
 export function getCreditsRoutePath() {
     return `/vendor/credits`;
 }
