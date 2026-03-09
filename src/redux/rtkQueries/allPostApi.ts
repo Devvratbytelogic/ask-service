@@ -112,7 +112,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      invalidatesTags: ['VendorAvailableLeads'],
+      invalidatesTags: ['VendorAvailableLeads', 'VendorDashboard'],
     }),
     closeServiceRequest: builder.mutation({
       query: ({ id, body }: { id: string; body: { reason: string; reason_comment: string } }) => ({

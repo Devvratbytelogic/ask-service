@@ -2,8 +2,9 @@
 export function generateLeadDetailRoutePath(id: string) {
     return `/vendor/dashboard/lead/${id}`;
 }
-export function getVendorDashboardRoutePath(params?: { leads?: 'purchased' }) {
-    const search = params?.leads === 'purchased' ? '?leads=purchased' : ''
+export function getVendorDashboardRoutePath(params?: { leads?: 'purchased' | 'quoted' }) {
+    const leadsParam = params?.leads === 'purchased' ? 'purchased' : params?.leads === 'quoted' ? 'quoted' : undefined
+    const search = leadsParam ? `?leads=${leadsParam}` : ''
     return `/vendor/dashboard${search}`;
 }
 export function getCreditsRoutePath() {

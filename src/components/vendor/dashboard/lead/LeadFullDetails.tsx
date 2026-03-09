@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import moment from 'moment'
 import { LocationSVG } from '@/components/library/AllSVG'
 import LeadHeader from './LeadHeader'
 import LeadSidebar from './LeadSidebar'
@@ -58,7 +59,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             serviceType: lead.service_category?.title || lead.child_category || 'N/A',
             frequency: lead.frequency || 'N/A',
             clientType: lead.contact_details?.client_type || 'N/A',
-            preferredStartDate: lead.preferred_start_date || 'N/A',
+            preferredStartDate: lead.preferred_start_date ? moment(lead.preferred_start_date).format('LL') : 'N/A',
             preferredTime: lead.preferred_time_of_day || 'N/A',
             tasks: lead.selected_options ?? [],
         }

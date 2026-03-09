@@ -31,12 +31,20 @@ export default function VendorDashboard() {
     )
     const searchParams = useSearchParams()
     const showPurchasedOnly = searchParams.get('leads') === 'purchased'
-    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery(leadsParams)
+    const showQuotedOnly = searchParams.get('leads') === 'quoted'
+    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
+        ...leadsParams,
+        ...(showQuotedOnly && { quoted: true }),
+    })
     const [unlockLead] = useUnlockLeadMutation()
     const allLeads = leadsData?.data ?? []
     const leads = useMemo(
-        () => (showPurchasedOnly ? allLeads.filter((l) => l?.unlocked) : allLeads),
-        [showPurchasedOnly, allLeads],
+        () => {
+            if (showQuotedOnly) return allLeads
+            if (showPurchasedOnly) return allLeads.filter((l) => l?.unlocked)
+            return allLeads
+        },
+        [showPurchasedOnly, showQuotedOnly, allLeads],
     )
     const isLoading = dashboardLoading || leadsLoading
 
@@ -88,7 +96,7 @@ export default function VendorDashboard() {
                         <p className="text-2xl font-bold text-fontBlack">
                             {isLoading ? '—' : dashboard?.purchasedLeadsCount ?? 0}
                         </p>
-                        <p className="text-sm text-darkSilver mt-0.5">Purchased Leads</p>
+                        <p className="text-sm text-darkSilver mt-0.5">My Leads</p>
                         <Link href={getVendorDashboardRoutePath({ leads: 'purchased' })} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
                             View leads →
                         </Link>
@@ -117,28 +125,30 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.quotesSentCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Quotes Sent</p>
-                        <Link href={getVendorDashboardRoutePath()} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
+                        <Link href={getVendorDashboardRoutePath({ leads: 'quoted' })} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
                             View all →
                         </Link>
                     </div>
                 </div>
 
-                {/* Available Leads / Purchased Leads Section */}
+                {/* Available Leads / My Leads / Quotes Sent Section */}
                 <div className="space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <h2 className="header_text_md text-fontBlack">
-                                {showPurchasedOnly ? 'Purchased Leads' : 'Available Leads'}
+                                {showQuotedOnly ? 'Quotes Sent' : showPurchasedOnly ? 'My Leads' : 'Available Leads'}
                             </h2>
                             <p className="text-sm text-darkSilver mt-1">
-                                {showPurchasedOnly
-                                    ? `${leads.length} purchased lead${leads.length !== 1 ? 's' : ''} • View full details below`
-                                    : `${allLeads.length} leads available • Unlock to view full details`}
-                                {showPurchasedOnly && (
+                                {showQuotedOnly
+                                    ? `${leads.length} lead${leads.length !== 1 ? 's' : ''} you&apos;ve quoted • View full details below`
+                                    : showPurchasedOnly
+                                        ? `${leads.length} purchased lead${leads.length !== 1 ? 's' : ''} • View full details below`
+                                        : `${allLeads.length} leads available • Unlock to view full details`}
+                                {(showPurchasedOnly || showQuotedOnly) && (
                                     <>
                                         {' • '}
                                         <Link href={getVendorDashboardRoutePath()} className="text-primaryColor hover:underline font-medium">
-                                            View all leads
+                                            View available leads
                                         </Link>
                                     </>
                                 )}
@@ -195,9 +205,13 @@ export default function VendorDashboard() {
 
                     {/* Lead Cards */}
                     <div className="flex flex-col gap-4">
-                        {showPurchasedOnly && leads.length === 0 && (
+                        {(showPurchasedOnly || showQuotedOnly) && leads.length === 0 && (
                             <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
-                                <p className="text-darkSilver">You have no purchased leads yet. Unlock leads from Available Leads to see their full details here.</p>
+                                <p className="text-darkSilver">
+                                    {showQuotedOnly
+                                        ? "You haven't sent any quotes yet. Unlock leads and submit quotes to see them here."
+                                        : 'You have no leads yet. Unlock leads from Available Leads to see their full details here.'}
+                                </p>
                                 <Link href={getVendorDashboardRoutePath()} className="inline-block mt-3 text-sm font-medium text-[#4CAF50] hover:underline">
                                     View available leads →
                                 </Link>
