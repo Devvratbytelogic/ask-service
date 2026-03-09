@@ -4,7 +4,7 @@ import DocumentUploadCard from "@/components/library/DocumentUploadCard"
 import { clientSideGetApis, useGetAllServicesDocumentsRequiredQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { useUploadVendorDocumentsMutation } from "@/redux/rtkQueries/allPostApi"
 import { RootState } from "@/redux/appStore"
-import { openModal } from "@/redux/slices/allModalSlice"
+import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -75,9 +75,14 @@ const VendorDocumentVerification = () => {
 
     return (
         <div className="w-11/12 mx-auto space-y-11.25 pb-8">
-            <div className="h-12 w-fit">
+            <button
+                type="button"
+                onClick={() => dispatch(closeModal())}
+                className="h-12 w-fit inline-flex items-center justify-start cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label="Close and go to Ask Service"
+            >
                 <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" />
-            </div>
+            </button>
 
             <div className="flex items-center justify-between gap-4">
                 <div className="space-y-5 w-full">

@@ -1,6 +1,7 @@
 import ImageComponent from "@/components/library/ImageComponent"
 import { RootState } from "@/redux/appStore";
-import { useSelector } from "react-redux";
+import { closeModal } from "@/redux/slices/allModalSlice";
+import { useSelector, useDispatch } from "react-redux";
 import SelectUserType from "./SelectUserType";
 import CustomerSignupIndex from "./CustomerSignupFlow/CustomerSignupIndex";
 import CustomerSignupDetails from "./CustomerSignupFlow/CustomerSignupDetails";
@@ -16,7 +17,7 @@ import ForgotPasswordOtpVerify from "./ForgotPasswordFlow/ForgotPasswordOtpVerif
 import ForgotPasswordSetNew from "./ForgotPasswordFlow/ForgotPasswordSetNew";
 
 const LoginSignupIndex = () => {
-
+    const dispatch = useDispatch();
     const { data } = useSelector((state: RootState) => state.allCommonModal);
 
     const renderComponent = () => {
@@ -58,9 +59,14 @@ const LoginSignupIndex = () => {
     return (
         <div className="relative flex flex-col md:flex-row h-full p-0 md:p-6">
             <div className="flex flex-col h-full items-start justify-between w-full md:w-[45%] mt-0 gap-10 xl:gap-auto max-h-[95svh] overflow-y-auto pe-10">
-                <div className="h-12 w-50 shrink-0 inline-flex items-center justify-start">
+                <button
+                    type="button"
+                    onClick={() => dispatch(closeModal())}
+                    className="h-12 w-50 shrink-0 inline-flex items-center justify-start cursor-pointer hover:opacity-80 transition-opacity"
+                    aria-label="Close and go to Ask Service"
+                >
                     <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" />
-                </div>
+                </button>
                 {
                     renderComponent()
                 }
