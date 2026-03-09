@@ -19,6 +19,7 @@ import "react-phone-input-2/lib/style.css"
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
+import { yupRequiredEmail } from "@/utils/validation"
 
 export interface VendorSignupFormValues {
     firstName: string
@@ -32,7 +33,7 @@ export interface VendorSignupFormValues {
 const vendorSignupValidationSchema = Yup.object({
     firstName: Yup.string().trim().required("This field is required"),
     lastName: Yup.string().trim().required("This field is required"),
-    email: Yup.string().trim().email("Enter a valid email").required("This field is required"),
+    email: yupRequiredEmail("This field is required"),
     phoneNumber: Yup.string().trim(),
     password: Yup.string().trim().required("This field is required"),
     agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the terms").required(),

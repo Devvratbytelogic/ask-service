@@ -9,13 +9,14 @@ import { useMemo } from "react"
 import { BiArrowBack } from "react-icons/bi"
 import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
+import { yupRequiredEmail } from "@/utils/validation"
 
 interface ForgotPasswordIdentifierValues {
     email: string
 }
 
 const forgotPasswordEmailSchema = Yup.object({
-    email: Yup.string().trim().email("Enter a valid email address").required("This field is required"),
+    email: yupRequiredEmail("This field is required"),
 })
 
 const ForgotPasswordEnterIdentifier = () => {

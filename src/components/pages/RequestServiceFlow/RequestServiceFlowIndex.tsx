@@ -15,7 +15,7 @@ import { getAuthToken } from "@/utils/authCookies"
 import AppLoader from "@/components/common/AppLoader"
 import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
 import { getAddressFromPincode } from "@/utils/pincodeToAddress"
-
+import { validateEmail } from "@/utils/validation"
 
 const baseInitialValues = {
     pincode: "",
@@ -167,6 +167,9 @@ const RequestServiceFlowIndex = () => {
                 err[field] = "Requis"
             }
         })
+        if (values.customerEmail?.toString().trim() && !validateEmail(values.customerEmail.trim())) {
+            err.customerEmail = "Please enter a valid email address"
+        }
         if (values.parentServiceName === "other" && !values.otherServiceName?.toString().trim()) {
             err.otherServiceName = "Requis"
         }

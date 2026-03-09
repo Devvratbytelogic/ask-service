@@ -14,6 +14,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
+import { yupRequiredEmail, yupOptionalEmail } from "@/utils/validation"
 
 export interface CustomerSignupFormValues {
     firstName: string
@@ -34,20 +35,20 @@ const getSignupValidationSchema = (userSignupType: string | undefined) => {
     if (userSignupType === "email") {
         return Yup.object({
             ...base,
-            email: Yup.string().trim().email("Enter a valid email").required("This field is required"),
+            email: yupRequiredEmail("This field is required"),
             phoneNumber: Yup.string(),
         })
     }
     if (userSignupType === "phoneNumber") {
         return Yup.object({
             ...base,
-            email: Yup.string(),
+            email: yupOptionalEmail(),
             phoneNumber: Yup.string().trim().required("This field is required"),
         })
     }
     return Yup.object({
         ...base,
-        email: Yup.string(),
+        email: yupOptionalEmail(),
         phoneNumber: Yup.string(),
     })
 }

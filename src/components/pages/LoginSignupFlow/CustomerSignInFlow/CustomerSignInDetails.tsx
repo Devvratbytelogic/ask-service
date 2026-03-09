@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
 import { useRouter } from "next/navigation"
+import { yupRequiredEmail, yupOptionalEmail } from "@/utils/validation"
 import { getDashboardPathForRole } from "@/routes/routes"
 
 export interface CustomerSignInFormValues {
@@ -32,20 +33,20 @@ const getSignInValidationSchema = (signInType: string | undefined) => {
     if (signInType === "email") {
         return Yup.object({
             ...base,
-            email: Yup.string().trim().email("Enter a valid email").required("This field is required"),
+            email: yupRequiredEmail("This field is required"),
             phoneNumber: Yup.string(),
         })
     }
     if (signInType === "phoneNumber") {
         return Yup.object({
             ...base,
-            email: Yup.string(),
+            email: yupOptionalEmail(),
             phoneNumber: Yup.string().trim().required("This field is required"),
         })
     }
     return Yup.object({
         ...base,
-        email: Yup.string(),
+        email: yupOptionalEmail(),
         phoneNumber: Yup.string(),
     })
 }
