@@ -3,6 +3,7 @@
 import { RootState } from "@/redux/appStore"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { useNewPasswordMutation, useVendorNewPasswordMutation } from "@/redux/rtkQueries/authApi"
+import { setResetTokenForNextRequest } from "@/utils/authCookies"
 import { addToast, Button, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useState } from "react"
@@ -31,6 +32,7 @@ const ForgotPasswordSetNew = () => {
     const dispatch = useDispatch()
     const userData = data?.userData as Record<string, unknown> | undefined
     const isVendor = Boolean(userData?.isVendor)
+    const resetToken = (userData?.resetToken as string) || ""
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
     const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
@@ -47,18 +49,23 @@ const ForgotPasswordSetNew = () => {
         onSubmit: async (values) => {
             const payload = { password: values.password, confirm_password: values.confirmPassword }
             try {
-                if (isVendor) {
-                    await vendorNewPassword(payload).unwrap()
-                } else {
-                    await newPassword(payload).unwrap()
+                if (resetToken) setResetTokenForNextRequest(resetToken)
+                try {
+                    if (isVendor) {
+                        await vendorNewPassword(payload).unwrap()
+                    } else {
+                        await newPassword(payload).unwrap()
+                    }
+                    addToast({
+                        title: "Password updated",
+                        description: "You can sign in with your new password.",
+                        color: "success",
+                        timeout: 3000,
+                    })
+                    openSignIn()
+                } finally {
+                    if (resetToken) setResetTokenForNextRequest(null)
                 }
-                addToast({
-                    title: "Password updated",
-                    description: "You can sign in with your new password.",
-                    color: "success",
-                    timeout: 3000,
-                })
-                openSignIn()
             } catch {
                 // Error toast from rtkQuerieSetup
             }

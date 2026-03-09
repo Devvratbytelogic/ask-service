@@ -7,12 +7,9 @@ import {
     useResendEmailVerificationMutation,
     useVerifyEmailMutation,
 } from "@/redux/rtkQueries/authApi"
-import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
-import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useRouter } from "next/navigation"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -20,7 +17,6 @@ const RESEND_COOLDOWN_SEC = 59
 const ForgotPasswordOtpVerify = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
-    const router = useRouter()
 
     const userData = data?.userData as Record<string, unknown> | undefined
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
@@ -71,19 +67,17 @@ const ForgotPasswordOtpVerify = () => {
         if (otpValue.length !== OTP_LENGTH || !email) return
         try {
             const res = await verifyEmail({ email, otp: otpValue }).unwrap()
-            const responseData = res?.data
-            if (responseData && typeof responseData === "object") {
-                setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
-                router.refresh()
-            }
-            const roleName = responseData?.role?.name ?? ""
-            const isVendor = roleName.toLowerCase() === "vendor"
+            const responseData = res?.data as Record<string, unknown> | undefined
+            const resetToken =
+                (responseData?.token as string) ?? (responseData?.access_token as string) ?? ""
+            const roleName = (responseData?.role as { name?: string })?.name ?? ""
+            const isVendor = String(roleName).toLowerCase() === "vendor"
             dispatch(
                 openModal({
                     componentName: "LoginSignupIndex",
                     data: {
                         componentName: "ForgotPasswordSetNew",
-                        userData: { ...userData, isVendor },
+                        userData: { ...userData, isVendor, resetToken },
                         ...(returnToRequestFlow && requestFlowData
                             ? { returnToRequestFlow: true, requestFlowData }
                             : {}),

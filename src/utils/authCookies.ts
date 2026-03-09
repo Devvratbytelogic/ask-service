@@ -48,6 +48,23 @@ export function getUserId(): string | undefined {
     return Cookies.get('userID')
 }
 
+/**
+ * Temporary token used only for the forgot-password "new password" request.
+ * When set, baseQuery uses this instead of auth_token cookie so the user is not logged in.
+ * Cleared by baseQuery after the request is prepared.
+ */
+let resetTokenForNextRequest: string | null = null
+
+export function setResetTokenForNextRequest(token: string | null): void {
+    resetTokenForNextRequest = token
+}
+
+export function getAndClearResetTokenForNextRequest(): string | null {
+    const token = resetTokenForNextRequest
+    resetTokenForNextRequest = null
+    return token
+}
+
 /** Clear auth cookies on logout */
 export function clearAuthCookies(): void {
     Cookies.remove('auth_token', { path: '/' })

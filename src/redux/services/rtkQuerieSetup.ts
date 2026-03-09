@@ -4,7 +4,7 @@ import { Mutex } from 'async-mutex';
 import Cookies from "js-cookie";
 import { addToast } from '@heroui/react';
 import { API_BASE_URL } from '@/utils/config';
-import { isUnauthorizedError, logoutAndRedirectToHome } from '@/utils/authCookies';
+import { getAndClearResetTokenForNextRequest, isUnauthorizedError, logoutAndRedirectToHome } from '@/utils/authCookies';
 
 const mutex = new Mutex();
 
@@ -26,12 +26,11 @@ interface IAPIError {
 const baseQuery = fetchBaseQuery({
     baseUrl: API_BASE_URL,
     prepareHeaders: async (headers) => {
-        const token = Cookies.get("auth_token") || null
+        const resetToken = getAndClearResetTokenForNextRequest()
+        const token = resetToken ?? Cookies.get("auth_token") ?? null
         const deviceId = Cookies.get("device") || ''
         const userId = Cookies.get("userID") || ''
         const userRole = Cookies.get("user_role") || ''
-        // headers.set('clientid', API_CLIENT_ID);
-        // headers.set('clientsecret', API_CLIENT_SECRET);
         headers.set('device', deviceId);
         headers.set('userID', userId);
         if (userRole) headers.set('user_role', userRole);
@@ -54,10 +53,7 @@ const baseQueryWithAuth: BaseQueryFn<
         if (result.error) {
             const errorData = result.error as IAPIError & { status?: number };
             const message = errorData?.data?.message || "Unknown API error";
-            const status = errorData?.status;
-            if (isUnauthorizedError(message, status)) {
-                logoutAndRedirectToHome();
-            }
+            // const status = errorData?.status;
             console.error(`API: ${args}, Failed to fetch data`);
             throw new Error(message);
         }else{
