@@ -136,6 +136,14 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         body: payload,
       }),
     }),
+    purchaseCredits: builder.mutation<unknown, { package_id: string }>({
+      query: (payload) => ({
+        url: `/vendor/credits/purchase`,
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['VendorTransactions', 'VendorDashboard'],
+    }),
   }),
 });
 
@@ -158,4 +166,5 @@ export const {
   useCloseServiceRequestMutation,
   useIgnoreQuoteMutation,
   usePostContactUsMutation,
+  usePurchaseCreditsMutation,
 } = postApi;

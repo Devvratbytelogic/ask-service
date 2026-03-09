@@ -11,6 +11,7 @@ import { IVendorDashboardTransactionAPIResponse } from '@/types/vendorDashboardT
 import { IAllVendorDocumentsAPIResponse } from '@/types/vendorDocuments';
 import { IVendorProfileInfoAPIResponse } from '@/types/vendorProfile';
 import type { IUserNotificationAPIResponse } from '@/types/notifications';
+import type { IAllCreditsAPIResponse } from '@/types/allCredits';
 import { IServiceRequestQuotesAPIResponse } from '@/types/serviceRequestQuotes';
 import { IServiceRequestQuotesDetailAPIResponse } from '@/types/serviceReuestQuotesDetails';
 
@@ -119,6 +120,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
+            providesTags: ['VendorTransactions'],
+        }),
+        getCreditsPackages: builder.query<IAllCreditsAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/credits/packages`,
+                method: 'GET',
+            }),
         }),
         getCreatedServices: builder.query<IAllRequestsAPIResponse, { search?: string | null; service?: string | null; status?: string; fromDate?: string | null; toDate?: string | null; page?: number; limit?: number } | void>({
             query: (arg) => {
@@ -175,6 +183,7 @@ export const {
     useGetVendorAvailableLeadsQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,
+    useGetCreditsPackagesQuery,
     useGetCreatedServicesQuery,
     useGetServiceRequestQuotesQuery,
     useGetServiceRequestQuotesDetailQuery,

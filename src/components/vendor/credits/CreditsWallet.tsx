@@ -2,19 +2,34 @@
 
 import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
+import { useGetCreditsPackagesQuery, useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { usePurchaseCreditsMutation } from '@/redux/rtkQueries/allPostApi'
+import type { IAllCreditsDataEntity } from '@/types/allCredits'
+import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
-const CREDIT_PACKAGES = [
-    { id: '50', credits: 50, bonus: null, price: '19.99', unitPrice: '0.40', popular: false },
-    { id: '150', credits: 150, bonus: 15, price: '49.99', unitPrice: '0.33', popular: true },
-    { id: '300', credits: 300, bonus: 50, price: '89.99', unitPrice: '0.30', popular: false },
-    { id: '500', credits: 500, bonus: 100, price: '139.99', unitPrice: '0.28', popular: false },
-]
+type CreditPackageDisplay = {
+    id: string
+    credits: number
+    bonus: number | null
+    price: string
+    unitPrice: string
+    popular: boolean
+}
+
+function mapPackageToDisplay(entity: IAllCreditsDataEntity): CreditPackageDisplay {
+    return {
+        id: entity._id,
+        credits: entity.credits,
+        bonus: entity.bonus_credits > 0 ? entity.bonus_credits : null,
+        price: String(entity.price),
+        unitPrice: String(entity.per_credit_price),
+        popular: entity.is_most_popular,
+    }
+}
 
 const PERIOD_OPTIONS = [
     { key: 'all', label: 'All time' },
@@ -27,6 +42,7 @@ export default function CreditsWallet() {
     const [period, setPeriod] = useState('all')
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState('10')
+    const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null)
     const router = useRouter()
 
     const queryParams = useMemo(() => {
@@ -49,7 +65,17 @@ export default function CreditsWallet() {
     const totalItems = apiData?.total ?? 0
     const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
 
-    const openPurchaseModal = async (pkg: (typeof CREDIT_PACKAGES)[0]) => {
+    const [purchaseCredits] = usePurchaseCreditsMutation()
+    const { data: creditsResponse, isLoading: packagesLoading } = useGetCreditsPackagesQuery()
+    const creditPackages = useMemo(() => {
+        const list = creditsResponse?.data ?? []
+        return list
+            .filter((p) => p.status === 'ACTIVE')
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+            .map(mapPackageToDisplay)
+    }, [creditsResponse?.data])
+
+    const openPurchaseModal = async (pkg: CreditPackageDisplay) => {
         const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
         if (!keyId) {
             alert(
@@ -71,6 +97,7 @@ export default function CreditsWallet() {
             if (!res.ok) throw new Error(data.error ?? 'Failed to create order')
             const { orderId } = data
 
+            const packageId = pkg.id
             const openCheckout = () => {
                 const Razorpay = (window as unknown as { Razorpay: new (o: object) => { open: () => void } }).Razorpay
                 const options = {
@@ -80,7 +107,16 @@ export default function CreditsWallet() {
                     name: 'Credits Purchase',
                     description: `${pkg.credits} credits${pkg.bonus ? ` + ${pkg.bonus} bonus` : ''}`,
                     order_id: orderId,
-                    handler: () => {},
+                    handler: async () => {
+                        try {
+                            await purchaseCredits({ package_id: packageId }).unwrap()
+                            addToast({ title: 'Credits purchased successfully', color: 'success', timeout: 2000 })
+                            setSelectedPackageId(null)
+                        } catch (err) {
+                            console.error(err)
+                            alert(err instanceof Error ? err.message : 'Failed to complete purchase')
+                        }
+                    },
                 }
                 const rzp = new Razorpay(options)
                 rzp.open()
@@ -118,13 +154,13 @@ export default function CreditsWallet() {
                         </p>
                     </div>
                 </div>
-                <Button
+                {/* <Button
                     className="btn_radius btn_bg_white"
                     startContent={<BackArrowSVG />}
                     onPress={() => router.push(getVendorDashboardRoutePath())}
                 >
                     Back to Dashboard
-                </Button>
+                </Button> */}
             </div>
 
             {/* Current Credit Balance Card */}
@@ -145,36 +181,55 @@ export default function CreditsWallet() {
             <div>
                 <h2 className="font-bold text-lg text-fontBlack mb-4">Buy Credits</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {CREDIT_PACKAGES.map((pkg) => (
-                        <div
-                            key={pkg.id}
-                            className={`relative rounded-2xl border bg-white p-5 ${pkg.popular ? 'border-primaryColor' : 'border-borderDark'} flex flex-col justify-between items-center gap-8`}>
-                            <div className='space-y-1 text-center'>
-                                {pkg.popular && (
-                                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 inline-flex rounded-full bg-primaryColor px-3 py-0.5 text-xs font-medium text-white">
-                                        MOST POPULAR
-                                    </span>
-                                )}
-                                <p className="font-bold text-xl text-fontBlack mt-2">
-                                    {pkg.credits}
-                                </p>
-                                <p className='text-sm text-darkSilver'>credits</p>
-                                {pkg.bonus && (
-                                    <span className="inline-flex mt-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
-                                        +{pkg.bonus} bonus
-                                    </span>
-                                )}
-                                <p className="mt-3 font-bold text-xl text-fontBlack">€{pkg.price}</p>
-                                <p className="text-xs text-darkSilver">€{pkg.unitPrice} per credit</p>
-                            </div>
-                            <Button
-                                className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-[#F3F4F6]'} w-full`}
-                                onPress={() => openPurchaseModal(pkg)}
-                            >
-                                Purchase Credits
-                            </Button>
+                    {packagesLoading ? (
+                        <div className="col-span-full flex justify-center py-12">
+                            <Spinner size="lg" color="primary" />
                         </div>
-                    ))}
+                    ) : (
+                        creditPackages && creditPackages?.length > 0 && creditPackages?.map((pkg) => {
+                            const isSelected = selectedPackageId === pkg.id
+                            return (
+                                <div
+                                    key={pkg.id}
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => setSelectedPackageId(pkg.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault()
+                                            setSelectedPackageId(pkg.id)
+                                        }
+                                    }}
+                                    className={`relative rounded-2xl border bg-white p-5 cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-primaryColor focus-visible:ring-offset-2 ${isSelected ? 'ring-2 ring-primaryColor border-primaryColor' : ''} ${!isSelected && pkg.popular ? 'border-primaryColor' : ''} ${!isSelected && !pkg.popular ? 'border-borderDark' : ''} flex flex-col justify-between items-center gap-8`}
+                                >
+                                    <div className='space-y-1 text-center'>
+                                        {pkg.popular && (
+                                            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 inline-flex rounded-full bg-primaryColor px-3 py-0.5 text-xs font-medium text-white">
+                                                MOST POPULAR
+                                            </span>
+                                        )}
+                                        <p className="font-bold text-xl text-fontBlack mt-2">
+                                            {pkg.credits}
+                                        </p>
+                                        <p className='text-sm text-darkSilver'>credits</p>
+                                        {pkg.bonus && (
+                                            <span className="inline-flex mt-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
+                                                +{pkg.bonus} bonus
+                                            </span>
+                                        )}
+                                        <p className="mt-3 font-bold text-xl text-fontBlack">€{pkg.price}</p>
+                                        <p className="text-xs text-darkSilver">€{pkg.unitPrice} per credit</p>
+                                    </div>
+                                    <Button
+                                        className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-[#F3F4F6]'} w-full`}
+                                        onPress={() => openPurchaseModal(pkg)}
+                                    >
+                                        Purchase Credits
+                                    </Button>
+                                </div>
+                            )
+                        })
+                    )}
                 </div>
             </div>
 
@@ -260,18 +315,16 @@ export default function CreditsWallet() {
                                             <tr key={txn._id} className="border-b border-borderDark last:border-b-0">
                                                 <td className="px-4 py-4">
                                                     <span
-                                                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${
-                                                            txn.type?.toLowerCase() === 'purchase'
+                                                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${txn.type?.toLowerCase() === 'purchase'
                                                                 ? 'bg-[#E8F5E9] text-[#2E7D32]'
                                                                 : 'bg-[#FFEBEE] text-[#C62828]'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <span
-                                                            className={`flex size-5 shrink-0 items-center justify-center rounded-full ${
-                                                                txn.type?.toLowerCase() === 'purchase'
+                                                            className={`flex size-5 shrink-0 items-center justify-center rounded-full ${txn.type?.toLowerCase() === 'purchase'
                                                                     ? 'bg-[#4CAF50] text-white'
                                                                     : 'bg-danger text-white'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {txn.type?.toLowerCase() === 'purchase' ? (
                                                                 <HiPlus className="size-3" strokeWidth={2.5} />
