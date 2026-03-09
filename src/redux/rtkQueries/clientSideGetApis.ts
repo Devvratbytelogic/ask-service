@@ -15,12 +15,19 @@ import type { IUserNotificationAPIResponse } from '@/types/notifications';
 import type { IAllCreditsAPIResponse } from '@/types/allCredits';
 import { IServiceRequestQuotesAPIResponse } from '@/types/serviceRequestQuotes';
 import { IServiceRequestQuotesDetailAPIResponse } from '@/types/serviceReuestQuotesDetails';
+import { ISingleServiceAPIResponse } from '@/types/singleService';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
         getServiceCategories: builder.query<IAllServiceCategoriesAPIResponse, void>({
             query: () => ({
                 url: `/user/service-categories`,
+                method: 'GET',
+            }),
+        }),
+        getServiceCategory: builder.query<ISingleServiceAPIResponse, { id: string }>({
+            query: ({ id }) => ({
+                url: `/user/service-category/${id}`,
                 method: 'GET',
             }),
         }),
@@ -176,6 +183,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
 
 export const {
     useGetServiceCategoriesQuery,
+    useGetServiceCategoryQuery,
     useGetAllServicesQuery,
     useGetAllServicesDocumentsRequiredQuery,
     useGetVendorProfileInfoQuery,

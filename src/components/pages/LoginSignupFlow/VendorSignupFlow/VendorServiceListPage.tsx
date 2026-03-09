@@ -15,19 +15,14 @@ const VendorServiceListPage = () => {
     const { data: modalData } = useSelector((state: RootState) => state.allCommonModal)
     const { data: servicesResponse, isLoading, isError } = useGetAllServicesQuery()
     const services = servicesResponse?.data ?? []
-    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+    const [selectedId, setSelectedId] = useState<string | null>(null)
     const [updateVendorServices, { isLoading: isUpdatingServices }] = useUpdateVendorServicesMutation()
 
-    const toggleService = (id: string) => {
-        setSelectedIds((prev) => {
-            const next = new Set(prev)
-            if (next.has(id)) next.delete(id)
-            else next.add(id)
-            return next
-        })
+    const selectService = (id: string) => {
+        setSelectedId((prev) => (prev === id ? null : id))
     }
     const handleContinue = async () => {
-        const singleSelectedId = selectedIds.size > 0 ? Array.from(selectedIds)[0] : null
+        const singleSelectedId = selectedId
         if (!singleSelectedId) return
 
         try {
@@ -64,7 +59,7 @@ const VendorServiceListPage = () => {
                 )}
                 <ul className="space-y-4 list-none p-0 m-0">
                     {services && services?.length > 0 && services?.map((service) => {
-                        const isSelected = selectedIds.has(service._id)
+                        const isSelected = selectedId === service._id
                         return (
                             <li key={service._id}>
                                 <label
@@ -93,7 +88,7 @@ const VendorServiceListPage = () => {
                                     </div>
                                     <Checkbox
                                         isSelected={isSelected}
-                                        onValueChange={() => toggleService(service._id)}
+                                        onValueChange={() => selectService(service._id)}
                                         onPointerDown={(e) => e.preventDefault()}
                                         classNames={{
                                             wrapper: "shrink-0 before:border-borderDark",
@@ -113,7 +108,7 @@ const VendorServiceListPage = () => {
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     onPress={handleContinue}
                     isLoading={isUpdatingServices}
-                    isDisabled={selectedIds.size === 0 || isUpdatingServices}
+                    isDisabled={!selectedId || isUpdatingServices}
                 >
                     Continue
                 </Button>

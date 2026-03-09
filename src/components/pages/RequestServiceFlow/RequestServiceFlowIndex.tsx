@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useCreateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
-import { useGetUserProfileInfoQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import { useGetUserProfileInfoQuery, useGetServiceCategoryQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { getAuthToken } from "@/utils/authCookies"
 import AppLoader from "@/components/common/AppLoader"
 import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
@@ -27,6 +27,10 @@ const baseInitialValues = {
     childServiceIds: [] as string[],
     serviceStartDate: "",
     serviceTimeOfDay: "",
+    start_date: "",
+    start_time: "",
+    end_date: "",
+    end_time: "",
     serviceNote: "",
     customerFirstName: "",
     customerLastName: "",
@@ -35,6 +39,15 @@ const baseInitialValues = {
     customerEmail: "",
 }
 export type RequestServiceFormValues = typeof baseInitialValues
+
+export type ScheduleVisibility = {
+    is_preferred_date_visible: boolean
+    is_preferred_time_visible: boolean
+    is_start_date_visible: boolean
+    is_start_time_visible: boolean
+    is_end_date_visible: boolean
+    is_end_time_visible: boolean
+}
 
 const flowTypes = {
     PHONE_VERIFICATION_REQUIRED: 'PHONE_VERIFICATION_REQUIRED',
@@ -71,6 +84,19 @@ const RequestServiceFlowIndex = () => {
         skip: !isAuthenticated,
     })
     const profile = profileResponse?.data
+    const { data: serviceCategoryResponse } = useGetServiceCategoryQuery(
+        { id: data?.grandParentServiceId ?? "" },
+        { skip: !data?.grandParentServiceId }
+    )
+    const isFrequencyVisible = serviceCategoryResponse?.data?.is_frequency_visible ?? true
+    const scheduleVisibility: ScheduleVisibility = {
+        is_preferred_date_visible: serviceCategoryResponse?.data?.is_preferred_date_visible ?? true,
+        is_preferred_time_visible: serviceCategoryResponse?.data?.is_preferred_time_visible ?? true,
+        is_start_date_visible: serviceCategoryResponse?.data?.is_start_date_visible ?? false,
+        is_start_time_visible: serviceCategoryResponse?.data?.is_start_time_visible ?? false,
+        is_end_date_visible: serviceCategoryResponse?.data?.is_end_date_visible ?? false,
+        is_end_time_visible: serviceCategoryResponse?.data?.is_end_time_visible ?? false,
+    }
 
     const setStepCountSafe = useCallback(
         (arg: React.SetStateAction<number>) => {
@@ -115,13 +141,18 @@ const RequestServiceFlowIndex = () => {
 
     const validate = (values: RequestServiceFormValues) => {
         const err: Partial<Record<keyof RequestServiceFormValues, string>> = {}
+        const scheduleRequiredFields: (keyof RequestServiceFormValues)[] = [
+            ...(scheduleVisibility.is_preferred_date_visible ? (["serviceStartDate"] as const) : []),
+            ...(scheduleVisibility.is_preferred_time_visible ? (["serviceTimeOfDay"] as const) : []),
+            ...(scheduleVisibility.is_start_date_visible ? (["start_date"] as const) : []),
+            ...(scheduleVisibility.is_start_time_visible ? (["start_time"] as const) : []),
+            ...(scheduleVisibility.is_end_date_visible ? (["end_date"] as const) : []),
+            ...(scheduleVisibility.is_end_time_visible ? (["end_time"] as const) : []),
+        ]
         const requiredFields: (keyof RequestServiceFormValues)[] = [
-            //1st step (parentServiceId not collected in UI)
-            "pincode", "parentServiceName", "serviceFrequency",
-            //2nd step (childServiceIds optional)
-            //3rd step (serviceNote optional)
-            "serviceStartDate", "serviceTimeOfDay",
-            //4th step
+            "pincode", "parentServiceName",
+            ...(isFrequencyVisible ? (["serviceFrequency"] as const) : []),
+            ...scheduleRequiredFields,
             "customerFirstName", "customerLastName", "clientType", "customerPhoneNumber", "customerEmail",
         ]
         requiredFields.forEach((field) => {
@@ -150,6 +181,10 @@ const RequestServiceFlowIndex = () => {
                     selected_options: values.childServiceIds ?? [],
                     preferred_start_date: values.serviceStartDate ?? "",
                     preferred_time_of_day: values.serviceTimeOfDay ?? "",
+                    start_date: values.start_date ?? "",
+                    start_time: values.start_time ?? "",
+                    end_date: values.end_date ?? "",
+                    end_time: values.end_time ?? "",
                     note: values.serviceNote ?? "",
                     address_1: pincodeAddress.address_1,
                     address_2: pincodeAddress.address_2,
@@ -291,7 +326,6 @@ const RequestServiceFlowIndex = () => {
         },
     })
 
-console.log('data', data);
 
     return (
         <>
@@ -306,13 +340,13 @@ console.log('data', data);
                     </div>
                 </div>
                 {
-                    getStepCount === 1 && <ServiceAndLocation grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
+                    getStepCount === 1 && <ServiceAndLocation isFrequencyVisible={isFrequencyVisible} grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
                 {
                     getStepCount === 2 && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
                 {
-                    getStepCount === 3 && <DesiredSchedule formik={formik} setStepCount={setStepCountSafe} />
+                    getStepCount === 3 && <DesiredSchedule formik={formik} setStepCount={setStepCountSafe} scheduleVisibility={scheduleVisibility} />
                 }
                 {
                     getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} />

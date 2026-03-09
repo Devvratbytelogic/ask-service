@@ -5,6 +5,7 @@ import { Button } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
+import { useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { LeadFullDetailsData } from './LeadFullDetails'
 
 interface LeadHeaderProps {
@@ -14,6 +15,8 @@ interface LeadHeaderProps {
 export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
     const router = useRouter()
     const dispatch = useDispatch()
+    const { data: dashboardData } = useGetVendorDashboardDataQuery()
+    const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
 
     const handleUnlockClick = () => {
         if (leadId) {
@@ -61,7 +64,12 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                             </p>
                             <p className="text-xs text-darkSilver">to unlock</p>
                         </div>
-                        <Button className="btn_radius btn_bg_blue font-medium shrink-0" startContent={<LockPrimaryColorSVG className="size-4 text-white" />} onPress={handleUnlockClick}>
+                        <Button
+                            className="btn_radius btn_bg_blue font-medium shrink-0"
+                            startContent={<LockPrimaryColorSVG className="size-4 text-white" />}
+                            onPress={handleUnlockClick}
+                            isDisabled={!canPurchaseLeads}
+                        >
                             Unlock Lead
                         </Button>
                     </div>

@@ -1,4 +1,3 @@
-
 import { SERVICE_FREQUENCY_TYPE } from "@/utils/constant_var"
 import { Button, Input, Select, SelectItem } from "@heroui/react"
 import { FormikProps } from "formik"
@@ -10,22 +9,23 @@ interface ServiceAndLocationProps {
   setStepCount: React.Dispatch<React.SetStateAction<number>>
   childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
   grandParentServiceName?: string | null
+  isFrequencyVisible?: boolean
 }
 
-const STEP1_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = ["parentServiceName", "serviceFrequency", "pincode"]
+const STEP1_REQUIRED_FIELDS_WITH_FREQUENCY: (keyof RequestServiceFormValues)[] = ["parentServiceName", "serviceFrequency", "pincode"]
+const STEP1_REQUIRED_FIELDS_WITHOUT_FREQUENCY: (keyof RequestServiceFormValues)[] = ["parentServiceName", "pincode"]
 
-const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, childServices = [] }: ServiceAndLocationProps) => {
+const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFrequencyVisible = true, childServices = [] }: ServiceAndLocationProps) => {
   const { values, setFieldValue, touched, errors, handleBlur, handleChange, validateForm, setTouched } = formik
-  console.log('grandParentServiceName', grandParentServiceName);
-
 
   const isOtherSelected = values.parentServiceName === "other"
+  const step1RequiredFields = isFrequencyVisible ? STEP1_REQUIRED_FIELDS_WITH_FREQUENCY : STEP1_REQUIRED_FIELDS_WITHOUT_FREQUENCY
   const step1FieldsToValidate = isOtherSelected
-    ? [...STEP1_REQUIRED_FIELDS, "otherServiceName"]
-    : STEP1_REQUIRED_FIELDS
+    ? [...step1RequiredFields, "otherServiceName"]
+    : step1RequiredFields
 
   const isStep1Valid =
-    STEP1_REQUIRED_FIELDS.every((field) => values[field]?.toString().trim() !== "") &&
+    step1RequiredFields.every((field) => values[field]?.toString().trim() !== "") &&
     (!isOtherSelected || (values.otherServiceName?.toString().trim() ?? "") !== "")
 
   const handleNext = async () => {
@@ -104,32 +104,34 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, chil
             />
           </div>
         )}
-        <div className="col-span-1">
-          <Select
-            name="serviceFrequency"
-            variant="bordered"
-            label="Fréquence de la prestation"
-            labelPlacement="outside"
-            placeholder="Sélectionnez la fréquence"
-            selectedKeys={values.serviceFrequency ? [values.serviceFrequency] : []}
-            onSelectionChange={(keys) => {
-              const key = Array.from(keys as Set<string>)[0]
-              setFieldValue("serviceFrequency", key ?? "")
-            }}
-            onBlur={handleBlur}
-            isInvalid={!!(touched.serviceFrequency && errors.serviceFrequency)}
-            errorMessage={touched.serviceFrequency && errors.serviceFrequency}
-            classNames={{
-              trigger: ['custom_input_design'],
-              label: ['custom_label_text']
-            }}
-            isRequired
-          >
-            {SERVICE_FREQUENCY_TYPE?.map((curr) => (
-              <SelectItem key={curr.value}>{curr.label}</SelectItem>
-            ))}
-          </Select>
-        </div>
+        {isFrequencyVisible && (
+          <div className="col-span-1">
+            <Select
+              name="serviceFrequency"
+              variant="bordered"
+              label="Fréquence de la prestation"
+              labelPlacement="outside"
+              placeholder="Sélectionnez la fréquence"
+              selectedKeys={values.serviceFrequency ? [values.serviceFrequency] : []}
+              onSelectionChange={(keys) => {
+                const key = Array.from(keys as Set<string>)[0]
+                setFieldValue("serviceFrequency", key ?? "")
+              }}
+              onBlur={handleBlur}
+              isInvalid={!!(touched.serviceFrequency && errors.serviceFrequency)}
+              errorMessage={touched.serviceFrequency && errors.serviceFrequency}
+              classNames={{
+                trigger: ['custom_input_design'],
+                label: ['custom_label_text']
+              }}
+              isRequired
+            >
+              {SERVICE_FREQUENCY_TYPE?.map((curr) => (
+                <SelectItem key={curr.value}>{curr.label}</SelectItem>
+              ))}
+            </Select>
+          </div>
+        )}
       </div>
       <div className="flex justify-between pt-4">
         <Button

@@ -17,6 +17,10 @@ export interface ISingleLeadAPIResponse {
     selected_options?: (string)[] | null;
     preferred_start_date: string;
     preferred_time_of_day: string;
+    start_date?: string;
+    start_time?: string;
+    end_date?: string;
+    end_time?: string;
     note: string;
     address_1: string;
     address_2: string;

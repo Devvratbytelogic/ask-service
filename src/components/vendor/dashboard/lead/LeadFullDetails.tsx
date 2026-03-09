@@ -61,6 +61,10 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             clientType: lead.contact_details?.client_type || 'N/A',
             preferredStartDate: lead.preferred_start_date ? moment(lead.preferred_start_date).format('LL') : 'N/A',
             preferredTime: lead.preferred_time_of_day || 'N/A',
+            startDate: lead.start_date ? moment(lead.start_date).format('LL') : undefined,
+            startTime: lead.start_time,
+            endDate: lead.end_date ? moment(lead.end_date).format('LL') : undefined,
+            endTime: lead.end_time,
             tasks: lead.selected_options ?? [],
         }
     }, [lead])
@@ -165,24 +169,54 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                         </div>
                     </div>
 
-                    {/* Schedule Preference Card */}
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
-                        <h3 className="font-bold text-fontBlack mb-4">Schedule Preference</h3>
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-xl border border-borderDark px-4 py-3">
-                                <p className="text-xs text-darkSilver mb-1">Preferred Start Date</p>
-                                <p className="text-sm font-medium text-fontBlack">
-                                    {displayData.preferredStartDate}
-                                </p>
-                            </div>
-                            <div className="rounded-xl border border-borderDark px-4 py-3">
-                                <p className="text-xs text-darkSilver mb-1">Preferred Time</p>
-                                <p className="text-sm font-medium text-fontBlack">
-                                    {displayData.preferredTime}
-                                </p>
+                    {/* Schedule Preference Card - only show when at least one schedule value exists */}
+                    {(displayData.preferredStartDate !== 'N/A' || displayData.preferredTime !== 'N/A' || displayData.startDate || displayData.startTime || displayData.endDate || displayData.endTime) && (
+                        <div className="rounded-2xl border border-borderDark bg-white p-5">
+                            <h3 className="font-bold text-fontBlack mb-4">Schedule Preference</h3>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {displayData.preferredStartDate !== 'N/A' && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">Preferred Start Date</p>
+                                        <p className="text-sm font-medium text-fontBlack">
+                                            {displayData.preferredStartDate}
+                                        </p>
+                                    </div>
+                                )}
+                                {displayData.preferredTime !== 'N/A' && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">Preferred Time</p>
+                                        <p className="text-sm font-medium text-fontBlack">
+                                            {displayData.preferredTime}
+                                        </p>
+                                    </div>
+                                )}
+                                {displayData.startDate && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">Start Date</p>
+                                        <p className="text-sm font-medium text-fontBlack">{displayData.startDate}</p>
+                                    </div>
+                                )}
+                                {displayData.startTime && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">Start Time</p>
+                                        <p className="text-sm font-medium text-fontBlack">{displayData.startTime}</p>
+                                    </div>
+                                )}
+                                {displayData.endDate && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">End Date</p>
+                                        <p className="text-sm font-medium text-fontBlack">{displayData.endDate}</p>
+                                    </div>
+                                )}
+                                {displayData.endTime && (
+                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                        <p className="text-xs text-darkSilver mb-1">End Time</p>
+                                        <p className="text-sm font-medium text-fontBlack">{displayData.endTime}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Submit Quote Form - shown when Send Quote is clicked */}
                     {showSubmitQuoteForm && (
