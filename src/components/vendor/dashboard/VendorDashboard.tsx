@@ -2,7 +2,9 @@
 
 import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
-import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
+import { useDispatch } from 'react-redux'
+import { openModal } from '@/redux/slices/allModalSlice'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
@@ -11,13 +13,12 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
 import { useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { useUnlockLeadMutation } from '@/redux/rtkQueries/allPostApi'
 
 export default function VendorDashboard() {
+    const dispatch = useDispatch()
     const router = useRouter()
     const [locationFilter, setLocationFilter] = useState('all')
     const [sortFilter, setSortFilter] = useState('newest')
-    const [unlockingLeadId, setUnlockingLeadId] = useState<string | null>(null)
 
     const { data: dashboardData, isLoading: dashboardLoading } = useGetVendorDashboardDataQuery()
     const dashboard = dashboardData?.data;
@@ -36,7 +37,6 @@ export default function VendorDashboard() {
         ...leadsParams,
         ...(showQuotedOnly && { quoted: true }),
     })
-    const [unlockLead] = useUnlockLeadMutation()
     const allLeads = leadsData?.data ?? []
     const leads = useMemo(
         () => {
@@ -48,18 +48,12 @@ export default function VendorDashboard() {
     )
     const isLoading = dashboardLoading || leadsLoading
 
-    const handleUnlockLead = async (leadId: string) => {
-        console.log('leadId', leadId)
-        setUnlockingLeadId(leadId)
-        try {
-            await unlockLead(leadId).unwrap()
-            addToast({ title: 'Lead unlocked successfully', color: 'success', timeout: 2000 })
-            router.push(generateLeadDetailRoutePath(leadId))
-        } catch {
-            // Error toast handled by rtkQuerieSetup
-        } finally {
-            setUnlockingLeadId(null)
-        }
+    const handleUnlockLeadClick = (lead: { _id: string; creditsToUnlock?: number }) => {
+        dispatch(openModal({
+            componentName: 'UnlockLeadConfirmModal',
+            data: { leadId: lead._id, creditsToUnlock: lead.creditsToUnlock },
+            modalSize: 'sm',
+        }))
     }
 
     const locationOptions = [
@@ -220,10 +214,12 @@ export default function VendorDashboard() {
                         {leads && leads?.length > 0 && leads?.map((lead, index) => (
                             <div
                                 key={index}
-                                className="rounded-2xl border border-borderDark bg-white p-6"
+                                className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4"
                             >
-                                <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-                                    <div className="flex-1 min-w-0 space-y-3">
+                                <Link
+                                    href={generateLeadDetailRoutePath(lead?._id)}
+                                    className="flex-1 min-w-0 space-y-3 cursor-pointer hover:opacity-90 transition-opacity block"
+                                >
                                         <div className="flex flex-wrap items-center gap-2">
                                             <h3 className="font-bold text-lg text-fontBlack">
                                                 {lead.service_category.title}
@@ -288,41 +284,38 @@ export default function VendorDashboard() {
                                         <p className="text-sm text-darkSilver leading-relaxed">
                                             {lead.note}
                                         </p>
-                                    </div>
-                                    <div className="flex flex-col items-start lg:items-end shrink-0 gap-2">
-                                        {lead?.unlocked ? (
-                                            <>
-                                                <Button
-                                                    className="btn_radius font-medium bg-[#4CAF50] text-white hover:bg-[#45a049]"
-                                                    onPress={() => router.push(generateLeadDetailRoutePath(lead?._id))}
-                                                >
-                                                    View Full Details
-                                                </Button>
-
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="text-right">
-                                                    <p className="font-bold text-fontBlack">
-                                                        {lead?.creditsToUnlock} Credits
-                                                    </p>
-                                                    <p className="text-xs text-darkSilver">to unlock</p>
-                                                </div>
-                                                <Button
-                                                    className="btn_radius btn_bg_blue font-medium disabled:opacity-60 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                                                    startContent={<LockPrimaryColorSVG className="size-4 text-white" />}
-                                                    disabled={!dashboard?.canPurchaseLeads}
-                                                    isLoading={unlockingLeadId === lead?._id}
-                                                    onPress={() => handleUnlockLead(lead._id)}
-                                                >
-                                                    Unlock Lead
-                                                </Button>
-                                                <p className="text-xs text-darkSilver">
-                                                    Full details available after unlocking
+                                </Link>
+                                <div className="flex flex-col items-start lg:items-end shrink-0 gap-2">
+                                    {lead?.unlocked ? (
+                                        <>
+                                            <Button
+                                                className="btn_radius font-medium bg-[#4CAF50] text-white hover:bg-[#45a049]"
+                                                onPress={() => router.push(generateLeadDetailRoutePath(lead?._id))}
+                                            >
+                                                View Full Details
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="text-right">
+                                                <p className="font-bold text-fontBlack">
+                                                    {lead?.creditsToUnlock} Credits
                                                 </p>
-                                            </>
-                                        )}
-                                    </div>
+                                                <p className="text-xs text-darkSilver">to unlock</p>
+                                            </div>
+                                            <Button
+                                                className="btn_radius btn_bg_blue font-medium disabled:opacity-60 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                startContent={<LockPrimaryColorSVG className="size-4 text-white" />}
+                                                disabled={!dashboard?.canPurchaseLeads}
+                                                onPress={() => handleUnlockLeadClick(lead)}
+                                            >
+                                                Unlock Lead
+                                            </Button>
+                                            <p className="text-xs text-darkSilver">
+                                                Full details available after unlocking
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         ))}

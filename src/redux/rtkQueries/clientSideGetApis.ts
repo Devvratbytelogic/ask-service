@@ -113,6 +113,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 url: `/vendor/leads/${id}`,
                 method: 'GET',
             }),
+            providesTags: (_result, _error, { id }) => [{ type: 'VendorAvailableLeads', id }],
         }),
         getVendorDashboardTransactionHistory: builder.query<IVendorDashboardTransactionAPIResponse, { page?: number; limit?: number; startDate?: string; endDate?: string } | void>({
             query: (arg) => ({

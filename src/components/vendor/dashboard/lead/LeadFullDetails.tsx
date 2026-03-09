@@ -76,7 +76,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
     return (
         <>
             {/* Header */}
-            <LeadHeader data={headerData ?? {}} />
+            <LeadHeader data={headerData ?? {}} leadId={id} />
             <div className="flex flex-col lg:flex-row gap-6 mt-6">
                 {/* Main Content */}
                 <div className="flex-1 min-w-0 space-y-4">
@@ -191,7 +191,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                 </div>
 
                 {/* Sidebar */}
-                <LeadSidebar leadId={id} showSubmitQuoteForm={showSubmitQuoteForm} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} />
+                <LeadSidebar leadId={id} showSubmitQuoteForm={showSubmitQuoteForm} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} />
             </div>
         </>
     )

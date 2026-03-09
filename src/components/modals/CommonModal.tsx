@@ -15,6 +15,7 @@ import ReportProfileModal from "../vendor/profile/ReportProfileModal";
 import ReportSubmittedModal from "../vendor/profile/ReportSubmittedModal";
 import PurchaseCreditsModal from "../vendor/credits/PurchaseCreditsModal";
 import VerifyEmailOtpModal from "./VerifyEmailOtpModal";
+import UnlockLeadConfirmModal from "../vendor/dashboard/lead/UnlockLeadConfirmModal";
 
 const CommonModal = () => {
 
@@ -67,6 +68,9 @@ const CommonModal = () => {
 
             case "VerifyEmailOtpModal":
                 return <VerifyEmailOtpModal />
+
+            case "UnlockLeadConfirmModal":
+                return <UnlockLeadConfirmModal />
 
             default:
                 return null;

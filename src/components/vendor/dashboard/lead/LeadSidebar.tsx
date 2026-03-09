@@ -15,9 +15,10 @@ interface LeadSidebarProps {
     leadId?: string
     onSendQuoteClick?: () => void
     showSubmitQuoteForm?: boolean
+    unlocked?: boolean
 }
 
-export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteForm }: LeadSidebarProps) {
+export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteForm, unlocked }: LeadSidebarProps) {
     const router = useRouter()
 
     const handleMessageCustomer = () => {
@@ -27,21 +28,23 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteF
     return (
         <>
             <aside className="w-full lg:w-[320px] shrink-0 space-y-4">
-                {/* Actions - for larger screens */}
-                <div className="hidden lg:block rounded-2xl border border-borderDark bg-white p-5">
-                    <h3 className="font-semibold text-fontBlack mb-4">Actions</h3>
-                    <div className="flex flex-col gap-3">
-                        {!showSubmitQuoteForm && <Button
-                            className="btn_radius btn_bg_blue w-full"
-                            onPress={onSendQuoteClick}
-                        >
-                            Send Quote
-                        </Button>}
-                        <Button className="btn_radius btn_bg_white w-full" onPress={handleMessageCustomer}>
-                            Message Customer
-                        </Button>
+                {/* Actions - only show when lead is not yet unlocked */}
+                {unlocked && (
+                    <div className="hidden lg:block rounded-2xl border border-borderDark bg-white p-5">
+                        <h3 className="font-semibold text-fontBlack mb-4">Actions</h3>
+                        <div className="flex flex-col gap-3">
+                            {!showSubmitQuoteForm && <Button
+                                className="btn_radius btn_bg_blue w-full"
+                                onPress={onSendQuoteClick}
+                            >
+                                Send Quote
+                            </Button>}
+                            <Button className="btn_radius btn_bg_white w-full" onPress={handleMessageCustomer}>
+                                Message Customer
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Tips for Winning */}
                 <div className="rounded-2xl bg-[#FFFBEB] border border-[#FEE685] p-5">
