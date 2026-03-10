@@ -11,10 +11,11 @@ import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useCreateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
 import { useGetUserProfileInfoQuery, useGetServiceCategoryQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import { useLazyGetAddressFromPincodeQuery } from "@/redux/geo-location/geoLocation"
 import { getAuthToken } from "@/utils/authCookies"
+import { parseGeocodeResponse } from "@/utils/pincodeToAddress"
 import AppLoader from "@/components/common/AppLoader"
 import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
-import { getAddressFromPincode } from "@/utils/pincodeToAddress"
 import { validateEmail } from "@/utils/validation"
 
 const baseInitialValues = {
@@ -77,6 +78,7 @@ const RequestServiceFlowIndex = () => {
     const [getStepCount, setStepCount] = useState(initialStep)
     const [submissionRef, setSubmissionRef] = useState<string | null>(null)
     const dispatch = useDispatch()
+    const [fetchAddressFromPincode] = useLazyGetAddressFromPincodeQuery()
     const [createServiceRequest, { isLoading }] = useCreateServiceRequestMutation()
     const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
     const isAuthenticated = !!getAuthToken() || isClientAuthenticated
@@ -182,7 +184,15 @@ const RequestServiceFlowIndex = () => {
         validate,
         onSubmit: async (values) => {
             try {
-                const pincodeAddress = await getAddressFromPincode(values.pincode ?? "")
+                let addressData = { address_1: "", address_2: "", city: "", state: "", country: "" }
+                if (values.pincode?.trim()) {
+                    try {
+                        const geocodeResult = await fetchAddressFromPincode(values.pincode.trim()).unwrap()
+                        addressData = parseGeocodeResponse(geocodeResult)
+                    } catch {
+                        // Fallback to empty if geocoding fails
+                    }
+                }
                 const payload = {
                     service_category: data?.grandParentServiceId ?? "",
                     child_category: values.parentServiceName === "other" ? "" : (values.parentServiceName ?? ""),
@@ -196,11 +206,11 @@ const RequestServiceFlowIndex = () => {
                     end_date: values.end_date ?? "",
                     end_time: values.end_time ?? "",
                     note: values.serviceNote ?? "",
-                    address_1: pincodeAddress.address_1,
-                    address_2: pincodeAddress.address_2,
-                    city: pincodeAddress.city,
-                    state: pincodeAddress.state,
-                    country: pincodeAddress.country,
+                    address_1: addressData.address_1,
+                    address_2: addressData.address_2,
+                    city: addressData.city,
+                    state: addressData.state,
+                    country: addressData.country,
                     pincode: values.pincode ?? "",
                     contact_details: {
                         first_name: values.customerFirstName ?? "",
