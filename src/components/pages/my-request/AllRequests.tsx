@@ -34,6 +34,7 @@ export default function AllRequests() {
     const [searchInput, setSearchInput] = useState('')
     const [debouncedSearch, setDebouncedSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all')
+    const [serviceFilter, setServiceFilter] = useState<string>('all')
 
     useEffect(() => {
         const t = setTimeout(() => setDebouncedSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS)
@@ -42,11 +43,12 @@ export default function AllRequests() {
 
     useEffect(() => {
         setPage(1)
-    }, [debouncedSearch, statusFilter])
+    }, [debouncedSearch, statusFilter, serviceFilter])
 
     const { data, isLoading, isError } = useGetCreatedServicesQuery({
         ...(debouncedSearch && { search: debouncedSearch }),
         status: statusFilterToApi(statusFilter),
+        ...(serviceFilter && serviceFilter !== 'all' && { service: serviceFilter }),
         page,
         limit: ITEMS_PER_PAGE,
     })
@@ -84,6 +86,8 @@ export default function AllRequests() {
                             onSearchChange={setSearchInput}
                             statusFilter={statusFilter}
                             onStatusFilterChange={(key) => setStatusFilter(key as 'all' | 'pending' | 'completed')}
+                            serviceFilter={serviceFilter}
+                            onServiceFilterChange={setServiceFilter}
                         />
                     </div>
                 </div>

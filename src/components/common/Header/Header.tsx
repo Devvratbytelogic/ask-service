@@ -66,10 +66,12 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const firstName = profile?.first_name;
     const lastName = profile?.last_name;
     const email = profile?.email;
+    const profilePic = typeof profile?.profile_pic === 'string' && profile.profile_pic.trim() ? profile.profile_pic : null;
     const displayName = getDisplayName(firstName, lastName, email);
     const initials = getInitials(firstName, lastName, email);
     const fullName = getFullName(firstName, lastName);
-
+console.log("initials", initials);
+console.log("profilePic", profilePic);
     const handleLogout = () => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };
@@ -184,9 +186,15 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             variant="light"
                                             className="flex items-center gap-2 min-w-0 px-2 h-auto py-1.5 rounded-full hover:bg-borderDark"
                                         >
-                                            <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
-                                                {initials}
-                                            </span>
+                                            {profilePic ? (
+                                                <span className="h-8 w-8 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-primaryColor/20">
+                                                    <ImageComponent url={profilePic} img_title={initials} object_cover />
+                                                </span>
+                                            ) : (
+                                                <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
+                                                    {initials}
+                                                </span>
+                                            )}
                                             <span className="font-medium text-fontBlack text-sm hidden lg:inline">{displayName}</span>
                                             <ChevronDownIconSVG />
                                         </Button>
@@ -245,9 +253,15 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             variant="light"
                                             className="flex items-center gap-2 min-w-0 px-2 h-auto py-1.5 rounded-full hover:bg-borderDark"
                                         >
-                                            <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
-                                                {initials}
-                                            </span>
+                                            {profilePic ? (
+                                                <span className="h-8 w-8 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-primaryColor/20">
+                                                    <ImageComponent url={profilePic} img_title={initials} object_cover />
+                                                </span>
+                                            ) : (
+                                                <span className="h-8 w-8 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm shrink-0">
+                                                    {initials}
+                                                </span>
+                                            )}
                                             <span className="font-medium text-fontBlack text-sm hidden lg:inline">{displayName}</span>
                                             <ChevronDownIconSVG />
                                         </Button>
@@ -294,8 +308,14 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             {isVendor ? (
                                 <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
                                     <PopoverTrigger>
-                                        <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full bg-primaryColor/20">
-                                            <span className="text-primaryColor font-semibold text-sm">{initials}</span>
+                                        <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full overflow-hidden p-0 bg-primaryColor/20">
+                                            {profilePic ? (
+                                                <span className="block size-full">
+                                                    <ImageComponent url={profilePic} img_title={initials} object_cover />
+                                                </span>
+                                            ) : (
+                                                <span className="text-primaryColor font-semibold text-sm w-full h-full flex items-center justify-center">{initials}</span>
+                                            )}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent>
@@ -359,8 +379,14 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             ) : (
                                 <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
                                     <PopoverTrigger>
-                                        <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full bg-primaryColor/20">
-                                            <span className="text-primaryColor font-semibold text-sm">{initials}</span>
+                                        <Button variant="light" isIconOnly className="min-w-0 w-10 h-10 rounded-full overflow-hidden p-0 bg-primaryColor/20">
+                                            {profilePic ? (
+                                                <span className="block size-full">
+                                                    <ImageComponent url={profilePic} img_title={initials} object_cover />
+                                                </span>
+                                            ) : (
+                                                <span className="text-primaryColor font-semibold text-sm w-full h-full flex items-center justify-center">{initials}</span>
+                                            )}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent>
