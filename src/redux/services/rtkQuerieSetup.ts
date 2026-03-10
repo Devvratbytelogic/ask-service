@@ -51,12 +51,17 @@ const baseQueryWithAuth: BaseQueryFn<
         const result = await baseQuery(args, api, extraOptions);
         const res = result.data as IAPIResponse;
         if (result.error) {
-            const errorData = result.error as IAPIError & { status?: number };
-            const message = errorData?.data?.message || "Unknown API error";
-            // const status = errorData?.status;
+            const errorData = result.error as IAPIError & { status?: number; data?: { data?: { flow?: string }; message?: string } };
+            const status = errorData?.status;
+            const responseData = errorData?.data;
+            // Let login handle 403 EMAIL_VERIFICATION_REQUIRED by returning the response body
+            if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
+                return { data: responseData as IAPIResponse };
+            }
+            const message = (responseData as { message?: string })?.message || "Unknown API error";
             console.error(`API: ${args}, Failed to fetch data`);
             throw new Error(message);
-        }else{
+        } else {
             return { data: res };
         }
 

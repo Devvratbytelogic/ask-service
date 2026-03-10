@@ -9,6 +9,7 @@ import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useUpdateUserProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
+import { useResendEmailVerificationMutation } from '@/redux/rtkQueries/authApi'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
 import Cookies from 'js-cookie'
@@ -32,6 +33,7 @@ export default function ProfileInfo() {
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const { data, isLoading } = useGetUserProfileInfoQuery()
     const [updateUserProfileInfo, { isLoading: isUpdating }] = useUpdateUserProfileInfoMutation()
+    const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
 
     const profileData = data?.data
     const initialValues = {
@@ -114,6 +116,24 @@ export default function ProfileInfo() {
                 modalSize: 'md',
             })
         )
+    }
+
+    const handleVerifyEmail = async () => {
+        const email = profileData?.email ?? values.email ?? ''
+        if (!email) return
+        try {
+            await resendEmailVerification({ email }).unwrap()
+            addToast({ title: 'Verification code sent', description: 'Check your email.', color: 'success', timeout: 2000 })
+            dispatch(
+                openModal({
+                    componentName: 'VerifyEmailOtpModal',
+                    data: { email },
+                    modalSize: 'md',
+                })
+            )
+        } catch {
+            // Error toast from rtkQuerieSetup
+        }
     }
 
     const [latLong, setLatLong] = useState<string | null>(null)
@@ -268,20 +288,38 @@ export default function ProfileInfo() {
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Email Address
                         </label>
-                        <Input
-                            name="email"
-                            value={values.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isReadOnly={!isEditing}
-                            isInvalid={!!(touched.email && errors.email)}
-                            errorMessage={touched.email && errors.email}
-                            startContent={<EnvelopeIconSVG />}
-                            classNames={{
-                                inputWrapper: 'account_input_design',
-                            }}
-                            readOnly
-                        />
+                        <div className="flex gap-2 items-start">
+                            <div className="flex-1 min-w-0">
+                                <Input
+                                    name="email"
+                                    value={values.email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isReadOnly={!isEditing}
+                                    isInvalid={!!(touched.email && errors.email)}
+                                    errorMessage={touched.email && errors.email}
+                                    startContent={<EnvelopeIconSVG />}
+                                    classNames={{
+                                        inputWrapper: 'account_input_design',
+                                    }}
+                                    readOnly
+                                />
+                            </div>
+                            {profileData?.is_email_verified === false && (profileData?.email ?? values.email) && (
+                                <Button
+                                    size="sm"
+                                    className="btn_radius btn_outline_blue shrink-0"
+                                    onPress={handleVerifyEmail}
+                                    isLoading={isResendingEmail}
+                                    isDisabled={isResendingEmail}
+                                >
+                                    Verify
+                                </Button>
+                            )}
+                        </div>
+                        {touched.email && errors.email && (
+                            <p className="text-danger text-tiny mt-1">{errors.email}</p>
+                        )}
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">

@@ -87,7 +87,27 @@ const CustomerSignInDetails = () => {
             if (!identifier || !values.password) return
             try {
                 const res = await login({ identifier, password: values.password }).unwrap()
-                const responseData = res?.data
+                const responseData = res?.data as Record<string, unknown> | undefined
+                const flow = responseData?.flow as string | undefined
+                if (flow === 'EMAIL_VERIFICATION_REQUIRED') {
+                    const email = signInType === 'email' ? values.email?.trim() : undefined
+                    if (email) {
+                        dispatch(
+                            openModal({
+                                componentName: 'VerifyEmailOtpModal',
+                                data: {
+                                    email,
+                                    ...(returnToRequestFlow && requestFlowData
+                                        ? { returnToRequestFlow: true, requestFlowData }
+                                        : {}),
+                                },
+                                modalSize: 'md',
+                                modalPadding: 'px-6 py-8',
+                            })
+                        )
+                    }
+                    return
+                }
                 if (responseData && typeof responseData === 'object') {
                     setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                     router.refresh()
