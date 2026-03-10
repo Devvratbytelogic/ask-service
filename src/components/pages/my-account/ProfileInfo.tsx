@@ -10,6 +10,8 @@ import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useUpdateUserProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
 import { openModal } from '@/redux/slices/allModalSlice'
+import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
+import Cookies from 'js-cookie'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
@@ -113,6 +115,44 @@ export default function ProfileInfo() {
             })
         )
     }
+
+    const [latLong, setLatLong] = useState<string | null>(null)
+
+    const { data: geoData, isSuccess: isGeoSuccess, isLoading: isGeoLoading } = useGetGeoLocationQuery(
+        { latLong: latLong! },
+        { skip: !latLong }
+    )
+
+    const handleGetUserGeolocation = () => {
+        const lat = Cookies.get('geo_lat')
+        const lng = Cookies.get('geo_lng')
+        if (lat && lng) {
+            setLatLong(`${lat},${lng}`)
+        } else {
+            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+        }
+    }
+
+    // Override address fields when geo data is successfully loaded
+    useEffect(() => {
+        if (!isGeoSuccess || !geoData?.results?.length) return
+        const result = geoData.results.find((r: { types?: string[] }) => r.types?.includes('street_address')) ?? geoData.results[0]
+        const components = result?.address_components as Array<{ long_name: string; short_name: string; types: string[] }> | undefined
+        if (!components) return
+
+        const getComponent = (...types: string[]) =>
+            components.find((c) => types.some((t) => c.types.includes(t)))?.long_name ?? ''
+
+        const streetNumber = getComponent('street_number')
+        const route = getComponent('route')
+        const streetAddress = [streetNumber, route].filter(Boolean).join(' ') || (result.formatted_address ?? '')
+        const postcode = getComponent('postal_code')
+        const city = getComponent('locality', 'sublocality', 'administrative_area_level_2')
+
+        setFieldValue('streetAddress', streetAddress)
+        setFieldValue('postcode', postcode)
+        setFieldValue('city', city)
+    }, [isGeoSuccess, geoData, setFieldValue])
 
     return (
         <>
@@ -240,6 +280,7 @@ export default function ProfileInfo() {
                             classNames={{
                                 inputWrapper: 'account_input_design',
                             }}
+                            readOnly
                         />
                     </div>
                     <div>
@@ -265,6 +306,7 @@ export default function ProfileInfo() {
                                     inputStyle={{ height: '52px' }}
                                     dropdownClass="!z-[9999]"
                                     dropdownStyle={{ zIndex: 9999 }}
+                                    disabled
                                 />
                             </div>
                             {profileData?.is_phone_verified === false && profileData?.phone !== null && (
@@ -339,7 +381,9 @@ export default function ProfileInfo() {
                     type="button"
                     className="btn_radius btn_bg_white text-primaryColor!"
                     startContent={<MyLocationIconSVG />}
-                    isDisabled={!isEditing}
+                    isDisabled={!isEditing || isGeoLoading}
+                    isLoading={isGeoLoading}
+                    onPress={handleGetUserGeolocation}
                 >
                     Use my current location
                 </Button>

@@ -10,6 +10,8 @@ import { vendorProfileInfoValidationSchema } from '@/utils/validation'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
+import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
+import Cookies from 'js-cookie'
 
 const COMPANY_SIZE_OPTIONS = [
     '1 - 10 employees',
@@ -119,6 +121,42 @@ export default function VendorProfileInfo() {
         setProfilePicFile(null)
         setIsEditing(false)
     }
+
+    const [latLong, setLatLong] = useState<string | null>(null)
+    const { data: geoData, isSuccess: isGeoSuccess, isLoading: isGeoLoading } = useGetGeoLocationQuery(
+        { latLong: latLong! },
+        { skip: !latLong }
+    )
+
+    const handleGetUserGeolocation = () => {
+        const lat = Cookies.get('geo_lat')
+        const lng = Cookies.get('geo_lng')
+        if (lat && lng) {
+            setLatLong(`${lat},${lng}`)
+        } else {
+            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+        }
+    }
+
+    useEffect(() => {
+        if (!isGeoSuccess || !geoData?.results?.length) return
+        const result = geoData.results.find((r: { types?: string[] }) => r.types?.includes('street_address')) ?? geoData.results[0]
+        const components = result?.address_components as Array<{ long_name: string; short_name: string; types: string[] }> | undefined
+        if (!components) return
+
+        const getComponent = (...types: string[]) =>
+            components.find((c) => types.some((t) => c.types.includes(t)))?.long_name ?? ''
+
+        const streetNumber = getComponent('street_number')
+        const route = getComponent('route')
+        const businessAddress = [streetNumber, route].filter(Boolean).join(' ') || (result.formatted_address ?? '')
+        const postcode = getComponent('postal_code')
+        const city = getComponent('locality', 'sublocality', 'administrative_area_level_2')
+
+        setFieldValue('businessAddress', businessAddress)
+        setFieldValue('postcode', postcode)
+        setFieldValue('city', city)
+    }, [isGeoSuccess, geoData, setFieldValue])
 
     const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -332,6 +370,7 @@ export default function VendorProfileInfo() {
                                     </Button>
                                 ) : undefined
                             }
+                            readOnly
                         />
                     </div>
                     <div>
@@ -357,6 +396,7 @@ export default function VendorProfileInfo() {
                                     inputStyle={{ height: '52px' }}
                                     dropdownClass="!z-[9999]"
                                     dropdownStyle={{ zIndex: 9999 }}
+                                    disabled
                                 />
                             </div>
                             {profileData?.is_phone_verified === false && profileData?.phone !== null && (
@@ -422,6 +462,17 @@ export default function VendorProfileInfo() {
                         />
                     </div>
                 </div>
+
+                <Button
+                    type="button"
+                    className="btn_radius btn_bg_white text-primaryColor!"
+                    startContent={<MyLocationIconSVG />}
+                    isDisabled={!isEditing || isGeoLoading}
+                    isLoading={isGeoLoading}
+                    onPress={handleGetUserGeolocation}
+                >
+                    Use my current location
+                </Button>
 
                 {/* VAT Number | Company Registration Number */}
                 <div className="grid gap-5 sm:grid-cols-2">

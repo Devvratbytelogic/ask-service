@@ -9,9 +9,10 @@ import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { useSelector } from "react-redux";
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
 import { getUserRole, clearAllCookiesAndReload, getAuthToken } from "@/utils/authCookies";
+import Cookies from "js-cookie";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
 import type { RootState } from "@/redux/appStore";
-import { checkAuthTokenAndLogoutIfInvalid } from "@/utils/checkAuthToken";
+import { useEffect, useState } from "react";
 
 /** Get initials from first + last name, or email/placeholder */
 function getInitials(firstName?: string | null, lastName?: string | null, email?: string | null): string {
@@ -72,7 +73,60 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const handleLogout = () => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };
-    // checkAuthTokenAndLogoutIfInvalid();
+
+    const [error, setError] = useState<string | null>(null)
+
+    const checkPermissionAndGetLocation = async () => {
+        if (!navigator.permissions) {
+            handleUseCurrentLocation()
+            return
+        }
+
+        const status = await navigator.permissions.query({ name: "geolocation" })
+
+        if (status.state === "granted") {
+            handleUseCurrentLocation()
+        } else if (status.state === "prompt") {
+            handleUseCurrentLocation()
+        } else {
+            setError("Location permission denied")
+        }
+    }
+
+    const handleUseCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude
+                    const lng = position.coords.longitude
+                    Cookies.set('geo_lat', String(lat), { path: '/', sameSite: 'lax', expires: 7 })
+                    Cookies.set('geo_lng', String(lng), { path: '/', sameSite: 'lax', expires: 7 })
+                    console.log('😊😊😊😊😊😊 Location fetched successfully:', position.coords.latitude, position.coords.longitude)
+                },
+                (err) => {
+                    if (err.code === 1) {
+                        setError('Location access denied. Please enable location services to continue.')
+                    } else {
+                        setError('Failed to fetch location. Please try again.')
+                    }
+                },
+                {
+                    timeout: 10000,
+                    maximumAge: 60000,
+                    enableHighAccuracy: false,
+                }
+            )
+        } else {
+            console.warn('⚠️⚠️⚠️⚠️⚠️⚠️ Geolocation is not supported by this browser.')
+            setError('Geolocation is not supported by this browser.')
+            console.log('error', error)
+        }
+    }
+
+    useEffect(() => {
+        checkPermissionAndGetLocation()
+    }, [])
+
 
     if (!isAuthenticated) {
         return (
@@ -88,7 +142,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     } else {
         return (
             <>
-            
+
                 <header className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-10 bg-white border-b border-borderDark`} id="main_navbar">
                     <div className="flex items-center justify-between py-2">
                         <Link href={getHomeRoutePath()} className="flex items-center gap-2 shrink-0">
@@ -207,7 +261,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
                                                 <Link
-                                                    href={getMyAccountRoutePath({section: 'profile'})}
+                                                    href={getMyAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
@@ -281,7 +335,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     My Profile
                                                 </Link>
                                                 <Link
-                                                    href={getVendorAccountRoutePath({section: 'profile'})}
+                                                    href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
@@ -318,7 +372,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
                                                 <Link
-                                                    href={getMyAccountRoutePath({section: 'profile'})}
+                                                    href={getMyAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
