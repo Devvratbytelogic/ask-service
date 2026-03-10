@@ -15,7 +15,7 @@ export default function SupportAlert({ title, content }: { title: string, conten
                         <p className="text-sm text-fontBlack">{content}</p>
                     </div>
                 </div>
-                <Button className="btn_radius btn_bg_blue shrink-0">Contact Support</Button>
+                <Button className="btn_radius btn_bg_blue shrink-0">Contacter l'assistance</Button>
             </div>
         </>
     )

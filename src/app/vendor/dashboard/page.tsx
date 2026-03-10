@@ -7,8 +7,8 @@ export default function VendorDashboardPage() {
         <>
             <VendorUnderReviewBanner />
             <div className="body_x_axis_padding min-h-screen">
-                <h1 className='header_text_md'>Vendor <span className='text-darkSilver'>Dashboard</span></h1>
-                <p className='text-sm text-[#4A5565]'>Welcome back • Manage your leads and quotes</p>
+                <h1 className='header_text_md'>Tableau de bord <span className='text-darkSilver'>prestataire</span></h1>
+                <p className='text-sm text-[#4A5565]'>Bon retour • Gérez vos demandes et vos devis</p>
                 <div className="flex flex-col lg:flex-row gap-6 mt-8">
                     <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24">
                         <AccountSidebar navItems={vendorNavItems} />

@@ -138,7 +138,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
                     {/* Service Requirements Card */}
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
-                        <h3 className="font-bold text-fontBlack mb-4">Service Requirements</h3>
+                        <h3 className="font-bold text-fontBlack mb-4">Exigences du service</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Service Type</p>
@@ -179,7 +179,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                     {/* Schedule Preference Card - only show when at least one schedule value exists */}
                     {(displayData.preferredStartDate !== 'N/A' || displayData.preferredTime !== 'N/A' || displayData.startDate || displayData.startTime || displayData.endDate || displayData.endTime) && (
                         <div className="rounded-2xl border border-borderDark bg-white p-5">
-                            <h3 className="font-bold text-fontBlack mb-4">Schedule Preference</h3>
+                            <h3 className="font-bold text-fontBlack mb-4">Préférence de planning</h3>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {displayData.preferredStartDate !== 'N/A' && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">

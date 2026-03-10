@@ -155,10 +155,10 @@ const CustomerSignupDetails = () => {
                             role="button"
                             aria-label="Go back"
                         />
-                        Sign up <span className="text-darkSilver ml-1">{' ' + 'now'} </span>
+                        S'inscrire <span className="text-darkSilver ml-1">{' ' + 'maintenant'} </span>
                     </h1>
                     <p className="text-fontBlack text-base">
-                        By creating an account, I am also consenting to receive SMS messages and emails.
+                        En créant un compte, j'accepte également de recevoir des SMS et des emails.
                     </p>
                 </div>
                 <div className="space-y-4 w-11/12 xl:w-full">
@@ -166,10 +166,10 @@ const CustomerSignupDetails = () => {
                         <Input
                             name="firstName"
                             variant="bordered"
-                            label="First name"
+                            label="Prénom"
                             labelPlacement="outside"
                             isRequired
-                            placeholder="First name"
+                            placeholder="Prénom"
                             value={values.firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -183,10 +183,10 @@ const CustomerSignupDetails = () => {
                         <Input
                             name="lastName"
                             variant="bordered"
-                            label="Last name"
+                            label="Nom"
                             labelPlacement="outside"
                             isRequired
-                            placeholder="Last name"
+                            placeholder="Nom"
                             value={values.lastName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -204,7 +204,7 @@ const CustomerSignupDetails = () => {
                             <Input
                                 name="email"
                                 variant="bordered"
-                                label="Email address"
+                                label="Adresse email"
                                 labelPlacement="outside"
                                 isRequired
                                 placeholder="example@xyz.com"
@@ -223,7 +223,7 @@ const CustomerSignupDetails = () => {
                     )}
                     {userSignupType === "phoneNumber" && (
                         <div className="w-full relative z-100">
-                            <p className="custom_label_text_light mb-1.5">Phone number</p>
+                            <p className="custom_label_text_light mb-1.5">Numéro de téléphone</p>
                             <div className="mt-1.5">
                                 <PhoneInput
                                     country="fr"
@@ -314,13 +314,13 @@ const CustomerSignupDetails = () => {
                         isLoading={isSigningUp}
                         isDisabled={isSigningUp}
                     >
-                        Continue
+                        Continuer
                     </Button>
                 </div>
                 <p className="text-base text-fontBlack text-center flex justify-center gap-1">
-                    Already have an account?{" "}
+                    Vous avez déjà un compte ?{" "}
                     <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
-                        Sign In
+                        Connectez-vous
                     </p>
                 </p>
             </div>

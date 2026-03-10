@@ -97,7 +97,7 @@ const HomeBanner = () => {
                             listboxWrapper: "max-h-[200px]",
                         }}
                         listboxProps={{
-                            emptyContent: searchValue.trim() ? "No data found" : "No items.",
+                            emptyContent: searchValue.trim() ? "Aucun résultat" : "Aucun élément.",
                         }}
                         inputProps={{
                             classNames: {

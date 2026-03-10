@@ -11,8 +11,8 @@ export default function MyRequestPage() {
     return (
         <div className="min-h-screen body_x_axis_padding navbar_y_axis_padding">
             <div className='text-center mb-8'>
-                <h1 className="header_text font-bold">My Requests</h1>
-                <p className='text-lightBlack'>Manage and track your service requests</p>
+                <h1 className="header_text font-bold">Mes demandes</h1>
+                <p className='text-lightBlack'>Gérez et suivez vos demandes de service</p>
             </div>
             <div className="flex flex-col lg:flex-row gap-6">
                 <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24">
@@ -27,7 +27,7 @@ export default function MyRequestPage() {
                                 className='btn_radius btn_bg_blue'
                                 endContent={<FiArrowRight />}
                             >
-                                Create a new request
+                                Créer une nouvelle demande
                             </Button>
                         </div>
                         <AllRequests />

@@ -193,10 +193,10 @@ const CustomerSignInDetails = () => {
                             role="button"
                             aria-label="Go back"
                         />
-                        Sign In <span className="text-darkSilver ml-1">now</span>
+                        Se connecter <span className="text-darkSilver ml-1">maintenant</span>
                     </h1>
                     <p className="text-fontBlack text-base">
-                        Sign in to access Ask Service, manage your requests, and connect with the right support quickly and securely.
+                        Connectez-vous pour accéder à Ask Service, gérer vos demandes et contacter rapidement le bon professionnel.
                     </p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4 w-11/12 xl:w-full">
@@ -206,7 +206,7 @@ const CustomerSignInDetails = () => {
                             <Input
                                 name="email"
                                 variant="bordered"
-                                label="Email address"
+                                label="Adresse email"
                                 labelPlacement="outside"
                                 placeholder="example@xyz.com"
                                 type="email"
@@ -230,7 +230,7 @@ const CustomerSignInDetails = () => {
                                 className="btn_radius btn_bg_whiteSilver_border w-full"
                                 onPress={() => setShowOtpView(false)}
                             >
-                                Sign in with password
+                                Se connecter avec un mot de passe
                             </Button>
                             <Button
                                 type="button"
@@ -239,7 +239,7 @@ const CustomerSignInDetails = () => {
                                 isDisabled={isSendingOtp}
                                 onPress={handleContinueWithEmailOtp}
                             >
-                                Continue
+                                Continuer
                             </Button>
                         </>
                     ) : (
@@ -265,7 +265,7 @@ const CustomerSignInDetails = () => {
                             )}
                             {signInType === "phoneNumber" && (
                                 <div className="w-full relative z-100">
-                                    <p className="custom_label_text_light mb-1.5">Phone number</p>
+                                    <p className="custom_label_text_light mb-1.5">Numéro de téléphone</p>
                                     <div className="mt-1.5">
                                         <PhoneInput
                                             country="fr"
@@ -370,7 +370,7 @@ const CustomerSignInDetails = () => {
                                 isLoading={isLoggingIn}
                                 isDisabled={isLoggingIn}
                             >
-                                Sign In
+                                Se connecter
                             </Button>
                         </>
                     )}
@@ -379,8 +379,8 @@ const CustomerSignInDetails = () => {
             {!returnToRequestFlow && (
                 <div className="w-11/12 space-y-6.25">
                     <p className="text-base text-fontBlack text-center">
-                        Don&apos;t have an account?{" "}
-                        <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={goToSignup} onKeyDown={(e) => e.key === 'Enter' && goToSignup()} role="button" tabIndex={0}>Sign up</span>
+                        Vous n'avez pas de compte ?{" "}
+                        <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={goToSignup} onKeyDown={(e) => e.key === 'Enter' && goToSignup()} role="button" tabIndex={0}>S'inscrire</span>
                     </p>
                 </div>
             )}

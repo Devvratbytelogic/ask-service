@@ -123,7 +123,7 @@ export default function VerifyEmailOtpModal() {
                 isLoading={isVerifying}
                 onPress={handleVerify}
             >
-                Verify & Sign In
+                Vérifier et se connecter
             </Button>
         </div>
     )

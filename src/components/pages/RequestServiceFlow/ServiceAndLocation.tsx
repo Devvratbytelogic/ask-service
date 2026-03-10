@@ -90,7 +90,7 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFr
             <Input
               name="otherServiceName"
               variant="bordered"
-              placeholder="Please specify..."
+              placeholder="Précisez..."
               value={values.otherServiceName}
               onChange={handleChange}
               onBlur={handleBlur}

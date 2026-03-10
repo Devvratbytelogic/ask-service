@@ -24,29 +24,29 @@ export type NavId =
 export type NavItem = { id?: NavId; label: string; icon: React.ReactNode; href?: string }
 
 const defaultNavItems: NavItem[] = [
-    { id: 'profile', label: 'Profile', icon: <ProfileIconSVG /> },
-    { id: 'security', label: 'Security', icon: <SecurityIconSVG /> },
+    { id: 'profile', label: 'Profil', icon: <ProfileIconSVG /> },
+    { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG /> },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG /> },
 ]
 
 export const customerNavItems: NavItem[] = [
-    { id: 'my-requests', label: 'My Requests', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
-    { id: 'profile', label: 'Profile', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
-    { id: 'security', label: 'Security', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
+    { id: 'my-requests', label: 'Mes demandes', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
+    { id: 'profile', label: 'Mon Profil', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
+    { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getMyAccountRoutePath({ section: 'notifications' }) },
-    { id: 'create-request', label: 'Create a new request', icon: <HiPlus className="size-5 shrink-0" />, href: getCreateRequestRoutePath() },
+    { id: 'create-request', label: 'Créer une nouvelle demande', icon: <HiPlus className="size-5 shrink-0" />, href: getCreateRequestRoutePath() },
 ]
 
 export const vendorNavItems: NavItem[] = [
-    { id: 'dashboard', label: 'Leads', icon: <BriefcaseIconSVG />, href: getVendorDashboardRoutePath() },
-    { id: 'my-leads', label: 'My Leads', icon: <LockGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
-    { id: 'all-quotes', label: 'All Quotes', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
-    { id: 'profile', label: 'Profile', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
-    { id: 'security', label: 'Security', icon: <SecurityIconSVG />, href: getVendorAccountRoutePath({ section: 'security' }) },
+    { id: 'dashboard', label: 'Prospects', icon: <BriefcaseIconSVG />, href: getVendorDashboardRoutePath() },
+    { id: 'my-leads', label: 'Mes Prospects', icon: <LockGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
+    { id: 'all-quotes', label: 'Mes Devis', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
+    { id: 'profile', label: 'Mon profil', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
+    { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getVendorAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getVendorAccountRoutePath({ section: 'notifications' }) },
-    { id: 'documents', label: 'My Documents', icon: <VendorDocumentIconSVG />, href: getVendorAccountRoutePath({ section: 'documents' }) },
-    { id: 'reviews', label: 'My Reviews', icon: <VendorReviewIconSVG />, href: getVendorAccountRoutePath({ section: 'reviews' }) },
-    { id: 'payment-history', label: 'Payment History', icon: <VendorPaymentHistoryIconSVG />, href: getVendorAccountRoutePath({ section: 'payment-history' }) },
+    { id: 'documents', label: 'Mes Documents', icon: <VendorDocumentIconSVG />, href: getVendorAccountRoutePath({ section: 'documents' }) },
+    { id: 'reviews', label: 'Mes Avis', icon: <VendorReviewIconSVG />, href: getVendorAccountRoutePath({ section: 'reviews' }) },
+    { id: 'payment-history', label: 'Mes Paiements', icon: <VendorPaymentHistoryIconSVG />, href: getVendorAccountRoutePath({ section: 'payment-history' }) },
     { id: 'messages', label: 'Messages', icon: <ChatBubbleLeftRightIconSVG />, href: getVendorMessageRoutePath() },
 ]
 

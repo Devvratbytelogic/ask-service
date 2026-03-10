@@ -33,7 +33,7 @@ const FAQ_TABS = [
   { key: 'general', label: 'General' },
   { key: 'payments', label: 'Payments' },
   { key: 'licensing', label: 'Licensing' },
-  { key: 'support', label: 'Support' },
+  { key: 'support', label: 'Assistance' },
 ] as const
 
 export default function ContactFaq() {

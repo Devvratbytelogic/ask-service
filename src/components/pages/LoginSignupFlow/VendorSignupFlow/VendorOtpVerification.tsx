@@ -176,7 +176,7 @@ const VendorOtpVerification = () => {
                     isLoading={isVerifying}
                     onPress={handleVerifyOtp}
                 >
-                    Continue
+                    Continuer
                 </Button>
                 <p className="text-base text-fontBlack text-center">
                     Don&apos;t have an account?{" "}

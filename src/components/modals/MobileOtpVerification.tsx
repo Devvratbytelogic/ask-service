@@ -295,7 +295,7 @@ const MobileOtpVerification = () => {
                 isLoading={isVerifyingPhone}
                 onPress={handleVerify}
             >
-                Continue
+                Continuer
             </Button>
         </div>
     )

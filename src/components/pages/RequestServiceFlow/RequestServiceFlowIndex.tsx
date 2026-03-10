@@ -170,7 +170,7 @@ const RequestServiceFlowIndex = () => {
             }
         })
         if (values.customerEmail?.toString().trim() && !validateEmail(values.customerEmail.trim())) {
-            err.customerEmail = "Please enter a valid email address"
+            err.customerEmail = "Veuillez entrer une adresse email valide"
         }
         if (values.parentServiceName === "other" && !values.otherServiceName?.toString().trim()) {
             err.otherServiceName = "Requis"

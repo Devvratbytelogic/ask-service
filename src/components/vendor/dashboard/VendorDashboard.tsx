@@ -57,15 +57,15 @@ export default function VendorDashboard() {
     }
 
     const locationOptions = [
-        { key: 'all', label: 'All Locations' },
+        { key: 'all', label: 'Toutes les villes' },
         { key: 'london', label: 'London' },
         { key: 'manchester', label: 'Manchester' },
     ]
 
     const sortOptions = [
-        { key: 'newest', label: 'Newest First' },
-        { key: 'oldest', label: 'Oldest First' },
-        { key: 'credits', label: 'Credits (Low to High)' },
+        { key: 'newest', label: 'Les plus récents' },
+        { key: 'oldest', label: 'Les plus anciens' },
+        { key: 'credits', label: 'Points (du plus bas au plus élevé)' },
     ]
 
     return (
@@ -80,7 +80,7 @@ export default function VendorDashboard() {
                         <p className="text-2xl font-bold text-fontBlack">
                             {isLoading ? '—' : dashboard?.availableLeadsCount ?? 0}
                         </p>
-                        <p className="text-sm text-darkSilver mt-0.5">Available Leads</p>
+                        <p className="text-sm text-darkSilver mt-0.5">Prospects Disponibles</p>
                     </div>
 
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
@@ -90,9 +90,9 @@ export default function VendorDashboard() {
                         <p className="text-2xl font-bold text-fontBlack">
                             {isLoading ? '—' : dashboard?.purchasedLeadsCount ?? 0}
                         </p>
-                        <p className="text-sm text-darkSilver mt-0.5">My Leads</p>
+                        <p className="text-sm text-darkSilver mt-0.5">Mes Prospects</p>
                         <Link href={getVendorDashboardRoutePath({ leads: 'purchased' })} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
-                            View leads →
+                            Voir les prospects →
                         </Link>
                     </div>
 
@@ -102,11 +102,11 @@ export default function VendorDashboard() {
                                 <CreditCardIconSVG className="size-5 text-[#E17100]" />
                             </div>
                             <p className="text-2xl font-bold text-fontBlack">
-                                {isLoading ? '—' : `${dashboard?.creditBalance ?? 0} credits`}
+                                {isLoading ? '—' : `${dashboard?.creditBalance ?? 0} points`}
                             </p>
-                            <p className="text-sm text-darkSilver mt-0.5">Credit Balance</p>
+                            <p className="text-sm text-darkSilver mt-0.5">Solde de points</p>
                             <span className="inline-block mt-2 text-sm font-medium text-[#E17100] hover:underline">
-                                Buy credits →
+                                Acheter des points →
                             </span>
                         </div>
                     </Link>
@@ -118,9 +118,9 @@ export default function VendorDashboard() {
                         <p className="text-2xl font-bold text-fontBlack">
                             {isLoading ? '—' : dashboard?.quotesSentCount ?? 0}
                         </p>
-                        <p className="text-sm text-darkSilver mt-0.5">Quotes Sent</p>
+                        <p className="text-sm text-darkSilver mt-0.5">Devis envoyés</p>
                         <Link href={getVendorAllQuotesRoutePath()} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
-                            View all →
+                            Voir tout →
                         </Link>
                     </div>
                 </div>
@@ -130,19 +130,19 @@ export default function VendorDashboard() {
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <h2 className="header_text_md text-fontBlack">
-                                {showQuotedOnly ? 'Quotes Sent' : showPurchasedOnly ? 'My Leads' : 'Available Leads'}
+                                {showQuotedOnly ? 'Devis envoyés' : showPurchasedOnly ? 'Mes Prospects' : 'Prospects Disponibles'}
                             </h2>
                             <p className="text-sm text-darkSilver mt-1">
                                 {showQuotedOnly
-                                    ? `${leads.length} lead${leads.length !== 1 ? 's' : ''} you&apos;ve quoted • View full details below`
+                                    ? `${leads.length} prospect${leads.length !== 1 ? 's' : ''} avec devis • Voir les détails ci-dessous`
                                     : showPurchasedOnly
-                                        ? `${leads.length} purchased lead${leads.length !== 1 ? 's' : ''} • View full details below`
-                                        : `${allLeads.length} leads available • Unlock to view full details`}
+                                        ? `${leads.length} prospect${leads.length !== 1 ? 's' : ''} acheté(s) • Voir les détails ci-dessous`
+                                        : `${allLeads.length} prospect${allLeads.length !== 1 ? 's' : ''} disponibles • Débloquez pour voir tous les détails`}
                                 {(showPurchasedOnly || showQuotedOnly) && (
                                     <>
                                         {' • '}
                                         <Link href={getVendorDashboardRoutePath()} className="text-primaryColor hover:underline font-medium">
-                                            View available leads
+                                            Voir les prospects disponibles
                                         </Link>
                                     </>
                                 )}
@@ -155,7 +155,7 @@ export default function VendorDashboard() {
                                         className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-35 shadow-none"
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
-                                        {locationOptions.find((o) => o.key === locationFilter)?.label ?? 'All Locations'}
+                                        {locationOptions.find((o) => o.key === locationFilter)?.label ?? 'Toutes les villes'}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -177,7 +177,7 @@ export default function VendorDashboard() {
                                         className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-35 shadow-none"
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
-                                        {sortOptions.find((o) => o.key === sortFilter)?.label ?? 'Newest First'}
+                                        {sortOptions.find((o) => o.key === sortFilter)?.label ?? 'Les plus récents'}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -193,7 +193,7 @@ export default function VendorDashboard() {
                                     {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
                                 </DropdownMenu>
                             </Dropdown>
-                            <span className="text-sm text-darkSilver">Showing <span className='font-bold text-fontBlack'>{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}</span>
+                            <span className="text-sm text-darkSilver">{leads.length} prospect{leads.length !== 1 ? 's' : ''} affiché{leads.length !== 1 ? 's' : ''}</span>
                         </div>
                     </div>
 
@@ -203,11 +203,11 @@ export default function VendorDashboard() {
                             <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
                                 <p className="text-darkSilver">
                                     {showQuotedOnly
-                                        ? "You haven't sent any quotes yet. Unlock leads and submit quotes to see them here."
-                                        : 'You have no leads yet. Unlock leads from Available Leads to see their full details here.'}
+                                        ? "Vous n'avez pas encore envoyé de devis. Débloquez des prospects et envoyez des devis pour les voir ici."
+                                        : "Vous n'avez pas encore de prospects. Débloquez des prospects dans la liste pour voir leurs détails."}
                                 </p>
                                 <Link href={getVendorDashboardRoutePath()} className="inline-block mt-3 text-sm font-medium text-[#4CAF50] hover:underline">
-                                    View available leads →
+                                    Voir les prospects disponibles →
                                 </Link>
                             </div>
                         )}
@@ -232,11 +232,11 @@ export default function VendorDashboard() {
                                             {lead?.unlocked && (
                                                 <span className="inline-flex items-center gap-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
                                                     <LockUnlockedIconSVG className="size-3.5 text-[#4CAF50]" />
-                                                    Unlocked
+                                                    Débloqué
                                                 </span>
                                             )}
                                             <div className="flex items-center gap-2 text-sm text-darkSilver">
-                                                <span>{lead?.quotes_count}/5 professionals responded</span>
+                                                <span>{lead?.quotes_count}/5 professionnel{lead?.quotes_count !== 1 ? 's ont' : ' a'} répondu</span>
                                                 {!lead?.unlocked && (
                                                     <Tooltip content="This request will stay open for 7 days. After that, it will close automatically.">
                                                         <span className="inline-flex cursor-help"><InfoSVG /></span>
@@ -292,16 +292,16 @@ export default function VendorDashboard() {
                                                 className="btn_radius font-medium bg-[#4CAF50] text-white hover:bg-[#45a049]"
                                                 onPress={() => router.push(generateLeadDetailRoutePath(lead?._id))}
                                             >
-                                                View Full Details
+                                                Voir les détails
                                             </Button>
                                         </>
                                     ) : (
                                         <>
                                             <div className="text-right">
                                                 <p className="font-bold text-fontBlack">
-                                                    {lead?.creditsToUnlock} Credits
+                                                    {lead?.creditsToUnlock} Points
                                                 </p>
-                                                <p className="text-xs text-darkSilver">to unlock</p>
+                                                <p className="text-xs text-darkSilver">pour débloquer</p>
                                             </div>
                                             <Button
                                                 className="btn_radius btn_bg_blue font-medium disabled:opacity-60 disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -309,10 +309,10 @@ export default function VendorDashboard() {
                                                 disabled={!dashboard?.canPurchaseLeads}
                                                 onPress={() => handleUnlockLeadClick(lead)}
                                             >
-                                                Unlock Lead
+                                                Débloquer le prospect
                                             </Button>
                                             <p className="text-xs text-darkSilver">
-                                                Full details available after unlocking
+                                                Détails complets après déblocage
                                             </p>
                                         </>
                                     )}
@@ -323,7 +323,7 @@ export default function VendorDashboard() {
                 </div>
 
                 {/* Support Banner */}
-                <SupportAlert title="Need help?" content={`Contact vendor support for assistance with leads, quotes, or your account`} />
+                <SupportAlert title="Besoin d'aide ?" content="Contactez l'assistance prestataire pour toute question sur les prospects, les devis ou votre compte." />
             </div>
         </>
     )

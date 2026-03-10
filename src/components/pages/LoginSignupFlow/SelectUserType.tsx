@@ -33,11 +33,11 @@ const SelectUserType = () => {
         <>
             <div className="space-y-3 xl:space-y-6">
                 <h1 className="header_text">
-                    Join as a Customer or <br />
-                    <span className="text-darkSilver"> Service provider</span>
+                    Inscrivez-vous en tant que client ou <br />
+                    <span className="text-darkSilver"> prestataire</span>
                 </h1>
                 <p className="text-fontBlack text-base">
-                    By creating an account, I am also consenting to receive SMS messages and emails.
+                    En créant un compte, j'accepte également de recevoir des SMS et des emails.
                 </p>
             </div>
             <div className="w-full space-y-3.5">
@@ -54,7 +54,7 @@ const SelectUserType = () => {
                     </div>
 
                     <div>
-                        <p className="text-base/[21px] text-fontBlack font-semibold">I'm a Customer, hiring for a <br /><span className="text-darkSilver">Work</span> </p>
+                        <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un client et je cherche un <br /><span className="text-darkSilver">professionnel</span> </p>
                     </div>
                 </div>
                 <div className="border border-borderDark rounded-3xl p-5 space-y-3.5 w-11/12 cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
@@ -70,16 +70,16 @@ const SelectUserType = () => {
                     </div>
 
                     <div>
-                        <p className="text-base/[21px] text-fontBlack font-semibold">I'm a Service provider, looking for a <br /><span className="text-darkSilver">Job</span> </p>
+                        <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un prestataire et je recherche des <br /><span className="text-darkSilver">missions</span> </p>
                     </div>
                 </div>
             </div>
             <div className="w-11/12 space-y-6.25">
                 <Button className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full" onPress={() => startSignupForUser()}>
-                    Continue
+                    Continuer
                 </Button>
                 <p className="text-base text-fontBlack text-center">
-                    Already have an account? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={openSignIn} onKeyDown={(e) => e.key === 'Enter' && openSignIn()} role="button" tabIndex={0}>Sign In</span>
+                    Vous avez déjà un compte ? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={openSignIn} onKeyDown={(e) => e.key === 'Enter' && openSignIn()} role="button" tabIndex={0}>Connectez-vous</span>
                 </p>
             </div>
         </>

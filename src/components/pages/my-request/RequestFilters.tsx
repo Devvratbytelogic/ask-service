@@ -28,7 +28,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
         <>
             <div className="w-max lg:min-w-75">
                 <Input
-                    placeholder="Search request..."
+                    placeholder="Rechercher une demande …"
                     value={search}
                     onValueChange={onSearchChange}
                     classNames={{

@@ -56,13 +56,13 @@ const ApplicationSuccessfull = () => {
                     We&apos;ll send updates to your registered email address.
                 </p>
             </div>
-            <div className="space-y-[25px] pt-2 w-11/12">
+            <div className="space-y-6.25 pt-2 w-11/12">
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     onPress={() => dispatch(closeModal())}
                 >
-                    Continue
+                    Continuer
                 </Button>
                 <p className="text-base text-fontBlack text-center">
                     Have questions?{" "}

@@ -6,10 +6,10 @@ import { LightningIconSVG, TipCheckedIconSVG } from '@/components/library/AllSVG
 import { Button } from '@heroui/react'
 
 const TIPS = [
-    "Be clear about what's included in the price",
-    "Mention your experience and qualifications",
-    "Address specific requirements mentioned",
-    "Keep pricing competitive but fair",
+    "Soyez clair sur ce qui est inclus dans le prix",
+    "Présentez votre expérience et vos qualifications",
+    "Répondez aux exigences spécifiques mentionnées",
+    "Proposez un prix compétitif tout en restant juste",
 ]
 interface LeadSidebarProps {
     leadId?: string
@@ -31,16 +31,16 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteF
                 {/* Actions - only show when lead is not yet unlocked */}
                 {unlocked && (
                     <div className="hidden lg:block rounded-2xl border border-borderDark bg-white p-5">
-                        <h3 className="font-semibold text-fontBlack mb-4">Actions</h3>
+                        <h3 className="font-semibold text-fontBlack mb-4">Options</h3>
                         <div className="flex flex-col gap-3">
                             {!showSubmitQuoteForm && <Button
                                 className="btn_radius btn_bg_blue w-full"
                                 onPress={onSendQuoteClick}
                             >
-                                Send Quote
+                                Envoyer un devis
                             </Button>}
                             <Button className="btn_radius btn_bg_white w-full" onPress={handleMessageCustomer}>
-                                Message Customer
+                                Contacter le client
                             </Button>
                         </div>
                     </div>
@@ -52,7 +52,7 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteF
                         <span className="[&_path]:fill-[#E17100] [&_path]:stroke-[#E17100]">
                             <LightningIconSVG />
                         </span>
-                        <h3 className="font-bold text-fontBlack">Tips for Winning</h3>
+                        <h3 className="font-bold text-fontBlack">Conseils pour remporter la mission</h3>
                     </div>
                     <ul className="space-y-3">
                         {TIPS.map((tip, i) => (

@@ -158,13 +158,13 @@ console.log("profilePic", profilePic);
                                 href={isVendor ? getVendorDashboardRoutePath() : getMyRequestRoutePath()}
                                 className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
-                                {isVendor ? 'Leads' : 'My Requests'}
+                                {isVendor ? 'Prospects' : 'Mes demandes'}
                             </Link>
                             <Link
                                 href={getVendorMessageRoutePath()}
                                 className="relative inline-flex items-center gap-1.5 text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
-                                Messages
+                                Mes messages
                                 <span className="min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center px-1">
                                     2
                                 </span>
@@ -214,21 +214,21 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
-                                                    Dashboard
+                                                    Tableau de bord
                                                 </Link>
                                                 <Link
                                                     href={getVendorProfileRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    My Profile
+                                                    Mon Profil
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
-                                                    Settings
+                                                    Paramètres
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
@@ -240,7 +240,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
-                                                    Sign Out
+                                                    Déconnexion
                                                 </button>
                                             </div>
                                         </div>
@@ -279,7 +279,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    My Profile
+                                                    Mon Profil
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
@@ -290,7 +290,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
-                                                    Sign Out
+                                                    Déconnexion
                                                 </button>
                                             </div>
                                         </div>
@@ -331,35 +331,35 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
-                                                    Dashboard
+                                                    Tableau de bord
                                                 </Link>
                                                 <Link
                                                     href={getMyRequestRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
-                                                    My Requests
+                                                    Mes demandes
                                                 </Link>
                                                 <Link
                                                     href={getVendorMessageRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><BellIconSVG /></span>
-                                                    Messages
+                                                    Mes messages
                                                 </Link>
                                                 <Link
                                                     href={getVendorProfileRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    My Profile
+                                                    Mon Profil
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
-                                                    Settings
+                                                    Paramètres
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
@@ -370,7 +370,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
-                                                    Sign Out
+                                                    Déconnexion
                                                 </button>
                                             </div>
                                         </div>
@@ -402,7 +402,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    My Profile
+                                                    Mon Profil
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
@@ -413,7 +413,7 @@ console.log("profilePic", profilePic);
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[#EF4444] text-sm font-normal hover:bg-red-50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex"><SignOutIconSVG /></span>
-                                                    Sign Out
+                                                    Déconnexion
                                                 </button>
                                             </div>
                                         </div>

@@ -5,10 +5,10 @@ const RealStoriesIndex = () => {
         <div className="space_y_header_body container_y_padding bg-[#F9FAFB] rounded-[52px]">
             <div className="space_y_header_paragraph">
                 <h2 className="header_text text-center font-bold w-11/12 md:w-1/3 mx-auto">
-                    <span className="text-fontBlack">Real stories.</span>
-                    <span className="text-darkSilver mx-2">Real results.</span>
+                    <span className="text-fontBlack">Des témoignages réels.</span>
+                    <span className="text-darkSilver mx-2">Des résultats concrets.</span>
                 </h2>
-                <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center w-11/12 md:w-2/3 mx-auto">Customers and verified professionals share how the platform helps them work better together.</p>
+                <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center w-11/12 md:w-2/3 mx-auto">Des clients et des professionnels vérifiés expliquent comment la plateforme les aide à mieux travailler ensemble.</p>
             </div>
             <div className="relative w-11/12 mx-auto overflow-hidden">
                 <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 pb-10 md:pb-20 w-full">

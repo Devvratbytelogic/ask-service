@@ -71,11 +71,11 @@ const Footer = () => {
                     </div>
 
                     <div className="space-y-3 col-span-2">
-                        <div className="footer_nav_heading text-nowrap">Support</div>
+                        <div className="footer_nav_heading text-nowrap">Assistance</div>
                         <div className="space-y-2 footer_nav_item">
-                            <Link href={getHelpCenterRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">Help Center</Link>
-                            <Link href={getFaqRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">FAQ</Link>
-                            <Link href={getContactUsRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">Contact Us</Link>
+                            <Link href={getHelpCenterRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">Centre d'aide</Link>
+                            <Link href={getFaqRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">Foire aux questions</Link>
+                            <Link href={getContactUsRoutePath()} className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors">Contactez-nous</Link>
                         </div>
                     </div>
 

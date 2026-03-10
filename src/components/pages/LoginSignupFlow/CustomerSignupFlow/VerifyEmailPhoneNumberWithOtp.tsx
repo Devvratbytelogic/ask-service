@@ -150,12 +150,12 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                     isLoading={isVerifying}
                     onPress={handleVerify}
                 >
-                    Verify & Sign Up
+                    Vérifier et s'inscrire
                 </Button>
                 <p className="text-base text-fontBlack text-center flex justify-center gap-1">
-                    Already have an account?{" "}
+                    Vous avez déjà un compte ?{" "}
                     <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
-                        Sign In
+                        Se connecter
                     </p>
                 </p>
             </div>

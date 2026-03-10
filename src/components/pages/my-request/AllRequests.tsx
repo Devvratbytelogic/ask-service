@@ -68,7 +68,7 @@ export default function AllRequests() {
     if (isError) {
         return (
             <div className="text-center py-12 text-darkSilver">
-                Failed to load requests. Please try again.
+                Échec du chargement des demandes. Veuillez réessayer.
             </div>
         )
     }
@@ -77,7 +77,7 @@ export default function AllRequests() {
         <>
             <div className="grid grid-cols-6 lg:grid-cols-12 gap-4 items-center">
                 <div className="col-span-4">
-                    <h2 className='header_text_md'>Total Requests: <span className='text-primaryColor'>{totalCount}</span></h2>
+                    <h2 className='header_text_md'>Nombre total de demandes : <span className='text-primaryColor'>{totalCount}</span></h2>
                 </div>
                 <div className="col-span-8">
                     <div className="flex flex-wrap gap-4 lg:justify-end items-center">

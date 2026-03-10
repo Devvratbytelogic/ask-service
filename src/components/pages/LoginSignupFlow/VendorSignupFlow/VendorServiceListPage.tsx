@@ -110,7 +110,7 @@ const VendorServiceListPage = () => {
                     isLoading={isUpdatingServices}
                     isDisabled={!selectedId || isUpdatingServices}
                 >
-                    Continue
+                    Continuer
                 </Button>
             </div>
         </>

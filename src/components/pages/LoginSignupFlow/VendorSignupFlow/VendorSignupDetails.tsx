@@ -133,10 +133,10 @@ const VendorSignupDetails = () => {
                             role="button"
                             aria-label="Go back"
                         />
-                        Sign up <span className="text-darkSilver ml-1"> now</span>
+                        S'inscrire <span className="text-darkSilver ml-1"> maintenant</span>
                     </h1>
                     <p className="text-fontBlack text-base">
-                        By creating an account, I am also consenting to receive SMS messages and emails.
+                        En créant un compte, j'accepte également de recevoir des SMS et des emails.
                     </p>
                 </div>
 
@@ -152,7 +152,7 @@ const VendorSignupDetails = () => {
                         <span className="size-4.5">
                             <ImageComponent url="/images/signup/google_icon.png" img_title="Google login icon" />
                         </span>
-                        Continue with Google
+                        Se connecter avec Google
                     </Button>
 
                     {/* Divider */}
@@ -168,10 +168,10 @@ const VendorSignupDetails = () => {
                             <Input
                                 name="firstName"
                                 variant="bordered"
-                                label="First name"
+                                label="Prénom"
                                 labelPlacement="outside"
                                 isRequired
-                                placeholder="First name"
+                                placeholder="Prénom"
                                 value={values.firstName}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -185,10 +185,10 @@ const VendorSignupDetails = () => {
                             <Input
                                 name="lastName"
                                 variant="bordered"
-                                label="Last name"
+                                label="Nom"
                                 labelPlacement="outside"
                                 isRequired
-                                placeholder="Last name"
+                                placeholder="Nom"
                                 value={values.lastName}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -309,12 +309,12 @@ const VendorSignupDetails = () => {
                     isLoading={isRegistering}
                     isDisabled={isRegistering}
                 >
-                    Continue
+                    Continuer
                 </Button>
                 <p className="text-base text-fontBlack text-center flex justify-center gap-1">
-                    Already have an account?{" "}
+                    Vous avez déjà un compte ?{" "}
                     <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
-                        Sign In
+                        Se connecter
                     </p>
                 </p>
             </div>

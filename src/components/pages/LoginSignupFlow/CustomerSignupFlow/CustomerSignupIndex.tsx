@@ -73,10 +73,10 @@ const CustomerSignupIndex = () => {
                         role="button"
                         aria-label="Go back"
                     />
-                    Sign up <span className="text-darkSilver ml-1"> now</span>
+                    S'inscrire <span className="text-darkSilver ml-1"> maintenant</span>
                 </h1>
                 <p className="text-fontBlack text-base">
-                    By creating an account, I am also consenting to receive SMS messages and emails.
+                    En créant un compte, j'accepte également de recevoir des SMS et des emails.
                 </p>
             </div>
             <div className="w-full space-y-4.5">
@@ -88,7 +88,7 @@ const CustomerSignupIndex = () => {
                         isLoading={isGoogleLoading}
                         isDisabled={isGoogleLoading}
                     >
-                        <span className="size-4.5"><ImageComponent url="/images/signup/google_icon.png" img_title="google login icon" /></span>Continue with Google
+                        <span className="size-4.5"><ImageComponent url="/images/signup/google_icon.png" img_title="google login icon" /></span>Se connecter avec Google
                     </Button>
                 </section>
 
@@ -102,7 +102,7 @@ const CustomerSignupIndex = () => {
                 {/* Email & Mobile options */}
                 <section className="space-y-2.5 w-11/12">
                     <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('email')}>
-                        <span><CgMail className="text-lg" /></span>Email
+                        <span><CgMail className="text-lg" /></span>Se connecter avec un Email
                     </Button>
                     {/* <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('phoneNumber')}>
                         <span><BiPhone className="text-lg" /></span>Mobile Number
@@ -111,7 +111,7 @@ const CustomerSignupIndex = () => {
             </div>
             <div className="w-11/12 space-y-6.25">
                 <p className="text-base text-fontBlack text-center">
-                    Already have an account? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} onKeyDown={(e) => e.key === 'Enter' && dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} role="button" tabIndex={0}>Sign In</span>
+                    Vous avez déjà un compte ? <span className="text-primaryColor cursor-pointer underline underline-offset-2" onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} onKeyDown={(e) => e.key === 'Enter' && dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} role="button" tabIndex={0}>Connectez-vous</span>
                 </p>
             </div>
         </>
