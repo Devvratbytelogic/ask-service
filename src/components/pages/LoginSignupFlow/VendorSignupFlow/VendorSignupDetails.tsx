@@ -100,7 +100,7 @@ const VendorSignupDetails = () => {
                 }).unwrap()
                 addToast({
                     title: "Verification code sent",
-                    description: "Check your email for OTP.",
+                    description: "Check your email for Verification Code.",
                     color: "success",
                     timeout: 3000,
                 })

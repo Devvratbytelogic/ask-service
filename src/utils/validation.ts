@@ -1,10 +1,36 @@
 import * as Yup from 'yup'
 
-// Email validation regex: local part + @ + domain + TLD (2+ letters)
+// Basic email shape: local + @ + domain with TLD (used for initial format check)
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 
+/**
+ * Validates email with strict rules:
+ * - No dot at start/end of local part; no consecutive dots in local or domain
+ * - No domain label starting/ending with hyphen; no consecutive hyphens in domain
+ */
 export function validateEmail(email: string): boolean {
-    return EMAIL_REGEX.test(email)
+    const trimmed = email.trim()
+    if (!trimmed || !EMAIL_REGEX.test(trimmed)) return false
+
+    const atIndex = trimmed.indexOf('@')
+    const local = trimmed.slice(0, atIndex)
+    const domain = trimmed.slice(atIndex + 1)
+
+    // Local part: no leading/trailing dot, no consecutive dots
+    if (local.startsWith('.') || local.endsWith('.')) return false
+    if (/\.\./.test(local)) return false
+
+    // Domain: no consecutive dots (no empty labels)
+    const labels = domain.split('.')
+    if (labels.some((label) => label.length === 0)) return false
+
+    // Each domain label: no leading/trailing hyphen, no consecutive hyphens
+    for (const label of labels) {
+        if (label.startsWith('-') || label.endsWith('-')) return false
+        if (/--/.test(label)) return false
+    }
+
+    return true
 }
 
 const EMAIL_VALIDATION_MESSAGE = 'Please enter a valid email address'
@@ -14,13 +40,13 @@ export const yupRequiredEmail = (requiredMessage = 'Email is required') =>
     Yup.string()
         .trim()
         .required(requiredMessage)
-        .matches(EMAIL_REGEX, EMAIL_VALIDATION_MESSAGE)
+        .test('email', EMAIL_VALIDATION_MESSAGE, (value) => !!value && validateEmail(value))
 
-/** Yup field for optional email. Valid only when value is empty or matches regex. */
+/** Yup field for optional email. Valid only when value is empty or passes full email validation. */
 export const yupOptionalEmail = () =>
     Yup.string()
         .trim()
-        .test('email', EMAIL_VALIDATION_MESSAGE, (value) => !value || EMAIL_REGEX.test(value))
+        .test('email', EMAIL_VALIDATION_MESSAGE, (value) => !value || validateEmail(value))
 
 export const profileInfoValidationSchema = Yup.object({
     firstName: Yup.string().required('First name is required'),
