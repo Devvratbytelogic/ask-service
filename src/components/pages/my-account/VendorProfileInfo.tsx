@@ -12,6 +12,7 @@ import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetAp
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
 import Cookies from 'js-cookie'
+import ImageComponent from '@/components/library/ImageComponent'
 
 const COMPANY_SIZE_OPTIONS = [
     '1 - 10 employees',
@@ -248,11 +249,13 @@ export default function VendorProfileInfo() {
                         aria-label="Upload profile picture"
                     />
                     {avatarSrc ? (
-                        <img
-                            src={avatarSrc}
-                            alt="Profile"
-                            className="size-16 shrink-0 rounded-full object-cover"
-                        />
+                        <div className='size-16 shrink-0 rounded-full overflow-hidden'>
+                            <ImageComponent
+                                url={avatarSrc}
+                                img_title="Profile"
+                                object_cover={true}
+                            />
+                        </div>
                     ) : (
                         <div
                             className={`flex size-16 shrink-0 items-center justify-center rounded-full text-lg font-bold ${hasBusinessDetails

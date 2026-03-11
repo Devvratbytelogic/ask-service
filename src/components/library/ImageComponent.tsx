@@ -41,7 +41,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
       height={1000}
       alt={img_title || 'title not found'}
       className={`w-full h-full ${objectFitClass}`}
-      unoptimized={true}
+      // unoptimized={false}
       onError={() => setHasError(true)}
     />
   );

@@ -33,7 +33,7 @@ const SelectUserType = () => {
         <>
             <div className="space-y-3 xl:space-y-6">
                 <h1 className="header_text">
-                    Inscrivez-vous en tant que client ou <br />
+                    Inscrivez-vous en tant que client ou
                     <span className="text-darkSilver"> prestataire</span>
                 </h1>
                 <p className="text-fontBlack text-base">

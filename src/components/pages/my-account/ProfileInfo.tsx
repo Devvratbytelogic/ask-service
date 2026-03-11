@@ -13,6 +13,7 @@ import { useResendEmailVerificationMutation } from '@/redux/rtkQueries/authApi'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
 import Cookies from 'js-cookie'
+import ImageComponent from '@/components/library/ImageComponent'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
@@ -210,14 +211,16 @@ export default function ProfileInfo() {
                         aria-label="Upload profile picture"
                     />
                     {avatarSrc ? (
-                        <img
-                            src={avatarSrc}
-                            alt="Profile"
-                            className="size-16 shrink-0 rounded-full object-cover"
-                        />
+                        <div className='size-16 shrink-0 rounded-full overflow-hidden'>
+                            <ImageComponent
+                                url={avatarSrc}
+                                img_title="Profile"
+                                object_cover={true}
+                            />
+                        </div>
                     ) : (
-                        <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primaryColor/20 text-lg font-bold text-primaryColor">
-                            {[profileData?.first_name?.charAt(0), profileData?.last_name?.charAt(0)].filter(Boolean).join('').toUpperCase() || 'U'}
+                        <div className='size-16 shrink-0 rounded-full bg-primaryColor/20 flex items-center justify-center text-primaryColor font-semibold text-sm'>
+                            <CameraIconSVG />
                         </div>
                     )}
                     {isEditing && (
