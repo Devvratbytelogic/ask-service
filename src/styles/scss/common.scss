@@ -34,7 +34,7 @@
     @apply font-bold text-[27.3px]/[38px] xl:text-[42.3px]/[54px] tracking-[-2px];
 }
 .header_text_md{
-    @apply font-bold text-2xl;
+    @apply font-bold text-xl md:text-2xl;
 }
 
 .footer_nav_heading{

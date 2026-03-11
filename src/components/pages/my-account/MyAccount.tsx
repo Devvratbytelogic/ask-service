@@ -18,7 +18,7 @@ export default function MyAccount({ variant = 'default' }: MyAccountProps) {
     const activeSection = (urlSection ?? 'profile') as NavId
     return (
         <>
-            <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24">
+            <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24 z-50">
                 <AccountSidebar
                     activeSection={activeSection}
                     navItems={variant === 'vendor' ? vendorNavItems : customerNavItems}

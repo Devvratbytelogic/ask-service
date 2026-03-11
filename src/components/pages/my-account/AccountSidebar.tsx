@@ -65,7 +65,7 @@ export default function AccountSidebar({
     const searchParams = useSearchParams()
     const navItems = customNavItems ?? defaultNavItems
     return (
-        <div className="rounded-2xl border border-borderDark p-4">
+        <div className="rounded-2xl border border-borderDark p-4 bg-white">
             <nav className="flex flex-col gap-0.5">
                 {navItems.map((item, idx) => {
                     const isLink = Boolean(item.href)

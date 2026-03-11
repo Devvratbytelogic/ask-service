@@ -3,7 +3,9 @@ import { CalendarSVG, HorizontalDotsSVG, InfoSVG, LocationSVG, RequestNumberSVG 
 import RequestFilters from '@/components/pages/my-request/RequestFilters'
 import { useGetCreatedServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
-import type { DataEntity } from '@/types/allRequests'
+import { getCreateRequestRoutePath } from '@/routes/routes'
+import Link from 'next/link'
+import { FiArrowRight } from 'react-icons/fi'
 import { Button, Pagination, Spinner, Tooltip } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { FiArrowUpRight, FiInfo } from 'react-icons/fi'
@@ -75,12 +77,24 @@ export default function AllRequests() {
 
     return (
         <>
-            <div className="grid grid-cols-6 lg:grid-cols-12 gap-4 items-center">
-                <div className="col-span-4">
+            <div className="grid grid-cols-12 gap-2 md:gap-4 items-center">
+                <div className="col-span-full md:col-span-7">
                     <h2 className='header_text_md'>Nombre total de demandes : <span className='text-primaryColor'>{totalCount}</span></h2>
                 </div>
-                <div className="col-span-8">
-                    <div className="flex flex-wrap gap-4 lg:justify-end items-center">
+                <div className="col-span-full md:col-span-5">
+                    <div className="flex justify-end">
+                        <Button
+                            as={Link}
+                            href={getCreateRequestRoutePath()}
+                            className='btn_radius btn_bg_blue'
+                            endContent={<FiArrowRight />}
+                        >
+                            Créer une nouvelle demande
+                        </Button>
+                    </div>
+                </div>
+                <div className="col-span-full">
+                    <div className="flex flex-wrap gap-2 lg:justify-end items-center">
                         <RequestFilters
                             search={searchInput}
                             onSearchChange={setSearchInput}

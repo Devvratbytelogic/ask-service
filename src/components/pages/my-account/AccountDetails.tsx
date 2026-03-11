@@ -15,7 +15,7 @@ interface AccountDetailsProps {
 export default function AccountDetails({ activeSection = 'profile', variant = 'default' }: AccountDetailsProps) {
     return (
         <>
-            <div className="rounded-2xl border border-borderDark p-4">
+            <div className="rounded-2xl border border-borderDark p-4 bg-white">
                 {activeSection === 'profile' && variant === 'default' && <ProfileInfo />}
                 {activeSection === 'profile' && variant === 'vendor' && <VendorProfileInfo />}
                 {activeSection === 'security' && <SecuritySettings variant={variant} />}

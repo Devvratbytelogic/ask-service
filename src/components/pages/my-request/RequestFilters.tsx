@@ -26,7 +26,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
     ]
     return (
         <>
-            <div className="w-max lg:min-w-75">
+            <div className="w-max md:min-w-75">
                 <Input
                     placeholder="Rechercher une demande …"
                     value={search}
@@ -43,7 +43,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                     type="search"
                 />
             </div>
-            <div className="w-max lg:min-w-50">
+            <div className="w-max md:min-w-50">
                 <Dropdown>
                     <DropdownTrigger>
                         <Button
@@ -67,7 +67,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                     </DropdownMenu>
                 </Dropdown>
             </div>
-            <div className="w-max lg:min-w-50">
+            <div className="w-max md:min-w-50">
                 <Dropdown>
                     <DropdownTrigger>
                         <Button
