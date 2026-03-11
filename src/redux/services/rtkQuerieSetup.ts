@@ -4,7 +4,7 @@ import { Mutex } from 'async-mutex';
 import Cookies from "js-cookie";
 import { addToast } from '@heroui/react';
 import { API_BASE_URL } from '@/utils/config';
-import { getAndClearResetTokenForNextRequest, isUnauthorizedError, logoutAndRedirectToHome } from '@/utils/authCookies';
+import { getAndClearResetTokenForNextRequest, isUnauthorizedError } from '@/utils/authCookies';
 
 const mutex = new Mutex();
 
@@ -54,13 +54,19 @@ const baseQueryWithAuth: BaseQueryFn<
             const errorData = result.error as IAPIError & { status?: number; data?: { data?: { flow?: string }; message?: string } };
             const status = errorData?.status;
             const responseData = errorData?.data;
+            const message = (responseData as { message?: string })?.message || "Unknown API error";
             // Let login handle 403 EMAIL_VERIFICATION_REQUIRED by returning the response body
             if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
                 return { data: responseData as IAPIResponse };
             }
-            const message = (responseData as { message?: string })?.message || "Unknown API error";
             console.error(`API: ${args}, Failed to fetch data`);
-            throw new Error(message);
+            return {
+                error: {
+                    status: "CUSTOM_ERROR",
+                    data: { message, httpStatus: status },
+                    error: message,
+                },
+            };
         } else {
             return { data: res };
         }

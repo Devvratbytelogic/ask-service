@@ -353,7 +353,7 @@ const CustomerSignInDetails = () => {
                                 </button>
                             </div>
 
-                            {signInType === "email" && (
+                            {/* {signInType === "email" && (
                                 <Button
                                     type="button"
                                     className="btn_radius btn_bg_whiteSilver_border w-full"
@@ -361,7 +361,7 @@ const CustomerSignInDetails = () => {
                                 >
                                     Send an OTP on your email
                                 </Button>
-                            )}
+                            )} */}
 
                             <Button
                                 type="submit"

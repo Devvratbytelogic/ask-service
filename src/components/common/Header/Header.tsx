@@ -53,13 +53,21 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const role = roleFromRedux ?? roleFromCookie;
     const isVendor = role?.toLowerCase() === "vendor";
 
-    const { data: vendorProfile } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, {
+    const { data: vendorProfile, isError: isVendorProfileError, error: vendorProfileError } = clientSideGetApis.useGetVendorProfileInfoQuery(undefined, {
         skip: !isAuthenticated || !isVendor,
     });
-    const { data: userProfile } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, {
+    const { data: userProfile, isError: isUserProfileError, error: userProfileError } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, {
         skip: !isAuthenticated || isVendor,
     });
-
+    
+    // Auto logout only when these two profile APIs return 401
+    useEffect(() => {
+        const httpStatus = (vendorProfileError as { data?: { httpStatus?: number } } | undefined)?.data?.httpStatus;
+        const userHttpStatus = (userProfileError as { data?: { httpStatus?: number } } | undefined)?.data?.httpStatus;
+        if ((isVendorProfileError && httpStatus === 401) || (isUserProfileError && userHttpStatus === 401)) {
+            handleLogout();
+        }
+    }, [isVendorProfileError, vendorProfileError, isUserProfileError, userProfileError]);
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
     // console.log("refetchVendorProfile", refetchVendorProfile);
     // console.log("refetchUserProfile", refetchUserProfile);
@@ -70,8 +78,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const displayName = getDisplayName(firstName, lastName, email);
     const initials = getInitials(firstName, lastName, email);
     const fullName = getFullName(firstName, lastName);
-console.log("initials", initials);
-console.log("profilePic", profilePic);
+
     const handleLogout = () => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };

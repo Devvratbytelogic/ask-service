@@ -15,6 +15,7 @@ export interface LeadFullDetailsData {
     postedAt?: string
     creditsToUnlock?: number
     unlocked?: boolean
+    canQuote?: boolean
 }
 
 interface LeadFullDetailsProps {
@@ -47,6 +48,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             postedAt: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : undefined,
             creditsToUnlock: (lead as ISingleLead & { creditsToUnlock?: number }).creditsToUnlock ?? 0,
             unlocked: lead.unlocked,
+            canQuote: lead.canQuote,
         }
     }, [lead])
 
@@ -234,7 +236,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                 </div>
 
                 {/* Sidebar */}
-                <LeadSidebar leadId={id} showSubmitQuoteForm={showSubmitQuoteForm} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} />
+                <LeadSidebar leadId={id} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} canQuote={headerData?.canQuote} />
             </div>
         </>
     )

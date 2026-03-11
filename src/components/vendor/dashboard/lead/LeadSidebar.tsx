@@ -14,11 +14,11 @@ const TIPS = [
 interface LeadSidebarProps {
     leadId?: string
     onSendQuoteClick?: () => void
-    showSubmitQuoteForm?: boolean
     unlocked?: boolean
+    canQuote?: boolean
 }
 
-export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteForm, unlocked }: LeadSidebarProps) {
+export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuote }: LeadSidebarProps) {
     const router = useRouter()
 
     const handleMessageCustomer = () => {
@@ -33,7 +33,7 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, showSubmitQuoteF
                     <div className="hidden lg:block rounded-2xl border border-borderDark bg-white p-5">
                         <h3 className="font-semibold text-fontBlack mb-4">Options</h3>
                         <div className="flex flex-col gap-3">
-                            {!showSubmitQuoteForm && <Button
+                            {canQuote && <Button
                                 className="btn_radius btn_bg_blue w-full"
                                 onPress={onSendQuoteClick}
                             >

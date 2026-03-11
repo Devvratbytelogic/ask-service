@@ -29,7 +29,7 @@ export default async function RootLayout({
   const initialIsAuthenticated = !!authToken;
 
   return (
-    <html lang="en">
+    <html lang="fr">
       <body
         className={` ${inter.variable} antialiased`}
       >
