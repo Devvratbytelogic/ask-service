@@ -16,6 +16,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body: value,
       }),
+      invalidatesTags: ['CreatedServices'],
     }),
     updateVendorServices: builder.mutation({
       query: (value) => ({
