@@ -13,7 +13,7 @@ const NavbarComponent = () => {
         dispatch(openModal({
             componentName: 'LoginSignupIndex',
             data: {
-                componentName: 'SelectUserType'
+                componentName: 'CustomerSignInIndex',
             },
             modalSize: 'full'
         }))
