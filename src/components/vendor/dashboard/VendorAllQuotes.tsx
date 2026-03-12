@@ -14,45 +14,47 @@ export default function VendorAllQuotes() {
     const quotes = data?.data ?? []
 
     return (
-        <div className="mt-8 space-y-8">
-            <div className="space-y-4">
-                <div>
-                    <h2 className="header_text_md text-fontBlack">All Quotes</h2>
-                    <p className="text-sm text-darkSilver mt-1">
-                        {isLoading ? 'Loading…' : `${quotes.length} quote${quotes.length !== 1 ? 's' : ''} sent • View and manage below`}
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                    {isLoading && (
-                        <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
-                            <p className="text-darkSilver">Loading quotes…</p>
-                        </div>
-                    )}
-                    {!isLoading && quotes.length === 0 && (
-                        <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
-                            <div className="flex justify-center mb-3">
-                                <DocumentArrowIconSVG className="size-12 text-[#9C27B0]/50" />
+        <>
+            <div className="space-y-8">
+                <div className="space-y-4">
+                    <div>
+                        <h2 className="header_text_md text-fontBlack">All Quotes</h2>
+                        <p className="text-sm text-darkSilver mt-1">
+                            {isLoading ? 'Loading…' : `${quotes.length} quote${quotes.length !== 1 ? 's' : ''} sent • View and manage below`}
+                        </p>
+                    </div>
+    
+                    <div className="flex flex-col gap-4">
+                        {isLoading && (
+                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                                <p className="text-darkSilver">Loading quotes…</p>
                             </div>
-                            <p className="text-darkSilver">
-                                You haven&apos;t sent any quotes yet. Unlock leads and submit quotes to see them here.
-                            </p>
-                            <Link href="/vendor/dashboard" className="inline-block mt-3 text-sm font-medium text-[#9C27B0] hover:underline">
-                                Go to dashboard →
-                            </Link>
-                        </div>
-                    )}
-                    {!isLoading && quotes.length > 0 && quotes.map((quote: IAllQuotes) => (
-                        <QuoteCard key={quote._id} quote={quote} />
-                    ))}
+                        )}
+                        {!isLoading && quotes.length === 0 && (
+                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                                <div className="flex justify-center mb-3">
+                                    <DocumentArrowIconSVG className="size-12 text-[#9C27B0]/50" />
+                                </div>
+                                <p className="text-darkSilver">
+                                    You haven&apos;t sent any quotes yet. Unlock leads and submit quotes to see them here.
+                                </p>
+                                <Link href="/vendor/dashboard" className="inline-block mt-3 text-sm font-medium text-[#9C27B0] hover:underline">
+                                    Go to dashboard →
+                                </Link>
+                            </div>
+                        )}
+                        {!isLoading && quotes.length > 0 && quotes.map((quote: IAllQuotes) => (
+                            <QuoteCard key={quote._id} quote={quote} />
+                        ))}
+                    </div>
                 </div>
+    
+                <SupportAlert
+                    title="Need help?"
+                    content="Contact vendor support for assistance with quotes or your account"
+                />
             </div>
-
-            <SupportAlert
-                title="Need help?"
-                content="Contact vendor support for assistance with quotes or your account"
-            />
-        </div>
+        </>
     )
 }
 

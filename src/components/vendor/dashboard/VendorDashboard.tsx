@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
+import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
 import { useDispatch } from 'react-redux'
@@ -33,6 +33,10 @@ export default function VendorDashboard() {
     const searchParams = useSearchParams()
     const showPurchasedOnly = searchParams.get('leads') === 'purchased'
     const showQuotedOnly = searchParams.get('leads') === 'quoted'
+    const showLockedOnly = searchParams.get('leads') === 'available'
+    const isActiveAvailable = !showLockedOnly && !showPurchasedOnly && !showQuotedOnly
+    const isActiveLocked = showLockedOnly
+    const isActivePurchased = showPurchasedOnly
     const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
         ...leadsParams,
         ...(showQuotedOnly && { quoted: true }),
@@ -42,9 +46,10 @@ export default function VendorDashboard() {
         () => {
             if (showQuotedOnly) return allLeads
             if (showPurchasedOnly) return allLeads.filter((l) => l?.unlocked)
+            if (showLockedOnly) return allLeads.filter((l) => !l?.unlocked)
             return allLeads
         },
-        [showPurchasedOnly, showQuotedOnly, allLeads],
+        [showPurchasedOnly, showQuotedOnly, showLockedOnly, allLeads],
     )
     const isLoading = dashboardLoading || leadsLoading
 
@@ -70,10 +75,13 @@ export default function VendorDashboard() {
 
     return (
         <>
-            <div className="mt-8 space-y-8">
+            <div className="space-y-8">
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <Link
+                        href={getVendorDashboardRoutePath()}
+                        className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveAvailable ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
+                    >
                         <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F4FD] mb-3">
                             <DocumentIconSVG className="size-5 text-primaryColor" />
                         </div>
@@ -81,37 +89,54 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.availableLeadsCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Prospects Disponibles</p>
-                    </div>
+                    </Link>
 
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <Link
+                        href={getVendorDashboardRoutePath({ leads: 'available' })}
+                        className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveLocked ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
+                    >
+                        <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F4FD] mb-3">
+                            <LockPrimaryColorSVG className="size-5 text-primaryColor" />
+                        </div>
+                        <p className="text-2xl font-bold text-fontBlack">
+                            {isLoading ? '—' : Math.max(0, (dashboard?.availableLeadsCount ?? 0) - (dashboard?.purchasedLeadsCount ?? 0))}
+                        </p>
+                        <p className="text-sm text-darkSilver mt-0.5">Prospects verrouillés</p>
+                        <span className="inline-block mt-2 text-sm font-medium text-primaryColor">
+                            Voir les prospects verrouillés →
+                        </span>
+                    </Link>
+
+                    <Link
+                        href={getVendorDashboardRoutePath({ leads: 'purchased' })}
+                        className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActivePurchased ? 'border-[#4CAF50] bg-[#4CAF50]/10' : 'border-borderDark bg-white hover:border-[#4CAF50]/30 hover:bg-[#4CAF50]/5'}`}
+                    >
                         <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F5E9] mb-3">
-                            <LockGreenIconSVG className="size-5 text-[#4CAF50]" />
+                            <LockOpenGreenIconSVG className="size-5 text-[#4CAF50]" />
                         </div>
                         <p className="text-2xl font-bold text-fontBlack">
                             {isLoading ? '—' : dashboard?.purchasedLeadsCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Mes Prospects</p>
-                        <Link href={getVendorDashboardRoutePath({ leads: 'purchased' })} className="inline-block mt-2 text-sm font-medium text-[#4CAF50] hover:underline">
+                        <span className="inline-block mt-2 text-sm font-medium text-[#4CAF50]">
                             Voir les prospects →
-                        </Link>
-                    </div>
-
-                    <Link href={getCreditsRoutePath()} className="block cursor-pointer">
-                        <div className="rounded-2xl border border-borderDark bg-[#FFF8F0] p-5">
-                            <div className="flex size-10 items-center justify-center rounded-full bg-[#FFE4CC] mb-3">
-                                <CreditCardIconSVG className="size-5 text-[#E17100]" />
-                            </div>
-                            <p className="text-2xl font-bold text-fontBlack">
-                                {isLoading ? '—' : `${dashboard?.creditBalance ?? 0} points`}
-                            </p>
-                            <p className="text-sm text-darkSilver mt-0.5">Solde de points</p>
-                            <span className="inline-block mt-2 text-sm font-medium text-[#E17100] hover:underline">
-                                Acheter des points →
-                            </span>
-                        </div>
+                        </span>
                     </Link>
 
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <Link href={getCreditsRoutePath()} className="block rounded-2xl border border-borderDark p-5 transition-colors hover:border-[#E17100]/30 hover:bg-[#FFF8F0] cursor-pointer">
+                        <div className="flex size-10 items-center justify-center rounded-full bg-[#FFE4CC] mb-3">
+                            <CreditCardIconSVG className="size-5 text-[#E17100]" />
+                        </div>
+                        <p className="text-2xl font-bold text-fontBlack">
+                            {isLoading ? '—' : `${dashboard?.creditBalance ?? 0} points`}
+                        </p>
+                        <p className="text-sm text-darkSilver mt-0.5">Solde de points</p>
+                        <span className="inline-block mt-2 text-sm font-medium text-[#E17100]">
+                            Acheter des points →
+                        </span>
+                    </Link>
+
+                    <Link href={getVendorAllQuotesRoutePath()} className="block rounded-2xl border border-borderDark bg-white p-5 transition-colors hover:border-[#9C27B0]/30 hover:bg-[#9C27B0]/5 cursor-pointer">
                         <div className="flex size-10 items-center justify-center rounded-full bg-[#F3E5F5] mb-3">
                             <DocumentArrowIconSVG className="size-5 text-[#9C27B0]" />
                         </div>
@@ -119,10 +144,10 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.quotesSentCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Devis envoyés</p>
-                        <Link href={getVendorAllQuotesRoutePath()} className="inline-block mt-2 text-sm font-medium text-[#9C27B0] hover:underline">
+                        <span className="inline-block mt-2 text-sm font-medium text-[#9C27B0]">
                             Voir tout →
-                        </Link>
-                    </div>
+                        </span>
+                    </Link>
                 </div>
 
                 {/* Available Leads / My Leads / Quotes Sent Section */}
@@ -130,15 +155,17 @@ export default function VendorDashboard() {
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <h2 className="header_text_md text-fontBlack">
-                                {showQuotedOnly ? 'Devis envoyés' : showPurchasedOnly ? 'Mes Prospects' : 'Prospects Disponibles'}
+                                {showQuotedOnly ? 'Devis envoyés' : showPurchasedOnly ? 'Mes Prospects' : showLockedOnly ? 'Prospects verrouillés' : 'Prospects Disponibles'}
                             </h2>
                             <p className="text-sm text-darkSilver mt-1">
                                 {showQuotedOnly
                                     ? `${leads.length} prospect${leads.length !== 1 ? 's' : ''} avec devis • Voir les détails ci-dessous`
                                     : showPurchasedOnly
                                         ? `${leads.length} prospect${leads.length !== 1 ? 's' : ''} acheté(s) • Voir les détails ci-dessous`
-                                        : `${allLeads.length} prospect${allLeads.length !== 1 ? 's' : ''} disponibles • Débloquez pour voir tous les détails`}
-                                {(showPurchasedOnly || showQuotedOnly) && (
+                                        : showLockedOnly
+                                            ? `${leads.length} prospect${leads.length !== 1 ? 's' : ''} verrouillé(s) • Débloquez pour voir tous les détails`
+                                            : `${allLeads.length} prospect${allLeads.length !== 1 ? 's' : ''} disponibles • Débloquez pour voir tous les détails`}
+                                {(showPurchasedOnly || showQuotedOnly || showLockedOnly) && (
                                     <>
                                         {' • '}
                                         <Link href={getVendorDashboardRoutePath()} className="text-primaryColor hover:underline font-medium">
@@ -148,7 +175,7 @@ export default function VendorDashboard() {
                                 )}
                             </p>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex flex-wrap justify-end items-center gap-3">
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button
@@ -199,12 +226,14 @@ export default function VendorDashboard() {
 
                     {/* Lead Cards */}
                     <div className="flex flex-col gap-4">
-                        {(showPurchasedOnly || showQuotedOnly) && leads.length === 0 && (
+                        {(showPurchasedOnly || showQuotedOnly || showLockedOnly) && leads.length === 0 && (
                             <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
                                 <p className="text-darkSilver">
                                     {showQuotedOnly
                                         ? "Vous n'avez pas encore envoyé de devis. Débloquez des prospects et envoyez des devis pour les voir ici."
-                                        : "Vous n'avez pas encore de prospects. Débloquez des prospects dans la liste pour voir leurs détails."}
+                                        : showLockedOnly
+                                            ? "Aucun prospect verrouillé pour le moment. Les prospects disponibles apparaîtront ici."
+                                            : "Vous n'avez pas encore de prospects. Débloquez des prospects dans la liste pour voir leurs détails."}
                                 </p>
                                 <Link href={getVendorDashboardRoutePath()} className="inline-block mt-3 text-sm font-medium text-[#4CAF50] hover:underline">
                                     Voir les prospects disponibles →

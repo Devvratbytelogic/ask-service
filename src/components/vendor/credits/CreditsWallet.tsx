@@ -2,7 +2,7 @@
 
 import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { useGetCreditsPackagesQuery, useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { usePurchaseCreditsMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
@@ -58,6 +58,9 @@ export default function CreditsWallet() {
             endDate: end.toISOString().split('T')[0],
         }
     }, [period, page, itemsPerPage])
+
+    const { data: dashboardData, isLoading: balanceLoading } = useGetVendorDashboardDataQuery()
+    const creditBalance = dashboardData?.data?.creditBalance ?? 0
 
     const { data, isLoading } = useGetVendorDashboardTransactionHistoryQuery(queryParams)
     const apiData = data?.data
@@ -167,13 +170,16 @@ export default function CreditsWallet() {
             <div className="rounded-2xl bg-primaryColor p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden">
                 <div>
                     <p className="text-white/90 text-sm font-medium">Current Credit Balance</p>
-                    <p className="text-4xl md:text-5xl font-bold text-white mt-1">150 credits</p>
-                    <p className="text-white/80 text-sm mt-2">
-                        Each lead costs 3-5 credits to unlock
-                    </p>
+                    {balanceLoading ? (
+                        <div className="mt-1">
+                            <Spinner size="lg" color="white" classNames={{ circle1: 'border-b-white', circle2: 'border-b-white' }} />
+                        </div>
+                    ) : (
+                        <p className="text-4xl md:text-5xl font-bold text-white mt-1">{creditBalance} credits</p>
+                    )}
                 </div>
                 <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-white/20">
-                    <DollarSignIconSVG className="size-8 text-white" />
+                    <span className="text-4xl font-bold text-white">€</span>
                 </div>
             </div>
 

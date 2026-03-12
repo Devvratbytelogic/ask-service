@@ -162,7 +162,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                         </Link>
                         <nav className="hidden md:flex items-center gap-6">
                             <Link
-                                href={isVendor ? getVendorDashboardRoutePath() : getMyRequestRoutePath()}
+                                href={isVendor ? getVendorDashboardRoutePath({ leads: 'available' }) : getMyRequestRoutePath()}
                                 className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
                                 {isVendor ? 'Prospects' : 'Mes demandes'}
