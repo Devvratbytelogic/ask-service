@@ -27,6 +27,9 @@ export function getCreateRequestRoutePath() {
 export function getVendorMessageRoutePath() {
     return `/vendor/message`;
 }
+export function getMessageRoutePath() {
+    return `/message`;
+}
 export function getVendorProfileRoutePath() {
     return `/vendor/profile`;
 }

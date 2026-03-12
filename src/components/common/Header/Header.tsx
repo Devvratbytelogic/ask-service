@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { useSelector } from "react-redux";
-import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
+import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
 import { getUserRole, clearAllCookiesAndReload, getAuthToken } from "@/utils/authCookies";
 import Cookies from "js-cookie";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
@@ -168,7 +168,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 {isVendor ? 'Trouver des prospect' : 'Mes demandes'}
                             </Link>
                             <Link
-                                href={getVendorMessageRoutePath()}
+                                href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()}
                                 className="relative inline-flex items-center gap-1.5 text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
                                 Mes messages
@@ -306,7 +306,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             )}
                         </nav>
                         <div className="flex md:hidden items-center gap-2">
-                            <Link href={getVendorMessageRoutePath()} className="relative p-2">
+                            <Link href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()} className="relative p-2">
                                 <BellIconSVG />
                                 <span className="absolute top-1 right-1 min-w-3.5 h-3.5 rounded-full bg-primaryColor text-white text-[10px] font-medium flex items-center justify-center">
                                     2
@@ -348,7 +348,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     Mes demandes
                                                 </Link>
                                                 <Link
-                                                    href={getVendorMessageRoutePath()}
+                                                    href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><BellIconSVG /></span>
@@ -410,6 +410,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
+                                                </Link>
+                                                <Link
+                                                    href={getMessageRoutePath()}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                                >
+                                                    <span className="size-5 shrink-0 flex text-darkSilver"><BellIconSVG /></span>
+                                                    Mes messages
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />

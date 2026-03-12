@@ -7,7 +7,7 @@ import DiscussionContextBar from './DiscussionContextBar';
 import MessagesChatBox from './MessagesChatBox';
 import { EmojiIconSVG, PaperClipIconSVG, PhotographIconSVG, SendIconSVG } from '@/components/library/AllSVG';
 
-export default function VendorMessage() {
+export default function MessageLayout() {
   const [messageInput, setMessageInput] = useState('');
   // On mobile: show list or chat. On lg+: always show both
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');

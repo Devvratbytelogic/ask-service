@@ -13,6 +13,9 @@ const USER_PATH_PREFIXES = ['/create-request', '/my-account', '/my-request'] as 
 /** Vendor-only paths; users cannot access these. */
 const VENDOR_PATH_PREFIXES = ['/vendor'] as const;
 
+/** Paths that vendors cannot access (e.g. user message page). */
+const VENDOR_BLOCKED_PATH_PREFIXES = ['/message'] as const;
+
 function matchesPathPrefix(pathname: string, prefixes: readonly string[]): boolean {
     const normalized = pathname.replace(/\/+$/, '') || '/';
     return prefixes.some(
@@ -43,6 +46,9 @@ export async function proxy(request: NextRequest) {
         if (isVendor && matchesPathPrefix(pathname, USER_PATH_PREFIXES)) {
             return NextResponse.redirect(new URL(VENDOR_DASHBOARD_PATH, request.url));
         }
+        if (isVendor && matchesPathPrefix(pathname, VENDOR_BLOCKED_PATH_PREFIXES)) {
+            return NextResponse.redirect(new URL(VENDOR_DASHBOARD_PATH, request.url));
+        }
         if (!isVendor && matchesPathPrefix(pathname, VENDOR_PATH_PREFIXES)) {
             return NextResponse.redirect(new URL(USER_DASHBOARD_PATH, request.url));
         }
@@ -57,5 +63,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/my-request/:path*', '/vendor/:path*'],
+    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/my-request/:path*', '/vendor/:path*', '/message', '/message/:path*'],
 };
