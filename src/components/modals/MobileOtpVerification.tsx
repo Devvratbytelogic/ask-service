@@ -108,10 +108,11 @@ const MobileOtpVerification = () => {
         setOtpExpirySeconds(0)
     }
 
-    const handleVerify = useCallback(async () => {
+    const handleVerify = useCallback(async (otp?: string) => {
+        const toVerify = otp ?? otpValue
         setErrorMessage(null)
         try {
-            const res = await verifyPhone({ phone: phoneNumber, otp: otpValue }).unwrap()
+            const res = await verifyPhone({ phone: phoneNumber, otp: toVerify }).unwrap()
             const responseData = (res as { data?: unknown })?.data ?? res
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -245,6 +246,7 @@ const MobileOtpVerification = () => {
                         setErrorMessage(null)
                     }}
                     length={OTP_LENGTH}
+                    onComplete={handleVerify}
                     classNames={{ wrapper: "flex gap-4 max-w-[200px]" }}
                     ariaLabelPrefix="Digit"
                 />
@@ -293,7 +295,7 @@ const MobileOtpVerification = () => {
                 className="btn_bg_blue btn_radius btn_padding font-medium text-sm xl:text-base w-full"
                 isDisabled={!canVerify || isVerifyingPhone}
                 isLoading={isVerifyingPhone}
-                onPress={handleVerify}
+                onPress={() => handleVerify()}
             >
                 Continuer
             </Button>

@@ -30,10 +30,11 @@ export default function VerifyEmailOtpModal() {
     const [otpValue, setOtpValue] = useState("")
     const [resendCooldown, setResendCooldown] = useState(0)
 
-    const handleVerify = useCallback(async () => {
-        if (otpValue.length !== OTP_LENGTH || !email) return
+    const handleVerify = useCallback(async (otp?: string) => {
+        const toVerify = otp ?? otpValue
+        if (toVerify.length !== OTP_LENGTH || !email) return
         try {
-            const res = await verifyEmail({ email, otp: otpValue }).unwrap()
+            const res = await verifyEmail({ email, otp: toVerify }).unwrap()
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -49,7 +50,7 @@ export default function VerifyEmailOtpModal() {
                 }))
             } else {
                 dispatch(closeModal())
-                router.push(getMyAccountRoutePath({section: 'profile'}))
+                router.push(getMyAccountRoutePath({ section: 'profile' }))
             }
         } catch {
             // Error toast from rtkQuerieSetup
@@ -61,9 +62,10 @@ export default function VerifyEmailOtpModal() {
         try {
             await resendEmailVerification({ email }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
+            addToast({ title: "Error", description: "Failed to send verification code", color: "danger", timeout: 2000 })
         }
     }, [email, resendCooldown, resendEmailVerification])
 
@@ -95,6 +97,7 @@ export default function VerifyEmailOtpModal() {
                     value={otpValue}
                     onChange={setOtpValue}
                     length={OTP_LENGTH}
+                    onComplete={handleVerify}
                     classNames={{ wrapper: "flex gap-4 justify-center" }}
                     ariaLabelPrefix="Digit"
                 />
@@ -121,7 +124,7 @@ export default function VerifyEmailOtpModal() {
                 className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full mt-6"
                 isDisabled={!canVerify || isVerifying}
                 isLoading={isVerifying}
-                onPress={handleVerify}
+                onPress={() => handleVerify()}
             >
                 Vérifier et se connecter
             </Button>

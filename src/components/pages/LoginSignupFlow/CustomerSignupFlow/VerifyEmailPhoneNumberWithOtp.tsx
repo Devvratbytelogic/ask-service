@@ -38,7 +38,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         try {
             await resendEmailVerification({ email: displayValue }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Code sent", color: "success", timeout: 2000 })
+            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
@@ -63,10 +63,11 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         )
     }
 
-    const handleVerify = useCallback(async () => {
-        if (otpValue.length !== OTP_LENGTH || !displayValue) return
+    const handleVerify = useCallback(async (otp?: string) => {
+        const toVerify = otp ?? otpValue
+        if (toVerify.length !== OTP_LENGTH || !displayValue) return
         try {
-            const res = await verifyEmail({ email: displayValue, otp: otpValue }).unwrap()
+            const res = await verifyEmail({ email: displayValue, otp: toVerify }).unwrap()
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -83,7 +84,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, displayValue, verifyEmail, dispatch])
+    }, [otpValue, displayValue, verifyEmail, dispatch, router])
 
     const canVerify = otpValue.length === OTP_LENGTH
     const isVerifying = isVerifyingEmail
@@ -120,6 +121,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                         value={otpValue}
                         onChange={setOtpValue}
                         length={OTP_LENGTH}
+                        onComplete={handleVerify}
                         classNames={{ wrapper: "flex gap-4 max-w-[200px]" }}
                         ariaLabelPrefix="Digit"
                     />
@@ -148,7 +150,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     isDisabled={!canVerify || isVerifying}
                     isLoading={isVerifying}
-                    onPress={handleVerify}
+                    onPress={() => handleVerify()}
                 >
                     Vérifier et s'inscrire
                 </Button>

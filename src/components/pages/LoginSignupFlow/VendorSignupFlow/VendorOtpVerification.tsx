@@ -41,7 +41,7 @@ const VendorOtpVerification = () => {
                 type: "SIGNUP",
             }).unwrap()
             setEmailResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
@@ -49,13 +49,14 @@ const VendorOtpVerification = () => {
 
     const canVerify = emailOtp.length === OTP_LENGTH
 
-    const handleVerifyOtp = useCallback(async () => {
-        if (!canVerify || !email) return
+    const handleVerifyOtp = useCallback(async (otpValue?: string) => {
+        const toVerify = otpValue ?? emailOtp
+        if (toVerify.length !== OTP_LENGTH || !email) return
         try {
             const response = await vendorVerifyOtp({
                 type: "SIGNUP",
                 email,
-                ...(emailOtp && { otp_email: emailOtp }),
+                ...(toVerify && { otp_email: toVerify }),
             }).unwrap()
             const data = (response).data
             setAuthAndRefetchProfile({
@@ -86,7 +87,7 @@ const VendorOtpVerification = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [canVerify, email, emailOtp, vendorVerifyOtp, dispatch])
+    }, [email, emailOtp, vendorVerifyOtp, dispatch])
 
     useEffect(() => {
         if (emailResendCooldown <= 0) return
@@ -142,6 +143,7 @@ const VendorOtpVerification = () => {
                                 value={emailOtp}
                                 onChange={setEmailOtp}
                                 length={OTP_LENGTH}
+                                onComplete={handleVerifyOtp}
                                 classNames={{ wrapper: "flex gap-4 max-w-[280px]" }}
                                 ariaLabelPrefix="Email digit"
                             />
@@ -174,7 +176,7 @@ const VendorOtpVerification = () => {
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     isDisabled={!canVerify || isVerifying}
                     isLoading={isVerifying}
-                    onPress={handleVerifyOtp}
+                    onPress={() => handleVerifyOtp()}
                 >
                     Continuer
                 </Button>

@@ -56,8 +56,13 @@ const baseQueryWithAuth: BaseQueryFn<
             const responseData = errorData?.data;
             const message = (responseData as { message?: string })?.message || "Unknown API error";
             // Let login handle 403 EMAIL_VERIFICATION_REQUIRED by returning the response body
+            console.log('responseData', responseData);
+            
             if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
                 return { data: responseData as IAPIResponse };
+            }
+            if (status === 401) {
+                addToast({ title: "Error", description: responseData?.message ?? "Unknown error", color: "danger", timeout: 2000 })
             }
             console.error(`API: ${args}, Failed to fetch data`);
             return {

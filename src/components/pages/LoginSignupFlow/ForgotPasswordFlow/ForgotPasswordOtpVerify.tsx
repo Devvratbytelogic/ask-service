@@ -35,7 +35,7 @@ const ForgotPasswordOtpVerify = () => {
         try {
             await resendEmailVerification({ email }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Code sent", color: "success", timeout: 2000 })
+            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
@@ -63,10 +63,11 @@ const ForgotPasswordOtpVerify = () => {
         )
     }
 
-    const handleVerify = useCallback(async () => {
-        if (otpValue.length !== OTP_LENGTH || !email) return
+    const handleVerify = useCallback(async (otp?: string) => {
+        const toVerify = otp ?? otpValue
+        if (toVerify.length !== OTP_LENGTH || !email) return
         try {
-            const res = await verifyEmail({ email, otp: otpValue }).unwrap()
+            const res = await verifyEmail({ email, otp: toVerify }).unwrap()
             const responseData = res?.data as Record<string, unknown> | undefined
             const resetToken =
                 (responseData?.token as string) ?? (responseData?.access_token as string) ?? ""
@@ -125,6 +126,7 @@ const ForgotPasswordOtpVerify = () => {
                         value={otpValue}
                         onChange={setOtpValue}
                         length={OTP_LENGTH}
+                        onComplete={handleVerify}
                         classNames={{ wrapper: "flex gap-2 md:gap-4 max-w-[280px]" }}
                         ariaLabelPrefix="Digit"
                     />
@@ -153,7 +155,7 @@ const ForgotPasswordOtpVerify = () => {
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"
                     isDisabled={!canVerify || isVerifying}
                     isLoading={isVerifying}
-                    onPress={handleVerify}
+                    onPress={() => handleVerify()}
                 >
                     Verify
                 </Button>
