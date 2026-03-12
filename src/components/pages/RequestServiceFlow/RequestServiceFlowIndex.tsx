@@ -302,7 +302,8 @@ const RequestServiceFlowIndex = () => {
                     }))
                 }
             } catch (error: unknown) {
-                console.log("error : ", error)
+                console.error('dkgndfgkldfgdfgk', error);
+
                 const err = error as { data?: { message?: string; flow?: string }; error?: string }
                 const isPhoneVerificationRequired =
                     err?.data?.message === "Phone verification required" ||
@@ -331,17 +332,32 @@ const RequestServiceFlowIndex = () => {
                 if (isPhoneVerificationRequired) {
                     const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
                     setSubmissionRef(ref)
+                    // dispatch(openModal({
+                    //     componentName: 'MobileOtpVerification',
+                    //     data: {
+                    //         ...values,
+                    //         phoneNumber: values?.customerPhoneNumber,
+                    //         parentCallBackModal: 'SubmissionSuccess',
+                    //         codeRef: ref,
+                    //         nextModalSize: 'lg',
+                    //         skipToCodeEntry: true,
+                    //     },
+                    //     modalSize: 'lg',
+                    // }))
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
                         data: {
+                            ...data,
                             ...values,
+                            initialStep: 5,
+                            initialFormValues: values,
                             phoneNumber: values?.customerPhoneNumber,
-                            parentCallBackModal: 'SubmissionSuccess',
+                            parentCallBackModal: 'RequestServiceFlowIndex',
                             codeRef: ref,
                             nextModalSize: 'lg',
                             skipToCodeEntry: true,
                         },
-                        modalSize: 'lg',
+                        modalSize: 'lg'
                     }))
                 }
                 const errMessage = err?.data?.message ?? err?.error

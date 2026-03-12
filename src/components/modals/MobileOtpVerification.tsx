@@ -114,11 +114,29 @@ const MobileOtpVerification = () => {
         try {
             const res = await verifyPhone({ phone: phoneNumber, otp: toVerify }).unwrap()
             const responseData = (res as { data?: unknown })?.data ?? res
+            console.log('responseData', responseData);
+            console.log('data', data);
+            console.log('res ->', res);
+            console.log('typeof responseDat ->', typeof responseData);
+
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
                 const authData = responseData as AuthResponseData
-                dispatch(closeModal())
+                if (data?.callBackModal || data?.parentCallBackModal) {
+                    dispatch(
+                        openModal({
+                            componentName: data?.parentCallBackModal ? data?.parentCallBackModal : "LoginSignupIndex",
+                            data: {
+                                ...data,
+                                componentName: data?.callBackModal ? data?.callBackModal : null,
+                            },
+                            modalSize: data?.nextModalSize ? data?.nextModalSize : "full",
+                        })
+                    )
+                } else {
+                    dispatch(closeModal())
+                }
                 router.push(getDashboardPathForRole(authData.role))
             } else {
                 if (data?.callBackModal || data?.parentCallBackModal) {

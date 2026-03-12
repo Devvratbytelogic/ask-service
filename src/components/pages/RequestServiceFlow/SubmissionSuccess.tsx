@@ -111,11 +111,11 @@ const SubmissionSuccess = () => {
           className="w-full font-medium btn_radius"
           onPress={handleReturnHome}
         >
-          Return to homepage
+          Return to dashboard
         </Button>
-        <Button variant="bordered" onPress={handleSubmitAnother} className="w-full btn_radius">
+        {/* <Button variant="bordered" onPress={handleSubmitAnother} className="w-full btn_radius">
           Submit another request
-        </Button>
+        </Button> */}
       </div>
 
       <p className="text-placeHolderText text-tiny">

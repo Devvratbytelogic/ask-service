@@ -55,9 +55,7 @@ const baseQueryWithAuth: BaseQueryFn<
             const status = errorData?.status;
             const responseData = errorData?.data;
             const message = (responseData as { message?: string })?.message || "Unknown API error";
-            // Let login handle 403 EMAIL_VERIFICATION_REQUIRED by returning the response body
-            console.log('responseData', responseData);
-            
+            // Let login handle 403 EMAIL_VERIFICATION_REQUIRED by returning the response body            
             if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
                 return { data: responseData as IAPIResponse };
             }
