@@ -34,6 +34,7 @@ export interface VendorSignupFormValues {
 const vendorSignupValidationSchema = Yup.object({
     firstName: Yup.string().trim().required("This field is required"),
     lastName: Yup.string().trim().required("This field is required"),
+    businessName: Yup.string().trim().required("This field is required"),
     email: yupRequiredEmail("This field is required"),
     phoneNumber: Yup.string().trim(),
     password: Yup.string().trim().required("This field is required"),
