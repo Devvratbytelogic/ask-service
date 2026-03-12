@@ -5,8 +5,8 @@ const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 
 /**
  * Validates email with strict rules:
- * - No dot at start/end of local part; no consecutive dots in local or domain
- * - No domain label starting/ending with hyphen; no consecutive hyphens in domain
+ * - Local: no leading/trailing dot or hyphen; no consecutive dots
+ * - Domain: no label starting/ending with hyphen; no consecutive hyphens
  */
 export function validateEmail(email: string): boolean {
     const trimmed = email.trim()
@@ -16,8 +16,9 @@ export function validateEmail(email: string): boolean {
     const local = trimmed.slice(0, atIndex)
     const domain = trimmed.slice(atIndex + 1)
 
-    // Local part: no leading/trailing dot, no consecutive dots
+    // Local part: no leading/trailing dot or hyphen, no consecutive dots
     if (local.startsWith('.') || local.endsWith('.')) return false
+    if (local.startsWith('-') || local.endsWith('-')) return false
     if (/\.\./.test(local)) return false
 
     // Domain: no consecutive dots (no empty labels)
