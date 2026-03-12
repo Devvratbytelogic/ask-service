@@ -1,34 +1,14 @@
 "use client"
 import ImageComponent from "@/components/library/ImageComponent";
 import Link from "next/link";
-import { getHomeRoutePath, getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl } from "@/routes/routes";
+import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl } from "@/routes/routes";
 import { BiBuilding, BiShield } from "react-icons/bi";
-import { BsFacebook, BsInstagram, BsMailbox } from "react-icons/bs";
+import { BsFacebook, BsInstagram } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoDocumentSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 import { PiPhone } from "react-icons/pi";
-import { useDispatch } from "react-redux";
-import { openModal } from "@/redux/slices/allModalSlice";
-import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis";
-import type { IAllServiceCategoriesDataEntity } from "@/types/services";
-
 const Footer = () => {
-    const { data } = useGetServiceCategoriesQuery();
-    const grandParentServicesList = data?.data ?? [];
-    const dispatch = useDispatch();
-
-    const openRequestFlowWithService = (service: IAllServiceCategoriesDataEntity) => {
-        dispatch(openModal({
-            componentName: "RequestServiceFlowIndex",
-            data: {
-                grandParentServiceId: service._id ?? "",
-                grandParentServiceName: service.title ?? "",
-                child_services: service.child_categories ?? [],
-            },
-            modalSize: "lg",
-        }));
-    };
     return (
         <div className="py-6.75 px-10 bg-pinkBlack space-y-21.25">
             <div className="flex flex-col xl:flex-row justify-between items-start px-0 lg:px-7.5 pt-5 lg:pt-16.25 gap-y-10">
@@ -54,22 +34,6 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="flex justify-between xl:justify-end gap-auto lg:gap-35 w-full flex-wrap gap-y-10">
-                    <div className="space-y-3 col-span-2">
-                        <div className="footer_nav_heading text-nowrap">Services</div>
-                        <div className="space-y-2 footer_nav_item">
-                            {grandParentServicesList && grandParentServicesList?.length > 0 && grandParentServicesList?.map((curr, index) => (
-                                <button
-                                    type="button"
-                                    onClick={() => openRequestFlowWithService(curr)}
-                                    key={`service_${index + 1}`}
-                                    className="text-footerSilver hover:text-customWhite hover:underline cursor-pointer transition-colors text-left bg-transparent border-0 p-0 font-inherit"
-                                >
-                                    {curr.title}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     <div className="space-y-3 col-span-2">
                         <div className="footer_nav_heading text-nowrap">Assistance</div>
                         <div className="space-y-2 footer_nav_item">
