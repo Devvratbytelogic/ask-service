@@ -234,7 +234,8 @@ const RequestServiceFlowIndex = () => {
                 }
 
                 const res = await createServiceRequest(payload).unwrap();
-                const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
+                console.log('res', res);
+                const ref = res?.data?.request?.reference_no;
                 setSubmissionRef(ref)
                 if (res?.data?.flow === flowTypes.PHONE_VERIFICATION_REQUIRED) {
                     dispatch(openModal({
