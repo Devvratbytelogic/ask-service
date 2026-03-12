@@ -286,7 +286,7 @@ export default function VendorDashboard() {
                                             </span>
                                             <span className="flex items-center gap-1.5">
                                                 <TimeIconSVG />
-                                                Posted {moment(lead.createdAt).fromNow()}
+                                                Posted {moment(lead.createdAt).fromNow()} ({moment(lead.createdAt).format('DD MMM YYYY, h:mm A')})
                                             </span>
                                         </div>
 

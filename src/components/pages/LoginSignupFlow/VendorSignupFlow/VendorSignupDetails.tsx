@@ -25,6 +25,7 @@ export interface VendorSignupFormValues {
     firstName: string
     lastName: string
     email: string
+    businessName: string
     phoneNumber: string
     password: string
     agreeToTerms: boolean
@@ -42,6 +43,7 @@ const vendorSignupValidationSchema = Yup.object({
 const initialValues: VendorSignupFormValues = {
     firstName: "",
     lastName: "",
+    businessName: "",
     email: "",
     phoneNumber: "",
     password: "",
@@ -97,6 +99,7 @@ const VendorSignupDetails = () => {
                     email: values.email,
                     phone: values.phoneNumber,
                     password: values.password,
+                    businessName: values.businessName,
                 }).unwrap()
                 addToast({
                     title: "Verification code sent",
@@ -142,7 +145,7 @@ const VendorSignupDetails = () => {
 
                 <div className="space-y-2 w-full">
                     {/* Continue with Google */}
-                    <Button
+                    {/* <Button
                         type="button"
                         className="btn_bg_white btn_radius btn_padding w-full font-medium"
                         onPress={handleGoogleLogin}
@@ -153,14 +156,14 @@ const VendorSignupDetails = () => {
                             <ImageComponent url="/images/signup/google_icon.png" img_title="Google login icon" />
                         </span>
                         Se connecter avec Google
-                    </Button>
+                    </Button> */}
 
                     {/* Divider */}
-                    <div className="flex items-center gap-3 w-full">
+                    {/* <div className="flex items-center gap-3 w-full">
                         <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
                         <span className="text-darkSilver text-sm font-medium">or</span>
                         <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
-                    </div>
+                    </div> */}
 
                     {/* Form fields */}
                     <form id="vendor-signup-form" onSubmit={handleSubmit} className="space-y-2">
@@ -248,31 +251,48 @@ const VendorSignupDetails = () => {
                                 }}
                             />
                         </div>
-                        <div className="w-full relative z-100">
-                            <p className="custom_label_text_light mb-1.5">Phone number</p>
-                            <div className="mt-1.5">
-                                <PhoneInput
-                                    country="fr"
-                                    countryCodeEditable={false}
-                                    enableSearch
-                                    value={values.phoneNumber}
-                                    onChange={(value) => setFieldValue("phoneNumber", value)}
-                                    onBlur={() => setFieldTouched("phoneNumber", true)}
-                                    inputProps={{
-                                        name: "phoneNumber",
-                                        "aria-label": "Phone number",
-                                    }}
-                                    containerClass="!w-full"
-                                    inputClass="!w-full !rounded-[12px] !border-borderDark"
-                                    inputStyle={{ height: "52px" }}
-                                />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                            <div className="w-full relative z-100">
+                                <p className="custom_label_text_light text-darkSilver font-medium mb-1.5">Phone number</p>
+                                <div className="mt-1.5">
+                                    <PhoneInput
+                                        country="fr"
+                                        countryCodeEditable={false}
+                                        enableSearch
+                                        value={values.phoneNumber}
+                                        onChange={(value) => setFieldValue("phoneNumber", value)}
+                                        onBlur={() => setFieldTouched("phoneNumber", true)}
+                                        inputProps={{
+                                            name: "phoneNumber",
+                                            "aria-label": "Phone number",
+                                        }}
+                                        containerClass="!w-full"
+                                        inputClass="!w-full !rounded-[12px] !border-borderDark"
+                                        inputStyle={{ height: "52px" }}
+                                    />
+                                </div>
+                                {touched.phoneNumber && errors.phoneNumber && (
+                                    <p className="text-danger text-tiny mt-1">{errors.phoneNumber}</p>
+                                )}
                             </div>
-                            {touched.phoneNumber && errors.phoneNumber && (
-                                <p className="text-danger text-tiny mt-1">{errors.phoneNumber}</p>
-                            )}
+                            <Input
+                                name="businessName"
+                                variant="bordered"
+                                label="Company Name"
+                                labelPlacement="outside"
+                                isRequired
+                                placeholder="Company Name"
+                                value={values.businessName}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.businessName && errors.businessName)}
+                                errorMessage={touched.businessName && errors.businessName}
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
                         </div>
-
-
                     </form>
                 </div>
             </div>

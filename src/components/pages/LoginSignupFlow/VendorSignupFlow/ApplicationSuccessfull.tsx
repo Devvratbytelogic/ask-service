@@ -68,6 +68,7 @@ const ApplicationSuccessfull = () => {
                     Have questions?{" "}
                     <Link
                         href={getVendorSupportRoutePath()}
+                        target="_blank"
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                     >
                         Contact vendor support

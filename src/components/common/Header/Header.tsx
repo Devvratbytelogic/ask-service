@@ -165,7 +165,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 href={isVendor ? getVendorDashboardRoutePath({ leads: 'available' }) : getMyRequestRoutePath()}
                                 className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
-                                {isVendor ? 'Prospects' : 'Mes demandes'}
+                                {isVendor ? 'Trouver des prospect' : 'Mes demandes'}
                             </Link>
                             <Link
                                 href={getVendorMessageRoutePath()}

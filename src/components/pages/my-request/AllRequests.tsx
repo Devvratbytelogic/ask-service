@@ -12,6 +12,7 @@ import { Button, Pagination, Spinner, Tooltip } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { FiArrowUpRight, FiInfo } from 'react-icons/fi'
 import { useDispatch } from 'react-redux'
+import moment from 'moment'
 
 /** Map a created-service request to RequestServiceFlowIndex initial form values (for Edit flow). */
 function requestToInitialFormValues(request: DataEntity): RequestServiceFormValues {
@@ -160,8 +161,12 @@ export default function AllRequests() {
                                 <div className="flex flex-wrap gap-4 sm:gap-6 text-sm text-darkSilver">
                                     <span className="flex items-center gap-1.5">
                                         <CalendarSVG />
-                                        {formatRequestDate(request?.preferred_start_date ?? '')}
+                                        Created {moment(request?.createdAt ?? '').fromNow()} ({moment(request?.createdAt ?? '').format('DD MMM YYYY, h:mm A')})
                                     </span>
+                                    {request?.preferred_start_date !== null && <span className="flex items-center gap-1.5">
+                                        <CalendarSVG />
+                                        Preferred start {formatRequestDate(request?.preferred_start_date ?? '')}
+                                    </span>}
                                     <span className="flex items-center gap-1.5">
                                         <LocationSVG />
                                         {request?.location}

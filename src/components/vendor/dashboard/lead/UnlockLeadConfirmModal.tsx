@@ -30,7 +30,7 @@ export default function UnlockLeadConfirmModal() {
             await unlockLead(leadId).unwrap()
             addToast({ title: 'Lead unlocked successfully', color: 'success', timeout: 2000 })
             dispatch(closeModal())
-            router.push(generateLeadDetailRoutePath(leadId))
+            // router.push(generateLeadDetailRoutePath(leadId))
         } catch {
             // Error toast handled by rtkQuerieSetup
         }
