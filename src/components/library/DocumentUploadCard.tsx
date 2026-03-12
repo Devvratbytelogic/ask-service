@@ -20,8 +20,8 @@ export interface DocumentUploadCardProps {
     maxSizeBytes?: number
     /** Accepted input accept attribute (e.g. ".pdf,.jpg,.png") */
     accept?: string
-    /** Called when a file is rejected (e.g. over max size) */
-    onFileRejected?: (reason: "size") => void
+    /** Called when a file is rejected (e.g. over max size or invalid type) */
+    onFileRejected?: (reason: "size" | "type") => void
 }
 
 export default function DocumentUploadCard({
@@ -36,6 +36,29 @@ export default function DocumentUploadCard({
     onFileRejected,
 }: DocumentUploadCardProps) {
     const uploaded = value !== null
+
+    const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png"] as const
+    const ALLOWED_EXT = [".pdf", ".jpg", ".jpeg", ".png"] as const
+
+    const handleChange = (file: File | null) => {
+        if (!file) {
+            onChange(null)
+            return
+        }
+        const ext = "." + (file.name.split(".").pop() ?? "").toLowerCase()
+        const validType =
+            ALLOWED_MIME.includes(file.type as (typeof ALLOWED_MIME)[number]) ||
+            ALLOWED_EXT.some((e) => e === ext)
+        if (!validType) {
+            onFileRejected?.("type")
+            return
+        }
+        if (file.size > maxSizeBytes) {
+            onFileRejected?.("size")
+            return
+        }
+        onChange(file)
+    }
 
     return (
         <div className="rounded-2xl border border-borderDark bg-white p-4 sm:p-5 flex flex-col gap-3">
@@ -65,7 +88,7 @@ export default function DocumentUploadCard({
 
             <FileUploadZone
                 value={value}
-                onChange={onChange}
+                onChange={handleChange}
                 accept={accept}
                 maxSizeBytes={maxSizeBytes}
                 onFileRejected={onFileRejected}

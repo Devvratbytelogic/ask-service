@@ -41,7 +41,7 @@ const VendorServiceListPage = () => {
 
     return (
         <>
-            <div className="space-y-10 w-11/12">
+            <div className="space-y-10 w-full">
                 <div className="space-y-3 xl:space-y-6">
                     <h1 className="header_text">
                         Tell us more about <span className="text-darkSilver">you</span>
@@ -102,7 +102,7 @@ const VendorServiceListPage = () => {
                 </ul>
             </div>
 
-            <div className="space-y-6.25 w-11/12">
+            <div className="space-y-2 w-full">
                 <Button
                     type="button"
                     className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"

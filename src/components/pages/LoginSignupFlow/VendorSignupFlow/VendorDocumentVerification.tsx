@@ -28,7 +28,7 @@ const VendorDocumentVerification = () => {
     }
 
     const requiredIds = documents.filter((doc) => doc.is_required).map((doc) => doc._id)
-    const allRequiredUploaded = requiredIds.length > 0 && requiredIds.every((id) => files[id] !== null)
+    const allRequiredUploaded = requiredIds.length > 0 && requiredIds.every((id) => files[id] != null)
 
     const handleSubmit = async () => {
         const formData = new FormData()
@@ -72,7 +72,6 @@ const VendorDocumentVerification = () => {
             })
         )
     }
-
     return (
         <div className="w-11/12 mx-auto space-y-11.25 pb-8">
             <button
@@ -118,7 +117,8 @@ const VendorDocumentVerification = () => {
                             title={doc.name}
                             required={doc.is_required}
                             description={doc.description ?? ""}
-                            allowedTypes={doc.allowed_formats}
+                            // allowedTypes={doc.allowed_formats}
+                            allowedTypes={'PDF, JPG, PNG (Max 5MB)'}
                             value={files[doc._id] ?? null}
                             onChange={(file) => setFile(doc._id, file)}
                             maxSizeBytes={MAX_FILE_SIZE_BYTES}
@@ -126,7 +126,7 @@ const VendorDocumentVerification = () => {
                                 const message =
                                     reason === "size"
                                         ? "File size exceeds the 5 MB limit. Please choose a smaller file."
-                                        : "File was not accepted. Please try again."
+                                        : "Only PDF, JPG and PNG files are allowed."
                                 addToast({
                                     title: "Upload rejected",
                                     description: message,

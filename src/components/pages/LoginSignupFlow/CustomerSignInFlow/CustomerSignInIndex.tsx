@@ -80,12 +80,12 @@ const CustomerSignInIndex = () => {
         <>
             <div className="space-y-3 xl:space-y-6">
                 <h1 className="header_text flex items-center gap-0.5">
-                    <BiArrowBack
+                    {/* <BiArrowBack
                         className="modal_back_icon"
                         onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'SelectUserType' }, modalSize: 'full' }))}
                         role="button"
                         aria-label="Go back"
-                    />
+                    /> */}
                     Se connecter <span className="text-darkSilver ml-1">maintenant</span>
                 </h1>
                 <p className="text-fontBlack text-base">

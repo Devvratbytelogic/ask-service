@@ -124,8 +124,8 @@ const VendorSignupDetails = () => {
 
     return (
         <>
-            <div className="space-y-10 w-11/12">
-                <div className="space-y-3 xl:space-y-6 w-full">
+            <div className="space-y-2">
+                <div className="space-y-2 w-full">
                     <h1 className="header_text flex items-center gap-0.5">
                         <BiArrowBack
                             className="modal_back_icon"
@@ -140,7 +140,7 @@ const VendorSignupDetails = () => {
                     </p>
                 </div>
 
-                <div className="space-y-4 w-full">
+                <div className="space-y-2 w-full">
                     {/* Continue with Google */}
                     <Button
                         type="button"
@@ -163,7 +163,7 @@ const VendorSignupDetails = () => {
                     </div>
 
                     {/* Form fields */}
-                    <form id="vendor-signup-form" onSubmit={handleSubmit} className="space-y-4">
+                    <form id="vendor-signup-form" onSubmit={handleSubmit} className="space-y-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Input
                                 name="firstName"
@@ -200,25 +200,54 @@ const VendorSignupDetails = () => {
                                 }}
                             />
                         </div>
-                        <Input
-                            name="email"
-                            variant="bordered"
-                            label="Email address"
-                            labelPlacement="outside"
-                            isRequired
-                            placeholder="example@xyz.com"
-                            type="email"
-                            value={values.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={!!(touched.email && errors.email)}
-                            errorMessage={touched.email && errors.email}
-                            classNames={{
-                                inputWrapper: ["custom_input_design_dark"],
-                                label: ["custom_label_text_light"],
-                            }}
-                        />
-
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <Input
+                                name="email"
+                                variant="bordered"
+                                label="Email address"
+                                labelPlacement="outside"
+                                isRequired
+                                placeholder="example@xyz.com"
+                                type="email"
+                                value={values.email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.email && errors.email)}
+                                errorMessage={touched.email && errors.email}
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
+                            <Input
+                                name="password"
+                                variant="bordered"
+                                label="Password"
+                                isRequired
+                                labelPlacement="outside"
+                                placeholder="Password"
+                                type={isPasswordVisible ? "text" : "password"}
+                                value={values.password}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.password && errors.password)}
+                                errorMessage={touched.password && errors.password}
+                                endContent={
+                                    <button
+                                        type="button"
+                                        className="focus:outline-none text-lg text-placeHolderText"
+                                        onClick={() => setIsPasswordVisible((prev) => !prev)}
+                                        aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                                    >
+                                        {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                                    </button>
+                                }
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
+                        </div>
                         <div className="w-full relative z-100">
                             <p className="custom_label_text_light mb-1.5">Phone number</p>
                             <div className="mt-1.5">
@@ -243,39 +272,12 @@ const VendorSignupDetails = () => {
                             )}
                         </div>
 
-                        <Input
-                            name="password"
-                            variant="bordered"
-                            label="Password"
-                            isRequired
-                            labelPlacement="outside"
-                            placeholder="Password"
-                            type={isPasswordVisible ? "text" : "password"}
-                            value={values.password}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={!!(touched.password && errors.password)}
-                            errorMessage={touched.password && errors.password}
-                            endContent={
-                                <button
-                                    type="button"
-                                    className="focus:outline-none text-lg text-placeHolderText"
-                                    onClick={() => setIsPasswordVisible((prev) => !prev)}
-                                    aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-                                >
-                                    {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
-                                </button>
-                            }
-                            classNames={{
-                                inputWrapper: ["custom_input_design_dark"],
-                                label: ["custom_label_text_light"],
-                            }}
-                        />
+
                     </form>
                 </div>
             </div>
 
-            <div className="space-y-6.25 w-11/12">
+            <div className="space-y-2 w-full">
                 <div className="mx-auto">
                     <Checkbox
                         name="agreeToTerms"

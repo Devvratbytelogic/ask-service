@@ -146,7 +146,7 @@ const CustomerSignupDetails = () => {
 
     return (
         <>
-            <div className="space-y-10">
+            <div className="space-y-2">
                 <div className="space-y-3 xl:space-y-6 w-11/12">
                     <h1 className="header_text flex items-center gap-0.5">
                         <BiArrowBack
@@ -161,8 +161,8 @@ const CustomerSignupDetails = () => {
                         En créant un compte, j'accepte également de recevoir des SMS et des emails.
                     </p>
                 </div>
-                <div className="space-y-4 w-11/12 xl:w-full">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Input
                             name="firstName"
                             variant="bordered"
@@ -280,7 +280,7 @@ const CustomerSignupDetails = () => {
                 </div>
             </div>
 
-            <div className="space-y-6.25 w-11/12">
+            <div className="space-y-2 w-full">
                 <div className="mx-auto">
                     <Checkbox
                         name="agreeToTerms"
@@ -306,7 +306,7 @@ const CustomerSignupDetails = () => {
                         <p className="text-danger text-tiny mt-1">{errors.agreeToTerms}</p>
                     )}
                 </div>
-                <div className="w-11/12">
+                <div className="w-full">
                     <Button
                         type="submit"
                         className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full"

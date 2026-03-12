@@ -65,7 +65,7 @@ const CustomerSignupIndex = () => {
 
     return (
         <>
-            <div className="space-y-3 xl:space-y-6">
+            <div className="space-y-2">
                 <h1 className="header_text flex items-center gap-0.5">
                     <BiArrowBack
                         className="modal_back_icon"
@@ -101,8 +101,12 @@ const CustomerSignupIndex = () => {
 
                 {/* Email & Mobile options */}
                 <section className="space-y-2.5 w-11/12">
-                    <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('email')}>
-                        <span><CgMail className="text-lg" /></span>Se connecter avec un Email
+                    <Button
+                        className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]"
+                        onPress={() => signupForUserWith('email')}
+                    >
+                        <span><CgMail className="text-lg" /></span>
+                        S’inscrire avec un Email
                     </Button>
                     {/* <Button className="btn_bg_whiteSilver btn_radius btn_padding custom_border_1px w-full font-medium text-[15px]/[22.5px]" onPress={() => signupForUserWith('phoneNumber')}>
                         <span><BiPhone className="text-lg" /></span>Mobile Number

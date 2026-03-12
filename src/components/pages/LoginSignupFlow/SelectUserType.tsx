@@ -43,24 +43,33 @@ const SelectUserType = () => {
             <div className="w-full space-y-3.5">
                 <div className="border border-borderDark rounded-3xl p-3 md:p-5 space-y-3.5 w-11/12 cursor-pointer hover:border-darkSilver" onClick={() => setUserType("customer")}>
                     <div className="flex justify-between items-start">
-                        <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
-                            <CustomerIconSVG />
+                        <div className='flex gap-5'>
+                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
+                                <CustomerIconSVG />
+                            </div>
+                            <div>
+                                <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un client et je cherche un <br /><span className="text-darkSilver">professionnel</span> </p>
+                            </div>
                         </div>
+
                         {(userType === 'customer') ?
                             <div className="border border-borderDark h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
                                 <FaCheck className="text-white" />
                             </div>
                             : <div className="border border-borderDark h-5 w-5 rounded-full" />}
+
                     </div>
 
-                    <div>
-                        <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un client et je cherche un <br /><span className="text-darkSilver">professionnel</span> </p>
-                    </div>
                 </div>
                 <div className="border border-borderDark rounded-3xl p-5 space-y-3.5 w-11/12 cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
                     <div className="flex justify-between items-start">
-                        <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
-                            <ServiceProviderIconSVG />
+                        <div className='flex gap-5'>
+                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
+                                <ServiceProviderIconSVG />
+                            </div>
+                            <div>
+                                <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un prestataire et je recherche des <br /><span className="text-darkSilver">missions</span> </p>
+                            </div>
                         </div>
                         {(userType === 'service') ?
                             <div className="border border-borderDark h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
@@ -69,9 +78,6 @@ const SelectUserType = () => {
                             : <div className="border border-borderDark h-5 w-5 rounded-full" />}
                     </div>
 
-                    <div>
-                        <p className="text-base/[21px] text-fontBlack font-semibold">Je suis un prestataire et je recherche des <br /><span className="text-darkSilver">missions</span> </p>
-                    </div>
                 </div>
             </div>
             <div className="w-11/12 space-y-6.25">

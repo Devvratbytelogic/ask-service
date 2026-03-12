@@ -63,7 +63,7 @@ export function getFaqRoutePath() {
     return `/faq`;
 }
 export function getVendorSupportRoutePath() {
-    return `/vendor-support`;
+    return `/vendor/support`;
 }
 export function getTermsRoutePath() {
     return `/terms`;

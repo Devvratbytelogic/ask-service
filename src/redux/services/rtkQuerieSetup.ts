@@ -59,9 +59,9 @@ const baseQueryWithAuth: BaseQueryFn<
             if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
                 return { data: responseData as IAPIResponse };
             }
-            if (status === 401) {
+            // if (status === 401) {
                 addToast({ title: "Error", description: responseData?.message ?? "Unknown error", color: "danger", timeout: 2000 })
-            }
+            // }
             console.error(`API: ${args}, Failed to fetch data`);
             return {
                 error: {
