@@ -23,13 +23,14 @@ const STEP4_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = [
 interface ContactInformationProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
+  readOnly?: boolean
 }
 
-const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) => {
+const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactInformationProps) => {
   const dispatch = useDispatch()
   const { values, setFieldValue, setFieldTouched, touched, errors, handleBlur, handleChange, setTouched, validateForm } = formik
 
-  const isStep4Valid = STEP4_REQUIRED_FIELDS.every(
+  const isStep4Valid = readOnly || STEP4_REQUIRED_FIELDS.every(
     (field) => values[field]?.toString().trim() !== ""
   )
 
@@ -38,6 +39,10 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
     dispatch(closeModal())
   }
   const handleContinue = async () => {
+    if (readOnly) {
+      setStepCount((prev) => prev + 1)
+      return
+    }
     setTouched(
       STEP4_REQUIRED_FIELDS.reduce(
         (acc, k) => ({ ...acc, [k]: true }),
@@ -78,6 +83,8 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
               label: ["custom_label_text"],
             }}
             isRequired
+            isReadOnly={readOnly}
+            isDisabled={readOnly}
           />
         </div>
         <div className="col-span-1">
@@ -97,6 +104,8 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
               label: ["custom_label_text"],
             }}
             isRequired
+            isReadOnly={readOnly}
+            isDisabled={readOnly}
           />
         </div>
         <div className="col-span-1">
@@ -110,10 +119,12 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
                 <button
                   key={type}
                   type="button"
-                  onClick={() => setFieldValue("clientType", type)}
+                  onClick={() => !readOnly && setFieldValue("clientType", type)}
                   onBlur={handleBlur}
+                  disabled={readOnly}
                   className={`
                     flex-1 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-colors
+                    ${readOnly ? "cursor-default opacity-80" : ""}
                     ${isSelected
                       ? "border-primaryColor bg-primaryColor/10 text-primaryColor"
                       : "border-borderColor bg-white text-fontBlack hover:border-primaryColor/50"
@@ -133,7 +144,7 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
           <p className="custom_label_text mb-1.5">
             Numéro de téléphone <span className="text-danger">*</span>
           </p>
-          <div className="mt-1.5">
+          <div className={`mt-1.5 ${readOnly ? "pointer-events-none opacity-80" : ""}`}>
             <PhoneInput
               country="fr"
               countryCodeEditable={false}
@@ -144,6 +155,8 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
               inputProps={{
                 name: "customerPhoneNumber",
                 "aria-label": "Numéro de téléphone",
+                readOnly: readOnly,
+                disabled: readOnly,
               }}
               containerClass="!w-full"
               inputClass="!w-full !rounded-[12px] !border-borderDark"
@@ -174,6 +187,8 @@ const ContactInformation = ({ formik, setStepCount }: ContactInformationProps) =
               label: ["custom_label_text"],
             }}
             isRequired
+            isReadOnly={readOnly}
+            isDisabled={readOnly}
           />
         </div>
         <div className="col-span-1 flex items-start gap-2 rounded-lg bg-primaryColor/10 px-3 py-2 text-primaryColor">

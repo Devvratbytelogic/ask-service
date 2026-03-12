@@ -10,7 +10,7 @@ const SmartHiringIndex = () => {
                 </h2>
                 <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center">Pas d'appels interminables, pas de suppositions. Des demandes claires et des professionnels vérifiés pour votre projet.</p>
             </div>
-            <div className="relative px-0 xl:px-[120px]">
+            <div className="relative px-0 xl:px-30">
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     {
                         SmartHiringData?.map((curr, index) => (

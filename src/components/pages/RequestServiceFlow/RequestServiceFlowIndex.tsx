@@ -9,7 +9,7 @@ import TaskRequired from "./TaskRequired"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
-import { useCreateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
+import { useCreateServiceRequestMutation, useUpdateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
 import { useGetUserProfileInfoQuery, useGetServiceCategoryQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { useLazyGetAddressFromPincodeQuery } from "@/redux/geo-location/geoLocation"
 import { getAuthToken } from "@/utils/authCookies"
@@ -71,6 +71,8 @@ const RequestServiceFlowIndex = () => {
         grandParentServiceId?: string
         grandParentServiceName?: string
         child_services?: unknown[]
+        isEditMode?: boolean
+        request?: { _id: string; [key: string]: unknown }
         [key: string]: unknown
     } | undefined
     const data = modalData
@@ -80,7 +82,9 @@ const RequestServiceFlowIndex = () => {
     const [submissionRef, setSubmissionRef] = useState<string | null>(null)
     const dispatch = useDispatch()
     const [fetchAddressFromPincode] = useLazyGetAddressFromPincodeQuery()
-    const [createServiceRequest, { isLoading }] = useCreateServiceRequestMutation()
+    const [createServiceRequest, { isLoading: isCreateLoading }] = useCreateServiceRequestMutation()
+    const [updateServiceRequest, { isLoading: isUpdateLoading }] = useUpdateServiceRequestMutation()
+    const isLoading = isCreateLoading || isUpdateLoading
     const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
     const isAuthenticated = !!getAuthToken() || isClientAuthenticated
     const { data: profileResponse } = useGetUserProfileInfoQuery(undefined, {
@@ -221,6 +225,14 @@ const RequestServiceFlowIndex = () => {
                         email: values.customerEmail ?? "",
                     },
                 }
+
+                const requestId = data?.request?._id
+                if (data?.isEditMode && requestId) {
+                    await updateServiceRequest({ id: requestId, value: payload }).unwrap()
+                    dispatch(closeModal())
+                    return
+                }
+
                 const res = await createServiceRequest(payload).unwrap();
                 const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
                 setSubmissionRef(ref)
@@ -389,7 +401,7 @@ const RequestServiceFlowIndex = () => {
 
     return (
         <>
-            {isLoading && <AppLoader message="Création de la demande en cours..." />}
+            {isLoading && <AppLoader message={data?.isEditMode ? "Mise à jour de la demande en cours..." : "Création de la demande en cours..."} />}
             <div className="space-y-5">
                 <div className="space-y-2.5">
                     <p className="text-fontBlack text-sm/[20px] xl:text-lg/[22px] text-center">
@@ -409,7 +421,7 @@ const RequestServiceFlowIndex = () => {
                     getStepCount === 3 && <DesiredSchedule formik={formik} setStepCount={setStepCountSafe} scheduleVisibility={scheduleVisibility} />
                 }
                 {
-                    getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} />
+                    getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} readOnly={!!data?.isEditMode} />
                 }
                 {
                     getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />

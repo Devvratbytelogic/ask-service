@@ -18,6 +18,14 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['CreatedServices'],
     }),
+    updateServiceRequest: builder.mutation({
+      query: ({ id, value }) => ({
+        url: `/user/service-request/${id}`,
+        method: 'PUT',
+        body: value,
+      }),
+      invalidatesTags: ['CreatedServices'],
+    }),
     updateVendorServices: builder.mutation({
       query: (value) => ({
         url: `/vendor/update-service-data`,
@@ -151,6 +159,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
 export const {
   useUploadPrescriptionMutation,
   useCreateServiceRequestMutation,
+  useUpdateServiceRequestMutation,
   useUpdateVendorServicesMutation,
   useUploadVendorDocumentsMutation,
   useUpdateVendorProfileInfoMutation,

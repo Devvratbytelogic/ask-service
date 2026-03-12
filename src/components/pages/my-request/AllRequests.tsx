@@ -1,15 +1,46 @@
 'use client'
 import { CalendarSVG, HorizontalDotsSVG, InfoSVG, LocationSVG, RequestNumberSVG } from '@/components/library/AllSVG'
 import RequestFilters from '@/components/pages/my-request/RequestFilters'
-import { useGetCreatedServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreatedServicesQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { getCreateRequestRoutePath } from '@/routes/routes'
+import type { RequestServiceFormValues } from '@/components/pages/RequestServiceFlow/RequestServiceFlowIndex'
+import type { DataEntity } from '@/types/allRequests'
 import Link from 'next/link'
-import { FiArrowRight } from 'react-icons/fi'
+import { FiArrowRight, FiEdit2 } from 'react-icons/fi'
 import { Button, Pagination, Spinner, Tooltip } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { FiArrowUpRight, FiInfo } from 'react-icons/fi'
 import { useDispatch } from 'react-redux'
+
+/** Map a created-service request to RequestServiceFlowIndex initial form values (for Edit flow). */
+function requestToInitialFormValues(request: DataEntity): RequestServiceFormValues {
+    const cd = request?.contact_details
+    const clientType = cd?.client_type === 'Entreprise' || cd?.client_type === 'Company' ? 'Company' : 'Individual'
+    const childId = request?.child_category?._id
+    const isOther = !!request?.manual_child_category
+    return {
+        pincode: request?.pincode ?? '',
+        parentServiceId: childId ?? '',
+        parentServiceName: isOther ? 'other' : (childId ?? ''),
+        otherServiceName: typeof request?.manual_child_category === 'string' ? request.manual_child_category : '',
+        serviceFrequency: request?.frequency ?? '',
+        childServiceId: '',
+        childServiceIds: request?.selected_options ?? [],
+        serviceStartDate: request?.preferred_start_date ?? '',
+        serviceTimeOfDay: request?.preferred_time_of_day ?? '',
+        start_date: '',
+        start_time: '',
+        end_date: '',
+        end_time: '',
+        serviceNote: request?.note ?? '',
+        customerFirstName: cd?.first_name ?? '',
+        customerLastName: cd?.last_name ?? '',
+        clientType,
+        customerPhoneNumber: cd?.phone ?? '',
+        customerEmail: cd?.email ?? '',
+    }
+}
 
 const ITEMS_PER_PAGE = 5
 
@@ -37,6 +68,7 @@ export default function AllRequests() {
     const [debouncedSearch, setDebouncedSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all')
     const [serviceFilter, setServiceFilter] = useState<string>('all')
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
 
     useEffect(() => {
         const t = setTimeout(() => setDebouncedSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS)
@@ -159,7 +191,36 @@ export default function AllRequests() {
                                         View {request?.quotes_count} quotes
                                     </Button>
                                 ) : (
-                                    <p className="text-sm text-darkSilver">Waiting for responses...</p>
+                                    <>
+                                        <p className="text-sm text-darkSilver">Waiting for responses...</p>
+                                        {request?._id && (
+                                            <Button
+                                                className="btn_radius btn_bg_white font-medium"
+                                                variant="faded"
+                                                startContent={<FiEdit2 size={18} />}
+                                                onPress={() => {
+                                                    const grandParentId = request?.service_category?._id ?? ''
+                                                    const childServices = serviceCategoriesData?.data?.find((c) => c._id === grandParentId)?.child_categories ?? []
+                                                    dispatch(openModal({
+                                                        componentName: 'RequestServiceFlowIndex',
+                                                        data: {
+                                                            request,
+                                                            isEditMode: true,
+                                                            grandParentServiceId: grandParentId,
+                                                            grandParentServiceName: request?.service_category?.title ?? '',
+                                                            child_services: childServices,
+                                                            pincode: request?.pincode ?? '',
+                                                            initialFormValues: requestToInitialFormValues(request),
+                                                        },
+                                                        modalSize: 'lg',
+                                                        // modalPadding: 'px-8 py-6.5',
+                                                    }))
+                                                }}
+                                            >
+                                                Edit
+                                            </Button>
+                                        )}
+                                    </>
                                 )}
                                 <Button
                                     isIconOnly
