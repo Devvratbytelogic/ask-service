@@ -68,7 +68,7 @@ const VendorOtpVerification = () => {
             router.refresh()
             addToast({
                 title: "Success",
-                description: "OTP verification complete. You're signed up!",
+                description: "Verification Code verification complete. You're signed up!",
                 color: "success",
                 timeout: 3000,
             })

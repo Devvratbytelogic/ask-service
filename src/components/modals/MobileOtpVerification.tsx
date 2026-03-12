@@ -137,7 +137,7 @@ const MobileOtpVerification = () => {
             }
             addToast({
                 title: "Success",
-                description: "OTP Verification completed.",
+                description: "Verification Code Verification completed.",
                 color: "success",
                 timeout: 3000,
             })
@@ -251,7 +251,7 @@ const MobileOtpVerification = () => {
 
                 <ul className="text-darkSilver text-sm xl:text-base space-y-1 list-none">
                     <li>
-                        The OTP will be expired in{" "}
+                        The Verification Code will be expired in{" "}
                         <span className="font-semibold text-fontBlack">
                             {formatExpiry(otpExpirySeconds)}
                         </span>

@@ -359,7 +359,7 @@ const CustomerSignInDetails = () => {
                                     className="btn_radius btn_bg_whiteSilver_border w-full"
                                     onPress={handleSendOtp}
                                 >
-                                    Send an OTP on your email
+                                    Send an Verification Code on your email
                                 </Button>
                             )} */}
 
