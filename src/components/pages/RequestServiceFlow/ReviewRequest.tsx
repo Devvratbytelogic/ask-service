@@ -1,6 +1,7 @@
 "use client"
 
 import { CHILD_SERVICE_LIST, SERVICE_LIST } from "@/utils/serviceList"
+import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
 import { Button } from "@heroui/react"
 import { FormikProps } from "formik"
 import { FiCheck } from "react-icons/fi"
@@ -10,6 +11,7 @@ interface ReviewRequestProps {
   formik: FormikProps<RequestServiceFormValues>
   setStepCount: React.Dispatch<React.SetStateAction<number>>
   isTasksRequiredVisible?: boolean
+  childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
 }
 
 const formatDate = (dateStr: string) => {
@@ -19,11 +21,17 @@ const formatDate = (dateStr: string) => {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 }
 
-const getServiceName = (value: string, otherName?: string) => {
-  if (!value) return "—"
-  if (value === "other") return (otherName?.trim() || "Autre")
+const getServiceName = (
+  value: string,
+  otherName?: string,
+  childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
+) => {
+  if (!value) return ""
+  if (value === "other") return otherName?.trim() || "Autre"
+  const fromApi = childServices?.find((c) => String(c._id) === value)?.title
+  if (fromApi) return fromApi
   const found = SERVICE_LIST.find((s) => String(s._id) === value)
-  return found?.service_name ?? value
+  return found?.service_name ?? ""
 }
 
 const getTaskNames = (ids: string[]) => {
@@ -33,8 +41,7 @@ const getTaskNames = (ids: string[]) => {
     .join(", ")
 }
 
-const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true }: ReviewRequestProps) => {
-  
+const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, childServices = null }: ReviewRequestProps) => {
   const { values, handleSubmit } = formik
 
   const handleBack = () => setStepCount((prev) => prev - 1)
@@ -44,8 +51,10 @@ const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true }: 
       title: "Service et fréquence",
       step: 1,
       rows: [
-        { label: "Service:", value: getServiceName(values.parentServiceName, values.otherServiceName) },
-        { label: "Fréquence:", value: values.serviceFrequency || "—" },
+        ...(values.parentServiceName
+          ? [{ label: "Service:", value: getServiceName(values.parentServiceName, values.otherServiceName, childServices) || "—" }]
+          : []),
+        ...(values.serviceFrequency ? [{ label: "Fréquence:", value: values.serviceFrequency }] : []),
       ],
     },
     ...(isTasksRequiredVisible
@@ -107,7 +116,7 @@ const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true }: 
               <button
                 type="button"
                 onClick={() => setStepCount(card.step)}
-                className="text-primaryColor text-sm font-medium hover:underline"
+                className="text-primaryColor text-sm cursor-pointer font-medium hover:underline"
               >
                 Modifier
               </button>

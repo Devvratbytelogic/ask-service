@@ -25,8 +25,15 @@ export function parseGeocodeResponse(response: GoogleGeocodeResponse | undefined
         return empty
     }
 
-    const result = response.results[0]
+    const results = response.results
+    const isFranceResult = (r: (typeof results)[0]) =>
+        r.address_components?.some(
+            (c) => c.types.includes("country") && c.long_name === "France"
+        ) ?? false
+    const franceResult = results.find(isFranceResult)
+    const result = franceResult ?? results[0]
     const components = result.address_components ?? []
+
 
     const getComponent = (types: string[]) =>
         components.find((c) => types.some((t) => c.types.includes(t)))?.long_name ?? ""

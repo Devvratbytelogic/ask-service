@@ -1,6 +1,6 @@
 "use client"
 import ImageComponent from "@/components/library/ImageComponent"
-import { Autocomplete, AutocompleteItem, Button, Input } from "@heroui/react"
+import { Autocomplete, AutocompleteItem, Button, Select, SelectItem } from "@heroui/react"
 import { useMemo, useState } from "react"
 import { BiSearch } from "react-icons/bi"
 import { FiArrowRight } from "react-icons/fi"
@@ -9,22 +9,22 @@ import { useDispatch } from "react-redux"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { SERVICE_LIST } from "@/utils/serviceList"
 import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import francePostalCodes from "@/data/france-postal-codes.json"
+
+type PostalEntry = { code: string; name: string }
+
+const getPostalKey = (item: PostalEntry) => `${item.code}|${item.name}`
 
 const HomeBanner = () => {
-
-    const [selectedPinCode, setSelectedPinCode] = useState("75001")
+    const defaultKey = useMemo(() => {
+        const first = (francePostalCodes as PostalEntry[]).find((p) => p.code === "75001")
+        return first ? getPostalKey(first) : null
+    }, [])
+    const [selectedPostalKey, setSelectedPostalKey] = useState<string | null>(defaultKey)
+    const selectedPinCode = selectedPostalKey ? selectedPostalKey.split("|")[0] : ""
     const { data } = useGetServiceCategoriesQuery();
     const grandParentServicesList = data?.data ?? [];
-    const [searchValue, setSearchValue] = useState("");
     const [selectedServiceKey, setSelectedServiceKey] = useState<string | null>(null);
-
-    const filteredServicesList = useMemo(() => {
-        if (!searchValue.trim()) return grandParentServicesList;
-        const query = searchValue.toLowerCase().trim();
-        return grandParentServicesList.filter((item) =>
-            item.title.toLowerCase().includes(query)
-        );
-    }, [grandParentServicesList, searchValue]);
 
     const dispatch = useDispatch()
 
@@ -78,60 +78,65 @@ const HomeBanner = () => {
             </p>
             <div id="banner-search" className="flex gap-2 flex-wrap justify-center">
                 <div className="w-[90vw] md:w-[30vw] max-w-full mx-auto">
-                    <Autocomplete
+                    <Select
                         variant="bordered"
                         placeholder="Quel service recherchez-vous?"
-                        allowsCustomValue
-                        items={filteredServicesList}
-                        inputValue={searchValue}
-                        onInputChange={setSearchValue}
-                        selectedKey={selectedServiceKey}
-                        onSelectionChange={(key) => {
-                            const keyStr = key != null ? String(key) : null;
-                            setSelectedServiceKey(keyStr);
-                            const item = keyStr ? grandParentServicesList.find((c) => c._id === keyStr) : null;
-                            setSearchValue(item?.title ?? '');
+                        selectedKeys={selectedServiceKey ? [selectedServiceKey] : []}
+                        onSelectionChange={(keys) => {
+                            const key = Array.from(keys as Set<string>)[0];
+                            setSelectedServiceKey(key ?? null);
                         }}
                         classNames={{
-                            base: "w-full",
-                            listboxWrapper: "max-h-[200px]",
+                            trigger: "custom_input_large_design btn_radius h-[60px]! min-h-[60px]!",
                         }}
                         listboxProps={{
-                            emptyContent: searchValue.trim() ? "Aucun résultat" : "Aucun élément.",
+                            emptyContent: "Aucun élément.",
+                        }}
+                    >
+                        {grandParentServicesList.map((item) => (
+                            <SelectItem key={item._id} textValue={item.title}>
+                                {item.title}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                </div>
+                <span className="w-[50vw] md:w-auto max-w-full min-w-0">
+                    <Autocomplete
+                        placeholder="Code postal"
+                        selectedKey={selectedPostalKey}
+                        onSelectionChange={(key) => setSelectedPostalKey(key as string | null)}
+                        items={francePostalCodes as PostalEntry[]}
+                        variant="bordered"
+                        isVirtualized
+                        itemHeight={40}
+                        maxListboxHeight={280}
+                        classNames={{
+                            base: "w-full",
+                            listboxWrapper: "max-h-[280px]",
                         }}
                         inputProps={{
                             classNames: {
-                                inputWrapper: ['custom_input_large_design btn_radius h-[60px]!'],
+                                inputWrapper: [
+                                    "btn_radius h-[60px]! min-h-[60px]!",
+                                    "bg-transparent",
+                                    "border-borderDark border-1",
+                                    "data-[hover=true]:bg-transparent",
+                                    "group-data-[focus=true]:bg-transparent",
+                                ],
+                                input: "text-fontBlack text-base",
                             },
+                        }}
+                        startContent={<FaLocationDot className="text-xl text-primaryColor shrink-0" />}
+                        listboxProps={{
+                            emptyContent: "Aucun code postal trouvé.",
                         }}
                     >
                         {(item) => (
-                            <AutocompleteItem key={item._id} textValue={item.title}>
-                                {item.title}
+                            <AutocompleteItem key={getPostalKey(item)} textValue={`${item.code} - ${item.name}`}>
+                                {item.code} - {item.name}
                             </AutocompleteItem>
                         )}
                     </Autocomplete>
-                </div>
-                <span className="w-[50vw] md:w-auto max-w-full min-w-0">
-                    <Input
-                        type="text"
-                        placeholder="Code postal"
-                        value={selectedPinCode}
-                        onValueChange={setSelectedPinCode}
-                        variant="bordered"
-                        classNames={{
-                            base: "w-full",
-                            inputWrapper: [
-                                "btn_radius h-[60px]! min-h-[60px]!",
-                                "bg-transparent",
-                                "border-borderDark border-1",
-                                "data-[hover=true]:bg-transparent",
-                                "group-data-[focus=true]:bg-transparent",
-                            ],
-                            input: "text-fontBlack text-base",
-                        }}
-                        startContent={<FaLocationDot className="text-xl text-primaryColor shrink-0" />}
-                    />
                 </span>
                 <Button className="size-15 min-w-14 min-h-14 p-0! rounded-full! bg-primaryColor flex items-center justify-center text-white shrink-0" isDisabled={!canStartRequest} onPress={() => startServiceRegisterationRequest()}>
                     <BiSearch className="text-xl" />

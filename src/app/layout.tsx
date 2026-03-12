@@ -29,6 +29,7 @@ export default async function RootLayout({
   const initialIsAuthenticated = !!authToken;
 
   return (
+    // <html lang="fr" translate="no" className="notranslate">
     <html lang="fr">
       <body
         className={` ${inter.variable} antialiased`}
@@ -37,7 +38,7 @@ export default async function RootLayout({
           <div className="flex min-h-screen flex-col">
             <Header initialIsAuthenticated={initialIsAuthenticated} />
             {/* <div className="min-h-0 flex-1"> */}
-              {children}
+            {children}
             {/* </div> */}
             <Footer />
           </div>

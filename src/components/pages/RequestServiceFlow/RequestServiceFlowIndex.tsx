@@ -52,6 +52,7 @@ export type ScheduleVisibility = {
 
 const flowTypes = {
     PHONE_VERIFICATION_REQUIRED: 'PHONE_VERIFICATION_REQUIRED',
+    EMAIL_VERIFICATION_REQUIRED: 'EMAIL_VERIFICATION_REQUIRED',
     LOGIN_REQUIRED: 'LOGIN_REQUIRED',
     REQUEST_CREATED: 'REQUEST_CREATED',
 }
@@ -136,7 +137,7 @@ const RequestServiceFlowIndex = () => {
             customerLastName: profile.last_name ?? "",
             customerEmail: profile.email ?? "",
             customerPhoneNumber: profile.phone ?? "",
-          }
+        }
         : {}
 
     const initialValues: RequestServiceFormValues = {
@@ -223,7 +224,6 @@ const RequestServiceFlowIndex = () => {
                 const res = await createServiceRequest(payload).unwrap();
                 const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
                 setSubmissionRef(ref)
-                console.log('res', res);
                 if (res?.data?.flow === flowTypes.PHONE_VERIFICATION_REQUIRED) {
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
@@ -236,6 +236,23 @@ const RequestServiceFlowIndex = () => {
                             skipToCodeEntry: true,
                         },
                         modalSize: 'lg'
+                    }))
+                }
+                if (res?.data?.flow === flowTypes.EMAIL_VERIFICATION_REQUIRED && values.customerEmail?.trim()) {
+                    const requestFlowData = {
+                        ...data,
+                        initialFormValues: values,
+                        initialStep: 5,
+                    }
+                    dispatch(openModal({
+                        componentName: 'VerifyEmailOtpModal',
+                        data: {
+                            email: values.customerEmail.trim(),
+                            returnToRequestFlow: true,
+                            requestFlowData,
+                        },
+                        modalSize: 'md',
+                        modalPadding: 'px-6 py-8',
                     }))
                 }
                 if (res?.data?.flow === flowTypes.REQUEST_CREATED) {
@@ -286,10 +303,31 @@ const RequestServiceFlowIndex = () => {
                 }
             } catch (error: unknown) {
                 console.log("error : ", error)
-                const err = error as { data?: { message?: string }; error?: string }
+                const err = error as { data?: { message?: string; flow?: string }; error?: string }
                 const isPhoneVerificationRequired =
                     err?.data?.message === "Phone verification required" ||
                     err?.error === "Phone verification required"
+                const isEmailVerificationRequired =
+                    err?.data?.flow === flowTypes.EMAIL_VERIFICATION_REQUIRED ||
+                    err?.data?.message === "Email verification required" ||
+                    err?.error === "Email verification required"
+                if (isEmailVerificationRequired && values.customerEmail?.trim()) {
+                    const requestFlowData = {
+                        ...data,
+                        initialFormValues: values,
+                        initialStep: 5,
+                    }
+                    dispatch(openModal({
+                        componentName: 'VerifyEmailOtpModal',
+                        data: {
+                            email: values.customerEmail.trim(),
+                            returnToRequestFlow: true,
+                            requestFlowData,
+                        },
+                        modalSize: 'md',
+                        modalPadding: 'px-6 py-8',
+                    }))
+                }
                 if (isPhoneVerificationRequired) {
                     const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
                     setSubmissionRef(ref)
@@ -372,7 +410,7 @@ const RequestServiceFlowIndex = () => {
                     getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} />
                 }
                 {
-                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} />
+                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
 
             </div>
