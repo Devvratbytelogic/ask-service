@@ -69,8 +69,9 @@ export default function VendorDashboard() {
 
     const sortOptions = [
         { key: 'newest', label: 'Les plus récents' },
+        { key: 'high_to_low', label: 'Du plus élevé au plus bas' },
+        { key: 'low_to_high', label: 'Du plus bas au plus élevé' },
         { key: 'oldest', label: 'Les plus anciens' },
-        { key: 'credits', label: 'Points (du plus bas au plus élevé)' },
     ]
 
     return (
