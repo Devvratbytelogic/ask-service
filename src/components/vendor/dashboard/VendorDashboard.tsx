@@ -253,6 +253,11 @@ export default function VendorDashboard() {
                                             <h3 className="font-bold text-lg text-fontBlack">
                                                 {lead.service_category.title}
                                             </h3>
+                                            {lead?.reference_no && (
+                                                <span className="inline-flex items-center rounded-full bg-gray-100 border border-borderDark px-2.5 py-0.5 text-xs font-medium text-darkSilver">
+                                                    Ref: {lead.reference_no}
+                                                </span>
+                                            )}
                                             <span className="inline-flex items-center rounded-full bg-[#E8F4FD] border border-primary px-2.5 py-0.5 text-xs font-medium text-primaryColor">
                                                 {/* {lead.businessType} */}
                                                 {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}

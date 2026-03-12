@@ -69,10 +69,10 @@ const SubmissionSuccess = () => {
         <p className="mt-2 text-darkSilver text-sm xl:text-base">
           Your request has been received and is being processed
         </p>
-        <p className="mt-1 text-sm xl:text-base">
+        {/* <p className="mt-1 text-sm xl:text-base">
           Reference:{" "}
           <span className="font-medium text-primaryColor">{data?.reference}</span>
-        </p>
+        </p> */}
       </div>
 
       <div className="rounded-xl bg-primaryColor/10 p-4 text-left">

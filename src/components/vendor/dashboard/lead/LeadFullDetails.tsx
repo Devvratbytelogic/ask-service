@@ -148,23 +148,23 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                     {displayData.serviceType}
                                 </p>
                             </div>
-                            <div className="rounded-xl border border-borderDark px-4 py-3">
+                            {displayData.frequency !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Frequency</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.frequency}
                                 </p>
-                            </div>
-                            <div className="rounded-xl border border-borderDark px-4 py-3 sm:col-span-2">
+                            </div>}
+                            {displayData.clientType !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3 sm:col-span-2">
                                 <p className="text-xs text-darkSilver mb-1">Client Type</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.clientType}
                                 </p>
-                            </div>
+                            </div>}
                         </div>
                     </div>
 
                     {/* Requested Tasks Card */}
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    {displayData.tasks.length > 0 && <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <h3 className="font-bold text-fontBlack mb-4">Requested Tasks</h3>
                         <div className="flex flex-wrap gap-2">
                             {displayData.tasks.map((task: string, i: number) => (
@@ -176,7 +176,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 </span>
                             ))}
                         </div>
-                    </div>
+                    </div>}
 
                     {/* Schedule Preference Card - only show when at least one schedule value exists */}
                     {(displayData.preferredStartDate !== 'N/A' || displayData.preferredTime !== 'N/A' || displayData.startDate || displayData.startTime || displayData.endDate || displayData.endTime) && (
