@@ -105,7 +105,7 @@ const HomeBanner = () => {
                         placeholder="Code postal"
                         selectedKey={selectedPostalKey}
                         onSelectionChange={(key) => setSelectedPostalKey(key as string | null)}
-                        items={francePostalCodes as PostalEntry[]}
+                        defaultItems={francePostalCodes as PostalEntry[]}
                         variant="bordered"
                         isVirtualized
                         itemHeight={40}
