@@ -1,5 +1,6 @@
 'use client';
 
+import InactivityLogout from "@/components/common/InactivityLogout";
 import CommonModal from "@/components/modals/CommonModal";
 import appStore from "@/redux/appStore";
 import { HeroUIProvider, ToastProvider } from "@heroui/react";
@@ -16,6 +17,7 @@ export default function AppProviders({ children }: ProvidersProps) {
       <HeroUIProvider>
         <ToastProvider placement="top-right" />
         <NextTopLoader />
+        <InactivityLogout />
         {children}
         <CommonModal />
       </HeroUIProvider>

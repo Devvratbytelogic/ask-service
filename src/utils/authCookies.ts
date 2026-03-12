@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie'
 
 const COOKIE_OPTIONS = { path: '/', sameSite: 'lax' as const }
-const TOKEN_MAX_AGE_DAYS = 7
+/** Session cookies: no expires = removed when browser/tab is closed */
+const SESSION_COOKIE_OPTIONS = { ...COOKIE_OPTIONS }
 
 /** Auth data returned by login / verify-email / verify-phone */
 export interface AuthResponseData {
@@ -14,24 +15,25 @@ export interface AuthResponseData {
 
 /**
  * Store auth token, user id and role in cookies after successful login/verify.
+ * Uses session cookies so the user is logged out when the browser is closed.
  * Handles common API shapes: token or access_token; user._id or user.id; role.id, role.name.
  */
 export function setAuthCookies(data: AuthResponseData): void {
     const token = data.token ?? data.access_token
     if (token) {
-        Cookies.set('auth_token', token, { ...COOKIE_OPTIONS, expires: TOKEN_MAX_AGE_DAYS })
+        Cookies.set('auth_token', token, SESSION_COOKIE_OPTIONS)
     }
 
     const userId = data.user?._id ?? data.user?.id
     if (userId) {
-        Cookies.set('userID', String(userId), { ...COOKIE_OPTIONS, expires: TOKEN_MAX_AGE_DAYS })
+        Cookies.set('userID', String(userId), SESSION_COOKIE_OPTIONS)
     }
 
     const role = data.role
     if (role != null && role !== '') {
         const roleValue = typeof role === 'string' ? role : (role.name ?? role.id ?? role._id)
         if (roleValue) {
-            Cookies.set('user_role', String(roleValue), { ...COOKIE_OPTIONS, expires: TOKEN_MAX_AGE_DAYS })
+            Cookies.set('user_role', String(roleValue), SESSION_COOKIE_OPTIONS)
         }
     }
 }
