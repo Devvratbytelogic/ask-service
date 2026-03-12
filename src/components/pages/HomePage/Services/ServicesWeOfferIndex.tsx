@@ -51,21 +51,3 @@ const ServicesWeOfferIndex = () => {
 }
 
 export default ServicesWeOfferIndex
-
-const ServicesDataList = [
-    {
-        serviceImage: '/images/home/Security.png',
-        serviceName: 'Security',
-        serviceDescription: 'Trained and verified security professionals for residential, commercial, and event requirements.'
-    },
-    {
-        serviceImage: '/images/home/Gardening.png',
-        serviceName: 'Gardening',
-        serviceDescription: 'From regular garden maintenance to one-time landscaping work by experienced professionals.'
-    },
-    {
-        serviceImage: '/images/home/house_cleaning.png',
-        serviceName: 'House Cleaning',
-        serviceDescription: 'Reliable home and office cleaning services, available for one-time or recurring needs.'
-    },
-]

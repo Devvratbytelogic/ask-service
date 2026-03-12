@@ -10,12 +10,13 @@ interface ServiceAndLocationProps {
   childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
   grandParentServiceName?: string | null
   isFrequencyVisible?: boolean
+  isServiceCategoryLoading?: boolean
 }
 
 const STEP1_REQUIRED_FIELDS_WITH_FREQUENCY: (keyof RequestServiceFormValues)[] = ["parentServiceName", "serviceFrequency", "pincode"]
 const STEP1_REQUIRED_FIELDS_WITHOUT_FREQUENCY: (keyof RequestServiceFormValues)[] = ["parentServiceName", "pincode"]
 
-const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFrequencyVisible = true, childServices = [] }: ServiceAndLocationProps) => {
+const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFrequencyVisible, isServiceCategoryLoading, childServices = [] }: ServiceAndLocationProps) => {
   const { values, setFieldValue, touched, errors, handleBlur, handleChange, validateForm, setTouched } = formik
 
   const isOtherSelected = values.parentServiceName === "other"
@@ -104,7 +105,28 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFr
             />
           </div>
         )}
-        {isFrequencyVisible && (
+        {!values.pincode?.toString().trim() && (
+          <div className="col-span-1">
+            <Input
+              name="pincode"
+              variant="bordered"
+              label="Postal Code"
+              labelPlacement="outside"
+              placeholder="Entrez votre code postal"
+              value={values.pincode}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              isInvalid={!!(touched.pincode && errors.pincode)}
+              errorMessage={touched.pincode && errors.pincode}
+              classNames={{
+                inputWrapper: ["custom_input_design"],
+                label: ["custom_label_text"],
+              }}
+              isRequired
+            />
+          </div>
+        )}
+        {isFrequencyVisible && !isServiceCategoryLoading && (
           <div className="col-span-1">
             <Select
               name="serviceFrequency"

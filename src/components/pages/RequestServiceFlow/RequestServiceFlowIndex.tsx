@@ -87,7 +87,7 @@ const RequestServiceFlowIndex = () => {
         skip: !isAuthenticated,
     })
     const profile = profileResponse?.data
-    const { data: serviceCategoryResponse } = useGetServiceCategoryQuery(
+    const { data: serviceCategoryResponse, isLoading: isServiceCategoryLoading } = useGetServiceCategoryQuery(
         { id: data?.grandParentServiceId ?? "" },
         { skip: !data?.grandParentServiceId }
     )
@@ -398,7 +398,7 @@ const RequestServiceFlowIndex = () => {
                     </div>
                 </div>
                 {
-                    getStepCount === 1 && <ServiceAndLocation isFrequencyVisible={isFrequencyVisible} grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
+                    getStepCount === 1 && <ServiceAndLocation isServiceCategoryLoading={isServiceCategoryLoading} isFrequencyVisible={isFrequencyVisible} grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
                 }
                 {
                     getStepCount === 2 && isTasksRequiredVisible && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} isTasksRequiredVisible={isTasksRequiredVisible} />
