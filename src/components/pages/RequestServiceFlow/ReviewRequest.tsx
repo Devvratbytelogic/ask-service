@@ -12,6 +12,7 @@ interface ReviewRequestProps {
   setStepCount: React.Dispatch<React.SetStateAction<number>>
   isTasksRequiredVisible?: boolean
   childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
+  grandParentServiceName?: string | null
 }
 
 const formatDate = (dateStr: string) => {
@@ -41,18 +42,26 @@ const getTaskNames = (ids: string[]) => {
     .join(", ")
 }
 
-const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, childServices = null }: ReviewRequestProps) => {
+const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, childServices = null, grandParentServiceName = null }: ReviewRequestProps) => {
   const { values, handleSubmit } = formik
 
   const handleBack = () => setStepCount((prev) => prev - 1)
+
+  const childServiceLabel = values.parentServiceName
+    ? getServiceName(values.parentServiceName, values.otherServiceName, childServices)
+    : ""
+  const serviceDisplay =
+    grandParentServiceName && childServiceLabel
+      ? `${grandParentServiceName} › ${childServiceLabel}`
+      : childServiceLabel || grandParentServiceName || "—"
 
   const summaryCards = [
     {
       title: "Service et fréquence",
       step: 1,
       rows: [
-        ...(values.parentServiceName
-          ? [{ label: "Service:", value: getServiceName(values.parentServiceName, values.otherServiceName, childServices) || "—" }]
+        ...(values.parentServiceName || grandParentServiceName
+          ? [{ label: "Service:", value: serviceDisplay }]
           : []),
         ...(values.serviceFrequency ? [{ label: "Fréquence:", value: values.serviceFrequency }] : []),
       ],

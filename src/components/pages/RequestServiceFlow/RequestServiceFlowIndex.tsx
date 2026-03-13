@@ -425,7 +425,7 @@ const RequestServiceFlowIndex = () => {
                     getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} readOnly={!!data?.isEditMode} />
                 }
                 {
-                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
+                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} grandParentServiceName={data?.grandParentServiceName} />
                 }
 
             </div>

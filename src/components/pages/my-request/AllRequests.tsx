@@ -14,6 +14,14 @@ import { FiArrowUpRight, FiInfo } from 'react-icons/fi'
 import { useDispatch } from 'react-redux'
 import moment from 'moment'
 
+/** Format API ISO date (e.g. 2026-03-14T00:00:00.000Z) to yyyy-MM-dd for date inputs. */
+function apiDateToInputValue(isoDate?: string | null): string {
+    if (!isoDate?.trim()) return ''
+    const d = new Date(isoDate)
+    if (Number.isNaN(d.getTime())) return ''
+    return d.toISOString().slice(0, 10)
+}
+
 /** Map a created-service request to RequestServiceFlowIndex initial form values (for Edit flow). */
 function requestToInitialFormValues(request: DataEntity): RequestServiceFormValues {
     const cd = request?.contact_details
@@ -30,10 +38,10 @@ function requestToInitialFormValues(request: DataEntity): RequestServiceFormValu
         childServiceIds: request?.selected_options ?? [],
         serviceStartDate: request?.preferred_start_date ?? '',
         serviceTimeOfDay: request?.preferred_time_of_day ?? '',
-        start_date: '',
-        start_time: '',
-        end_date: '',
-        end_time: '',
+        start_date: apiDateToInputValue(request?.start_date) || '',
+        start_time: (request?.start_time ?? '').toString().trim() || '',
+        end_date: apiDateToInputValue(request?.end_date) || '',
+        end_time: (request?.end_time ?? '').toString().trim() || '',
         serviceNote: request?.note ?? '',
         customerFirstName: cd?.first_name ?? '',
         customerLastName: cd?.last_name ?? '',
