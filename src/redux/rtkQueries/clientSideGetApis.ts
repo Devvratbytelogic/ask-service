@@ -18,6 +18,7 @@ import { IServiceRequestQuotesDetailAPIResponse } from '@/types/serviceReuestQuo
 import { ISingleServiceAPIResponse } from '@/types/singleService';
 import { IAllChatListAPIResponse } from '@/types/allChatList';
 import { IAllChatsMessagesAPIResponse } from '@/types/allChatsMessages';
+import { IAllTestimonialsAPIResponse } from '@/types/testimonial';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -209,6 +210,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorChats'],
         }),
+        getTestimonials: builder.query<IAllTestimonialsAPIResponse, void>({
+            query: () => ({
+                url: `/user/testimonials`,
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
@@ -242,4 +249,6 @@ export const {
     // Vendor Chat APIs
     useGetVendorChatsQuery,
     useGetVendorAllMessagesQuery,
+    // Testimonials APIs
+    useGetTestimonialsQuery,
 } = clientSideGetApis;
