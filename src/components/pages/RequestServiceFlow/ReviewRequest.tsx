@@ -57,7 +57,7 @@ const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, ch
 
   const summaryCards = [
     {
-      title: "Service et fréquence",
+      title: "Service et lieu",
       step: 1,
       rows: [
         ...(values.parentServiceName || grandParentServiceName
@@ -76,7 +76,7 @@ const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, ch
         }]
       : []),
     {
-      title: "Planning",
+      title: "Planning souhaité",
       step: 3,
       rows: [
         ...(values.serviceStartDate ? [{ label: "Date préférée:", value: formatDate(values.serviceStartDate) }] : []),
