@@ -1,60 +1,73 @@
-import React from 'react'
+'use client';
+
+import React, { useMemo, useState } from 'react';
 import { EditIconSVG, HeartIconSVG, SearchIconSVG } from '@/components/library/AllSVG';
 import { Input } from '@heroui/react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/appStore';
+import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
+import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
+import ImageComponent from '@/components/library/ImageComponent';
 
-
-const conversations = [
-    {
-        id: '1',
-        initial: 'P',
-        name: 'ProClean Services',
-        lastMessage: 'We also bring all our own equipment...',
-        status: 'Active now',
-        unread: 2,
-        isSelected: true,
-    },
-    {
-        id: '2',
-        initial: 'S',
-        name: 'Sparkle Home Care',
-        lastMessage: 'Marina is typing...',
-        status: 'typing',
-        unread: 0,
-        isSelected: false,
-    },
-    {
-        id: '3',
-        initial: 'E',
-        name: 'Elite Maids',
-        lastMessage: 'Sent a picture',
-        status: null,
-        unread: 0,
-        isSelected: false,
-    },
-    {
-        id: '4',
-        initial: 'F',
-        name: 'Fresh Start Cleaners',
-        lastMessage: 'Meet me before presentation...',
-        status: null,
-        unread: 0,
-        isSelected: false,
-    },
-    {
-        id: '5',
-        initial: 'C',
-        name: 'Crystal Clear',
-        lastMessage: 'How did you prepared...',
-        status: null,
-        unread: 0,
-        isSelected: false,
-    },
-];
-interface MessagesListProps {
-    onSelectConversation?: () => void;
+function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
+    return chat.users?.find((u) => !u.itsMe);
 }
 
-export default function MessagesList({ onSelectConversation }: MessagesListProps) {
+function getDisplayName(chat: IAllChatListData): string {
+    const u = getOtherUser(chat);
+    if (!u) return 'Unknown';
+    if (u.first_name && u.last_name) return `${u.first_name} ${u.last_name}`;
+    const first = (u.first_name ?? '').trim();
+    const last = (u.last_name ?? '').trim();
+    return [first, last].filter(Boolean).join(' ') || 'Unknown';
+}
+
+function getInitial(name: string): string {
+    return name.trim().charAt(0)?.toUpperCase() || 'U';
+}
+
+function getLastMessage(chat: IAllChatListData): string {
+    const latest = chat.latestMessage as { content?: string } | null | undefined;
+    return (latest && typeof latest?.content === 'string' ? latest.content : '') || 'No messages yet';
+}
+
+interface MessagesListProps {
+    onSelectConversation?: (chat: IAllChatListData) => void;
+    selectedChatId?: string | null;
+}
+
+export default function MessagesList({
+    onSelectConversation,
+    selectedChatId = null,
+}: MessagesListProps) {
+    const [search, setSearch] = useState('');
+    const role = useSelector((state: RootState) => state.auth.userRole);
+    const isVendor = (role ?? '').toLowerCase() === 'vendor';
+
+    const { data: userData, isLoading: userLoading, isError: userError } = useGetUserChatsQuery(
+        undefined,
+        { skip: isVendor }
+    );
+    const { data: vendorData, isLoading: vendorLoading, isError: vendorError } = useGetVendorChatsQuery(
+        undefined,
+        { skip: !isVendor }
+    );
+
+    const rawChats = isVendor ? vendorData?.data : userData?.data ?? null;
+    const chats = Array.isArray(rawChats) ? rawChats : [];
+    const isLoading = isVendor ? vendorLoading : userLoading;
+    const isError = isVendor ? vendorError : userError;
+
+    const filtered = useMemo(() => {
+        if (!search.trim()) return chats;
+        const q = search.trim().toLowerCase();
+        return chats.filter((c) => {
+            const name = getDisplayName(c).toLowerCase();
+            const msg = getLastMessage(c).toLowerCase();
+            return name.includes(q) || msg.includes(q);
+        });
+    }, [chats, search]);
+
     return (
         <>
             <div className="border-b border-borderColor p-3 md:p-4">
@@ -75,63 +88,84 @@ export default function MessagesList({ onSelectConversation }: MessagesListProps
                         >
                             <HeartIconSVG />
                         </button>
-                        {/* <button
-                            type="button"
-                            className="rounded p-1.5 text-darkSilver hover:bg-borderDark hover:text-fontBlack"
-                            aria-label="More"
-                        >
-                            <HorizontalDotsSVG />
-                        </button> */}
                     </div>
                 </div>
                 <div className="relative">
                     <Input
                         type="text"
-                        name="name"
+                        name="search"
                         variant="bordered"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                         classNames={{
-                            inputWrapper: ['custom_input_design shadow-none btn_radius px-3! border-borderColor!'],
+                            inputWrapper: [
+                                'custom_input_design shadow-none btn_radius px-3! border-borderColor!',
+                            ],
                         }}
                         placeholder="Search"
                         startContent={<SearchIconSVG />}
                     />
                 </div>
             </div>
+
             <div className="min-h-0 flex-1 overflow-y-auto">
-                {conversations.map((conv) => (
-                    <button
-                        key={conv.id}
-                        type="button"
-                        onClick={onSelectConversation}
-                        className={`flex items-center w-full cursor-pointer gap-3 px-3 py-3 md:px-4 text-left transition-colors hover:bg-borderDark/50 active:bg-borderDark/30 ${conv.isSelected ? 'bg-primaryColor/5' : ''
-                            }`}
-                    >
-                        <div className="relative shrink-0">
-                            <div className="flex size-12 items-center justify-center rounded-full bg-[#D1D5DC] text-base font-semibold text-white">
-                                {conv.initial}
-                            </div>
-                            {(conv.status === 'Active now' || conv.status === 'typing') && (
-                                <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-white bg-[#00A63E]" />
-                            )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                                <span className="text-sm truncate font-semibold text-fontBlack">
-                                    {conv.name}
-                                </span>
-                                {conv.unread > 0 && (
-                                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primaryColor text-xs font-medium text-white">
-                                        {conv.unread}
-                                    </span>
-                                )}
-                            </div>
-                            <p className="mt-0.5 truncate text-xs font-medium text-darkSilver">
-                                {conv.lastMessage}
-                            </p>
-                        </div>
-                    </button>
-                ))}
+                {isLoading && (
+                    <div className="flex items-center justify-center py-8 text-sm text-darkSilver">
+                        Loading conversations...
+                    </div>
+                )}
+                {isError && (
+                    <div className="px-4 py-6 text-sm text-red-600">
+                        Failed to load conversations.
+                    </div>
+                )}
+                {!isLoading && !isError && filtered.length === 0 && (
+                    <div className="px-4 py-8 text-center text-sm text-darkSilver">
+                        No conversations yet.
+                    </div>
+                )}
+                {!isLoading && !isError &&
+                    filtered.map((chat) => {
+                        const name = getDisplayName(chat);
+                        const profilePic = getOtherUser(chat)?.profile_pic ?? null;
+                        const unread = Number(chat.unreadCount ?? 0) || 0;
+                        return (
+                            <button
+                                key={chat._id}
+                                type="button"
+                                onClick={() => onSelectConversation?.(chat)}
+                                className={`flex w-full cursor-pointer items-center gap-3 px-3 py-3 text-left transition-colors hover:bg-borderDark/50 active:bg-borderDark/30 md:px-4 ${
+                                    selectedChatId === chat._id ? 'bg-primaryColor/5' : ''
+                                }`}
+                            >
+                                <div className="relative shrink-0">
+                                    <div className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] text-base font-semibold text-white">
+                                        {profilePic ? (
+                                            <ImageComponent url={profilePic} img_title={name} />
+                                        ) : (
+                                            getInitial(name)
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="truncate text-sm font-semibold text-fontBlack">
+                                            {name}
+                                        </span>
+                                        {unread > 0 && (
+                                            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primaryColor text-xs font-medium text-white">
+                                                {unread}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="mt-0.5 truncate text-xs font-medium text-darkSilver">
+                                        {getLastMessage(chat)}
+                                    </p>
+                                </div>
+                            </button>
+                        );
+                    })}
             </div>
         </>
-    )
+    );
 }

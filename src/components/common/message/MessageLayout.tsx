@@ -6,11 +6,20 @@ import ChatHeader from './ChatHeader';
 import DiscussionContextBar from './DiscussionContextBar';
 import MessagesChatBox from './MessagesChatBox';
 import { EmojiIconSVG, PaperClipIconSVG, PhotographIconSVG, SendIconSVG } from '@/components/library/AllSVG';
+import type { IAllChatListData } from '@/types/allChatList';
 
 export default function MessageLayout() {
   const [messageInput, setMessageInput] = useState('');
   // On mobile: show list or chat. On lg+: always show both
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [selectedChat, setSelectedChat] = useState<IAllChatListData | null>(null);
+
+  const handleSelectConversation = (chat: IAllChatListData) => {
+    setSelectedChat(chat);
+    setSelectedChatId(chat._id);
+    setMobileView('chat');
+  };
 
   return (
     <div className="relative flex h-full min-h-0 overflow-hidden bg-white">
@@ -23,7 +32,10 @@ export default function MessageLayout() {
           ${mobileView === 'list' ? 'flex' : 'hidden lg:flex'}
         `}
       >
-        <MessagesList onSelectConversation={() => setMobileView('chat')} />
+        <MessagesList
+          selectedChatId={selectedChatId}
+          onSelectConversation={handleSelectConversation}
+        />
       </aside>
 
       {/* Main chat area */}
@@ -36,17 +48,17 @@ export default function MessageLayout() {
       >
         {/* Chat header */}
         <header>
-          <ChatHeader onBack={() => setMobileView('list')} />
+          <ChatHeader selectedChat={selectedChat} onBack={() => setMobileView('list')} />
         </header>
 
         {/* Discussion context bar */}
         <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
-          <DiscussionContextBar />
+          <DiscussionContextBar selectedChat={selectedChat} />
         </div>
 
         {/* Messages - scrollable, leaves room for input */}
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6">
-          <MessagesChatBox />
+          <MessagesChatBox selectedChatId={selectedChatId} />
         </div>
 
         {/* Message input - always visible at bottom, compact on mobile */}

@@ -16,6 +16,8 @@ import type { IAllCreditsAPIResponse } from '@/types/allCredits';
 import { IServiceRequestQuotesAPIResponse } from '@/types/serviceRequestQuotes';
 import { IServiceRequestQuotesDetailAPIResponse } from '@/types/serviceReuestQuotesDetails';
 import { ISingleServiceAPIResponse } from '@/types/singleService';
+import { IAllChatListAPIResponse } from '@/types/allChatList';
+import { IAllChatsMessagesAPIResponse } from '@/types/allChatsMessages';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -178,6 +180,35 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['ServiceRequestQuotes'],
         }),
+
+        getUserChats: builder.query<IAllChatListAPIResponse, void>({
+            query: () => ({
+                url: `/user/fetch-chats`,
+                method: 'GET',
+            }),
+            providesTags: ['UserChats'],
+        }),
+        getUserAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string }>({
+            query: ({ chatId }) => ({
+                url: `/user/all-messages/${chatId}`,
+                method: 'GET',
+            }),
+            providesTags: ['UserChats'],
+        }),
+        getVendorChats: builder.query<IAllChatListAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/fetch-chats`,
+                method: 'GET',
+            }),
+            providesTags: ['VendorChats'],
+        }),
+        getVendorAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string }>({
+            query: ({ chatId }) => ({
+                url: `/vendor/all-messages/${chatId}`,
+                method: 'GET',
+            }),
+            providesTags: ['VendorChats'],
+        }),
     }),
 });
 
@@ -205,4 +236,10 @@ export const {
     useGetCreatedServicesQuery,
     useGetServiceRequestQuotesQuery,
     useGetServiceRequestQuotesDetailQuery,
+    // User Chat APIs
+    useGetUserChatsQuery,
+    useGetUserAllMessagesQuery,
+    // Vendor Chat APIs
+    useGetVendorChatsQuery,
+    useGetVendorAllMessagesQuery,
 } = clientSideGetApis;

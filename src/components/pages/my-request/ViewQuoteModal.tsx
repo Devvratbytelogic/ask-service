@@ -30,7 +30,8 @@ export default function ViewQuoteModal() {
 
     const request = apiData?.data?.request ?? null
     const handleClose = () => dispatch(closeModal())
-
+    // console.log ('apiData in view quote modal', apiData);
+    
     return (
         <>
             {/* Header */}
@@ -122,9 +123,9 @@ export default function ViewQuoteModal() {
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h3 className="font-bold text-base text-fontBlack">{quote?.provider_name}</h3>
                                     {quote?.status === 'IGNORED' && (
-                                    <span className="rounded-full bg-red-500 text-white text-xs font-medium px-2 py-0.5">
-                                        Ignored
-                                    </span>
+                                        <span className="rounded-full bg-red-500 text-white text-xs font-medium px-2 py-0.5">
+                                            Ignored
+                                        </span>
                                     )}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-sm text-darkSilver">
@@ -159,6 +160,7 @@ export default function ViewQuoteModal() {
                                                 data: {
                                                     requestId: request?._id,
                                                     quoteId: quote?._id ?? quote?._id,
+                                                    request,
                                                     quote: { ...quote, price: quote?.price, providerName: quote?.provider_name, rating: quote?.rating, reviews: quote?.reviews_count },
                                                 },
                                                 modalSize: '3xl',

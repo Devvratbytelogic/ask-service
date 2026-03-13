@@ -3,13 +3,14 @@
 import { BackArrowSVG, FileUploadIconSVG, StarRatingIconSVG } from '@/components/library/AllSVG'
 import { RootState } from '@/redux/appStore'
 import { useGetServiceRequestQuotesDetailQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
-import { closeModal } from '@/redux/slices/allModalSlice'
-import { Button, Spinner } from '@heroui/react'
+import { useIgnoreQuoteMutation, useUserAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
+import { closeModal, openModal } from '@/redux/slices/allModalSlice'
+import { addToast, Button, Spinner } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { HiOutlineArrowDownTray } from 'react-icons/hi2'
-import router from 'next/router'
-import { getVendorMessageRoutePath } from '@/routes/routes'
+import moment from 'moment'
+import { useRouter } from 'next/navigation'
+import { getMessageRoutePath } from '@/routes/routes'
 
 function formatQuoteDate(dateStr: string) {
     if (!dateStr) return '—'
@@ -28,17 +29,33 @@ function getValidUntilDate(availableStartDate: string, quoteValidDays: number | 
 
 export default function QuoteDetailModal() {
     const dispatch = useDispatch()
+    const router = useRouter()
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const requestId = modalData?.requestId ?? modalData?.request?._id ?? null
     const quoteId = modalData?.quoteId ?? modalData?.quote?._id ?? null
-
+    console.log('quoteId', quoteId);
     const { data: apiData, isLoading } = useGetServiceRequestQuotesDetailQuery(
         { requestId: requestId ?? '', quoteId: quoteId ?? '' },
         { skip: !requestId || !quoteId }
     )
+    console.log('apiData', apiData);
     const [ignoreQuote, { isLoading: isIgnoring }] = useIgnoreQuoteMutation()
+    const [userAccessChat, { isLoading: isAccessingChat }] = useUserAccessChatMutation()
 
-    const handleClose = () => dispatch(closeModal())
+    const handleClose = () => {
+        const request = modalData?.request
+        if (request) {
+            dispatch(openModal({
+                componentName: 'ViewQuoteModal',
+                data: { request },
+                modalSize: '3xl',
+                modalPadding: 'p-0!',
+                hideCloseButton: true,
+            }))
+        } else {
+            dispatch(closeModal())
+        }
+    }
 
     const handleIgnoreQuote = async () => {
         if (!requestId || !quoteId) return
@@ -50,10 +67,18 @@ export default function QuoteDetailModal() {
         }
     }
 
-    const handleChatWithVendor = () => {
-        // TODO: open chat
-        handleClose()
-        router.push(getVendorMessageRoutePath())
+    const handleChatWithVendor = async () => {
+        if (!requestId || !vendor._id) return addToast({ title: 'Error', description: 'Please try again later', color: 'danger' })
+        try {
+            await userAccessChat({
+                userId: vendor._id,
+                quote_id: quoteId ?? '',
+            }).unwrap()
+            dispatch(closeModal())
+            router.push(getMessageRoutePath())
+        } catch {
+            // Error handled by RTK Query / can add toast here
+        }
     }
 
     const handleDownloadPdf = () => {
@@ -83,7 +108,6 @@ export default function QuoteDetailModal() {
 
     const quote = apiData.data.quote
     const vendor = apiData.data.vendor
-
     return (
         <>
             {/* Header */}
@@ -140,7 +164,7 @@ export default function QuoteDetailModal() {
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
                         <p className="text-xs text-darkSilver">Availability</p>
-                        <p className="text-sm text-fontBlack mt-1">{quote.preferred_time_of_day}</p>
+                        <p className="text-sm text-fontBlack mt-1">{quote.available_start_date ? moment(quote.available_start_date).format('DD MMM YYYY') : '—'}</p>
                     </div>
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
                         <p className="text-xs text-darkSilver">Quote valid for</p>
@@ -180,6 +204,8 @@ export default function QuoteDetailModal() {
                 </Button>
                 <Button
                     onPress={handleChatWithVendor}
+                    isDisabled={isAccessingChat}
+                    isLoading={isAccessingChat}
                     className="btn_radius btn_bg_blue w-full"
                 >
                     Chat with vendor

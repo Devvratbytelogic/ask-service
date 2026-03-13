@@ -17,7 +17,7 @@ export default function AppProviders({ children }: ProvidersProps) {
       <HeroUIProvider>
         <ToastProvider placement="top-right" />
         <NextTopLoader />
-        <InactivityLogout />
+        {/* <InactivityLogout /> */}
         {children}
         <CommonModal />
       </HeroUIProvider>

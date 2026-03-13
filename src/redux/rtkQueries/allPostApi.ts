@@ -153,6 +153,41 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorTransactions', 'VendorDashboard'],
     }),
+    // User Chat APIs
+    userSendMessage: builder.mutation({
+      query: (body) => ({
+        url: `/user/send-msg`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['UserChats'],
+    }),
+    userAccessChat: builder.mutation({
+      query: (body) => ({
+        url: `/user/access-chat`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['UserChats'],
+    }),
+
+    // Vendor Chat APIs
+    vendorSendMessage: builder.mutation({
+      query: (body) => ({
+        url: `/vendor/send-msg`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['VendorChats'],
+    }),
+    vendorAccessChat: builder.mutation({
+      query: (body) => ({
+        url: `/vendor/access-chat`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['VendorChats'],
+    }),
   }),
 });
 
@@ -177,4 +212,10 @@ export const {
   useIgnoreQuoteMutation,
   usePostContactUsMutation,
   usePurchaseCreditsMutation,
+  // User Chat APIs
+  useUserSendMessageMutation,
+  useUserAccessChatMutation,
+  // Vendor Chat APIs
+  useVendorSendMessageMutation,
+  useVendorAccessChatMutation,
 } = postApi;
