@@ -39,16 +39,16 @@ export default function UnlockLeadConfirmModal() {
     return (
         <>
             <div className="p-4 px-6 border-b border-borderDark space-y-4">
-                <h2 className="font-bold text-xl text-fontBlack">Unlock this lead?</h2>
+                <h2 className="font-bold text-xl text-fontBlack">Débloquer ce prospect?</h2>
                 <p className="text-sm text-darkSilver">
-                    This will use <span className="font-semibold text-fontBlack">{creditsToUnlock} credits</span> from your balance to unlock the full lead details. This action cannot be undone.
+                    Cette action utilisera <span className="font-semibold text-fontBlack">{creditsToUnlock} crédits</span> pour accéder aux détails complets de la demande. Cette action est irréversible.
                 </p>
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-primaryColor/5 border border-primaryColor/20">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primaryColor/10">
                         <LockPrimaryColorSVG className="size-5 text-primaryColor" />
                     </span>
                     <p className="text-sm text-fontBlack">
-                        You will get access to full contact details and can send a quote to the customer.
+                        Vous aurez accès aux coordonnées complètes du client et pourrez lui envoyer un devis.
                     </p>
                 </div>
             </div>
@@ -59,7 +59,7 @@ export default function UnlockLeadConfirmModal() {
                     className="btn_radius btn_bg_white"
                     isDisabled={isLoading}
                 >
-                    Cancel
+                    Annuler
                 </Button>
                 <Button
                     onPress={handleConfirm}
@@ -69,7 +69,7 @@ export default function UnlockLeadConfirmModal() {
                     spinner={<Spinner size="sm" color="white" />}
                     isDisabled={!leadId}
                 >
-                    Unlock Lead
+                    Débloquer le prospect
                 </Button>
             </div>
         </>

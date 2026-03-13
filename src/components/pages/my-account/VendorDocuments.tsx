@@ -249,7 +249,7 @@ export default function VendorDocuments() {
           </div>
         )}
 
-        <SupportAlert title="Need help with document verification?" content={`If you have questions about document requirements or need assistance, please contact our vendor support team.`} />
+        <SupportAlert title="Besoin d'aide pour la vérification des documents ?" content="Si vous avez des questions sur les documents requis ou si vous avez besoin d'assistance, contactez notre support prestataire." />
       </div>
       )}
       

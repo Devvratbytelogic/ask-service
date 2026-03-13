@@ -18,9 +18,9 @@ export default function VendorAllQuotes() {
             <div className="space-y-8">
                 <div className="space-y-4">
                     <div>
-                        <h2 className="header_text_md text-fontBlack">All Quotes</h2>
+                        <h2 className="header_text_md text-fontBlack">Mes Devis</h2>
                         <p className="text-sm text-darkSilver mt-1">
-                            {isLoading ? 'Loading…' : `${quotes.length} quote${quotes.length !== 1 ? 's' : ''} sent • View and manage below`}
+                            {isLoading ? 'Chargement…' : `${quotes.length} devis envoyés • Consultez et gérez ci-dessous`}
                         </p>
                     </div>
     
@@ -36,10 +36,10 @@ export default function VendorAllQuotes() {
                                     <DocumentArrowIconSVG className="size-12 text-[#9C27B0]/50" />
                                 </div>
                                 <p className="text-darkSilver">
-                                    You haven&apos;t sent any quotes yet. Unlock leads and submit quotes to see them here.
+                                    Vous n'avez encore envoyé de devis. Débloquez des prospects et envoyez vos devis.
                                 </p>
                                 <Link href="/vendor/dashboard" className="inline-block mt-3 text-sm font-medium text-[#9C27B0] hover:underline">
-                                    Go to dashboard →
+                                    Retour au tableau de bord →
                                 </Link>
                             </div>
                         )}
@@ -50,8 +50,8 @@ export default function VendorAllQuotes() {
                 </div>
     
                 <SupportAlert
-                    title="Need help?"
-                    content="Contact vendor support for assistance with quotes or your account"
+                    title="Besoin d'aide ?"
+                    content="Contactez le support prestataire si vous avez besoin d'aide avec vos devis ou votre compte."
                 />
             </div>
         </>

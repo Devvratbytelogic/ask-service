@@ -71,7 +71,7 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                             onPress={handleUnlockClick}
                             isDisabled={!canPurchaseLeads}
                         >
-                            Unlock Lead
+                            Débloquer le prospect
                         </Button>
                     </div>
                 )}

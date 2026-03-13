@@ -51,47 +51,47 @@ const notificationItems: {
     }[]
 }[] = [
         {
-            category: 'Email Notifications',
+            category: 'Notifications par email',
             items: [
                 {
                     key: 'email_new_quotes',
-                    title: 'New Quotes',
-                    description: 'Get notified when you receive new quotes',
+                    title: 'Nouveaux devis',
+                    description: 'Recevoir une notification lorsque vous recevez de nouveaux devis',
                 },
                 {
                     key: 'email_messages',
                     title: 'Messages',
-                    description: 'Get notified when you receive new messages',
+                    description: 'Recevoir une notification lorsque vous recevez de nouveaux messages',
                 },
                 {
                     key: 'email_product_updates',
-                    title: 'Product Updates',
-                    description: 'Get notified about new features and updates',
+                    title: 'Mises à jour de la plateforme',
+                    description: 'Recevoir des notifications sur les nouvelles fonctionnalités et les mises à jour',
                 },
             ],
         },
         {
-            category: 'Push Notifications',
+            category: 'Notifications push',
             items: [
                 {
                     key: 'push_new_quotes',
-                    title: 'New Quotes',
-                    description: 'Browser notifications for new quotes',
+                    title: 'Nouveaux devis',
+                    description: 'Notifications du navigateur pour les nouveaux devis',
                 },
                 {
                     key: 'push_messages',
                     title: 'Messages',
-                    description: 'Browser notifications for new messages',
+                    description: 'Notifications du navigateur pour les nouveaux messages',
                 },
             ],
         },
         {
-            category: 'SMS Notifications',
+            category: 'Notifications par SMS',
             items: [
                 {
                     key: 'sms_important_updates',
-                    title: 'Important Updates',
-                    description: 'SMS for critical account activity',
+                    title: 'Mises à jour importantes',
+                    description: 'SMS pour les activités importantes du compte',
                 },
             ],
         },
@@ -191,19 +191,19 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
         return (
             <>
                 <h2 className="mb-6 text-lg font-bold text-fontBlack">
-                    Notification Preferences
+                    Paramètres de notification
                 </h2>
 
                 <div className="space-y-8">
                     <div>
-                        <h3 className="mb-4 font-bold text-fontBlack">Email Notifications</h3>
+                        <h3 className="mb-4 font-bold text-fontBlack">Notifications par email</h3>
                         <div className="space-y-2">
                             {[
-                                { key: 'new_leads_available' as const, title: 'New leads available', description: 'Get notified when new leads are available' },
-                                { key: 'quote_accepted' as const, title: 'Quote accepted', description: 'Get notified when a quote is accepted' },
-                                { key: 'messages' as const, title: 'Messages', description: 'Get notified about new messages' },
-                                { key: 'low_credit_balance' as const, title: 'Low credit balance', description: 'Get notified when your credit balance is low' },
-                                { key: 'platform_updates' as const, title: 'Platform updates', description: 'Get notified about platform news and updates' },
+                                { key: 'new_leads_available' as const, title: 'Nouveaux prospects disponibles', description: 'Recevoir une notification lorsque de nouveaux prospects sont disponibles' },
+                                { key: 'quote_accepted' as const, title: 'Devis accepté', description: 'Recevoir une notification lorsqu\'un devis est accepté' },
+                                { key: 'messages' as const, title: 'Messages', description: 'Recevoir une notification pour les nouveaux messages' },
+                                { key: 'low_credit_balance' as const, title: 'Solde de crédits faible', description: 'Recevoir une notification lorsque votre solde de crédits est faible' },
+                                { key: 'platform_updates' as const, title: 'Mises à jour de la plateforme', description: 'Recevoir des notifications sur les nouveautés et les mises à jour de la plateforme' },
                             ].map((item) => (
                                 <div
                                     key={item.key}
@@ -224,12 +224,12 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                         </div>
                     </div>
                     <div>
-                        <h3 className="mb-4 font-bold text-fontBlack">Push Notifications</h3>
+                        <h3 className="mb-4 font-bold text-fontBlack">Notifications push</h3>
                         <div className="space-y-2">
                             {[
-                                { key: 'new_leads' as const, title: 'New leads', description: 'Browser notifications for new leads' },
-                                { key: 'messages' as const, title: 'Messages', description: 'Browser notifications for messages' },
-                                { key: 'low_credits' as const, title: 'Low credits', description: 'Get notified when credits are low' },
+                                { key: 'new_leads' as const, title: 'Nouveaux prospects', description: 'Notifications du navigateur pour les nouveaux prospects' },
+                                { key: 'messages' as const, title: 'Messages', description: 'Notifications du navigateur pour les nouveaux messages' },
+                                { key: 'low_credits' as const, title: 'Crédits faibles', description: 'Recevoir une notification lorsque votre solde de crédits est faible' },
                             ].map((item) => (
                                 <div
                                     key={item.key}
@@ -250,12 +250,12 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                         </div>
                     </div>
                     <div>
-                        <h3 className="mb-4 font-bold text-fontBlack">SMS Notifications</h3>
+                        <h3 className="mb-4 font-bold text-fontBlack">Notifications par SMS</h3>
                         <div className="space-y-2">
                             <div className="border border-borderDark rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4">
                                 <div className="flex-1">
-                                    <p className="font-medium text-fontBlack">Important updates</p>
-                                    <p className="mt-0.5 text-sm text-darkSilver">SMS for critical account activity</p>
+                                    <p className="font-medium text-fontBlack">Mises à jour importantes</p>
+                                    <p className="mt-0.5 text-sm text-darkSilver">SMS pour les activités importantes du compte</p>
                                 </div>
                                 <Switch
                                     size="sm"
@@ -275,7 +275,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                         isLoading={isSavingVendor}
                         isDisabled={isSavingVendor}
                     >
-                        Save Preference
+                        Enregistrer les préférences
                     </Button>
                 </div>
             </>
@@ -285,7 +285,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
     return (
         <>
             <h2 className="mb-6 text-lg font-bold text-fontBlack">
-                Notification Preferences
+                Paramètres de notification
             </h2>
 
             <div className="space-y-8">
@@ -326,7 +326,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                     isLoading={isSavingUser}
                     isDisabled={isSavingUser}
                 >
-                    Save Preference
+                    Enregistrer les préférences
                 </Button>
             </div>
         </>

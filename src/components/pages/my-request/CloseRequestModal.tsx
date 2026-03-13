@@ -141,7 +141,7 @@ export default function CloseRequestModal() {
                     onPress={handleCancel}
                     className="btn_radius btn_bg_white w-full"
                 >
-                    Cancel
+                    Annuler
                 </Button>
                 <Button
                     onPress={handleCloseRequest}

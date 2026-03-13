@@ -3,7 +3,7 @@ export default function VendorSupportPage() {
     <div className="body_x_axis_padding min-h-screen flex flex-col items-center justify-center py-16">
       <div className="text-center max-w-md">
         <h1 className="header_text_md text-fontBlack mb-2">
-          Support <span className="text-darkSilver">Centre</span>
+          Assistance
         </h1>
         <p className="text-lg text-[#4A5565] mb-8">
           We&apos;re building something helpful. Check back soon.

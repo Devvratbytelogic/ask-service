@@ -79,7 +79,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
 
     return (
         <>
-            <h2 className="mb-6 text-lg font-bold text-fontBlack">Security Settings</h2>
+            <h2 className="mb-6 text-lg font-bold text-fontBlack">Paramètres de sécurité</h2>
 
             <div className="space-y-4">
                 {/* Password Card */}
@@ -90,16 +90,16 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 <LockPrimaryColorSVG />
                             </div>
                             <div>
-                                <h3 className="font-bold text-fontBlack">Password</h3>
+                                <h3 className="font-bold text-fontBlack">Mot de passe</h3>
                                 <p className="mt-0.5 text-sm text-darkSilver">
-                                    Last changed 3 months ago
+                                    Modifié il y a 3 mois
                                 </p>
                             </div>
                         </div>
                         {!isChangingPassword ? (
-                            <Button className='btn_radius btn_bg_white' onPress={() => setIsChangingPassword(true)} >Change Password</Button>
+                            <Button className='btn_radius btn_bg_white' onPress={() => setIsChangingPassword(true)} >Changer le mot de passe</Button>
                         ) : (
-                            <Button className="btn_radius btn_bg_white shrink-0" onPress={() => setIsChangingPassword(false)}>Cancel</Button>
+                            <Button className="btn_radius btn_bg_white shrink-0" onPress={() => setIsChangingPassword(false)}>Annuler</Button>
                         )}
                     </div>
 
@@ -179,9 +179,9 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 <DeleteIconSVG />
                             </div>
                             <div>
-                                <h3 className="font-bold text-fontBlack">Delete Account</h3>
+                                <h3 className="font-bold text-fontBlack">Supprimer le compte</h3>
                                 <p className="mt-0.5 text-sm text-darkSilver">
-                                    Permanently delete your account and data
+                                    Cette action est permanente et supprimera définitivement votre compte et toutes vos données.
                                 </p>
                             </div>
                         </div>
@@ -191,7 +191,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                             isLoading={isDeleting}
                             isDisabled={isDeleting}
                         >
-                            Delete
+                            Supprimer
                         </Button>
                     </div>
                 </div>

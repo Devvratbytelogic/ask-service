@@ -110,7 +110,7 @@ const ServiceAndLocation = ({ formik, setStepCount, grandParentServiceName, isFr
             <Input
               name="pincode"
               variant="bordered"
-              label="Postal Code"
+              label="Code Postal"
               labelPlacement="outside"
               placeholder="Entrez votre code postal"
               value={values.pincode}

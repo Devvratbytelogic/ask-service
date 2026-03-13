@@ -74,7 +74,7 @@ const Header = () => {
                             href={getMyRequestRoutePath()}
                             className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                         >
-                            My Requests
+                            Mes demandes
                         </Link>
                         <Link
                             href={getVendorMessageRoutePath()}
@@ -129,7 +129,7 @@ const Header = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="User menu">
-                                <DropdownItem key="my-requests" href={getMyRequestRoutePath()}>My Requests</DropdownItem>
+                                <DropdownItem key="my-requests" href={getMyRequestRoutePath()}>Mes demandes</DropdownItem>
                                 <DropdownItem key="messages" href={getVendorMessageRoutePath()}>Messages</DropdownItem>
                                 <DropdownItem key="profile">Profile</DropdownItem>
                                 <DropdownItem key="logout" color="danger">Log out</DropdownItem>

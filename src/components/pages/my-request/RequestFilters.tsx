@@ -21,7 +21,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const serviceCategories = serviceCategoriesData?.data ?? []
     const serviceFilterItems = [
-        { key: 'all', label: 'All Services' },
+        { key: 'all', label: 'Tous les services' },
         ...serviceCategories.map((cat) => ({ key: cat._id, label: cat.title }))
     ]
     return (
@@ -50,7 +50,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                             className="btn_radius capitalize text-base bg-white! border-1 border-borderDark h-12! w-full shadow-none"
                             endContent={<MdKeyboardArrowDown className="text-xl text-fontBlack ml-10" />}
                         >
-                            {serviceFilterItems.find(item => item.key === serviceFilter)?.label ?? 'All Services'}
+                            {serviceFilterItems.find(item => item.key === serviceFilter)?.label ?? 'Tous les services'}
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu

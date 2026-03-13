@@ -78,17 +78,16 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
 
     return (
         <div className="rounded-2xl border border-borderDark bg-white p-5 mt-4">
-            <h3 className="font-bold text-xl text-fontBlack mb-4">Submit Your Quote</h3>
+            <h3 className="font-bold text-xl text-fontBlack mb-4">Envoyer un devis</h3>
 
             {/* Info box */}
             <div className="flex gap-3 p-4 rounded-xl bg-[#E8F4FD] border border-[#BEDBFF] mb-6">
                 <InfoBlueIconSVG />
 
                 <div>
-                    <p className="font-bold text-fontBlack text-sm">Make your quote competitive</p>
+                    <p className="font-bold text-fontBlack text-sm">Conseils pour remporter la mission</p>
                     <p className="text-xs text-darkSilver mt-0.5">
-                        Be clear, detailed, and professional. The customer will compare multiple
-                        quotes.
+                        Soyez clair sur ce qui est inclus dans le prix. Présentez votre expérience et vos qualifications. Répondez aux exigences spécifiques mentionnées. Proposez un prix compétitif tout en restant juste.
                     </p>
                 </div>
             </div>
@@ -216,7 +215,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         onPress={onCancel}
                         isDisabled={isLoading}
                     >
-                        Cancel
+                        Annuler
                     </Button>
                     <Button
                         type="submit"
@@ -224,7 +223,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         isLoading={isLoading}
                         isDisabled={isLoading}
                     >
-                        Submit Quote
+                        Envoyer un devis
                     </Button>
                 </div>
             </form>

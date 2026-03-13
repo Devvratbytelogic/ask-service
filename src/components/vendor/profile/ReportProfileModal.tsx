@@ -103,7 +103,7 @@ export default function ReportProfileModal() {
                     onPress={handleCancel}
                     className="btn_radius min-w-25 border border-[#E5E7EB] bg-white text-fontBlack font-medium"
                 >
-                    Cancel
+                    Annuler
                 </Button>
                 <Button
                     onPress={handleSubmit}

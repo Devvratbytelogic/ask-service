@@ -218,12 +218,12 @@ export default function VendorProfileInfo() {
                         className="btn_radius btn_bg_blue px-6"
                         onPress={() => setIsEditing(true)}
                     >
-                        Edit Profile
+                        Modifier le profil
                     </Button>
                 ) : (
                     <div className="flex shrink-0 gap-2">
                         <Button className="btn_radius btn_bg_white px-6" onPress={handleCancel}>
-                            Cancel
+                            Annuler
                         </Button>
                         <Button
                             className="btn_radius btn_bg_blue px-6"
@@ -286,7 +286,7 @@ export default function VendorProfileInfo() {
                     {memberSinceDate && (
                         <p className={`mt-0.5 text-xs text-darkSilver ${hasBusinessDetails ? 'flex items-center gap-1.5' : ''}`}>
                             {hasBusinessDetails && <CheckGreenIconSVG />}
-                            {hasBusinessDetails ? 'Verified Vendor since ' : 'Member since '}
+                            {hasBusinessDetails ? 'Inscrit depuis ' : 'Inscrit depuis '}
                             {memberSinceDate}
                         </p>
                     )}
@@ -297,7 +297,7 @@ export default function VendorProfileInfo() {
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Business Name
+                        Nom de l'entreprise
                     </label>
                     <Input
                         name="businessName"
@@ -317,7 +317,7 @@ export default function VendorProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Owner Name
+                            Nom du propriétaire
                         </label>
                         <Input
                             name="ownerName"
@@ -333,7 +333,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Service Category
+                            Type de service
                         </label>
                         <Input
                             name="serviceCategory"
@@ -353,7 +353,7 @@ export default function VendorProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Email Address
+                            Adresse email
                         </label>
                         <Input
                             name="email"
@@ -369,7 +369,7 @@ export default function VendorProfileInfo() {
                             endContent={
                                 !profileData?.is_email_verified && isEditing ? (
                                     <Button size="sm" className="btn_radius btn_outline_blue">
-                                        Verify
+                                        Vérifier
                                     </Button>
                                 ) : undefined
                             }
@@ -378,7 +378,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Phone Number
+                            Numéro de téléphone
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
@@ -417,7 +417,7 @@ export default function VendorProfileInfo() {
                 {/* Business Address - full width */}
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Business Address
+                        Adresse de l'entreprise
                     </label>
                     <Input
                         name="businessAddress"
@@ -432,11 +432,11 @@ export default function VendorProfileInfo() {
                     />
                 </div>
 
-                {/* Postcode | City */}
+                {/* Code Postal | City */}
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Postcode
+                            Code Postal
                         </label>
                         <Input
                             name="postcode"
@@ -451,7 +451,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            City
+                            Ville
                         </label>
                         <Input
                             name="city"
@@ -481,7 +481,7 @@ export default function VendorProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            VAT Number
+                            Numéro de TVA
                         </label>
                         <Input
                             name="vatNumber"
@@ -497,7 +497,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Company Registration Number
+                            Numéro d'immatriculation de l'entreprise
                         </label>
                         <Input
                             name="companyRegistrationNumber"

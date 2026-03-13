@@ -179,14 +179,14 @@ export default function ProfileInfo() {
         <>
             {/* Section header with actions */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-lg font-bold text-fontBlack">Profile Information</h2>
+                <h2 className="text-lg font-bold text-fontBlack">Informations du profil</h2>
                 {!isEditing ? (
                     <Button className="btn_radius btn_bg_blue px-6" onPress={() => setIsEditing(true)}>
                         Edit Profile
                     </Button>
                 ) : (
                     <div className="flex shrink-0 gap-2">
-                        <Button className="btn_radius btn_bg_white px-6" onPress={() => { resetForm(); setProfilePicFile(null); setIsEditing(false) }}>Cancel</Button>
+                        <Button className="btn_radius btn_bg_white px-6" onPress={() => { resetForm(); setProfilePicFile(null); setIsEditing(false) }}>Annuler</Button>
                         <Button
                             className="btn_radius btn_bg_blue"
                             isLoading={isUpdating}
@@ -241,7 +241,7 @@ export default function ProfileInfo() {
                     <p className="text-sm text-darkSilver">{profileData?.email ?? '—'}</p>
                     {profileData?.createdAt && (
                         <p className="mt-0.5 text-xs text-darkSilver">
-                            Member since {new Date(profileData.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                            Inscrit depuis {new Date(profileData.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
                         </p>
                     )}
                 </div>
@@ -252,7 +252,7 @@ export default function ProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            First Name
+                            Prénom
                         </label>
                         <Input
                             name="firstName"
@@ -269,7 +269,7 @@ export default function ProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Last Name
+                            Nom
                         </label>
                         <Input
                             name="lastName"
@@ -289,7 +289,7 @@ export default function ProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Email Address
+                            Adresse email
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
@@ -316,7 +316,7 @@ export default function ProfileInfo() {
                                     isLoading={isResendingEmail}
                                     isDisabled={isResendingEmail}
                                 >
-                                    Verify
+                                    Vérifier
                                 </Button>
                             )}
                         </div>
@@ -326,7 +326,7 @@ export default function ProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Phone Number
+                            Numéro de téléphone
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
@@ -352,7 +352,7 @@ export default function ProfileInfo() {
                             </div>
                             {profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
-                                    Verify
+                                    Vérifier
                                 </Button>
                             )}
                         </div>
@@ -384,7 +384,7 @@ export default function ProfileInfo() {
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Postcode
+                            Code Postal
                         </label>
                         <Input
                             name="postcode"
@@ -401,7 +401,7 @@ export default function ProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            City
+                            Ville
                         </label>
                         <Input
                             name="city"
