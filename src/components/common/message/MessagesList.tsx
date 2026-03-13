@@ -139,7 +139,7 @@ export default function MessagesList({
                                 }`}
                             >
                                 <div className="relative shrink-0">
-                                    <div className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] text-base font-semibold text-white">
+                                    <div className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] border border-borderColor text-base font-semibold text-white">
                                         {profilePic ? (
                                             <ImageComponent url={profilePic} img_title={name} />
                                         ) : (

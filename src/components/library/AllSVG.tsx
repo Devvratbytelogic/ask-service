@@ -459,28 +459,28 @@ export function LockGreenIconSVG({ className }: { className?: string }) {
 export function LockOpenGreenIconSVG({ className }: { className?: string }) {
     return (
         <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-    >
-      <path
-        d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M17 11V7C17 5.67392 16.4732 4.40215 15.5355 3.46447C14.5979 2.52678 13.3261 2 12 2C10.6739 2 9.40215 2.52678 8.46447 3.46447"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            className={className}
+        >
+            <path
+                d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M17 11V7C17 5.67392 16.4732 4.40215 15.5355 3.46447C14.5979 2.52678 13.3261 2 12 2C10.6739 2 9.40215 2.52678 8.46447 3.46447"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
     )
 }
 export function CreditCardIconSVG({ className }: { className?: string }) {
@@ -676,6 +676,19 @@ export function ServiceProviderIconSVG() {
             <path d="M15.6045 21.3851C15.6279 21.3861 15.6498 21.3927 15.673 21.3948C16.0332 21.4264 16.3543 21.5843 16.6004 21.8306C16.6062 21.8366 16.6134 21.8409 16.6192 21.8469L17.9103 18.2834C17.5811 18.128 17.2415 17.9778 16.8947 17.8311L15.6045 21.3851Z" fill="black" />
             <path d="M23.0627 23.9487C22.6381 21.3517 20.8738 19.7931 18.5122 18.5801L17.0483 22.6205C17.242 23.1963 17.6987 23.638 18.2883 23.8072C18.9814 24.0086 19.4463 24.6019 19.4463 25.2834V26.233C20.6403 25.6789 21.798 25.0212 22.916 24.2821C23.0271 24.2065 23.0849 24.0776 23.0627 23.9487Z" fill="black" />
             <path d="M6.01371 22.6229L4.56449 18.5771C2.23105 19.7799 0.429941 21.3513 0.00472771 23.9491C-0.0174901 24.078 0.0402923 24.2024 0.142506 24.278C1.2559 25.0466 2.41567 25.7222 3.61668 26.2858V25.2881C3.61668 24.604 4.08152 24.009 4.77336 23.808C5.35333 23.6404 5.81948 23.1895 6.01371 22.6229Z" fill="black" />
+        </svg>
+    )
+}
+export function MessageIconSVG() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="size-12 md:size-14"
+            aria-hidden
+        >
+            <path d="M1.998 5.5a2.5 2.5 0 0 1 2.5-2.5h15a2.5 2.5 0 0 1 2.5 2.5v13a2.5 2.5 0 0 1-2.5 2.5h-15a2.5 2.5 0 0 1-2.5-2.5v-13Zm2.5-.5a.5.5 0 0 0-.5.5v2.764l8 3.638 8-3.636V5.5a.5.5 0 0 0-.5-.5h-15Zm15.5 5.463-8 3.636-8-3.638V18.5a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-8.037Z" />
         </svg>
     )
 }

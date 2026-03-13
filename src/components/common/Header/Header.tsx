@@ -71,8 +71,8 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
     // console.log("refetchVendorProfile", refetchVendorProfile);
     // console.log("refetchUserProfile", refetchUserProfile);
-    const firstName = profile?.first_name;
-    const lastName = profile?.last_name;
+    const firstName = isVendor ? vendorProfile?.data?.business_name : profile?.first_name;
+    const lastName = isVendor ? null : profile?.last_name;
     const email = profile?.email;
     const profilePic = typeof profile?.profile_pic === 'string' && profile.profile_pic.trim() ? profile.profile_pic : null;
     const displayName = getDisplayName(firstName, lastName, email);

@@ -13,11 +13,11 @@ export interface IAllChatListData {
   users?: (UsersEntity)[] | null;
   groupAdmin?: (null)[] | null;
   quote_id?: QuoteId | null;
-  unreadCounts?: (null)[] | null;
+  unreadCounts?: (UnreadCountsEntity | null)[] | null;
   createdAt: string;
   updatedAt: string;
   __v: number;
-  latestMessage?: null;
+  latestMessage?: LatestMessage | null;
   unreadCount: number;
 }
 export interface UsersEntity {
@@ -41,7 +41,7 @@ export interface Role {
 export interface QuoteId {
   _id: string;
   vendor_id: string;
-  service_request_id: string;
+  service_request_id: ServiceRequestId;
   quote_price: number;
   currency: string;
   service_description: string;
@@ -55,4 +55,65 @@ export interface QuoteId {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+export interface ServiceRequestId {
+  _id: string;
+  reference_no: string;
+  user: string;
+  service_category: string;
+  child_category: string;
+  manual_child_category?: null;
+  frequency: string;
+  selected_options?: (null)[] | null;
+  preferred_start_date?: null;
+  preferred_time_of_day?: null;
+  start_date: string;
+  start_time: string;
+  end_date: string;
+  end_time: string;
+  note: string;
+  address_1: string;
+  address_2: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+  contact_details: ContactDetails;
+  status: string;
+  deletedAt?: null;
+  reason?: null;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+export interface ContactDetails {
+  first_name: string;
+  last_name: string;
+  client_type: string;
+  phone: string;
+  email: string;
+}
+export interface UnreadCountsEntity {
+  user: string;
+  count: number;
+  _id: string;
+}
+export interface LatestMessage {
+  _id: string;
+  sender: Sender;
+  content: string;
+  chat: string;
+  type: string;
+  readBy?: (null)[] | null;
+  reactions?: (null)[] | null;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+export interface Sender {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  profile_pic: string;
+  id: string;
 }
