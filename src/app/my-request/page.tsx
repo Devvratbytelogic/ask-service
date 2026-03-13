@@ -12,7 +12,7 @@ export default function MyRequestPage() {
                 <p className='text-lightBlack'>Gérez et suivez vos demandes de service</p>
             </div>
             <div className="flex flex-col lg:flex-row gap-6">
-                <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24 z-50">
+                <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24 z-40">
                     <AccountSidebar navItems={customerNavItems} />
                 </aside>
                 <section className="relative flex-1 min-w-0">

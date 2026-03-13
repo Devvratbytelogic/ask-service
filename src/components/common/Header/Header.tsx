@@ -152,7 +152,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         return (
             <>
 
-                <header className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-10 bg-white border-b border-borderDark`} id="main_navbar">
+                <header className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-50 bg-white border-b border-borderDark`} id="main_navbar">
                     <div className="flex items-center justify-between py-2">
                         <Link href={getHomeRoutePath()} className="flex items-center gap-2 shrink-0">
                             <span className="h-9 w-9 rounded-full bg-primaryColor flex items-center justify-center shrink-0">
