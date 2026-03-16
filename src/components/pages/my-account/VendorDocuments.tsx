@@ -34,6 +34,20 @@ const formatFileSize = (bytes: number) => {
   return `${mb.toFixed(2)} MB`
 }
 
+function formatUploadedOn(isoDate: string): string {
+  try {
+    const d = new Date(isoDate)
+    const day = String(d.getDate()).padStart(2, '0')
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const year = d.getFullYear()
+    const hours = String(d.getHours()).padStart(2, '0')
+    const minutes = String(d.getMinutes()).padStart(2, '0')
+    return `Téléchargé le ${day}/${month}/${year} à ${hours}:${minutes}`
+  } catch {
+    return `Téléchargé le ${isoDate}`
+  }
+}
+
 function mapApiStatusToDocStatus(status: string): DocStatus {
   const s = (status || '').toLowerCase()
   if (s === 'verified' || s === 'approved') return 'verified'
@@ -68,7 +82,7 @@ function StatusBadge({ status }: { status: DocStatus }) {
     return (
       <span className="flex items-center gap-1.5 text-sm font-medium text-[#008236] rounded-full px-3 py-1 bg-[#F0FDF4]">
         <CheckGreenIconSVG />
-        Verified
+        Vérifié
       </span>
     )
   }
@@ -76,14 +90,14 @@ function StatusBadge({ status }: { status: DocStatus }) {
     return (
       <span className="flex items-center gap-1.5 text-sm font-medium text-[#EFB261] rounded-full px-3 py-1 bg-[#FFFBEB]">
         <VerificationPendingIconSVG />
-        Verification pending
+        Vérification en attente
       </span>
     )
   }
   return (
     <span className="flex items-center gap-1.5 text-sm font-medium text-[#E7000B] rounded-full px-3 py-1 bg-[#FEF2F2]">
       <ActionRequiredIconSVG />
-      Action Required
+      Action requise
     </span>
   )
 }
@@ -143,14 +157,14 @@ export default function VendorDocuments() {
   return (
     <>
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-fontBlack">Verification Documents</h2>
+        <h2 className="text-lg font-bold text-fontBlack">Vérification des documents</h2>
         <p className="mt-1 text-sm text-darkSilver">
-          Manage your uploaded documents and verification status
+          Gérez vos documents et leur statut de vérification
         </p>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-darkSilver">Loading documents...</p>
+        <p className="text-sm text-darkSilver">Chargement des documents...</p>
       ) : (
         <div className="space-y-4">
           {documents && documents.length > 0 ? documents.map((doc) => (
@@ -172,7 +186,7 @@ export default function VendorDocuments() {
                   )}
                   {doc.uploadedOn && doc.status !== 'action_required' && (
                     <p className="mt-1 text-xs text-darkSilver">
-                      Uploaded on {doc.uploadedOn}
+                      {formatUploadedOn(doc.uploadedOn)}
                     </p>
                   )}
                 </div>
@@ -213,7 +227,7 @@ export default function VendorDocuments() {
                       }}
                       isDisabled={!doc.downloadUrl}
                     >
-                      Download
+                      Télécharger
                     </Button>
                   </div>
                 </div>

@@ -25,16 +25,16 @@ interface PaymentRecord {
 }
 
 const DATE_RANGE_OPTIONS = [
-    { key: '7', label: 'Last 7 days' },
-    { key: '30', label: 'Last 30 days' },
-    { key: '90', label: 'Last 90 days' },
+    { key: '7', label: '7 derniers jours' },
+    { key: '30', label: '30 derniers jours' },
+    { key: '90', label: '90 derniers jours' },
 ]
 
 const STATUS_OPTIONS = [
-    { key: 'all', label: 'All Statuses' },
-    { key: 'completed', label: 'Completed' },
-    { key: 'failed', label: 'Failed' },
-    { key: 'refunded', label: 'Refunded' },
+    { key: 'all', label: 'Tous les statuts' },
+    { key: 'completed', label: 'Payé' },
+    { key: 'failed', label: 'Échoué' },
+    { key: 'refunded', label: 'Remboursé' },
 ]
 
 function mapApiStatusToPaymentStatus(status: string): PaymentStatus {
@@ -83,7 +83,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
         return (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-3 py-1 text-sm font-medium text-[#00A63E]">
                 <CheckGreenIconSVG />
-                Completed
+                Payé
             </span>
         )
     }
@@ -91,14 +91,14 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
         return (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-3 py-1 text-sm font-medium text-danger [&_svg_path]:fill-current">
                 <CircleXmarkIconSVG />
-                Failed
+                Échoué
             </span>
         )
     }
     return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
             <RefundIconSVG />
-            Refunded
+            Remboursé
         </span>
     )
 }
@@ -166,9 +166,9 @@ export default function VendorPaymentHistory() {
             <div className="mb-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h2 className="text-lg font-bold text-fontBlack">Payment History</h2>
+                        <h2 className="text-lg font-bold text-fontBlack">Mes Paiements</h2>
                         <p className="mt-1 text-sm text-darkSilver">
-                            View, filter, and download your payment records.
+                            Consultez, filtrez et téléchargez l'historique de vos paiements.
                         </p>
                     </div>
 
@@ -184,7 +184,7 @@ export default function VendorPaymentHistory() {
                                         startContent={<CalendarSVG />}
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
-                                        {DATE_RANGE_OPTIONS.find((o) => o.key === dateRange)?.label ?? 'Last 30 days'}
+                                        {DATE_RANGE_OPTIONS.find((o) => o.key === dateRange)?.label ?? '30 derniers jours'}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -215,7 +215,7 @@ export default function VendorPaymentHistory() {
                                     value: 'text-sm',
                                 }}
                                 aria-label="Filter by status"
-                                placeholder="All Statuses"
+                                placeholder="Tous les statuts"
                             >
                                 {STATUS_OPTIONS.map((o) => (
                                     <SelectItem key={o.key}>{o.label}</SelectItem>
@@ -249,32 +249,32 @@ export default function VendorPaymentHistory() {
 
             <div className="rounded-2xl border border-borderDark bg-white overflow-hidden">
                 {isLoading ? (
-                    <div className="p-8 text-center text-sm text-darkSilver">Loading payment history...</div>
+                    <div className="p-8 text-center text-sm text-darkSilver">Chargement de l'historique des paiements...</div>
                 ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-200">
                         <thead>
                             <tr className="border-b border-borderDark bg-[#F9FAFB]">
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Transaction ID
+                                    ID de transaction
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Date & Time
+                                    Date et heure
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Payment Method
+                                    Méthode de paiement
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Amount Paid
+                                    Montant payé
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Credit Added
+                                    Crédits ajoutés
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Status
+                                    Statut
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Receipt
+                                    Reçu
                                 </th>
                             </tr>
                         </thead>

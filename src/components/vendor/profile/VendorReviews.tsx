@@ -68,7 +68,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false }: VendorR
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
-                <h2 className="text-xl font-bold text-fontBlack">Reviews</h2>
+                <h2 className="text-xl font-bold text-fontBlack">Mes Avis</h2>
                 {!hideLeaveReviewButton && (
                     <div className="flex items-center gap-2">
                         <Button
@@ -90,7 +90,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false }: VendorR
             </div>
 
             {isLoading ? (
-                <p className="text-sm text-darkSilver">Loading reviews...</p>
+                <p className="text-sm text-darkSilver">Chargement des avis...</p>
             ) : (
                 <>
                     {/* Review summary card */}
@@ -106,7 +106,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false }: VendorR
                                 ))}
                             </div>
                             <span className="text-sm font-medium text-fontBlack">
-                                {totalReviews} reviews
+                                {totalReviews} avis
                             </span>
                         </div>
                         <div className="flex-1 p-6 sm:p-8">
@@ -116,7 +116,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false }: VendorR
                                     return (
                                         <div key={stars} className="flex items-center gap-3">
                                             <span className="w-12 shrink-0 text-sm text-fontBlack">
-                                                {stars} star
+                                                {stars} étoiles
                                             </span>
                                             <div className="flex-1 h-2 rounded-full bg-[#E5E7EB] overflow-hidden">
                                                 <div
