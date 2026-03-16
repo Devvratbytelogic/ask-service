@@ -4,7 +4,7 @@ import StepsToWorkCard from "./StepsToWorkCard"
 
 const HowDoesItWorkIndex = () => {
     return (
-        <div className="space_y_header_body container_y_padding">
+        <div className="space_y_header_body container_y_padding pt-0!">
             <h2 className="header_text text-center font-bold">
                 <span className="text-fontBlack">Comment ça marche?</span>
             </h2>

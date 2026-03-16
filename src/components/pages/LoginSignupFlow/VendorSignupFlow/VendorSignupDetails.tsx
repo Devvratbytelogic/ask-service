@@ -128,8 +128,8 @@ const VendorSignupDetails = () => {
 
     return (
         <>
-            <div className="space-y-2">
-                <div className="space-y-2 w-full">
+            <div className="space-y-2 w-full">
+                <div className="space-y-2">
                     <h1 className="header_text flex items-center gap-0.5">
                         <BiArrowBack
                             className="modal_back_icon"
@@ -144,7 +144,7 @@ const VendorSignupDetails = () => {
                     </p>
                 </div>
 
-                <div className="space-y-2 w-full">
+                <div className="space-y-2">
                     {/* Continue with Google */}
                     {/* <Button
                         type="button"
@@ -206,6 +206,23 @@ const VendorSignupDetails = () => {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Input
+                                name="businessName"
+                                variant="bordered"
+                                label="Company Name"
+                                labelPlacement="outside"
+                                isRequired
+                                placeholder="Company Name"
+                                value={values.businessName}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                isInvalid={!!(touched.businessName && errors.businessName)}
+                                errorMessage={touched.businessName && errors.businessName}
+                                classNames={{
+                                    inputWrapper: ["custom_input_design_dark"],
+                                    label: ["custom_label_text_light"],
+                                }}
+                            />
+                            <Input
                                 name="email"
                                 variant="bordered"
                                 label="Email address"
@@ -223,6 +240,8 @@ const VendorSignupDetails = () => {
                                     label: ["custom_label_text_light"],
                                 }}
                             />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                             <Input
                                 name="password"
                                 variant="bordered"
@@ -251,8 +270,7 @@ const VendorSignupDetails = () => {
                                     label: ["custom_label_text_light"],
                                 }}
                             />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+
                             <div className="w-full relative z-100">
                                 <p className="custom_label_text_light text-darkSilver font-medium mb-1.5">Phone number</p>
                                 <div className="mt-1.5">
@@ -276,23 +294,6 @@ const VendorSignupDetails = () => {
                                     <p className="text-danger text-tiny mt-1">{errors.phoneNumber}</p>
                                 )}
                             </div>
-                            <Input
-                                name="businessName"
-                                variant="bordered"
-                                label="Company Name"
-                                labelPlacement="outside"
-                                isRequired
-                                placeholder="Company Name"
-                                value={values.businessName}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                isInvalid={!!(touched.businessName && errors.businessName)}
-                                errorMessage={touched.businessName && errors.businessName}
-                                classNames={{
-                                    inputWrapper: ["custom_input_design_dark"],
-                                    label: ["custom_label_text_light"],
-                                }}
-                            />
                         </div>
                     </form>
                 </div>

@@ -10,7 +10,7 @@ interface IServiceCardProps{
 
 const ServiceCard = ({serviceImage,serviceName,serviceDescription, onPostRequestClick}:IServiceCardProps) => {
   return (
-    <div className="rounded-2xl p-4 xl:p-6 space-y-6.25 xl:space-y-8 shadow-[0px_0px_0px_1px_#EBEDEF]">
+    <div className="rounded-2xl p-4 xl:p-6 space-y-6.25 xl:space-y-8 shadow-[0px_0px_0px_1px_#EBEDEF] h-full">
         <div className="flex gap-3.75 items-center">
             <div className="size-12 xl:size-14 rounded-full shrink-0">
                 <ImageComponent url={serviceImage} img_title={serviceName}/>
@@ -28,7 +28,7 @@ const ServiceCard = ({serviceImage,serviceName,serviceDescription, onPostRequest
                 tabIndex={0}
                 onClick={onPostRequestClick}
                 onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && onPostRequestClick) { e.preventDefault(); onPostRequestClick(); } }}
-                className="cursor-pointer text-fontBlack text-[15px]/[25.6px] xl:text-base/[27.6px] group flex gap-2 items-center px-4"
+                className="cursor-pointer text-fontBlack group flex gap-2 items-center"
             >
                 <span className="group-hover:opacity-75">
                     Post a request

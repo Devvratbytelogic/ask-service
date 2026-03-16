@@ -165,7 +165,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 href={isVendor ? getVendorDashboardRoutePath({ leads: 'available' }) : getMyRequestRoutePath()}
                                 className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
-                                {isVendor ? 'Trouver des prospect' : 'Mes demandes'}
+                                {isVendor ? 'Trouver des prospects' : 'Mes demandes'}
                             </Link>
                             <Link
                                 href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()}
@@ -216,27 +216,27 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             <div className="border-t border-borderDark" />
                                             {/* Navigation items */}
                                             <div className="py-2 px-2">
-                                                <Link
+                                                {/* <Link
                                                     href={getVendorDashboardRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
                                                     Tableau de bord
-                                                </Link>
+                                                </Link> */}
                                                 <Link
-                                                    href={getVendorProfileRoutePath()}
+                                                    href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
                                                 </Link>
-                                                <Link
+                                                {/* <Link
                                                     href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
-                                                </Link>
+                                                </Link> */}
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             {/* Sign out */}
@@ -333,19 +333,19 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
-                                                <Link
+                                                {/* <Link
                                                     href={getVendorDashboardRoutePath()}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
                                                     Tableau de bord
-                                                </Link>
+                                                </Link> */}
                                                 <Link
-                                                    href={getMyRequestRoutePath()}
+                                                    href={getVendorDashboardRoutePath({ leads: 'available' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
-                                                    Mes demandes
+                                                    Trouver des prospects
                                                 </Link>
                                                 <Link
                                                     href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()}
@@ -355,19 +355,19 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     Mes messages
                                                 </Link>
                                                 <Link
-                                                    href={getVendorProfileRoutePath()}
+                                                    href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
                                                 </Link>
-                                                <Link
+                                                {/* <Link
                                                     href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
-                                                </Link>
+                                                </Link> */}
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
@@ -404,6 +404,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
+                                                <Link
+                                                    href={getMyRequestRoutePath()}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                                >
+                                                    <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
+                                                    Mes demandes
+                                                </Link>
                                                 <Link
                                                     href={getMyAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"

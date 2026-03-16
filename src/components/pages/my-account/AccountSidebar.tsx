@@ -40,7 +40,7 @@ export const customerNavItems: NavItem[] = [
 
 export const vendorNavItems: NavItem[] = [
     { id: 'dashboard', label: 'Tableau de bord', icon: <BriefcaseIconSVG />, href: getVendorDashboardRoutePath() },
-    { id: 'prospects', label: 'Trouver des prospect', icon: <LockPrimaryColorSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'available' }) },
+    // { id: 'prospects', label: 'Trouver des prospects', icon: <LockPrimaryColorSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'available' }) },
     { id: 'my-leads', label: 'Mes Prospects', icon: <LockOpenGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
     { id: 'all-quotes', label: 'Mes Devis', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
     { id: 'profile', label: 'Mon profil', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
@@ -72,7 +72,8 @@ export default function AccountSidebar({
                 {navItems.map((item, idx) => {
                     const isLink = Boolean(item.href)
                     const urlSection = searchParams.get('section')
-                    const isDashboardActive = isLink && item.id === 'dashboard' && (pathname === '/vendor/dashboard' || pathname.startsWith('/vendor/dashboard/')) && searchParams.get('leads') !== 'purchased' && searchParams.get('leads') !== 'available'
+                    // const isDashboardActive = isLink && item.id === 'dashboard' && (pathname === '/vendor/dashboard' || pathname.startsWith('/vendor/dashboard/')) && searchParams.get('leads') !== 'purchased' && searchParams.get('leads') !== 'available'
+                    const isDashboardActive = isLink && item.id === 'dashboard' && (pathname === '/vendor/dashboard' || pathname.startsWith('/vendor/dashboard/')) && searchParams.get('leads') !== 'purchased'
                     const isProspectsActive = isLink && item.id === 'prospects' && (pathname === '/vendor/dashboard' || pathname.startsWith('/vendor/dashboard/')) && searchParams.get('leads') === 'available'
                     const isMyLeadsActive = isLink && item.id === 'my-leads' && (pathname === '/vendor/dashboard' || pathname.startsWith('/vendor/dashboard/')) && searchParams.get('leads') === 'purchased'
                     const isAllQuotesActive = isLink && item.id === 'all-quotes' && pathname === '/vendor/all-quotes'

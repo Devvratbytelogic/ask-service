@@ -165,8 +165,7 @@ export default function AllRequests() {
                                         </span>
                                     </Tooltip>
                                 </div>
-                                <p className="text-base text-fontBlack">{request?.note}</p>
-                                <div className="flex flex-wrap gap-4 sm:gap-6 text-sm text-darkSilver">
+                                <div className="flex flex-wrap gap-x-6 text-sm text-darkSilver">
                                     <span className="flex items-center gap-1.5">
                                         <CalendarSVG />
                                         Created {moment(request?.createdAt ?? '').fromNow()} ({moment(request?.createdAt ?? '').format('DD MMM YYYY, h:mm A')})
@@ -179,11 +178,12 @@ export default function AllRequests() {
                                         <LocationSVG />
                                         {request?.location}
                                     </span>
-                                    <span className="flex items-center gap-1.5 text-fontBlack font-medium">
-                                        <RequestNumberSVG />
+                                    <span className="flex items-center gap-1.5 font-medium">
+                                        <RequestNumberSVG className="text-darkSilver" />
                                         {request?.request_id}
                                     </span>
                                 </div>
+                                <p className="text-base text-fontBlack wrap-break-word">{request?.note}</p>
                             </div>
                             <div className="flex items-center justify-between gap-2 shrink-0">
                                 {request?.status_label === 'Quotes received' ? (

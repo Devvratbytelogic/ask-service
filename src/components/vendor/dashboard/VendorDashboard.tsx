@@ -37,11 +37,15 @@ export default function VendorDashboard() {
     const isActiveAvailable = !showLockedOnly && !showPurchasedOnly && !showQuotedOnly
     const isActiveLocked = showLockedOnly
     const isActivePurchased = showPurchasedOnly
-    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
-        ...leadsParams,
-        ...(showQuotedOnly && { quoted: true }),
-    })
+    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery(
+        {
+            ...leadsParams,
+            ...(showQuotedOnly && { quoted: true }),
+        },
+        { pollingInterval: 10000 },
+    )
     const allLeads = leadsData?.data ?? []
+
     const leads = useMemo(
         () => {
             if (showQuotedOnly) return allLeads
@@ -79,7 +83,7 @@ export default function VendorDashboard() {
             <div className="space-y-8">
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Link
+                    {/* <Link
                         href={getVendorDashboardRoutePath()}
                         className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveAvailable ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
                     >
@@ -90,7 +94,7 @@ export default function VendorDashboard() {
                             {isLoading ? '—' : dashboard?.availableLeadsCount ?? 0}
                         </p>
                         <p className="text-sm text-darkSilver mt-0.5">Prospects Disponibles</p>
-                    </Link>
+                    </Link> */}
 
                     <Link
                         href={getVendorDashboardRoutePath({ leads: 'available' })}
