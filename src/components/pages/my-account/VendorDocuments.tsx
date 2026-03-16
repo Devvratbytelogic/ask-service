@@ -117,7 +117,7 @@ export default function VendorDocuments() {
   const documents: DocumentItem[] =
     data?.data?.documents?.length
       ? data.data.documents.map(mapApiDocumentToItem)
-      : FALLBACK_DOCUMENTS
+      : []
 
   const setFileForDoc = (docId: string, file: File | null) => {
     setFilesByDocId((prev) => ({ ...prev, [docId]: file }))
@@ -152,107 +152,107 @@ export default function VendorDocuments() {
       {isLoading ? (
         <p className="text-sm text-darkSilver">Loading documents...</p>
       ) : (
-      <div className="space-y-4">
-        {documents.map((doc) => (
-          <div
-            key={doc.id}
-            className="rounded-2xl border border-borderDark bg-white p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-bold text-fontBlack">{doc.title}</h3>
-                  <StatusBadge status={doc.status} />
-                </div>
-                <p className="mt-1 text-sm text-darkSilver">{doc.description}</p>
-                {doc.status === 'action_required' && (
-                  <p className="mt-0.5 text-xs text-darkSilver">
-                    PDF, JPG, PNG (Max 5MB)
-                  </p>
-                )}
-                {doc.uploadedOn && doc.status !== 'action_required' && (
-                  <p className="mt-1 text-xs text-darkSilver">
-                    Uploaded on {doc.uploadedOn}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {doc.status !== 'action_required' && doc.fileName && (
-              <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F9FAFB] px-4 py-3">
-                <div className='flex items-center gap-3'>
-                  <span className="p-2 rounded-xl border border-borderDark bg-white [&_svg]:size-6">
-                    <UploadFileIconSVG />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">
-                      {doc.fileName}
+        <div className="space-y-4">
+          {documents && documents.length > 0 ? documents.map((doc) => (
+            <div
+              key={doc.id}
+              className="rounded-2xl border border-borderDark bg-white p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-bold text-fontBlack">{doc.title}</h3>
+                    <StatusBadge status={doc.status} />
+                  </div>
+                  <p className="mt-1 text-sm text-darkSilver">{doc.description}</p>
+                  {doc.status === 'action_required' && (
+                    <p className="mt-0.5 text-xs text-darkSilver">
+                      PDF, JPG, PNG (Max 5MB)
                     </p>
-                    {doc.fileSizeBytes != null && (
-                      <p className="text-xs text-darkSilver">
-                        {formatFileSize(doc.fileSizeBytes)}
+                  )}
+                  {doc.uploadedOn && doc.status !== 'action_required' && (
+                    <p className="mt-1 text-xs text-darkSilver">
+                      Uploaded on {doc.uploadedOn}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {doc.status !== 'action_required' && doc.fileName && (
+                <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F9FAFB] px-4 py-3">
+                  <div className='flex items-center gap-3'>
+                    <span className="p-2 rounded-xl border border-borderDark bg-white [&_svg]:size-6">
+                      <UploadFileIconSVG />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate">
+                        {doc.fileName}
                       </p>
-                    )}
+                      {doc.fileSizeBytes != null && (
+                        <p className="text-xs text-darkSilver">
+                          {formatFileSize(doc.fileSizeBytes)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3 sm:flex-row-reverse">
+                    <Button
+                      className="btn_bg_white border-none"
+                      startContent={<DownloadIconSVG />}
+                      onPress={() => {
+                        if (doc.downloadUrl) {
+                          const link = document.createElement('a')
+                          link.href = doc.downloadUrl
+                          link.download = doc.fileName ?? doc.title
+                          link.target = '_blank'
+                          link.rel = 'noopener noreferrer'
+                          document.body.appendChild(link)
+                          link.click()
+                          document.body.removeChild(link)
+                        }
+                      }}
+                      isDisabled={!doc.downloadUrl}
+                    >
+                      Download
+                    </Button>
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-3 sm:flex-row-reverse">
-                  <Button
-                    className="btn_bg_white border-none"
-                    startContent={<DownloadIconSVG />}
-                    onPress={() => {
-                      if (doc.downloadUrl) {
-                        const link = document.createElement('a')
-                        link.href = doc.downloadUrl
-                        link.download = doc.fileName ?? doc.title
-                        link.target = '_blank'
-                        link.rel = 'noopener noreferrer'
-                        document.body.appendChild(link)
-                        link.click()
-                        document.body.removeChild(link)
-                      }
-                    }}
-                    isDisabled={!doc.downloadUrl}
-                  >
-                    Download
-                  </Button>
+              )}
+
+              {doc.status === 'action_required' && (
+                <div className="mt-4">
+                  <FileUploadZone
+                    value={filesByDocId[doc.id] ?? null}
+                    onChange={(file) => setFileForDoc(doc.id, file)}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    maxSizeBytes={5 * 1024 * 1024}
+                    dragLabel="Drag and drop your file here"
+                    browseLabel="Re-upload Document"
+                    ariaLabel={`Upload ${doc.title}`}
+                    buttonClassName="btn_radius btn_bg_blue text-white"
+                  />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          )) : <><p className="text-sm text-darkSilver">No documents found</p></>}
 
-            {doc.status === 'action_required' && (
-              <div className="mt-4">
-                <FileUploadZone
-                  value={filesByDocId[doc.id] ?? null}
-                  onChange={(file) => setFileForDoc(doc.id, file)}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  maxSizeBytes={5 * 1024 * 1024}
-                  dragLabel="Drag and drop your file here"
-                  browseLabel="Re-upload Document"
-                  ariaLabel={`Upload ${doc.title}`}
-                  buttonClassName="btn_radius btn_bg_blue text-white"
-                />
-              </div>
-            )}
-          </div>
-        ))}
+          {hasAnyFile && (
+            <div className="flex justify-end">
+              <Button
+                className="btn_radius btn_bg_blue text-white"
+                onPress={handleUpload}
+                isLoading={isUploading}
+                isDisabled={isUploading}
+              >
+                Upload documents
+              </Button>
+            </div>
+          )}
 
-        {hasAnyFile && (
-          <div className="flex justify-end">
-            <Button
-              className="btn_radius btn_bg_blue text-white"
-              onPress={handleUpload}
-              isLoading={isUploading}
-              isDisabled={isUploading}
-            >
-              Upload documents
-            </Button>
-          </div>
-        )}
-
-        <SupportAlert title="Besoin d'aide pour la vérification des documents ?" content="Si vous avez des questions sur les documents requis ou si vous avez besoin d'assistance, contactez notre support prestataire." />
-      </div>
+          <SupportAlert title="Besoin d'aide pour la vérification des documents ?" content="Si vous avez des questions sur les documents requis ou si vous avez besoin d'assistance, contactez notre support prestataire." />
+        </div>
       )}
-      
+
     </>
   )
 }
