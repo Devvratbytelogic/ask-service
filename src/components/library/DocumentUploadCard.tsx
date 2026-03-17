@@ -32,13 +32,20 @@ export default function DocumentUploadCard({
     value,
     onChange,
     maxSizeBytes = 5 * 1024 * 1024,
-    accept = ".pdf,.jpg,.jpeg,.png",
+    accept = ".jpg,.jpeg,.png,.doc,.docx,.pdf,.svg",
     onFileRejected,
 }: DocumentUploadCardProps) {
     const uploaded = value !== null
 
-    const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png"] as const
-    const ALLOWED_EXT = [".pdf", ".jpg", ".jpeg", ".png"] as const
+    const ALLOWED_MIME = [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/svg+xml",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ] as const
+    const ALLOWED_EXT = [".jpg", ".jpeg", ".png", ".doc", ".docx", ".pdf", ".svg"] as const
 
     const handleChange = (file: File | null) => {
         if (!file) {

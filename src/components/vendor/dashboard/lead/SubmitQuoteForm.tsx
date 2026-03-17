@@ -8,6 +8,9 @@ import { useFormik } from 'formik'
 import { useState, useRef } from 'react'
 import { FiCalendar, FiUploadCloud } from 'react-icons/fi'
 
+const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.doc', '.docx', '.pdf', '.svg']
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5MB
+
 const QUOTE_VALID_OPTIONS = [
     { key: '7', label: '7 days' },
     { key: '14', label: '14 days' },
@@ -70,10 +73,22 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            setAttachment(file)
-        }
         e.target.value = ''
+        if (!file) return
+
+        const ext = '.' + file.name.split('.').pop()?.toLowerCase()
+        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+            addToast({
+                title: `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`,
+                color: 'danger',
+            })
+            return
+        }
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+            addToast({ title: 'File must be 5MB or smaller', color: 'danger' })
+            return
+        }
+        setAttachment(file)
     }
 
     return (
@@ -185,7 +200,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         Attach Document
                     </label>
                     <p className="mb-2 text-xs text-darkSilver">
-                        Only support .jpg, .png and .svg and zip files. Upto 5MB
+                        Only support .jpg, .png, .doc, .docx, .pdf and .svg and upto 5MB
                     </p>
                     <Button
                         type="button"
@@ -201,7 +216,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                     <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".jpg,.jpeg,.png,.svg,.zip"
+                        accept=".jpg,.jpeg,.png,.doc,.docx,.pdf,.svg"
                         onChange={handleFileChange}
                         className="hidden"
                     />

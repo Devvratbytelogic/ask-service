@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { IoArrowBackOutline } from "react-icons/io5"
 import ImageComponent from "@/components/library/ImageComponent"
 
+const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".doc", ".docx", ".pdf", ".svg"]
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
 
 const VendorDocumentVerification = () => {
@@ -23,7 +24,22 @@ const VendorDocumentVerification = () => {
     const [files, setFiles] = useState<Record<string, File | null>>({})
 
     const setFile = (id: string, file: File | null) => {
-        if (file && file.size > MAX_FILE_SIZE_BYTES) return // Reject files over 5 MB
+        if (!file) {
+            setFiles((prev) => ({ ...prev, [id]: file }))
+            return
+        }
+        const ext = "." + (file.name.split(".").pop() ?? "").toLowerCase()
+        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+            addToast({
+                title: `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`,
+                color: "danger",
+            })
+            return
+        }
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+            addToast({ title: "File must be 5MB or smaller", color: "danger" })
+            return
+        }
         setFiles((prev) => ({ ...prev, [id]: file }))
     }
 
@@ -118,15 +134,16 @@ const VendorDocumentVerification = () => {
                             required={doc.is_required}
                             description={doc.description ?? ""}
                             // allowedTypes={doc.allowed_formats}
-                            allowedTypes={'PDF, JPG, PNG (Max 5MB)'}
+                            allowedTypes=".jpg, .png, .doc, .docx, .pdf, .svg (Max 5MB)"
+                            accept=".jpg,.jpeg,.png,.doc,.docx,.pdf,.svg"
                             value={files[doc._id] ?? null}
                             onChange={(file) => setFile(doc._id, file)}
                             maxSizeBytes={MAX_FILE_SIZE_BYTES}
                             onFileRejected={(reason) => {
                                 const message =
                                     reason === "size"
-                                        ? "File size exceeds the 5 MB limit. Please choose a smaller file."
-                                        : "Only PDF, JPG and PNG files are allowed."
+                                        ? "File must be 5MB or smaller."
+                                        : `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`
                                 addToast({
                                     title: "Upload rejected",
                                     description: message,
