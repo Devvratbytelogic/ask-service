@@ -3,8 +3,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { getAuthToken, logoutAndRedirectToHome } from '@/utils/authCookies';
 
-const INACTIVITY_MS = 10 * 60 * 1000; // 10 minutes
+const INACTIVITY_MS = 1 * 60 * 1000; // 1 minutes
 const AUTH_CHECK_INTERVAL_MS = 2000; // re-check auth so timer starts after login
+const LAST_ACTIVITY_KEY = 'inactivity_last_activity';
 
 const ACTIVITY_EVENTS = [
   'mousedown',
@@ -15,10 +16,28 @@ const ACTIVITY_EVENTS = [
   'click',
 ] as const;
 
+/** Persist last activity time so all tabs share it — activity in any tab keeps user logged in. */
+function setLastActivityNow(): void {
+  try {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+  } catch {
+    // ignore if localStorage is unavailable
+  }
+}
+
+function getLastActivity(): number {
+  try {
+    const v = localStorage.getItem(LAST_ACTIVITY_KEY);
+    return v ? parseInt(v, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
 /**
- * Listens for user activity and logs out after 10 minutes of inactivity.
- * Only runs when the user is authenticated (has auth_token).
- * Renders nothing.
+ * Listens for user activity and logs out after inactivity.
+ * Syncs activity across tabs: activity in any tab resets the inactivity timer everywhere.
+ * Only runs when the user is authenticated (has auth_token). Renders nothing.
  */
 export default function InactivityLogout() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -27,11 +46,19 @@ export default function InactivityLogout() {
   const resetTimer = useCallback(() => {
     if (!getAuthToken()) return;
 
+    setLastActivityNow();
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
+      const last = getLastActivity();
+      if (Date.now() - last < INACTIVITY_MS) {
+        // Another tab had activity; don't logout, just reschedule
+        resetTimer();
+        return;
+      }
       logoutAndRedirectToHome();
     }, INACTIVITY_MS);
   }, []);
@@ -48,12 +75,17 @@ export default function InactivityLogout() {
 
     const handleActivity = () => resetTimer();
 
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === LAST_ACTIVITY_KEY && e.newValue) resetTimer();
+    };
+
     const setupListeners = () => {
       if (listenersActiveRef.current) return;
       listenersActiveRef.current = true;
       ACTIVITY_EVENTS.forEach((event) => {
         window.addEventListener(event, handleActivity);
       });
+      window.addEventListener('storage', handleStorage);
     };
 
     const removeListeners = () => {
@@ -62,9 +94,11 @@ export default function InactivityLogout() {
       ACTIVITY_EVENTS.forEach((event) => {
         window.removeEventListener(event, handleActivity);
       });
+      window.removeEventListener('storage', handleStorage);
     };
 
     if (getAuthToken()) {
+      setLastActivityNow();
       resetTimer();
       setupListeners();
     }
@@ -73,6 +107,7 @@ export default function InactivityLogout() {
     const intervalId = setInterval(() => {
       if (getAuthToken()) {
         if (!timeoutRef.current) {
+          setLastActivityNow();
           resetTimer();
           setupListeners();
         }
