@@ -4,6 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { LightningIconSVG, TipCheckedIconSVG } from '@/components/library/AllSVG'
 import { Button } from '@heroui/react'
+import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 
 const TIPS = [
     "Soyez clair sur ce qui est inclus dans le prix",
@@ -16,14 +17,25 @@ interface LeadSidebarProps {
     onSendQuoteClick?: () => void
     unlocked?: boolean
     canQuote?: boolean
+    userId?: string | null
 }
 
-export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuote }: LeadSidebarProps) {
+export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuote, userId }: LeadSidebarProps) {
     const router = useRouter()
+    const [vendorAccessChat, { isLoading: isAccessingChat }] = useVendorAccessChatMutation()
 
-    const handleMessageCustomer = () => {
+    const handleMessageCustomer = async () => {
         const url = leadId ? `/vendor/message?leadId=${leadId}` : '/vendor/message'
-        router.push(url)
+        if (leadId) {
+            try {
+                await vendorAccessChat({ userId: userId }).unwrap()
+                router.push(url)
+            } catch {
+                // Error handled by RTK Query / can add toast here
+            }
+        } else {
+            router.push(url)
+        }
     }
     return (
         <>
@@ -39,7 +51,12 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuo
                             >
                                 Envoyer un devis
                             </Button>}
-                            <Button className="btn_radius btn_bg_white w-full" onPress={handleMessageCustomer}>
+                            <Button
+                                className="btn_radius btn_bg_white w-full"
+                                onPress={handleMessageCustomer}
+                                isLoading={isAccessingChat}
+                                isDisabled={isAccessingChat}
+                            >
                                 Contacter le client
                             </Button>
                         </div>

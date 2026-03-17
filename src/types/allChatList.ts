@@ -104,6 +104,7 @@ export interface LatestMessage {
   content: string;
   chat: string;
   type: string;
+  media_url?: string | null;
   readBy?: (null)[] | null;
   reactions?: (null)[] | null;
   createdAt: string;

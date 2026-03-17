@@ -33,7 +33,6 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
     const lead = leadData?.data
     const [showSubmitQuoteForm, setShowSubmitQuoteForm] = useState(false)
     const submitQuoteFormRef = useRef<HTMLDivElement>(null)
-
     useEffect(() => {
         if (showSubmitQuoteForm && submitQuoteFormRef.current) {
             submitQuoteFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -236,7 +235,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                 </div>
 
                 {/* Sidebar */}
-                <LeadSidebar leadId={id} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} canQuote={headerData?.canQuote} />
+                <LeadSidebar userId={lead?.user?._id} leadId={id} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} canQuote={headerData?.canQuote} />
             </div>
         </>
     )

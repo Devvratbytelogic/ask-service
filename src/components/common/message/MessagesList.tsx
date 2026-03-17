@@ -26,9 +26,34 @@ function getInitial(name: string): string {
     return name.trim().charAt(0)?.toUpperCase() || 'U';
 }
 
+function getFileNameFromUrl(url: string): string {
+    try {
+        const path = (url || '').split('?')[0];
+        const name = path.split('/').pop();
+        return name && name.length > 0 ? decodeURIComponent(name) : '';
+    } catch {
+        return '';
+    }
+}
+
 function getLastMessage(chat: IAllChatListData): string {
-    const latest = chat.latestMessage as { content?: string } | null | undefined;
-    return (latest && typeof latest?.content === 'string' ? latest.content : '') || 'No messages yet';
+    const latest = chat.latestMessage as {
+        content?: string;
+        type?: string;
+        media_url?: string | null;
+    } | null | undefined;
+    if (!latest) return 'No messages yet';
+    const content = typeof latest.content === 'string' ? latest.content.trim() : '';
+    const type = (latest.type ?? 'text').toLowerCase();
+    const mediaUrl = latest.media_url ?? '';
+    // Media message: show file name or a short label (content is often empty or opaque)
+    if (type === 'media' && mediaUrl) {
+        const fileName = getFileNameFromUrl(mediaUrl);
+        if (fileName) return fileName;
+        return 'Attachment';
+    }
+    if (content) return content;
+    return 'No messages yet';
 }
 
 interface MessagesListProps {

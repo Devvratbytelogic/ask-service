@@ -6,11 +6,10 @@ interface DiscussionContextBarProps {
 }
 
 export default function DiscussionContextBar({ selectedChat }: DiscussionContextBarProps) {
-    console.log('selectedChat', selectedChat);
     const quote = selectedChat?.quote_id;
-    const title = quote?.service_description ?? 'House Cleaning';
+    const title = quote?.service_description ?? 'N/A';
     const requestId = quote?.service_request_id?.reference_no ?? '—';
-    const price = quote != null ? `${quote.currency ?? '€'}${quote.quote_price}` : '€85/week';
+    const price = quote != null ? `${quote.currency ?? '€'}${quote.quote_price}` : '';
 
     return (
         <>

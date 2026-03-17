@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@heroui/react';
 import MessagesList from './MessagesList';
@@ -11,8 +11,67 @@ import { useUserSendMessageMutation, useVendorSendMessageMutation } from '@/redu
 import type { RootState } from '@/redux/appStore';
 import type { IAllChatListData } from '@/types/allChatList';
 
+// Images and documents only — no video
+const IMAGE_ACCEPT = 'image/*';
+const DOCUMENT_ACCEPT = '.pdf,.doc,.docx';
+
+function isImageFile(file: File): boolean {
+  return file.type.startsWith('image/');
+}
+
+function AttachedFilePreview({
+  file,
+  onRemove,
+}: {
+  file: File;
+  onRemove: () => void;
+}) {
+  const isImage = isImageFile(file);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!isImage) return;
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file, isImage]);
+
+  return (
+    <div className="mb-2 flex items-center gap-3 rounded-lg border border-borderDark bg-[#F9FAFB] px-3 py-2">
+      {isImage && preview ? (
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#E5E7EB]">
+          <img
+            src={preview}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+      ) : (
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#E5E7EB] text-[#6B7280]">
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </span>
+      )}
+      <span className="min-w-0 flex-1 truncate text-sm text-fontBlack">{file.name}</span>
+      <Button
+        size="sm"
+        variant="light"
+        className="min-w-0 shrink-0 text-darkSilver"
+        onPress={onRemove}
+        aria-label="Remove attachment"
+      >
+        Remove
+      </Button>
+    </div>
+  );
+}
+
 export default function MessageLayout() {
   const [messageInput, setMessageInput] = useState('');
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const documentInputRef = useRef<HTMLInputElement>(null);
   // On mobile: show list or chat. On lg+: always show both
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
@@ -30,20 +89,52 @@ export default function MessageLayout() {
     setMobileView('chat');
   };
 
+  const canSend = Boolean(selectedChatId && (messageInput.trim() || attachedFile) && !isSending);
+
   const handleSendMessage = async () => {
+    if (!selectedChatId || !canSend) return;
     const content = messageInput.trim();
-    if (!selectedChatId || !content || isSending) return;
     try {
-      const body = { chatId: selectedChatId, content, media: '' };
-      if (isVendor) {
-        await vendorSendMessage(body).unwrap();
+      if (attachedFile) {
+        const formData = new FormData();
+        formData.append('chatId', selectedChatId);
+        formData.append('content', content);
+        formData.append('media', attachedFile);
+        if (isVendor) {
+          await vendorSendMessage(formData).unwrap();
+        } else {
+          await userSendMessage(formData).unwrap();
+        }
+        setAttachedFile(null);
+        setMessageInput('');
       } else {
-        await userSendMessage(body).unwrap();
+        const body = { chatId: selectedChatId, content, media: '' };
+        if (isVendor) {
+          await vendorSendMessage(body).unwrap();
+        } else {
+          await userSendMessage(body).unwrap();
+        }
+        setMessageInput('');
       }
-      setMessageInput('');
     } catch {
       // Error can be handled via toast or inline UI if needed
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setAttachedFile(file);
+    }
+    e.target.value = '';
+  };
+
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && !file.type.startsWith('video/')) {
+      setAttachedFile(file);
+    }
+    e.target.value = '';
   };
 
   return (
@@ -97,22 +188,45 @@ export default function MessageLayout() {
               </header>
 
               {/* Discussion context bar */}
-              <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
+              {selectedChat?.quote_id && <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
                 <DiscussionContextBar selectedChat={selectedChat} />
-              </div>
+              </div>}
 
               {/* Messages - scrollable, leaves room for input */}
               <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6">
                 <MessagesChatBox selectedChatId={selectedChatId} />
               </div>
 
-              {/* Message input - always visible at bottom, compact on mobile */}
+              {/* Message input - WhatsApp-style: text, images & documents (no video) */}
               <div className="shrink-0 border-t border-borderColor bg-white px-4 py-3 md:px-6 md:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept={IMAGE_ACCEPT}
+                  onChange={handleImageChange}
+                  className="hidden"
+                  aria-label="Upload image"
+                />
+                <input
+                  ref={documentInputRef}
+                  type="file"
+                  accept={DOCUMENT_ACCEPT}
+                  onChange={handleDocumentChange}
+                  className="hidden"
+                  aria-label="Upload document"
+                />
+                {attachedFile && (
+                  <AttachedFilePreview
+                    file={attachedFile}
+                    onRemove={() => setAttachedFile(null)}
+                  />
+                )}
                 <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     isIconOnly
-                    aria-label="Attach file"
+                    aria-label="Attach document"
                     className="btn_radius btn_bg_white hidden sm:flex"
+                    onPress={() => documentInputRef.current?.click()}
                   >
                     <PaperClipIconSVG />
                   </Button>
@@ -120,6 +234,7 @@ export default function MessageLayout() {
                     isIconOnly
                     aria-label="Send image"
                     className="btn_radius btn_bg_white hidden sm:flex"
+                    onPress={() => imageInputRef.current?.click()}
                   >
                     <PhotographIconSVG />
                   </Button>
@@ -145,7 +260,7 @@ export default function MessageLayout() {
                     color="primary"
                     aria-label="Send"
                     className="btn_radius shrink-0 btn_bg_blue min-w-11 sm:min-w-0"
-                    isDisabled={!messageInput.trim() || isSending}
+                    isDisabled={!canSend}
                     onPress={handleSendMessage}
                   >
                     <span className="sm:hidden inline-flex"><SendIconSVG /></span>
