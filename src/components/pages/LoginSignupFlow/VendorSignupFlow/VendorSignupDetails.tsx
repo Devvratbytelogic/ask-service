@@ -337,9 +337,41 @@ const VendorSignupDetails = () => {
                 </Button>
                 <p className="text-base text-fontBlack text-center flex justify-center gap-1">
                     Vous avez déjà un compte ?{" "}
-                    <p onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))} className="text-primaryColor cursor-pointer underline underline-offset-2">
+                    <span
+                        onClick={() =>
+                            dispatch(
+                                openModal({
+                                    componentName: "LoginSignupIndex",
+                                    data: {
+                                        componentName: "CustomerSignInDetails",
+                                        userData: { signInType: "email" },
+                                        returnToVendorSignup: true,
+                                    },
+                                    modalSize: "full",
+                                })
+                            )
+                        }
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                dispatch(
+                                    openModal({
+                                        componentName: "LoginSignupIndex",
+                                        data: {
+                                            componentName: "CustomerSignInDetails",
+                                            userData: { signInType: "email" },
+                                            returnToVendorSignup: true,
+                                        },
+                                        modalSize: "full",
+                                    })
+                                )
+                            }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        className="text-primaryColor cursor-pointer underline underline-offset-2"
+                    >
                         Se connecter
-                    </p>
+                    </span>
                 </p>
             </div>
         </>

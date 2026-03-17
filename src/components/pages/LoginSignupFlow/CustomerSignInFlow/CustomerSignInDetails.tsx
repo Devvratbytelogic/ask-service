@@ -134,6 +134,7 @@ const CustomerSignInDetails = () => {
 
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
     const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
+    const returnToVendorSignup = (data as { returnToVendorSignup?: boolean })?.returnToVendorSignup
 
     const goToSignInIndex = () => {
         if (showOtpView && signInType === "email") {
@@ -145,6 +146,8 @@ const CustomerSignInDetails = () => {
                 data: requestFlowData,
                 modalSize: 'lg',
             }))
+        } else if (returnToVendorSignup) {
+            dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'VendorSignupDetails' }, modalSize: 'full' }))
         } else {
             dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))
         }
