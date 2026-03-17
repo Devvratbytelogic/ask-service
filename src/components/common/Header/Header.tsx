@@ -9,10 +9,9 @@ import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { useSelector } from "react-redux";
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
 import { getUserRole, clearAllCookiesAndReload, getAuthToken } from "@/utils/authCookies";
-import Cookies from "js-cookie";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
 import type { RootState } from "@/redux/appStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 /** Get initials from first + last name, or email/placeholder */
 function getInitials(firstName?: string | null, lastName?: string | null, email?: string | null): string {
@@ -83,58 +82,8 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };
 
-    const [error, setError] = useState<string | null>(null)
-
-    const checkPermissionAndGetLocation = async () => {
-        if (!navigator.permissions) {
-            handleUseCurrentLocation()
-            return
-        }
-
-        const status = await navigator.permissions.query({ name: "geolocation" })
-
-        if (status.state === "granted") {
-            handleUseCurrentLocation()
-        } else if (status.state === "prompt") {
-            handleUseCurrentLocation()
-        } else {
-            setError("Location permission denied")
-        }
-    }
-
-    const handleUseCurrentLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude
-                    const lng = position.coords.longitude
-                    Cookies.set('geo_lat', String(lat), { path: '/', sameSite: 'lax', expires: 7 })
-                    Cookies.set('geo_lng', String(lng), { path: '/', sameSite: 'lax', expires: 7 })
-                    console.log('😊😊😊😊😊😊 Location fetched successfully:', position.coords.latitude, position.coords.longitude)
-                },
-                (err) => {
-                    if (err.code === 1) {
-                        setError('Location access denied. Please enable location services to continue.')
-                    } else {
-                        setError('Failed to fetch location. Please try again.')
-                    }
-                },
-                {
-                    timeout: 10000,
-                    maximumAge: 60000,
-                    enableHighAccuracy: false,
-                }
-            )
-        } else {
-            console.warn('⚠️⚠️⚠️⚠️⚠️⚠️ Geolocation is not supported by this browser.')
-            setError('Geolocation is not supported by this browser.')
-            console.log('error', error)
-        }
-    }
-
-    useEffect(() => {
-        checkPermissionAndGetLocation()
-    }, [])
+    // Location is no longer requested on load; it is only requested when the user
+    // clicks "Use my current location" in profile pages (ProfileInfo / VendorProfileInfo).
 
 
     if (!isAuthenticated) {

@@ -149,9 +149,25 @@ export default function ProfileInfo() {
         const lng = Cookies.get('geo_lng')
         if (lat && lng) {
             setLatLong(`${lat},${lng}`)
-        } else {
-            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+            return
         }
+        if (!navigator.geolocation) {
+            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+            return
+        }
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const newLat = String(position.coords.latitude)
+                const newLng = String(position.coords.longitude)
+                Cookies.set('geo_lat', newLat, { path: '/', sameSite: 'lax', expires: 7 })
+                Cookies.set('geo_lng', newLng, { path: '/', sameSite: 'lax', expires: 7 })
+                setLatLong(`${newLat},${newLng}`)
+            },
+            () => {
+                addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+            },
+            { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
+        )
     }
 
     // Override address fields when geo data is successfully loaded
