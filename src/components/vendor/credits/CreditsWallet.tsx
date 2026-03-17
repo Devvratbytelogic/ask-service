@@ -145,7 +145,7 @@ export default function CreditsWallet() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                    <Button isIconOnly className="btn_radius btn_bg_white shrink-0" onPress={() => router.push(getVendorDashboardRoutePath())}>
+                    <Button isIconOnly className="btn_radius btn_bg_white shrink-0" onPress={() => router.push(getVendorDashboardRoutePath({ leads: 'purchased' }))}>
                         <BackArrowSVG />
                     </Button>
                     <div>

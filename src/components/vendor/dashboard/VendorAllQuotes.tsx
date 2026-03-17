@@ -1,15 +1,17 @@
 'use client'
 
-import { DocumentArrowIconSVG } from '@/components/library/AllSVG'
-import { generateLeadDetailRoutePath } from '@/routes/routes'
+import { BackArrowSVG, DocumentArrowIconSVG } from '@/components/library/AllSVG'
+import { generateLeadDetailRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { Button } from '@heroui/react'
 import Link from 'next/link'
 import moment from 'moment'
 import { useGetVendorAllQuotesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllQuotes } from '@/types/allquotes'
 import SupportAlert from './SupportAlert'
+import { useRouter } from 'next/navigation'
 
 export default function VendorAllQuotes() {
+    const router = useRouter()
     const { data, isLoading } = useGetVendorAllQuotesQuery()
     const quotes = data?.data ?? []
 
@@ -17,13 +19,26 @@ export default function VendorAllQuotes() {
         <>
             <div className="space-y-8">
                 <div className="space-y-4">
-                    <div>
-                        <h2 className="header_text_md text-fontBlack">Mes Devis</h2>
-                        <p className="text-sm text-darkSilver mt-1">
-                            {isLoading ? 'Chargement…' : `${quotes.length} devis envoyés • Consultez et gérez ci-dessous`}
-                        </p>
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div className="flex items-start gap-3 min-w-0">
+                            <Button isIconOnly className="btn_radius btn_bg_white shrink-0" onPress={() => router.push(getVendorDashboardRoutePath({ leads: 'purchased' }))}>
+                                <BackArrowSVG />
+                            </Button>
+                            <div>
+                                <h2 className="header_text_md text-fontBlack">Mes Devis</h2>
+                                <p className="text-sm text-darkSilver mt-1">
+                                    {isLoading ? 'Chargement…' : `${quotes.length} devis envoyés • Consultez et gérez ci-dessous`}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-    
+                                {/* <div>
+                                    <h2 className="header_text_md text-fontBlack">Mes Devis</h2>
+                                    <p className="text-sm text-darkSilver mt-1">
+                                        {isLoading ? 'Chargement…' : `${quotes.length} devis envoyés • Consultez et gérez ci-dessous`}
+                                    </p>
+                                </div> */}
+
                     <div className="flex flex-col gap-4">
                         {isLoading && (
                             <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
@@ -48,7 +63,7 @@ export default function VendorAllQuotes() {
                         ))}
                     </div>
                 </div>
-    
+
                 <SupportAlert
                     title="Besoin d'aide ?"
                     content="Contactez le support prestataire si vous avez besoin d'aide avec vos devis ou votre compte."

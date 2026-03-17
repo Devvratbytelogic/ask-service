@@ -1,6 +1,10 @@
 // Vendor dashboard & leads
-export function generateLeadDetailRoutePath(id: string) {
-    return `/vendor/dashboard/lead/${id}`;
+export function generateLeadDetailRoutePath(
+    id: string,
+    params?: { from?: 'purchased' | 'quoted' | 'available' },
+) {
+    const fromParam = params?.from ? `?from=${params.from}` : ''
+    return `/vendor/dashboard/lead/${id}${fromParam}`
 }
 export function getVendorDashboardRoutePath(params?: { leads?: 'purchased' | 'quoted' | 'available' }) {
     const leadsParam = params?.leads === 'purchased' ? 'purchased' : params?.leads === 'quoted' ? 'quoted' : params?.leads === 'available' ? 'available' : undefined

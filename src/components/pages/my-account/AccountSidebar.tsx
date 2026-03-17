@@ -39,17 +39,17 @@ export const customerNavItems: NavItem[] = [
 ]
 
 export const vendorNavItems: NavItem[] = [
-    { id: 'dashboard', label: 'Tableau de bord', icon: <BriefcaseIconSVG />, href: getVendorDashboardRoutePath() },
+    // { id: 'dashboard', label: 'Tableau de bord', icon: <BriefcaseIconSVG />, href: getVendorDashboardRoutePath() },
     // { id: 'prospects', label: 'Trouver des prospects', icon: <LockPrimaryColorSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'available' }) },
-    { id: 'my-leads', label: 'Mes Prospects', icon: <LockOpenGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
-    { id: 'all-quotes', label: 'Mes Devis', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
+    // { id: 'my-leads', label: 'Mes Prospects', icon: <LockOpenGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
+    // { id: 'all-quotes', label: 'Mes Devis', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
     { id: 'profile', label: 'Mon profil', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getVendorAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getVendorAccountRoutePath({ section: 'notifications' }) },
     { id: 'documents', label: 'Mes Documents', icon: <VendorDocumentIconSVG />, href: getVendorAccountRoutePath({ section: 'documents' }) },
     { id: 'reviews', label: 'Mes Avis', icon: <VendorReviewIconSVG />, href: getVendorAccountRoutePath({ section: 'reviews' }) },
     { id: 'payment-history', label: 'Mes Paiements', icon: <VendorPaymentHistoryIconSVG />, href: getVendorAccountRoutePath({ section: 'payment-history' }) },
-    { id: 'messages', label: 'Messages', icon: <ChatBubbleLeftRightIconSVG />, href: getVendorMessageRoutePath() },
+    // { id: 'messages', label: 'Messages', icon: <ChatBubbleLeftRightIconSVG />, href: getVendorMessageRoutePath() },
 ]
 
 interface AccountSidebarProps {

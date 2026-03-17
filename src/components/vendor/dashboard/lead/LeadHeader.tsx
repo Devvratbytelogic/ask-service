@@ -2,7 +2,7 @@ import React from 'react'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { BackArrowSVG, LockPrimaryColorSVG, UnlockGreenIconSVG } from '@/components/library/AllSVG'
 import { Button } from '@heroui/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -12,9 +12,16 @@ interface LeadHeaderProps {
     data: LeadFullDetailsData
     leadId?: string
 }
+const VALID_LEADS_TABS = ['purchased', 'quoted', 'available'] as const
+
 export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const dispatch = useDispatch()
+    const fromLeads = searchParams.get('from')
+    const backLeads = VALID_LEADS_TABS.includes(fromLeads as (typeof VALID_LEADS_TABS)[number])
+        ? (fromLeads as (typeof VALID_LEADS_TABS)[number])
+        : 'purchased'
     const { data: dashboardData } = useGetVendorDashboardDataQuery()
     const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
 
@@ -36,7 +43,7 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                     <Button
                         isIconOnly
                         className="btn_radius btn_bg_white"
-                        onPress={() => router.push(getVendorDashboardRoutePath())}
+                        onPress={() => router.push(getVendorDashboardRoutePath({ leads: backLeads }))}
                     >
                         <BackArrowSVG />
                     </Button>

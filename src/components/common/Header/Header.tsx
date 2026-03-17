@@ -59,7 +59,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const { data: userProfile, isError: isUserProfileError, error: userProfileError } = clientSideGetApis.useGetUserProfileInfoQuery(undefined, {
         skip: !isAuthenticated || isVendor,
     });
-    
+
     // Auto logout only when these two profile APIs return 401
     useEffect(() => {
         const httpStatus = (vendorProfileError as { data?: { httpStatus?: number } } | undefined)?.data?.httpStatus;
@@ -161,6 +161,12 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             <span className="font-bold text-lg text-fontBlack hidden sm:inline">Ask Service</span>
                         </Link>
                         <nav className="hidden md:flex items-center gap-6">
+                            {isVendor && <Link
+                                href={getVendorDashboardRoutePath({ leads: 'purchased' })}
+                                className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
+                            >
+                                Tableau de bord
+                            </Link>}
                             <Link
                                 href={isVendor ? getVendorDashboardRoutePath({ leads: 'available' }) : getMyRequestRoutePath()}
                                 className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
@@ -216,13 +222,6 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             <div className="border-t border-borderDark" />
                                             {/* Navigation items */}
                                             <div className="py-2 px-2">
-                                                {/* <Link
-                                                    href={getVendorDashboardRoutePath()}
-                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
-                                                >
-                                                    <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
-                                                    Tableau de bord
-                                                </Link> */}
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'profile' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
@@ -230,13 +229,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
                                                 </Link>
-                                                {/* <Link
-                                                    href={getVendorAccountRoutePath({ section: 'profile' })}
+                                                <Link
+                                                    href={getVendorAccountRoutePath({ section: 'security' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
-                                                </Link> */}
+                                                </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             {/* Sign out */}
@@ -333,13 +332,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
-                                                {/* <Link
-                                                    href={getVendorDashboardRoutePath()}
+                                                <Link
+                                                    href={getVendorDashboardRoutePath({ leads: 'purchased' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><DocumentIconSVG /></span>
                                                     Tableau de bord
-                                                </Link> */}
+                                                </Link>
                                                 <Link
                                                     href={getVendorDashboardRoutePath({ leads: 'available' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
@@ -361,13 +360,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
                                                 </Link>
-                                                {/* <Link
-                                                    href={getVendorAccountRoutePath({ section: 'profile' })}
+                                                <Link
+                                                    href={getVendorAccountRoutePath({ section: 'security' })}
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
-                                                </Link> */}
+                                                </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
