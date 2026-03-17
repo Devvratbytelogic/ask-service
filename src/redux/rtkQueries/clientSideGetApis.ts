@@ -141,6 +141,22 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorTransactions'],
         }),
+        getCreditsTransactionHistoryExportCSV: builder.query<Blob, { page?: number; limit?: number; startDate?: string; endDate?: string; status?: string } | void>({
+            query: (arg) => ({
+                url: `/vendor/all-transaction/export/csv`,
+                method: 'GET',
+                responseHandler: (response) => response.blob(),
+                ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
+            }),
+        }),
+        getCreditsTransactionHistoryExportPDF: builder.query<Blob, { page?: number; limit?: number; startDate?: string; endDate?: string; status?: string } | void>({
+            query: (arg) => ({
+                url: `/vendor/all-transaction/export/pdf`,
+                method: 'GET',
+                responseHandler: (response) => response.blob(),
+                ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
+            }),
+        }),
         getCreditsPackages: builder.query<IAllCreditsAPIResponse, void>({
             query: () => ({
                 url: `/vendor/credits/packages`,
@@ -239,6 +255,8 @@ export const {
     useGetVendorAllQuotesQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,
+    useLazyGetCreditsTransactionHistoryExportCSVQuery,
+    useLazyGetCreditsTransactionHistoryExportPDFQuery,
     useGetCreditsPackagesQuery,
     useGetCreatedServicesQuery,
     useGetServiceRequestQuotesQuery,

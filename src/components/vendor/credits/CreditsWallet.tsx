@@ -2,7 +2,13 @@
 
 import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import {
+    useGetCreditsPackagesQuery,
+    useGetVendorDashboardDataQuery,
+    useGetVendorDashboardTransactionHistoryQuery,
+    useLazyGetCreditsTransactionHistoryExportCSVQuery,
+    useLazyGetCreditsTransactionHistoryExportPDFQuery,
+} from '@/redux/rtkQueries/clientSideGetApis'
 import { usePurchaseCreditsMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
@@ -13,6 +19,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 
 type CreditPackageDisplay = {
     id: string
+    name: string
     credits: number
     bonus: number | null
     price: string
@@ -23,6 +30,7 @@ type CreditPackageDisplay = {
 function mapPackageToDisplay(entity: IAllCreditsDataEntity): CreditPackageDisplay {
     return {
         id: entity._id,
+        name: entity.name ?? '',
         credits: entity.credits,
         bonus: entity.bonus_credits > 0 ? entity.bonus_credits : null,
         price: String(entity.price),
@@ -69,6 +77,8 @@ export default function CreditsWallet() {
     const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
 
     const [purchaseCredits] = usePurchaseCreditsMutation()
+    const [fetchCSV] = useLazyGetCreditsTransactionHistoryExportCSVQuery()
+    const [fetchPDF] = useLazyGetCreditsTransactionHistoryExportPDFQuery()
     const { data: creditsResponse, isLoading: packagesLoading } = useGetCreditsPackagesQuery()
     const creditPackages = useMemo(() => {
         const list = creditsResponse?.data ?? []
@@ -77,6 +87,34 @@ export default function CreditsWallet() {
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
             .map(mapPackageToDisplay)
     }, [creditsResponse?.data])
+
+    const getExportParams = useMemo(() => {
+        if (period === 'all' || !period) return undefined
+        const days = Number(period) || 30
+        const end = new Date()
+        const start = new Date()
+        start.setDate(start.getDate() - days)
+        return {
+            startDate: start.toISOString().split('T')[0],
+            endDate: end.toISOString().split('T')[0],
+        }
+    }, [period])
+
+    const handleDownload = async (format: 'csv' | 'pdf') => {
+        try {
+            const result = format === 'csv' ? await fetchCSV(getExportParams).unwrap() : await fetchPDF(getExportParams).unwrap()
+            const blob = result as Blob
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `credits-transaction-history.${format}`
+            a.click()
+            URL.revokeObjectURL(url)
+            addToast({ title: `Downloaded as ${format.toUpperCase()}`, color: 'success', timeout: 2000 })
+        } catch {
+            addToast({ title: 'Download failed', color: 'danger', timeout: 3000 })
+        }
+    }
 
     const openPurchaseModal = async (pkg: CreditPackageDisplay) => {
         const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
@@ -214,7 +252,12 @@ export default function CreditsWallet() {
                                                 MOST POPULAR
                                             </span>
                                         )}
-                                        <p className="font-bold text-xl text-fontBlack mt-2">
+                                        {pkg.name && (
+                                            <p className="text-sm font-medium text-darkSilver mt-2">
+                                                {pkg.name}
+                                            </p>
+                                        )}
+                                        <p className="font-bold text-xl text-fontBlack mt-1">
                                             {pkg.credits}
                                         </p>
                                         <p className='text-sm text-darkSilver'>credits</p>
@@ -270,12 +313,25 @@ export default function CreditsWallet() {
                                 {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button
-                            className="btn_radius btn_bg_blue font-medium"
-                            startContent={<HiOutlineArrowDownTray className="size-5" />}
-                        >
-                            Download
-                        </Button>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    className="btn_radius btn_bg_blue font-medium"
+                                    startContent={<HiOutlineArrowDownTray className="size-5" />}
+                                    endContent={<MdKeyboardArrowDown className="size-5" />}
+                                >
+                                    Download
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Download format">
+                                <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
+                                    Download as CSV
+                                </DropdownItem>
+                                <DropdownItem key="pdf" onPress={() => handleDownload('pdf')}>
+                                    Download as PDF
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                 </div>
 
