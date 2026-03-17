@@ -32,7 +32,7 @@ const defaultNavItems: NavItem[] = [
 
 export const customerNavItems: NavItem[] = [
     { id: 'my-requests', label: 'Mes demandes', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
-    { id: 'profile', label: 'Mon Profil', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
+    { id: 'profile', label: 'Profil Public', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getMyAccountRoutePath({ section: 'notifications' }) },
     { id: 'create-request', label: 'Créer une nouvelle demande', icon: <HiPlus className="size-5 shrink-0" />, href: getCreateRequestRoutePath() },
@@ -43,7 +43,7 @@ export const vendorNavItems: NavItem[] = [
     // { id: 'prospects', label: 'Trouver des prospects', icon: <LockPrimaryColorSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'available' }) },
     // { id: 'my-leads', label: 'Mes Prospects', icon: <LockOpenGreenIconSVG className="size-5 shrink-0" />, href: getVendorDashboardRoutePath({ leads: 'purchased' }) },
     // { id: 'all-quotes', label: 'Mes Devis', icon: <DocumentArrowIconSVG className="size-5 shrink-0" />, href: getVendorAllQuotesRoutePath() },
-    { id: 'profile', label: 'Mon profil', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
+    { id: 'profile', label: 'Profil Public', icon: <ProfileIconSVG />, href: getVendorAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getVendorAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getVendorAccountRoutePath({ section: 'notifications' }) },
     { id: 'documents', label: 'Mes Documents', icon: <VendorDocumentIconSVG />, href: getVendorAccountRoutePath({ section: 'documents' }) },

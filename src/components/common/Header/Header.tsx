@@ -176,7 +176,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Mon Profil
+                                                    Profil Public
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'security' })}
@@ -234,7 +234,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Mon Profil
+                                                    Profil Public
                                                 </Link>
                                             </div>
                                             <div className="border-t border-borderDark" />
@@ -307,7 +307,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Mon Profil
+                                                    Profil Public
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'security' })}
@@ -364,7 +364,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Mon Profil
+                                                    Profil Public
                                                 </Link>
                                                 <Link
                                                     href={getMessageRoutePath()}

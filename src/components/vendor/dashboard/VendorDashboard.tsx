@@ -125,9 +125,9 @@ export default function VendorDashboard() {
                                 <p className="text-2xl font-bold text-fontBlack">
                                     {isLoading ? '—' : Math.max(0, (dashboard?.availableLeadsCount ?? 0) - (dashboard?.purchasedLeadsCount ?? 0))}
                                 </p>
-                                <p className="text-sm text-darkSilver mt-0.5">Prospects verrouillés</p>
+                                <p className="text-sm text-darkSilver mt-0.5">Prospects disponibles</p>
                                 <span className="inline-block mt-2 text-sm font-medium text-primaryColor">
-                                    Voir les prospects verrouillés →
+                                    Voir les Prospects disponibles →
                                 </span>
                             </Link>
 
@@ -166,7 +166,7 @@ export default function VendorDashboard() {
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <h2 className="header_text_md text-fontBlack">
-                                {showQuotedOnly ? 'Devis envoyés' : showPurchasedOnly ? 'Mes Prospects' : showLockedOnly ? 'Prospects verrouillés' : 'Prospects Disponibles'}
+                                {showQuotedOnly ? 'Devis envoyés' : showPurchasedOnly ? 'Mes Prospects' : showLockedOnly ? 'Prospects disponibles' : 'Prospects Disponibles'}
                             </h2>
                         </div>
                         <div className="flex flex-wrap justify-end items-center gap-3">
