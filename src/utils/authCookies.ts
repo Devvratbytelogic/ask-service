@@ -51,6 +51,14 @@ export function getUserId(): string | undefined {
 }
 
 /**
+ * Update only the user_role cookie (e.g. when switching from Vendor to User account).
+ * Keeps auth token and userID unchanged.
+ */
+export function setUserRoleCookie(role: string): void {
+    Cookies.set('user_role', role, SESSION_COOKIE_OPTIONS)
+}
+
+/**
  * Temporary token used only for the forgot-password "new password" request.
  * When set, baseQuery uses this instead of auth_token cookie so the user is not logged in.
  * Cleared by baseQuery after the request is prepared.

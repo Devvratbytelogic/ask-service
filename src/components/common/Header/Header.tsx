@@ -8,10 +8,12 @@ import { useRouter } from "next/navigation";
 import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { useSelector } from "react-redux";
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
-import { getUserRole, clearAllCookiesAndReload, getAuthToken } from "@/utils/authCookies";
+import { getUserRole, clearAllCookiesAndReload, getAuthToken, setUserRoleCookie } from "@/utils/authCookies";
 import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
 import type { RootState } from "@/redux/appStore";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUserRole } from "@/redux/slices/authSlice";
 
 /** Get initials from first + last name, or email/placeholder */
 function getInitials(firstName?: string | null, lastName?: string | null, email?: string | null): string {
@@ -45,6 +47,7 @@ interface HeaderProps {
 
 const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const router = useRouter();
+    const dispatch = useDispatch();
     const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated);
     const isAuthenticated = initialIsAuthenticated || !!getAuthToken() || isClientAuthenticated;
     const roleFromRedux = useSelector((state: RootState) => state.auth.userRole);
@@ -68,6 +71,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         }
     }, [isVendorProfileError, vendorProfileError, isUserProfileError, userProfileError]);
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
+    
     // console.log("refetchVendorProfile", refetchVendorProfile);
     // console.log("refetchUserProfile", refetchUserProfile);
     const firstName = isVendor ? vendorProfile?.data?.business_name : profile?.first_name;
@@ -81,6 +85,25 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
     const handleLogout = () => {
         clearAllCookiesAndReload(getHomeRoutePath());
     };
+
+    /** Switch from vendor to user account: update role cookie + Redux, invalidate caches, redirect to user area */
+    const handleSwitchToUserAccount = () => {
+        setUserRoleCookie("User");
+        dispatch(setUserRole("User"));
+        dispatch(clientSideGetApis.util.invalidateTags(["VendorProfile", "UserProfile"]));
+        window.location.href = getMyRequestRoutePath();
+    };
+
+    /** Switch from user to vendor account when profile has is_vendor: true */
+    const handleSwitchToVendorAccount = () => {
+        setUserRoleCookie("Vendor");
+        dispatch(setUserRole("Vendor"));
+        dispatch(clientSideGetApis.util.invalidateTags(["VendorProfile", "UserProfile"]));
+        window.location.href = getVendorDashboardRoutePath({ leads: "purchased" });
+    };
+
+    /** Show "Switch to vendor" only when logged in as customer and profile says they are also a vendor */
+    const showSwitchToVendor = !isVendor && userProfile?.data?.is_vendor === true;
 
     // Location is no longer requested on load; it is only requested when the user
     // clicks "Use my current location" in profile pages (ProfileInfo / VendorProfileInfo).
@@ -176,7 +199,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Profil Public
+                                                    Mon Profil
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'security' })}
@@ -185,6 +208,18 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
                                                 </Link>
+                                            </div>
+                                            <div className="border-t border-borderDark" />
+                                            {/* Switch to user account */}
+                                            <div className="py-2 px-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={handleSwitchToUserAccount}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-normal hover:bg-primaryColor/10 transition-colors"
+                                                >
+                                                    <span className="size-5 shrink-0 flex text-primaryColor"><ProfileIconSVG /></span>
+                                                    Passer en compte utilisateur
+                                                </button>
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             {/* Sign out */}
@@ -234,9 +269,24 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Profil Public
+                                                    Mon Profil
                                                 </Link>
                                             </div>
+                                            {showSwitchToVendor && (
+                                                <>
+                                                    <div className="border-t border-borderDark" />
+                                                    <div className="py-2 px-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleSwitchToVendorAccount}
+                                                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-normal hover:bg-primaryColor/10 transition-colors"
+                                                        >
+                                                            <span className="size-5 shrink-0 flex text-primaryColor"><DocumentIconSVG /></span>
+                                                            Passer en compte prestataire
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )}
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
                                                 <button
@@ -307,7 +357,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Profil Public
+                                                    Mon Profil
                                                 </Link>
                                                 <Link
                                                     href={getVendorAccountRoutePath({ section: 'security' })}
@@ -316,6 +366,17 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
                                                     Paramètres
                                                 </Link>
+                                            </div>
+                                            <div className="border-t border-borderDark" />
+                                            <div className="py-2 px-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={handleSwitchToUserAccount}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-normal hover:bg-primaryColor/10 transition-colors"
+                                                >
+                                                    <span className="size-5 shrink-0 flex text-primaryColor"><ProfileIconSVG /></span>
+                                                    Passer en compte utilisateur
+                                                </button>
                                             </div>
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
@@ -364,7 +425,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                                    Profil Public
+                                                    Mon Profil
                                                 </Link>
                                                 <Link
                                                     href={getMessageRoutePath()}
@@ -374,6 +435,21 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     Mes messages
                                                 </Link>
                                             </div>
+                                            {showSwitchToVendor && (
+                                                <>
+                                                    <div className="border-t border-borderDark" />
+                                                    <div className="py-2 px-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleSwitchToVendorAccount}
+                                                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-normal hover:bg-primaryColor/10 transition-colors"
+                                                        >
+                                                            <span className="size-5 shrink-0 flex text-primaryColor"><DocumentIconSVG /></span>
+                                                            Passer en compte prestataire
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )}
                                             <div className="border-t border-borderDark" />
                                             <div className="py-2 px-2">
                                                 <button

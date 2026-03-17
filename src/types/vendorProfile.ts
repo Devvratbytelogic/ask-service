@@ -38,6 +38,7 @@ export interface IVendorProfileInfoData {
     __v: number;
     service: IVendorProfileInfoService;
     id: string;
+    is_vendor?: boolean;
 }
 export interface IVendorProfileInfoService {
     _id: string;

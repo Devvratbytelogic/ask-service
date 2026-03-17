@@ -34,5 +34,6 @@ export interface IUserProfileInfoAPIResponse {
     postcode?: string;
     postal_code?: string;
     city?: string;
+    is_vendor?: boolean;
   }
   

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { getAuthToken, logoutAndRedirectToHome } from '@/utils/authCookies';
 
-const INACTIVITY_MS = 1 * 60 * 1000; // 1 minutes
+const INACTIVITY_MS = 20 * 60 * 1000; // 20 minutes
 const AUTH_CHECK_INTERVAL_MS = 2000; // re-check auth so timer starts after login
 const LAST_ACTIVITY_KEY = 'inactivity_last_activity';
 
