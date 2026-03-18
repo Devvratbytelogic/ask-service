@@ -28,26 +28,26 @@ function requestToInitialFormValues(request: DataEntity): RequestServiceFormValu
     const clientType = cd?.client_type === 'Entreprise' || cd?.client_type === 'Company' ? 'Company' : 'Individual'
     const childId = request?.child_category?._id
     const isOther = !!request?.manual_child_category
+    const dynamicAnswers: Record<string, string | string[]> = {}
+    if (request && 'dynamic_answers' in request && Array.isArray((request as { dynamic_answers?: { question_id: string; value: string }[] }).dynamic_answers)) {
+        (request as { dynamic_answers: { question_id: string; value: string }[] }).dynamic_answers.forEach((a) => {
+            dynamicAnswers[a.question_id] = a.value?.includes(',') ? a.value.split(',').map((s) => s.trim()) : a.value ?? ''
+        })
+    }
     return {
         pincode: request?.pincode ?? '',
         parentServiceId: childId ?? '',
         parentServiceName: isOther ? 'other' : (childId ?? ''),
         otherServiceName: typeof request?.manual_child_category === 'string' ? request.manual_child_category : '',
-        serviceFrequency: request?.frequency ?? '',
         childServiceId: '',
-        childServiceIds: request?.selected_options ?? [],
-        serviceStartDate: request?.preferred_start_date ?? '',
-        serviceTimeOfDay: request?.preferred_time_of_day ?? '',
-        start_date: apiDateToInputValue(request?.start_date) || '',
-        start_time: (request?.start_time ?? '').toString().trim() || '',
-        end_date: apiDateToInputValue(request?.end_date) || '',
-        end_time: (request?.end_time ?? '').toString().trim() || '',
+        childServiceIds: [],
         serviceNote: request?.note ?? '',
         customerFirstName: cd?.first_name ?? '',
         customerLastName: cd?.last_name ?? '',
         clientType,
         customerPhoneNumber: cd?.phone ?? '',
         customerEmail: cd?.email ?? '',
+        dynamicAnswers,
     }
 }
 

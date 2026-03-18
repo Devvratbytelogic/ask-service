@@ -2,12 +2,13 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import moment from 'moment'
+import { Spinner } from '@heroui/react'
 import { LocationSVG } from '@/components/library/AllSVG'
 import LeadHeader from './LeadHeader'
 import LeadSidebar from './LeadSidebar'
 import SubmitQuoteForm from './SubmitQuoteForm'
 import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import type { ISingleLead } from '@/types/singleLead'
+import type { ISingleLeadAPIResponseData, DynamicAnswersEntity } from '@/types/singleLead'
 
 export interface LeadFullDetailsData {
     title?: string
@@ -22,7 +23,7 @@ interface LeadFullDetailsProps {
     id: string
 }
 
-function formatLocation(lead: ISingleLead | undefined): string {
+function formatLocation(lead: ISingleLeadAPIResponseData | undefined): string {
     if (!lead) return ''
     const parts = [lead.address_1, lead.address_2, lead.city, lead.state, lead.country, lead.pincode].filter(Boolean)
     return parts.join(', ')
@@ -41,11 +42,12 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
     const headerData = useMemo((): LeadFullDetailsData | null => {
         if (!lead) return null
+        const leadExt = lead as ISingleLeadAPIResponseData & { creditsToUnlock?: number }
         return {
-            title: lead.service_category?.title || lead.child_category,
+            title: (lead.service_category?.title || lead.child_category) ?? undefined,
             id: lead.reference_no,
             postedAt: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : undefined,
-            creditsToUnlock: (lead as ISingleLead & { creditsToUnlock?: number }).creditsToUnlock ?? 0,
+            creditsToUnlock: leadExt.creditsToUnlock ?? 0,
             unlocked: lead.unlocked,
             canQuote: lead.canQuote,
         }
@@ -56,6 +58,8 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
         const contact = lead.contact_details
         const clientName = [contact?.first_name, contact?.last_name].filter(Boolean).join(' ') || [lead.user?.first_name, lead.user?.last_name].filter(Boolean).join(' ')
         const clientInitials = clientName ? clientName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'N/A'
+        const rawLead = lead as ISingleLeadAPIResponseData & { frequency?: string; preferred_start_date?: string; preferred_time_of_day?: string; start_date?: string; start_time?: string; end_date?: string; end_time?: string; selected_options?: string[] }
+        const dynamicAnswers: DynamicAnswersEntity[] = rawLead.dynamic_answers && Array.isArray(rawLead.dynamic_answers) ? [...rawLead.dynamic_answers] : []
         return {
             clientInitials,
             clientName: clientName || 'N/A',
@@ -65,21 +69,23 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             emailMasked: contact?.email || lead.user?.email || 'N/A',
             location: formatLocation(lead),
             serviceType: lead.service_category?.title || lead.child_category || 'N/A',
-            frequency: lead.frequency || 'N/A',
+            frequency: rawLead.frequency || 'N/A',
             clientType: lead.contact_details?.client_type || 'N/A',
-            preferredStartDate: lead.preferred_start_date ? moment(lead.preferred_start_date).format('LL') : 'N/A',
-            preferredTime: lead.preferred_time_of_day || 'N/A',
-            startDate: lead.start_date ? moment(lead.start_date).format('LL') : undefined,
-            startTime: lead.start_time,
-            endDate: lead.end_date ? moment(lead.end_date).format('LL') : undefined,
-            endTime: lead.end_time,
-            tasks: lead.selected_options ?? [],
+            preferredStartDate: rawLead.preferred_start_date ? moment(rawLead.preferred_start_date).format('LL') : 'N/A',
+            preferredTime: rawLead.preferred_time_of_day || 'N/A',
+            startDate: rawLead.start_date ? moment(rawLead.start_date).format('LL') : undefined,
+            startTime: rawLead.start_time,
+            endDate: rawLead.end_date ? moment(rawLead.end_date).format('LL') : undefined,
+            endTime: rawLead.end_time,
+            tasks: rawLead.selected_options ?? [],
+            dynamicAnswers,
         }
     }, [lead])
 
     if (leadLoading || !displayData) {
         return (
-            <div className="flex items-center justify-center min-h-50">
+            <div className="flex flex-col items-center justify-center min-h-50 gap-4">
+                {leadLoading && <Spinner size="lg" color="primary" />}
                 <p className="text-darkSilver">{leadLoading ? 'Loading lead details...' : 'No lead data found.'}</p>
             </div>
         )
@@ -162,7 +168,27 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                         </div>
                     </div>
 
-                    {/* Requested Tasks Card */}
+                    {/* Dynamic answers (from new request flow) */}
+                    {displayData.dynamicAnswers.length > 0 && (
+                        <div className="rounded-2xl border border-borderDark bg-white p-5">
+                            <h3 className="font-bold text-fontBlack mb-4">Détails du service</h3>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {displayData.dynamicAnswers.map((a: DynamicAnswersEntity) => {
+                                    const displayValue = a.value?.includes(',')
+                                        ? a.value.split(',').map((s) => s.trim()).join(', ')
+                                        : (a.value ?? '—')
+                                    return (
+                                        <div key={a._id || a.question_id} className="rounded-xl border border-borderDark px-4 py-3">
+                                            <p className="text-xs text-darkSilver mb-1">{a.label}</p>
+                                            <p className="text-sm font-medium text-fontBlack">{displayValue || '—'}</p>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Requested Tasks Card (legacy) */}
                     {displayData.tasks.length > 0 && <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <h3 className="font-bold text-fontBlack mb-4">Requested Tasks</h3>
                         <div className="flex flex-wrap gap-2">

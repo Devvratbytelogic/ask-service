@@ -1,19 +1,11 @@
 "use client"
 
-import { CHILD_SERVICE_LIST, SERVICE_LIST } from "@/utils/serviceList"
-import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
+import type { ListEntity } from "@/types/serviceQuestions"
 import { Button } from "@heroui/react"
 import { FormikProps } from "formik"
 import { FiCheck } from "react-icons/fi"
+import { useMemo } from "react"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
-
-interface ReviewRequestProps {
-  formik: FormikProps<RequestServiceFormValues>
-  setStepCount: React.Dispatch<React.SetStateAction<number>>
-  isTasksRequiredVisible?: boolean
-  childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
-  grandParentServiceName?: string | null
-}
 
 const formatDate = (dateStr: string) => {
   if (!dateStr?.trim()) return "—"
@@ -22,86 +14,85 @@ const formatDate = (dateStr: string) => {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 }
 
-const getServiceName = (
-  value: string,
-  otherName?: string,
-  childServices?: IAllServiceCategoriesChildCategoriesEntity[] | null
-) => {
-  if (!value) return ""
-  if (value === "other") return otherName?.trim() || "Autre"
-  const fromApi = childServices?.find((c) => String(c._id) === value)?.title
-  if (fromApi) return fromApi
-  const found = SERVICE_LIST.find((s) => String(s._id) === value)
-  return found?.service_name ?? ""
+function formatDynamicValue(value: string | string[], question: ListEntity): string {
+  if (Array.isArray(value)) return value.filter(Boolean).join(", ") || "—"
+  const s = (value ?? "").toString().trim()
+  if (!s) return "—"
+  if (question.type === "date") return formatDate(s)
+  return s
 }
 
-const getTaskNames = (ids: string[]) => {
-  if (!ids?.length) return "—"
-  return ids
-    .map((id) => CHILD_SERVICE_LIST.find((c) => String(c._id) === id)?.service_name ?? id)
-    .join(", ")
+interface ReviewRequestProps {
+  formik: FormikProps<RequestServiceFormValues>
+  setStepCount: React.Dispatch<React.SetStateAction<number>>
+  questionsList: ListEntity[]
+  contactStepIndex: number
 }
 
-const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, childServices = null, grandParentServiceName = null }: ReviewRequestProps) => {
+const ReviewRequest = ({
+  formik,
+  setStepCount,
+  questionsList,
+  contactStepIndex,
+}: ReviewRequestProps) => {
   const { values, handleSubmit } = formik
+  const dynamicAnswers = values.dynamicAnswers ?? {}
 
   const handleBack = () => setStepCount((prev) => prev - 1)
 
-  const childServiceLabel = values.parentServiceName
-    ? getServiceName(values.parentServiceName, values.otherServiceName, childServices)
-    : ""
-  const serviceDisplay =
-    grandParentServiceName && childServiceLabel
-      ? `${grandParentServiceName} › ${childServiceLabel}`
-      : childServiceLabel || grandParentServiceName || "—"
+  const firstDynamicStepIndex = 1
 
-  const summaryCards = [
-    {
-      title: "Service et lieu",
-      step: 1,
-      rows: [
-        ...(values.parentServiceName || grandParentServiceName
-          ? [{ label: "Service:", value: serviceDisplay }]
-          : []),
-        ...(values.serviceFrequency ? [{ label: "Fréquence:", value: values.serviceFrequency }] : []),
-      ],
-    },
-    ...(isTasksRequiredVisible
-      ? [{
-          title: "Missions",
-          step: 2,
-          rows: [
-            { label: "Missions:", value: getTaskNames(values.childServiceIds ?? []) },
-          ],
-        }]
-      : []),
-    {
-      title: "Planning souhaité",
-      step: 3,
-      rows: [
-        ...(values.serviceStartDate ? [{ label: "Date préférée:", value: formatDate(values.serviceStartDate) }] : []),
-        ...(values.serviceTimeOfDay ? [{ label: "Moment souhaité:", value: values.serviceTimeOfDay }] : []),
-        ...(values.start_date ? [{ label: "Date de début:", value: formatDate(values.start_date) }] : []),
-        ...(values.start_time ? [{ label: "Heure de début:", value: values.start_time }] : []),
-        ...(values.end_date ? [{ label: "Date de fin:", value: formatDate(values.end_date) }] : []),
-        ...(values.end_time ? [{ label: "Heure de fin:", value: values.end_time }] : []),
-        { label: "Détails:", value: values.serviceNote?.trim() || "—" },
-      ],
-    },
-    {
+  const summaryCards = useMemo(() => {
+    const cards: { title: string; step: number; rows: { label: string; value: string }[] }[] = []
+    const dynamicRows = [...questionsList]
+      .sort((a, b) => a.step - b.step || a.order - b.order)
+      .map((q) => ({
+        label: `${q.label}:`,
+        value: formatDynamicValue(dynamicAnswers[q._id] ?? "", q),
+      }))
+    if (dynamicRows.length > 0) {
+      cards.push({
+        title: "Détails du service",
+        step: firstDynamicStepIndex,
+        rows: dynamicRows,
+      })
+    }
+    cards.push({
       title: "Vos coordonnées",
-      step: 4,
+      step: contactStepIndex,
       rows: [
+        { label: "Code postal:", value: values.pincode?.trim() || "—" },
         {
           label: "Nom:",
           value: [values.customerFirstName, values.customerLastName].filter(Boolean).join(" ") || "—",
         },
-        { label: "Type:", value: (values.clientType === "Individual" ? "Particulier" : values.clientType === "Company" ? "Entreprise" : values.clientType) || "—" },
+        {
+          label: "Type:",
+          value:
+            values.clientType === "Individual"
+              ? "Particulier"
+              : values.clientType === "Company"
+                ? "Entreprise"
+                : values.clientType || "—",
+        },
         { label: "Téléphone:", value: values.customerPhoneNumber || "—" },
         { label: "Email:", value: values.customerEmail || "—" },
+        { label: "Détails:", value: values.serviceNote?.trim() || "—" },
       ],
-    },
-  ]
+    })
+    return cards
+  }, [
+    values.pincode,
+    values.customerFirstName,
+    values.customerLastName,
+    values.clientType,
+    values.customerPhoneNumber,
+    values.customerEmail,
+    values.serviceNote,
+    questionsList,
+    dynamicAnswers,
+    contactStepIndex,
+  ])
 
   return (
     <>
@@ -115,9 +106,9 @@ const ReviewRequest = ({ formik, setStepCount, isTasksRequiredVisible = true, ch
       </div>
 
       <div className="space-y-4 pt-2 max-h-[35svh] overflow-y-scroll">
-        {summaryCards.map((card) => (
+        {summaryCards.map((card, idx) => (
           <div
-            key={card.title}
+            key={`${card.title}-${card.step}-${idx}`}
             className="rounded-xl border border-borderColor bg-gray-100/80 p-4"
           >
             <div className="flex items-center justify-between mb-3">

@@ -1,7 +1,7 @@
 "use client"
 
-import { Button, Input } from "@heroui/react"
-import { FormikProps } from "formik"
+import { Button, Input, Textarea } from "@heroui/react"
+import { FormikProps, FormikTouched } from "formik"
 import { FiInfo } from "react-icons/fi"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
@@ -11,6 +11,7 @@ const CLIENT_TYPES = ["Individual", "Company"] as const
 const CLIENT_TYPE_LABELS: Record<string, string> = { Individual: "Particulier", Company: "Entreprise" }
 
 const STEP4_REQUIRED_FIELDS: (keyof RequestServiceFormValues)[] = [
+  "pincode",
   "customerFirstName",
   "customerLastName",
   "clientType",
@@ -39,12 +40,11 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
       setStepCount((prev) => prev + 1)
       return
     }
-    setTouched(
-      STEP4_REQUIRED_FIELDS.reduce(
-        (acc, k) => ({ ...acc, [k]: true }),
-        {} as Partial<Record<keyof RequestServiceFormValues, boolean>>
-      )
+    const touchedFields = STEP4_REQUIRED_FIELDS.reduce(
+      (acc, k) => ({ ...acc, [k]: true }),
+      {} as Record<string, boolean>
     )
+    setTouched({ ...touched, ...touchedFields } as FormikTouched<RequestServiceFormValues>)
     const errs = await validateForm()
     const hasStep4Errors = STEP4_REQUIRED_FIELDS.some((k) => errs[k])
     if (!hasStep4Errors) setStepCount((prev) => prev + 1)
@@ -62,6 +62,27 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
       </div>
 
       <div className="space-y-4 grid grid-cols-1 pt-2">
+        <div className="col-span-1">
+          {/* <Input
+            name="pincode"
+            variant="bordered"
+            label="Code postal"
+            labelPlacement="outside"
+            placeholder="Entrez votre code postal"
+            value={values.pincode ?? ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            isInvalid={!!(touched.pincode && errors.pincode)}
+            errorMessage={touched.pincode && errors.pincode}
+            classNames={{
+              inputWrapper: ["custom_input_design"],
+              label: ["custom_label_text"],
+            }}
+            isRequired
+            isReadOnly={readOnly}
+            isDisabled={readOnly}
+          /> */}
+        </div>
         <div className="col-span-1">
           <Input
             name="customerFirstName"
@@ -183,6 +204,25 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
               label: ["custom_label_text"],
             }}
             isRequired
+            isReadOnly={readOnly}
+            isDisabled={readOnly}
+          />
+        </div>
+        <div className="col-span-1">
+          <Textarea
+            name="serviceNote"
+            variant="bordered"
+            label="Donnez plus de détails (optionnel)"
+            labelPlacement="outside"
+            placeholder="Écrivez ici..."
+            value={values.serviceNote ?? ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            classNames={{
+              inputWrapper: ["custom_input_design"],
+              label: ["custom_label_text"],
+            }}
+            minRows={3}
             isReadOnly={readOnly}
             isDisabled={readOnly}
           />

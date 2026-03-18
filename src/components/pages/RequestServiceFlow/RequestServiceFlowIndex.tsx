@@ -1,21 +1,20 @@
 import { useFormik } from "formik"
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import ProgressStepBar from "@/components/library/ProgressStepBar"
 import ContactInformation from "./ContactInformation"
-import DesiredSchedule from "./DesiredSchedule"
+import DynamicQuestionsStep from "./DynamicQuestionsStep"
 import ReviewRequest from "./ReviewRequest"
-import ServiceAndLocation from "./ServiceAndLocation"
-import TaskRequired from "./TaskRequired"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useCreateServiceRequestMutation, useUpdateServiceRequestMutation } from "@/redux/rtkQueries/allPostApi"
-import { useGetUserProfileInfoQuery, useGetServiceCategoryQuery } from "@/redux/rtkQueries/clientSideGetApis"
+import { useGetUserProfileInfoQuery, useGetServicesQuetionsQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { useLazyGetAddressFromPincodeQuery } from "@/redux/geo-location/geoLocation"
 import { getAuthToken } from "@/utils/authCookies"
 import { parseGeocodeResponse } from "@/utils/pincodeToAddress"
 import AppLoader from "@/components/common/AppLoader"
-import type { IAllServiceCategoriesChildCategoriesEntity } from "@/types/services"
+import type { ListEntity } from "@/types/serviceQuestions"
+import type { ICreateServiceRequestPayload } from "@/types/serviceQuestions"
 import { validateEmail } from "@/utils/validation"
 
 const baseInitialValues = {
@@ -23,32 +22,17 @@ const baseInitialValues = {
     parentServiceId: "",
     parentServiceName: "",
     otherServiceName: "",
-    serviceFrequency: "",
     childServiceId: "",
     childServiceIds: [] as string[],
-    serviceStartDate: "",
-    serviceTimeOfDay: "",
-    start_date: "",
-    start_time: "",
-    end_date: "",
-    end_time: "",
     serviceNote: "",
     customerFirstName: "",
     customerLastName: "",
     clientType: "",
     customerPhoneNumber: "",
     customerEmail: "",
+    dynamicAnswers: {} as Record<string, string | string[]>,
 }
 export type RequestServiceFormValues = typeof baseInitialValues
-
-export type ScheduleVisibility = {
-    is_preferred_date_visible: boolean
-    is_preferred_time_visible: boolean
-    is_start_date_visible: boolean
-    is_start_time_visible: boolean
-    is_end_date_visible: boolean
-    is_end_time_visible: boolean
-}
 
 const flowTypes = {
     PHONE_VERIFICATION_REQUIRED: 'PHONE_VERIFICATION_REQUIRED',
@@ -61,6 +45,49 @@ const LOGIN_REQUIRED_MESSAGES = {
     PHONE: "User already exists with phone. Please login.",
     EMAIL: "Email already associated with another account",
 } as const
+
+/** Build empty dynamicAnswers from questions for form init */
+function buildEmptyDynamicAnswers(questions: ListEntity[]): Record<string, string | string[]> {
+    const out: Record<string, string | string[]> = {}
+    questions.forEach((q) => {
+        out[q._id] = q.is_multiple || q.type === "checkbox" ? [] : ""
+    })
+    return out
+}
+
+/** Clone dynamicAnswers so form state is never frozen (e.g. from Redux during edit). */
+function cloneDynamicAnswers(raw: Record<string, string | string[]> | null | undefined): Record<string, string | string[]> {
+    if (!raw || typeof raw !== "object") return {}
+    const out: Record<string, string | string[]> = {}
+    Object.keys(raw).forEach((key) => {
+        const v = raw[key]
+        out[key] = Array.isArray(v) ? [...v] : (v ?? "")
+    })
+    return out
+}
+
+/** Build dynamic_answers payload from questions + form dynamicAnswers */
+function buildDynamicAnswersPayload(
+    questions: ListEntity[],
+    dynamicAnswers: Record<string, string | string[]>
+): ICreateServiceRequestPayload["dynamic_answers"] {
+    return questions.map((q) => {
+        const raw = dynamicAnswers[q._id]
+        let value: string
+        if (Array.isArray(raw)) {
+            value = raw.filter(Boolean).join(",")
+        } else {
+            value = (raw ?? "").toString().trim()
+        }
+        return {
+            question_id: q._id,
+            key: q.key,
+            label: q.label,
+            type: q.type,
+            value,
+        }
+    })
+}
 
 const RequestServiceFlowIndex = () => {
 
@@ -91,36 +118,39 @@ const RequestServiceFlowIndex = () => {
         skip: !isAuthenticated,
     })
     const profile = profileResponse?.data
-    const { data: serviceCategoryResponse, isLoading: isServiceCategoryLoading } = useGetServiceCategoryQuery(
-        { id: data?.grandParentServiceId ?? "" },
-        { skip: !data?.grandParentServiceId }
+    const categoryId = data?.grandParentServiceId ?? ""
+    const { data: questionsResponse, isLoading: isQuestionsLoading } = useGetServicesQuetionsQuery(
+        { id: categoryId },
+        { skip: !categoryId }
     )
-    const isFrequencyVisible = serviceCategoryResponse?.data?.is_frequency_visible ?? true
-    const isTasksRequiredVisible = serviceCategoryResponse?.data?.is_tasks_required_visible ?? true
-    const scheduleVisibility: ScheduleVisibility = {
-        is_preferred_date_visible: serviceCategoryResponse?.data?.is_preferred_date_visible ?? true,
-        is_preferred_time_visible: serviceCategoryResponse?.data?.is_preferred_time_visible ?? true,
-        is_start_date_visible: serviceCategoryResponse?.data?.is_start_date_visible ?? false,
-        is_start_time_visible: serviceCategoryResponse?.data?.is_start_time_visible ?? false,
-        is_end_date_visible: serviceCategoryResponse?.data?.is_end_date_visible ?? false,
-        is_end_time_visible: serviceCategoryResponse?.data?.is_end_time_visible ?? false,
-    }
+    const questionsList = useMemo(() => questionsResponse?.data?.list ?? [], [questionsResponse?.data?.list])
+    const questionSteps = useMemo(() => {
+        const steps = Array.from(new Set(questionsList.map((q) => q.step))).sort((a, b) => a - b)
+        return steps
+    }, [questionsList])
+    const questionsByStep = useMemo(() => {
+        const map: Record<number, ListEntity[]> = {}
+        questionSteps.forEach((step) => {
+            map[step] = questionsList.filter((q) => q.step === step)
+        })
+        return map
+    }, [questionsList, questionSteps])
 
-    const totalSteps = isTasksRequiredVisible ? 5 : 4
-    const displayStep = isTasksRequiredVisible ? getStepCount : (getStepCount >= 3 ? getStepCount - 1 : getStepCount)
+    const totalSteps = questionSteps.length + 1 + 1 // dynamic steps + Contact + Review
+    const contactStepIndex = questionSteps.length + 1
+    const reviewStepIndex = contactStepIndex + 1
+    const displayStep = getStepCount
 
     const setStepCountSafe = useCallback(
         (arg: React.SetStateAction<number>) => {
             if (typeof arg === "function") {
                 setStepCount((prev) => {
-                    let next = arg(prev)
+                    const next = arg(prev)
                     if (next < 1) {
                         dispatch(closeModal())
                         return 1
                     }
-                    if (!isTasksRequiredVisible && next === 2) {
-                        next = prev < 2 ? 3 : 1
-                    }
+                    if (next > totalSteps) return totalSteps
                     return next
                 })
             } else {
@@ -128,11 +158,11 @@ const RequestServiceFlowIndex = () => {
                     dispatch(closeModal())
                     setStepCount(1)
                 } else {
-                    setStepCount(!isTasksRequiredVisible && arg === 2 ? 3 : arg)
+                    setStepCount(Math.min(arg, totalSteps))
                 }
             }
         },
-        [dispatch, isTasksRequiredVisible]
+        [dispatch, totalSteps]
     )
 
     const profilePrefill: Partial<RequestServiceFormValues> = profile
@@ -144,44 +174,65 @@ const RequestServiceFlowIndex = () => {
         }
         : {}
 
-    const initialValues: RequestServiceFormValues = {
-        ...baseInitialValues,
-        pincode: data?.pincode ?? baseInitialValues.pincode,
-        ...profilePrefill,
-        ...(modalData?.initialFormValues && typeof modalData.initialFormValues === "object"
-            ? modalData.initialFormValues
-            : {}),
-    }
+    const initialDynamicAnswers = useMemo(
+        () => buildEmptyDynamicAnswers(questionsList),
+        [questionsList]
+    )
 
-    const validate = (values: RequestServiceFormValues) => {
-        const err: Partial<Record<keyof RequestServiceFormValues, string>> = {}
-        const scheduleRequiredFields: (keyof RequestServiceFormValues)[] = [
-            ...(scheduleVisibility.is_preferred_date_visible ? (["serviceStartDate"] as const) : []),
-            ...(scheduleVisibility.is_preferred_time_visible ? (["serviceTimeOfDay"] as const) : []),
-            ...(scheduleVisibility.is_start_date_visible ? (["start_date"] as const) : []),
-            ...(scheduleVisibility.is_start_time_visible ? (["start_time"] as const) : []),
-            ...(scheduleVisibility.is_end_date_visible ? (["end_date"] as const) : []),
-            ...(scheduleVisibility.is_end_time_visible ? (["end_time"] as const) : []),
-        ]
-        const requiredFields: (keyof RequestServiceFormValues)[] = [
-            "pincode", "parentServiceName",
-            ...(isFrequencyVisible ? (["serviceFrequency"] as const) : []),
-            ...scheduleRequiredFields,
-            "customerFirstName", "customerLastName", "clientType", "customerPhoneNumber", "customerEmail",
-        ]
-        requiredFields.forEach((field) => {
-            if (!values[field]?.toString().trim()) {
-                err[field] = "Requis"
+    const initialValues: RequestServiceFormValues = useMemo(() => {
+        const saved = modalData?.initialFormValues && typeof modalData.initialFormValues === "object" ? modalData.initialFormValues : null
+        const { dynamicAnswers: savedDynamic, ...restSaved } = saved ?? {}
+        return {
+            ...baseInitialValues,
+            pincode: data?.pincode ?? baseInitialValues.pincode,
+            ...profilePrefill,
+            ...restSaved,
+            dynamicAnswers: {
+                ...initialDynamicAnswers,
+                ...cloneDynamicAnswers(savedDynamic),
+            },
+        }
+    }, [data?.pincode, profilePrefill, initialDynamicAnswers, modalData?.initialFormValues])
+
+    type FormErrors = Partial<Record<Exclude<keyof RequestServiceFormValues, "dynamicAnswers">, string>> & { dynamicAnswers?: Record<string, string> }
+
+    const validate = useCallback(
+        (values: RequestServiceFormValues): FormErrors => {
+            const baseErr: Partial<Record<Exclude<keyof RequestServiceFormValues, "dynamicAnswers">, string>> = {}
+            const requiredBase: (keyof RequestServiceFormValues)[] = [
+                "pincode",
+                "customerFirstName",
+                "customerLastName",
+                "clientType",
+                "customerPhoneNumber",
+                "customerEmail",
+            ]
+            requiredBase.forEach((field) => {
+                if (!values[field]?.toString().trim()) {
+                    baseErr[field as Exclude<keyof RequestServiceFormValues, "dynamicAnswers">] = "Requis"
+                }
+            })
+            if (values.customerEmail?.toString().trim() && !validateEmail(values.customerEmail.trim())) {
+                baseErr.customerEmail = "Veuillez entrer une adresse email valide"
             }
-        })
-        if (values.customerEmail?.toString().trim() && !validateEmail(values.customerEmail.trim())) {
-            err.customerEmail = "Veuillez entrer une adresse email valide"
-        }
-        if (values.parentServiceName === "other" && !values.otherServiceName?.toString().trim()) {
-            err.otherServiceName = "Requis"
-        }
-        return err
-    }
+            const dynErr: Record<string, string> = {}
+            questionsList.filter((q) => q.is_required).forEach((q) => {
+                const v = values.dynamicAnswers?.[q._id]
+                if (q.is_multiple || q.type === "checkbox") {
+                    const hasValue = Array.isArray(v)
+                        ? v.length > 0
+                        : (v ?? "").toString().trim() !== ""
+                    if (!hasValue) dynErr[q._id] = "Requis"
+                } else {
+                    if (!(v ?? "").toString().trim()) dynErr[q._id] = "Requis"
+                }
+            })
+            const result: FormErrors = { ...baseErr }
+            if (Object.keys(dynErr).length > 0) result.dynamicAnswers = dynErr
+            return result
+        },
+        [questionsList]
+    )
 
     const formik = useFormik({
         initialValues,
@@ -198,18 +249,10 @@ const RequestServiceFlowIndex = () => {
                         // Fallback to empty if geocoding fails
                     }
                 }
-                const payload = {
+                const payload: ICreateServiceRequestPayload = {
                     service_category: data?.grandParentServiceId ?? "",
-                    child_category: values.parentServiceName === "other" ? "" : (values.parentServiceName ?? ""),
-                    manual_child_category: values.parentServiceName === "other" ? (values.otherServiceName ?? "") : "",
-                    frequency: values.serviceFrequency ?? "",
-                    selected_options: values.childServiceIds ?? [],
-                    preferred_start_date: values.serviceStartDate ?? "",
-                    preferred_time_of_day: values.serviceTimeOfDay ?? "",
-                    start_date: values.start_date ?? "",
-                    start_time: values.start_time ?? "",
-                    end_date: values.end_date ?? "",
-                    end_time: values.end_time ?? "",
+                    // child_category: "",
+                    // manual_child_category: "",
                     note: values.serviceNote ?? "",
                     address_1: addressData.address_1,
                     address_2: addressData.address_2,
@@ -217,6 +260,7 @@ const RequestServiceFlowIndex = () => {
                     state: addressData.state,
                     country: addressData.country,
                     pincode: values.pincode ?? "",
+                    dynamic_answers: buildDynamicAnswersPayload(questionsList, values.dynamicAnswers ?? {}),
                     contact_details: {
                         first_name: values.customerFirstName ?? "",
                         last_name: values.customerLastName ?? "",
@@ -233,10 +277,9 @@ const RequestServiceFlowIndex = () => {
                     return
                 }
 
-                const res = await createServiceRequest(payload).unwrap();
-                console.log('res', res);
-                const ref = res?.data?.request?.reference_no;
-                setSubmissionRef(ref)
+                const res = await createServiceRequest(payload).unwrap()
+                const ref = res?.data?.request?.reference_no
+                setSubmissionRef(ref ?? null)
                 if (res?.data?.flow === flowTypes.PHONE_VERIFICATION_REQUIRED) {
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
@@ -255,7 +298,7 @@ const RequestServiceFlowIndex = () => {
                     const requestFlowData = {
                         ...data,
                         initialFormValues: values,
-                        initialStep: 5,
+                        initialStep: reviewStepIndex,
                     }
                     dispatch(openModal({
                         componentName: 'VerifyEmailOtpModal',
@@ -282,7 +325,7 @@ const RequestServiceFlowIndex = () => {
                 const requestFlowData = {
                     ...data,
                     initialFormValues: values,
-                    initialStep: 5,
+                    initialStep: reviewStepIndex,
                 }
                 if (resMessage === LOGIN_REQUIRED_MESSAGES.PHONE) {
                     dispatch(openModal({
@@ -327,7 +370,7 @@ const RequestServiceFlowIndex = () => {
                     const requestFlowData = {
                         ...data,
                         initialFormValues: values,
-                        initialStep: 5,
+                        initialStep: reviewStepIndex,
                     }
                     dispatch(openModal({
                         componentName: 'VerifyEmailOtpModal',
@@ -348,7 +391,7 @@ const RequestServiceFlowIndex = () => {
                         data: {
                             ...data,
                             ...values,
-                            initialStep: 5,
+                            initialStep: reviewStepIndex,
                             initialFormValues: values,
                             phoneNumber: values?.customerPhoneNumber,
                             parentCallBackModal: 'RequestServiceFlowIndex',
@@ -363,7 +406,7 @@ const RequestServiceFlowIndex = () => {
                 const requestFlowData = {
                     ...data,
                     initialFormValues: values,
-                    initialStep: 5,
+                    initialStep: reviewStepIndex,
                 }
                 if (errMessage === LOGIN_REQUIRED_MESSAGES.PHONE) {
                     dispatch(openModal({
@@ -399,10 +442,17 @@ const RequestServiceFlowIndex = () => {
         },
     })
 
+    const currentQuestionStep = questionSteps[getStepCount - 1]
+    const questionsForStep = currentQuestionStep != null ? questionsByStep[currentQuestionStep] ?? [] : []
+    const isQuestionsApiLoading = !!categoryId && isQuestionsLoading
 
     return (
         <>
             {isLoading && <AppLoader message={data?.isEditMode ? "Mise à jour de la demande en cours..." : "Création de la demande en cours..."} />}
+            {isQuestionsApiLoading && (
+                <AppLoader message="Chargement des questions..." fullScreen={false} />
+            )}
+            {!isQuestionsApiLoading && (
             <div className="space-y-5">
                 <div className="space-y-2.5">
                     <p className="text-fontBlack text-sm/[20px] xl:text-lg/[22px] text-center">
@@ -412,25 +462,45 @@ const RequestServiceFlowIndex = () => {
                         <ProgressStepBar currentStep={displayStep} totalSteps={totalSteps} />
                     </div>
                 </div>
-                {
-                    getStepCount === 1 && <ServiceAndLocation isServiceCategoryLoading={isServiceCategoryLoading} isFrequencyVisible={isFrequencyVisible} grandParentServiceName={data?.grandParentServiceName} formik={formik} setStepCount={setStepCountSafe} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} />
-                }
-                {
-                    getStepCount === 2 && isTasksRequiredVisible && <TaskRequired formik={formik} setStepCount={setStepCountSafe} childCategories={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} isTasksRequiredVisible={isTasksRequiredVisible} />
-                }
-                {
-                    getStepCount === 3 && <DesiredSchedule formik={formik} setStepCount={setStepCountSafe} scheduleVisibility={scheduleVisibility} />
-                }
-                {
-                    getStepCount === 4 && <ContactInformation formik={formik} setStepCount={setStepCountSafe} readOnly={!!data?.isEditMode} />
-                }
-                {
-                    getStepCount === 5 && <ReviewRequest formik={formik} setStepCount={setStepCountSafe} isTasksRequiredVisible={isTasksRequiredVisible} childServices={(data?.child_services ?? []) as IAllServiceCategoriesChildCategoriesEntity[]} grandParentServiceName={data?.grandParentServiceName} />
-                }
-
+                {getStepCount >= 1 && getStepCount < contactStepIndex && questionsForStep.length > 0 && (
+                    <DynamicQuestionsStep
+                        questions={questionsForStep}
+                        formik={formik}
+                        setStepCount={setStepCountSafe}
+                    />
+                )}
+                {getStepCount >= 1 && getStepCount < contactStepIndex && questionsForStep.length === 0 && !isQuestionsLoading && (
+                    <div className="flex justify-between pt-6 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setStepCountSafe((p) => p - 1)}
+                            className="btn_radius font-medium text-sm border border-borderColor px-4 py-2 rounded-xl"
+                        >
+                            Précédent
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setStepCountSafe((p) => p + 1)}
+                            className="btn_radius flex-1 bg-primaryColor text-white font-medium text-sm px-4 py-2 rounded-xl"
+                        >
+                            Continuer
+                        </button>
+                    </div>
+                )}
+                {getStepCount === contactStepIndex && (
+                    <ContactInformation formik={formik} setStepCount={setStepCountSafe} readOnly={!!data?.isEditMode} />
+                )}
+                {getStepCount === reviewStepIndex && (
+                    <ReviewRequest
+                        formik={formik}
+                        setStepCount={setStepCountSafe}
+                        questionsList={questionsList}
+                        contactStepIndex={contactStepIndex}
+                    />
+                )}
             </div>
+            )}
         </>
-
     )
 }
 

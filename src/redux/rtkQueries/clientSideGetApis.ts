@@ -19,6 +19,7 @@ import { ISingleServiceAPIResponse } from '@/types/singleService';
 import { IAllChatListAPIResponse } from '@/types/allChatList';
 import { IAllChatsMessagesAPIResponse } from '@/types/allChatsMessages';
 import { IAllTestimonialsAPIResponse } from '@/types/testimonial';
+import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -31,6 +32,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
         getServiceCategory: builder.query<ISingleServiceAPIResponse, { id: string }>({
             query: ({ id }) => ({
                 url: `/user/service-category/${id}`,
+                method: 'GET',
+            }),
+        }),
+        getServicesQuetions: builder.query<IAllServiceQuestionsAPIResponse, { id: string }>({
+            query: ({ id }) => ({
+                url: `/user/service-questions/${id}`,
                 method: 'GET',
             }),
         }),
@@ -197,7 +204,6 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['ServiceRequestQuotes'],
         }),
-
         getUserChats: builder.query<IAllChatListAPIResponse, void>({
             query: () => ({
                 url: `/user/fetch-chats`,
@@ -238,6 +244,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
 export const {
     useGetServiceCategoriesQuery,
     useGetServiceCategoryQuery,
+    useGetServicesQuetionsQuery,
     useGetAllServicesQuery,
     useGetAllServicesDocumentsRequiredQuery,
     useGetVendorProfileInfoQuery,
