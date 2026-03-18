@@ -32,7 +32,6 @@ export default function ChatHeader({ onBack, selectedChat }: ChatHeaderProps) {
     const rating = otherUser?.averageRating ?? null;
     const reviewCount = otherUser?.totalReviews ?? null;
     const isVerified = otherUser?.kyc_status === 'ACTIVE';
-
     return (
         <>
             <div className="flex shrink-0 items-start justify-between gap-3 md:gap-4 border-b border-borderDark bg-white px-4 py-3 md:px-6 md:py-4">

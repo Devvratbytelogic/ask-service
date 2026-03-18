@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGetUserAllMessagesQuery, useGetVendorAllMessagesQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import { getUserId, getUserRole } from '@/utils/authCookies';
 import ImageComponent from '@/components/library/ImageComponent';
@@ -190,21 +190,50 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
-    console.log('isVendor', isVendor);
 
-    const { data: userMessages, isLoading: userLoading } = useGetUserAllMessagesQuery(
+    // Track which chat we're waiting for so we show loading when switching; don't show previous chat's messages.
+    const [transitioningToChatId, setTransitioningToChatId] = useState<string | null>(null);
+    const prevFetchingRef = useRef(false);
+
+    const {
+        data: userMessages,
+        isLoading: userLoading,
+        isFetching: userFetching,
+    } = useGetUserAllMessagesQuery(
         { chatId: selectedChatId! },
         { skip: !selectedChatId || isVendor }
     );
-    const { data: vendorMessages, isLoading: vendorLoading } = useGetVendorAllMessagesQuery(
+    const {
+        data: vendorMessages,
+        isLoading: vendorLoading,
+        isFetching: vendorFetching,
+    } = useGetVendorAllMessagesQuery(
         { chatId: selectedChatId! },
         { skip: !selectedChatId || !isVendor }
     );
 
     const messagesData = isVendor ? vendorMessages : userMessages;
-    const isLoading = isVendor ? vendorLoading : userLoading;
+    const isFetching = isVendor ? vendorFetching : userFetching;
+    const isLoadingInitial = isVendor ? vendorLoading : userLoading;
     const messages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
-    // console.log('isLoading', isLoading);
+
+    // When selectedChatId changes, we're "transitioning" until the fetch for this chat completes.
+    useEffect(() => {
+        if (selectedChatId) setTransitioningToChatId(selectedChatId);
+    }, [selectedChatId]);
+
+    // Only clear transition when the fetch for the current chat actually completes (isFetching: true -> false).
+    // Clearing on messagesData alone would show the previous chat's messages because RTK can return stale cache.
+    useEffect(() => {
+        if (prevFetchingRef.current && !isFetching && selectedChatId) {
+            setTransitioningToChatId(null);
+        }
+        prevFetchingRef.current = isFetching;
+    }, [isFetching, selectedChatId]);
+
+    const isTransitioning = transitioningToChatId === selectedChatId && selectedChatId != null;
+    const isLoading = isLoadingInitial || isTransitioning;
+
     // WhatsApp-style: scroll to bottom when messages load or change
     useEffect(() => {
         if (messages.length > 0) {
