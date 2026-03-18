@@ -8,6 +8,8 @@ import DiscussionContextBar from './DiscussionContextBar';
 import MessagesChatBox from './MessagesChatBox';
 import { EmojiIconSVG, MessageIconSVG, PaperClipIconSVG, PhotographIconSVG, SendIconSVG } from '@/components/library/AllSVG';
 import { useUserSendMessageMutation, useVendorSendMessageMutation } from '@/redux/rtkQueries/allPostApi';
+import { useChatSocket, type NewMessagePayload } from '@/hooks/useChatSocket';
+import { getUserId } from '@/utils/authCookies';
 import type { RootState } from '@/redux/appStore';
 import type { IAllChatListData } from '@/types/allChatList';
 
@@ -79,6 +81,16 @@ export default function MessageLayout() {
 
   const role = useSelector((state: RootState) => state.auth.userRole);
   const isVendor = (role ?? '').toLowerCase() === 'vendor';
+  const userId = getUserId();
+  const userDisplayName = isVendor ? 'Vendor' : 'User';
+
+  const { emitNewMessage, addSentMessageToCache } = useChatSocket({
+    userId,
+    userDisplayName,
+    selectedChatId,
+    isVendor,
+  });
+
   const [userSendMessage, { isLoading: isUserSending }] = useUserSendMessageMutation();
   const [vendorSendMessage, { isLoading: isVendorSending }] = useVendorSendMessageMutation();
   const isSending = isUserSending || isVendorSending;
@@ -100,19 +112,27 @@ export default function MessageLayout() {
         formData.append('chatId', selectedChatId);
         formData.append('content', content);
         formData.append('media', attachedFile);
-        if (isVendor) {
-          await vendorSendMessage(formData).unwrap();
-        } else {
-          await userSendMessage(formData).unwrap();
+        const result = isVendor
+          ? await vendorSendMessage(formData).unwrap()
+          : await userSendMessage(formData).unwrap();
+        const payload = (result as { data?: unknown })?.data ?? result;
+        if (payload && typeof payload === 'object') {
+          const p = payload as NewMessagePayload;
+          emitNewMessage(p);
+          addSentMessageToCache(p, selectedChatId);
         }
         setAttachedFile(null);
         setMessageInput('');
       } else {
         const body = { chatId: selectedChatId, content, media: '' };
-        if (isVendor) {
-          await vendorSendMessage(body).unwrap();
-        } else {
-          await userSendMessage(body).unwrap();
+        const result = isVendor
+          ? await vendorSendMessage(body).unwrap()
+          : await userSendMessage(body).unwrap();
+        const payload = (result as { data?: unknown })?.data ?? result;
+        if (payload && typeof payload === 'object') {
+          const p = payload as NewMessagePayload;
+          emitNewMessage(p);
+          addSentMessageToCache(p, selectedChatId);
         }
         setMessageInput('');
       }
@@ -136,6 +156,7 @@ export default function MessageLayout() {
     }
     e.target.value = '';
   };
+  console.log('selectedChat', selectedChat);
 
   return (
     <>

@@ -160,7 +160,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['UserChats'],
+      // No invalidatesTags: cache is updated manually in useChatSocket.addSentMessageToCache
     }),
     userAccessChat: builder.mutation({
       query: (body) => ({
@@ -178,7 +178,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['VendorChats'],
+      // No invalidatesTags: cache is updated manually in useChatSocket.addSentMessageToCache
     }),
     vendorAccessChat: builder.mutation({
       query: (body) => ({
