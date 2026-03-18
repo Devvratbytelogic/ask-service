@@ -115,7 +115,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     }
   }, []);
 
-  /** Update RTK cache with a message we just sent so fetch-chats and all-messages are not refetched */
+  /** Update RTK cache with a message we just sent so fetch-chats and all-messages are not refetched. Also clear unread for this chat since we're viewing it. */
   const addSentMessageToCache = useCallback(
     (payload: NewMessagePayload, chatId: string) => {
       const normalized = normalizeToMessagesEntity(payload, userId);
@@ -133,7 +133,10 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
           clientSideGetApis.util.updateQueryData('getVendorChats', undefined, (draft) => {
             if (!draft?.data || !Array.isArray(draft.data)) return;
             const chat = draft.data.find((c) => c._id === chatId);
-            if (chat) (chat as { latestMessage?: LatestMessage }).latestMessage = latest;
+            if (chat) {
+              (chat as { latestMessage?: LatestMessage }).latestMessage = latest;
+              (chat as { unreadCount?: number }).unreadCount = 0;
+            }
           })
         );
       } else {
@@ -148,12 +151,39 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
           clientSideGetApis.util.updateQueryData('getUserChats', undefined, (draft) => {
             if (!draft?.data || !Array.isArray(draft.data)) return;
             const chat = draft.data.find((c) => c._id === chatId);
-            if (chat) (chat as { latestMessage?: LatestMessage }).latestMessage = latest;
+            if (chat) {
+              (chat as { latestMessage?: LatestMessage }).latestMessage = latest;
+              (chat as { unreadCount?: number }).unreadCount = 0;
+            }
           })
         );
       }
     },
     [dispatch, isVendor, userId]
+  );
+
+  /** Clear unread count for a chat in the RTK cache (e.g. when user opens that chat). */
+  const clearUnreadForChat = useCallback(
+    (chatId: string) => {
+      if (isVendor) {
+        dispatch(
+          clientSideGetApis.util.updateQueryData('getVendorChats', undefined, (draft) => {
+            if (!draft?.data || !Array.isArray(draft.data)) return;
+            const chat = draft.data.find((c) => c._id === chatId);
+            if (chat) (chat as { unreadCount?: number }).unreadCount = 0;
+          })
+        );
+      } else {
+        dispatch(
+          clientSideGetApis.util.updateQueryData('getUserChats', undefined, (draft) => {
+            if (!draft?.data || !Array.isArray(draft.data)) return;
+            const chat = draft.data.find((c) => c._id === chatId);
+            if (chat) (chat as { unreadCount?: number }).unreadCount = 0;
+          })
+        );
+      }
+    },
+    [dispatch, isVendor]
   );
 
   useEffect(() => {
@@ -252,6 +282,29 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     socket.on(MESSAGE_RECEIVED_EVENT, handleMessageReceived);
     socket.on(MESSAGE_RECEIVED_ALT, handleMessageReceived);
 
+    /** When backend marks messages as read it emits message:seen:update. Clear unread for that chat if chatId is in payload (backend should send it). */
+    const handleMessageSeenUpdate = (payload: { messageId?: string; userId?: string; chatId?: string }) => {
+      const chatId = payload.chatId ?? selectedChatIdRef.current;
+      if (chatId && payload.userId === userId) {
+        if (isVendor) {
+          dispatch(
+            clientSideGetApis.util.updateQueryData('getVendorChats', undefined, (draft) => {
+              const chat = draft?.data?.find((c) => c._id === chatId);
+              if (chat) (chat as { unreadCount?: number }).unreadCount = 0;
+            })
+          );
+        } else {
+          dispatch(
+            clientSideGetApis.util.updateQueryData('getUserChats', undefined, (draft) => {
+              const chat = draft?.data?.find((c) => c._id === chatId);
+              if (chat) (chat as { unreadCount?: number }).unreadCount = 0;
+            })
+          );
+        }
+      }
+    };
+    socket.on('message:seen:update', handleMessageSeenUpdate);
+
     socket.on('connect_error', (err) => {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[ChatSocket] Connection error', err.message);
@@ -261,6 +314,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     return () => {
       socket.off(MESSAGE_RECEIVED_EVENT, handleMessageReceived);
       socket.off(MESSAGE_RECEIVED_ALT, handleMessageReceived);
+      socket.off('message:seen:update', handleMessageSeenUpdate);
       disconnectTimeoutRef.current = setTimeout(() => {
         socket.removeAllListeners();
         socket.disconnect();
@@ -281,6 +335,11 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
       console.log('[ChatSocket] Joined chat', selectedChatId);
     }
   }, [selectedChatId]);
+
+  /** When user opens a chat, clear its unread count in the cache so the badge disappears. */
+  useEffect(() => {
+    if (selectedChatId) clearUnreadForChat(selectedChatId);
+  }, [selectedChatId, clearUnreadForChat]);
 
   return { emitNewMessage, addSentMessageToCache };
 }

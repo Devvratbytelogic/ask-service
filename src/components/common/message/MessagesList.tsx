@@ -8,6 +8,7 @@ import type { RootState } from '@/redux/appStore';
 import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
 import ImageComponent from '@/components/library/ImageComponent';
+import { getUserRole } from '@/utils/authCookies';
 
 function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
     return chat.users?.find((u) => !u.itsMe);
@@ -66,7 +67,7 @@ export default function MessagesList({
     selectedChatId = null,
 }: MessagesListProps) {
     const [search, setSearch] = useState('');
-    const role = useSelector((state: RootState) => state.auth.userRole);
+    const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
 
     const { data: userData, isLoading: userLoading, isError: userError } = useGetUserChatsQuery(

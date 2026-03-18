@@ -1,14 +1,23 @@
 "use client"
 import ImageComponent from "@/components/library/ImageComponent";
 import Link from "next/link";
-import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl } from "@/routes/routes";
+import { usePathname } from "next/navigation";
+import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl, getMessageRoutePath, getVendorMessageRoutePath } from "@/routes/routes";
 import { BiBuilding, BiShield } from "react-icons/bi";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoDocumentSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 import { PiPhone } from "react-icons/pi";
+
+const MESSAGE_PATHS = [getMessageRoutePath(), getVendorMessageRoutePath()];
+
 const Footer = () => {
+    const pathname = usePathname();
+    if (MESSAGE_PATHS.some((path) => pathname === path)) {
+        return null;
+    }
+
     return (
         <div className="py-6.75 px-10 bg-pinkBlack space-y-21.25">
             <div className="flex flex-col xl:flex-row justify-between items-start px-0 lg:px-7.5 pt-5 lg:pt-16.25 gap-y-10">

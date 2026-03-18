@@ -1,11 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/redux/appStore';
 import { useGetUserAllMessagesQuery, useGetVendorAllMessagesQuery } from '@/redux/rtkQueries/clientSideGetApis';
-import { getUserId } from '@/utils/authCookies';
+import { getUserId, getUserRole } from '@/utils/authCookies';
 import ImageComponent from '@/components/library/ImageComponent';
 
 interface MessagesChatBoxProps {
@@ -189,10 +186,11 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
 }
 
 export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps) {
-    const role = useSelector((state: RootState) => state.auth.userRole);
+    const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
+    console.log('isVendor', isVendor);
 
     const { data: userMessages, isLoading: userLoading } = useGetUserAllMessagesQuery(
         { chatId: selectedChatId! },
@@ -206,7 +204,7 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
     const messagesData = isVendor ? vendorMessages : userMessages;
     const isLoading = isVendor ? vendorLoading : userLoading;
     const messages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
-
+    // console.log('isLoading', isLoading);
     // WhatsApp-style: scroll to bottom when messages load or change
     useEffect(() => {
         if (messages.length > 0) {

@@ -9,7 +9,7 @@ import MessagesChatBox from './MessagesChatBox';
 import { EmojiIconSVG, MessageIconSVG, PaperClipIconSVG, PhotographIconSVG, SendIconSVG } from '@/components/library/AllSVG';
 import { useUserSendMessageMutation, useVendorSendMessageMutation } from '@/redux/rtkQueries/allPostApi';
 import { useChatSocket, type NewMessagePayload } from '@/hooks/useChatSocket';
-import { getUserId } from '@/utils/authCookies';
+import { getUserId, getUserRole } from '@/utils/authCookies';
 import type { RootState } from '@/redux/appStore';
 import type { IAllChatListData } from '@/types/allChatList';
 
@@ -79,7 +79,7 @@ export default function MessageLayout() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedChat, setSelectedChat] = useState<IAllChatListData | null>(null);
 
-  const role = useSelector((state: RootState) => state.auth.userRole);
+  const role = getUserRole();
   const isVendor = (role ?? '').toLowerCase() === 'vendor';
   const userId = getUserId();
   const userDisplayName = isVendor ? 'Vendor' : 'User';
@@ -156,7 +156,6 @@ export default function MessageLayout() {
     }
     e.target.value = '';
   };
-  console.log('selectedChat', selectedChat);
 
   return (
     <>
