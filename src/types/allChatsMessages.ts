@@ -9,6 +9,8 @@ export interface IAllChatsMessagesAPIResponse {
 export interface IAllChatsMessagesAPIResponseData {
   messages?: (MessagesEntity)[] | null;
   lastIndex: number;
+  totalPages?: number;
+  totalMsg?: number;
 }
 export interface MessagesEntity {
   _id: string;

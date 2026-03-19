@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetUserAllMessagesQuery, useGetVendorAllMessagesQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import { getUserId, getUserRole } from '@/utils/authCookies';
 import ImageComponent from '@/components/library/ImageComponent';
+
+const LIMIT = 10;
 
 interface MessagesChatBoxProps {
     selectedChatId: string | null;
@@ -185,39 +187,95 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
     );
 }
 
+function sortMessagesAscending(rows: ChatMessageRow[]): ChatMessageRow[] {
+    return [...rows].sort((a, b) => {
+        const tA = new Date(a.createdAt ?? 0).getTime();
+        const tB = new Date(b.createdAt ?? 0).getTime();
+        return tA - tB;
+    });
+}
+
 export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps) {
     const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
-    const [index, setIndex] = useState(1);
+    const scrollTopRef = useRef<HTMLDivElement>(null);
+    const firstMessageBlockRef = useRef<HTMLDivElement>(null);
+    const loadedIndicesRef = useRef<Set<number>>(new Set());
+    const justLoadedMoreRef = useRef(false);
 
-    const { data: userMessages, isLoading: userLoading, isFetching: userFetching, } = useGetUserAllMessagesQuery(
-        { chatId: selectedChatId!, index },
+    const [index, setIndex] = useState(1);
+    const [accumulatedMessages, setAccumulatedMessages] = useState<ChatMessageRow[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const { data: userMessages, isLoading: userLoading, isFetching: userFetching } = useGetUserAllMessagesQuery(
+        { chatId: selectedChatId!, index, limit: LIMIT },
         { skip: !selectedChatId || isVendor }
     );
-    const { data: vendorMessages, isLoading: vendorLoading, isFetching: vendorFetching, } = useGetVendorAllMessagesQuery(
-        { chatId: selectedChatId!, index },
+    const { data: vendorMessages, isLoading: vendorLoading, isFetching: vendorFetching } = useGetVendorAllMessagesQuery(
+        { chatId: selectedChatId!, index, limit: LIMIT },
         { skip: !selectedChatId || !isVendor }
     );
 
     const messagesData = isVendor ? vendorMessages : userMessages;
     const isLoading = isVendor ? vendorLoading : userLoading;
     const isFetching = isVendor ? vendorFetching : userFetching;
-    const rawMessages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
-    // Oldest at top, newest at bottom (ascending chronological order)
-    const messages = [...rawMessages].sort((a, b) => {
-        const tA = new Date(a.createdAt ?? 0).getTime();
-        const tB = new Date(b.createdAt ?? 0).getTime();
-        return tA - tB;
-    });
+    const data = messagesData?.data;
+    const rawPageMessages = (data?.messages as ChatMessageRow[] | undefined) ?? [];
 
-    // Show loading when initial load OR when refetching (e.g. after switching chat).
-    // This prevents showing the previous chat's messages while the new chat's request is pending.
-    const showLoading = isLoading || isFetching;
-
-    // WhatsApp-style: scroll to bottom when messages load or change
+    // Reset when chat changes
     useEffect(() => {
+        if (!selectedChatId) return;
+        loadedIndicesRef.current = new Set();
+        setIndex(1);
+        setAccumulatedMessages([]);
+        setTotalPages(1);
+    }, [selectedChatId]);
+
+    // Merge each page into accumulated when it arrives (infinite scroll)
+    useEffect(() => {
+        if (!selectedChatId || !data || userLoading || vendorLoading) return;
+        const lastIndex = data.lastIndex;
+        if (lastIndex !== index) return;
+        const pageMessages = rawPageMessages;
+        if (loadedIndicesRef.current.has(index)) return;
+        loadedIndicesRef.current.add(index);
+        const pages = (data as { totalPages?: number }).totalPages ?? 1;
+        setTotalPages(pages);
+        if (pageMessages.length === 0 && index === 1) {
+            setAccumulatedMessages([]);
+            return;
+        }
+        const sorted = sortMessagesAscending(pageMessages);
+        if (index === 1) {
+            setAccumulatedMessages(sorted);
+        } else {
+            justLoadedMoreRef.current = true;
+            setAccumulatedMessages((prev) => sortMessagesAscending([...sorted, ...prev]));
+            requestAnimationFrame(() => {
+                firstMessageBlockRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+    }, [selectedChatId, index, data, userLoading, vendorLoading, rawPageMessages.length]);
+
+    const messages = accumulatedMessages;
+
+    const hasMore = index < totalPages;
+    const loadMore = useCallback(() => {
+        if (!hasMore || isFetching) return;
+        scrollTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setIndex((i) => i + 1);
+    }, [hasMore, isFetching]);
+
+    const showInitialLoading = isLoading && accumulatedMessages.length === 0;
+
+    // Scroll to bottom when opening chat or when new messages appear at the end (not after "Load more")
+    useEffect(() => {
+        if (justLoadedMoreRef.current) {
+            justLoadedMoreRef.current = false;
+            return;
+        }
         if (messages.length > 0) {
             scrollBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
@@ -231,7 +289,7 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
         );
     }
 
-    if (showLoading) {
+    if (showInitialLoading) {
         return (
             <div className="flex flex-1 items-center justify-center py-12">
                 <p className="text-sm text-darkSilver">Loading messages...</p>
@@ -248,12 +306,33 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
     }
 
     const grouped = groupMessagesByDate(messages);
+    const isLoadingMore = isFetching && accumulatedMessages.length > 0;
 
     return (
         <div className="flex flex-col min-h-full">
-            {/* <button onClick={() => setIndex(index + 1)}>Load more</button> */}
-            {grouped.map(({ dateLabel, messages: groupMsgs }) => (
-                <div key={dateLabel}>
+            <div ref={scrollTopRef} className="min-h-0 shrink-0" aria-hidden />
+            {isLoadingMore && (
+                <div className="flex justify-center py-3">
+                    <span className="inline-flex items-center gap-2 text-sm text-darkSilver">
+                        <span className="size-5 animate-spin rounded-full border-2 border-primaryColor border-t-transparent" aria-hidden />
+                        Loading older messages...
+                    </span>
+                </div>
+            )}
+            {hasMore && !isLoadingMore && (
+                <div className="flex justify-center py-2">
+                    <button
+                        type="button"
+                        onClick={loadMore}
+                        disabled={isFetching}
+                        className="rounded-full cursor-pointer bg-[#E5E7EB] px-4 py-2 text-sm font-medium text-fontBlack hover:bg-[#D1D5DB] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Load more
+                    </button>
+                </div>
+            )}
+            {grouped.map(({ dateLabel, messages: groupMsgs }, groupIndex) => (
+                <div key={dateLabel} ref={groupIndex === 0 ? firstMessageBlockRef : undefined}>
                     <div className="flex justify-center my-3">
                         <span className="rounded-full bg-[#E5E7EB] px-3 py-1 text-xs text-fontBlack">
                             {dateLabel}
