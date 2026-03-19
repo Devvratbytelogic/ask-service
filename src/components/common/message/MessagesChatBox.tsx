@@ -190,49 +190,31 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
+    const [index, setIndex] = useState(1);
 
-    // Track which chat we're waiting for so we show loading when switching; don't show previous chat's messages.
-    const [transitioningToChatId, setTransitioningToChatId] = useState<string | null>(null);
-    const prevFetchingRef = useRef(false);
-
-    const {
-        data: userMessages,
-        isLoading: userLoading,
-        isFetching: userFetching,
-    } = useGetUserAllMessagesQuery(
-        { chatId: selectedChatId! },
+    const { data: userMessages, isLoading: userLoading, isFetching: userFetching, } = useGetUserAllMessagesQuery(
+        { chatId: selectedChatId!, index },
         { skip: !selectedChatId || isVendor }
     );
-    const {
-        data: vendorMessages,
-        isLoading: vendorLoading,
-        isFetching: vendorFetching,
-    } = useGetVendorAllMessagesQuery(
-        { chatId: selectedChatId! },
+    const { data: vendorMessages, isLoading: vendorLoading, isFetching: vendorFetching, } = useGetVendorAllMessagesQuery(
+        { chatId: selectedChatId!, index },
         { skip: !selectedChatId || !isVendor }
     );
 
     const messagesData = isVendor ? vendorMessages : userMessages;
+    const isLoading = isVendor ? vendorLoading : userLoading;
     const isFetching = isVendor ? vendorFetching : userFetching;
-    const isLoadingInitial = isVendor ? vendorLoading : userLoading;
-    const messages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
+    const rawMessages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
+    // Oldest at top, newest at bottom (ascending chronological order)
+    const messages = [...rawMessages].sort((a, b) => {
+        const tA = new Date(a.createdAt ?? 0).getTime();
+        const tB = new Date(b.createdAt ?? 0).getTime();
+        return tA - tB;
+    });
 
-    // When selectedChatId changes, we're "transitioning" until the fetch for this chat completes.
-    useEffect(() => {
-        if (selectedChatId) setTransitioningToChatId(selectedChatId);
-    }, [selectedChatId]);
-
-    // Only clear transition when the fetch for the current chat actually completes (isFetching: true -> false).
-    // Clearing on messagesData alone would show the previous chat's messages because RTK can return stale cache.
-    useEffect(() => {
-        if (prevFetchingRef.current && !isFetching && selectedChatId) {
-            setTransitioningToChatId(null);
-        }
-        prevFetchingRef.current = isFetching;
-    }, [isFetching, selectedChatId]);
-
-    const isTransitioning = transitioningToChatId === selectedChatId && selectedChatId != null;
-    const isLoading = isLoadingInitial || isTransitioning;
+    // Show loading when initial load OR when refetching (e.g. after switching chat).
+    // This prevents showing the previous chat's messages while the new chat's request is pending.
+    const showLoading = isLoading || isFetching;
 
     // WhatsApp-style: scroll to bottom when messages load or change
     useEffect(() => {
@@ -249,7 +231,7 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
         );
     }
 
-    if (isLoading) {
+    if (showLoading) {
         return (
             <div className="flex flex-1 items-center justify-center py-12">
                 <p className="text-sm text-darkSilver">Loading messages...</p>
@@ -269,6 +251,7 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
 
     return (
         <div className="flex flex-col min-h-full">
+            {/* <button onClick={() => setIndex(index + 1)}>Load more</button> */}
             {grouped.map(({ dateLabel, messages: groupMsgs }) => (
                 <div key={dateLabel}>
                     <div className="flex justify-center my-3">

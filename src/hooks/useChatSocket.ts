@@ -123,7 +123,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
 
       if (isVendor) {
         dispatch(
-          clientSideGetApis.util.updateQueryData('getVendorAllMessages', { chatId }, (draft) => {
+          clientSideGetApis.util.updateQueryData('getVendorAllMessages', { chatId, index: 1 }, (draft) => {
             if (!draft?.data?.messages) return;
             const exists = draft.data.messages.some((m) => m._id === normalized._id);
             if (!exists) draft.data.messages.push(normalized);
@@ -141,7 +141,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
         );
       } else {
         dispatch(
-          clientSideGetApis.util.updateQueryData('getUserAllMessages', { chatId }, (draft) => {
+          clientSideGetApis.util.updateQueryData('getUserAllMessages', { chatId, index: 1 }, (draft) => {
             if (!draft?.data?.messages) return;
             const exists = draft.data.messages.some((m) => m._id === normalized._id);
             if (!exists) draft.data.messages.push(normalized);
@@ -236,7 +236,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
 
       if (isVendor) {
         dispatch(
-          clientSideGetApis.util.updateQueryData('getVendorAllMessages', { chatId }, (draft) => {
+          clientSideGetApis.util.updateQueryData('getVendorAllMessages', { chatId, index: 1 }, (draft) => {
             if (!draft?.data?.messages) return;
             const exists = draft.data.messages.some((m) => m._id === normalized._id);
             if (!exists) draft.data.messages.push(normalized);
@@ -257,7 +257,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
         );
       } else {
         dispatch(
-          clientSideGetApis.util.updateQueryData('getUserAllMessages', { chatId }, (draft) => {
+          clientSideGetApis.util.updateQueryData('getUserAllMessages', { chatId, index: 1 }, (draft) => {
             if (!draft?.data?.messages) return;
             const exists = draft.data.messages.some((m) => m._id === normalized._id);
             if (!exists) draft.data.messages.push(normalized);

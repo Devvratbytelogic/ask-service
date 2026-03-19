@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addToast, Button, Input } from '@heroui/react'
+import { addToast, Button, Input, Modal, ModalBody, ModalContent } from '@heroui/react'
 import { DeleteIconSVG, LockPrimaryColorSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { securitySettingsValidationSchema } from '@/utils/validation'
@@ -39,11 +39,12 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
 
     const isChanging = variant === 'vendor' ? isChangingVendor : isChangingUser
     const isDeleting = variant === 'vendor' ? isDeletingVendor : isDeletingUser
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-    const handleDeleteAccount = async () => {
-        if (!window.confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) {
-            return
-        }
+    const handleDeleteAccountClick = () => setShowDeleteConfirm(true)
+
+    const handleDeleteAccountConfirm = async () => {
+        setShowDeleteConfirm(false)
         try {
             if (variant === 'vendor') {
                 await deleteVendorAccount({}).unwrap()
@@ -187,7 +188,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                         </div>
                         <Button
                             className="btn_radius btn_bg_white text-red-500!"
-                            onPress={handleDeleteAccount}
+                            onPress={handleDeleteAccountClick}
                             isLoading={isDeleting}
                             isDisabled={isDeleting}
                         >
@@ -196,6 +197,51 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                     </div>
                 </div>
             </div>
+
+            {/* Delete account confirmation modal */}
+            <Modal
+                isOpen={showDeleteConfirm}
+                onOpenChange={setShowDeleteConfirm}
+                placement="center"
+                size="md"
+                classNames={{ base: 'rounded-3xl' }}
+            >
+                <ModalContent>
+                    <ModalBody className="bg-white px-6 py-6 rounded-3xl">
+                        <div className="flex items-start gap-4">
+                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15">
+                                <DeleteIconSVG />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-lg text-fontBlack">
+                                    Supprimer le compte ?
+                                </h3>
+                                <p className="mt-2 text-sm text-darkSilver">
+                                    Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et toutes vos données seront perdues.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
+                            <Button
+                                className="btn_radius btn_bg_white"
+                                onPress={() => setShowDeleteConfirm(false)}
+                                isDisabled={isDeleting}
+                            >
+                                Annuler
+                            </Button>
+                            <Button
+                                className="btn_radius bg-danger text-white font-medium"
+                                onPress={handleDeleteAccountConfirm}
+                                isLoading={isDeleting}
+                                isDisabled={isDeleting}
+                                startContent={!isDeleting ? <span className="inline-flex text-white"><DeleteIconSVG /></span> : null}
+                            >
+                                Supprimer définitivement
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </>
     )
 }

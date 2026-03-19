@@ -211,9 +211,9 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['UserChats'],
         }),
-        getUserAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string }>({
-            query: ({ chatId }) => ({
-                url: `/user/all-messages/${chatId}`,
+        getUserAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string; index?: number; limit?: number }>({
+            query: ({ chatId, index = 1, limit = 10 }) => ({
+                url: `/user/all-messages/${chatId}?index=${index}&limit=${limit}`,
                 method: 'GET',
             }),
             providesTags: ['UserChats'],
@@ -225,9 +225,9 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorChats'],
         }),
-        getVendorAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string }>({
-            query: ({ chatId }) => ({
-                url: `/vendor/all-messages/${chatId}`,
+        getVendorAllMessages: builder.query<IAllChatsMessagesAPIResponse, { chatId: string; index?: number; limit?: number }>({
+            query: ({ chatId, index = 1, limit = 10 }) => ({
+                url: `/vendor/all-messages/${chatId}?index=${index}&limit=${limit}`,
                 method: 'GET',
             }),
             providesTags: ['VendorChats'],
