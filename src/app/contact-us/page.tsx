@@ -38,7 +38,7 @@ export default function ContactUsPage() {
                             <p className="text-sm font-medium text-fontBlack wrap-break-word">{ADDRESS}</p>
                         </div>
                     </div>
-                    <div className="flex gap-3 items-start w-full sm:w-auto min-w-0">
+                    {/* <div className="flex gap-3 items-start w-full sm:w-auto min-w-0">
                         <span className="rounded-xl p-3 sm:p-4 bg-primary/10 text-darkSilver shrink-0">
                             <ClockIconSVG />
                         </span>
@@ -46,7 +46,7 @@ export default function ContactUsPage() {
                             <p className="text-xs sm:text-sm text-darkSilver mb-0.5">Office Hours</p>
                             <p className="text-sm font-medium text-fontBlack wrap-break-word">{OFFICE_HOURS}</p>
                         </div>
-                    </div>
+                    </div> */}
                 </section>
                 <section className="w-full min-w-0 overflow-hidden">
                     <ContactFaq />

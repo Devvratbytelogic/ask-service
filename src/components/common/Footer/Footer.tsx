@@ -55,7 +55,7 @@ const Footer = () => {
                     <div className="space-y-3 col-span-2">
                         <div className="footer_nav_heading text-nowrap">Contact</div>
                         <div className="space-y-2 footer_nav_item">
-                            <Link href="mailto:Connect@askservice.com" className="flex items-center gap-2"><span><MdEmail /></span>Connect@askservice.com</Link>
+                            <Link href="mailto:Connect@askservice.com" className="flex items-center gap-2"><span><MdEmail /></span>connect@askservice.com</Link>
                             <Link href="tel:01987654321" className="flex items-center gap-2"><span><PiPhone /></span>01 987654321</Link>
                             <Link href={getContactUsRoutePath()} className="flex items-start gap-2"><span className="mt-1.5"><BiBuilding /></span>4517 Washington Ave. Manchester, Kentucky 39495</Link>
                         </div>

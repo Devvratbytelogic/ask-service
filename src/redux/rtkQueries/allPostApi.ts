@@ -136,7 +136,8 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         url: `/user/service-requests/${requestId}/quotes/${quoteId}/ignore`,
         method: 'POST',
       }),
-      invalidatesTags: ['ServiceRequestQuotes'],
+      // invalidatesTags: ['ServiceRequestQuotes'],
+      invalidatesTags: ['CreatedServices']
     }),
     postContactUs: builder.mutation({
       query: (payload: { name: string; email: string; message: string }) => ({

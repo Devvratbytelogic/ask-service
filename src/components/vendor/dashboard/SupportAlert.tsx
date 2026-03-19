@@ -1,8 +1,11 @@
 import { InfoBlueIconSVG } from '@/components/library/AllSVG'
+import { getContactUsRoutePath } from '@/routes/routes'
 import { Button } from '@heroui/react'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 export default function SupportAlert({ title, content }: { title: string, content: string }) {
+    const router = useRouter()
     return (
         <>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-[#EFF6FF] border border-[#BEDBFF] p-5">
@@ -15,7 +18,7 @@ export default function SupportAlert({ title, content }: { title: string, conten
                         <p className="text-sm text-fontBlack">{content}</p>
                     </div>
                 </div>
-                <Button className="btn_radius btn_bg_blue shrink-0">Contacter l'assistance</Button>
+                <Button className="btn_radius btn_bg_blue shrink-0" onPress={() => router.push(getContactUsRoutePath())}>Contacter l'assistance</Button>
             </div>
         </>
     )

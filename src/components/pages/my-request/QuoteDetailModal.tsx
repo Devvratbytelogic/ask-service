@@ -33,12 +33,10 @@ export default function QuoteDetailModal() {
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const requestId = modalData?.requestId ?? modalData?.request?._id ?? null
     const quoteId = modalData?.quoteId ?? modalData?.quote?._id ?? null
-    console.log('quoteId', quoteId);
     const { data: apiData, isLoading } = useGetServiceRequestQuotesDetailQuery(
         { requestId: requestId ?? '', quoteId: quoteId ?? '' },
         { skip: !requestId || !quoteId }
     )
-    console.log('apiData', apiData);
     const [ignoreQuote, { isLoading: isIgnoring }] = useIgnoreQuoteMutation()
     const [userAccessChat, { isLoading: isAccessingChat }] = useUserAccessChatMutation()
 
@@ -61,7 +59,7 @@ export default function QuoteDetailModal() {
         if (!requestId || !quoteId) return
         try {
             await ignoreQuote({ requestId, quoteId }).unwrap()
-            handleClose()
+            dispatch(closeModal())
         } catch {
             // Error handled by RTK Query / can add toast here
         }
