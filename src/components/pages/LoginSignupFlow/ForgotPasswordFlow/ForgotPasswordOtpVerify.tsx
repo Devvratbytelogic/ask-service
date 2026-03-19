@@ -7,6 +7,7 @@ import {
     useResendEmailVerificationMutation,
     useVerifyEmailMutation,
 } from "@/redux/rtkQueries/authApi"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 import { addToast, Button } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -23,6 +24,7 @@ const ForgotPasswordOtpVerify = () => {
     const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
     const email = (userData?.email as string) || ""
+    const fcmToken = getFcmTokenFromCookie()
 
     const [verifyEmail, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation()
     const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
@@ -67,7 +69,11 @@ const ForgotPasswordOtpVerify = () => {
         const toVerify = otp ?? otpValue
         if (toVerify.length !== OTP_LENGTH || !email) return
         try {
-            const res = await verifyEmail({ email, otp: toVerify }).unwrap()
+            const res = await verifyEmail({
+                email,
+                otp: toVerify,
+                ...(fcmToken && { fcm_token: fcmToken }),
+            }).unwrap()
             const responseData = res?.data as Record<string, unknown> | undefined
             const resetToken =
                 (responseData?.token as string) ?? (responseData?.access_token as string) ?? ""
@@ -89,7 +95,7 @@ const ForgotPasswordOtpVerify = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, email, verifyEmail, userData, dispatch, returnToRequestFlow, requestFlowData])
+    }, [otpValue, email, verifyEmail, userData, dispatch, returnToRequestFlow, requestFlowData, fcmToken])
 
     const canVerify = otpValue.length === OTP_LENGTH
     const isVerifying = isVerifyingEmail

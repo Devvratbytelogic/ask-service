@@ -17,6 +17,7 @@ import { BiArrowBack } from "react-icons/bi"
 import { useRouter } from "next/navigation"
 import { yupRequiredEmail, yupOptionalEmail } from "@/utils/validation"
 import { getDashboardPathForRole } from "@/routes/routes"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 export interface CustomerSignInFormValues {
     email: string
@@ -54,6 +55,7 @@ const getSignInValidationSchema = (signInType: string | undefined) => {
 const CustomerSignInDetails = () => {
     const { data } = useSelector((state: RootState) => state.allCommonModal)
     const dispatch = useDispatch()
+    const fcmToken = getFcmTokenFromCookie();
     const router = useRouter()
     const signInType = data?.userData?.signInType as string | undefined
 
@@ -85,8 +87,9 @@ const CustomerSignInDetails = () => {
         onSubmit: async (values) => {
             const identifier = signInType === "email" ? values.email.trim() : values.phoneNumber
             if (!identifier || !values.password) return
+            
             try {
-                const res = await login({ identifier, password: values.password }).unwrap()
+                const res = await login({ identifier, password: values.password, fcm_token: fcmToken ?? undefined }).unwrap()
                 const responseData = res?.data as Record<string, unknown> | undefined
                 const flow = responseData?.flow as string | undefined
                 if (flow === 'EMAIL_VERIFICATION_REQUIRED') {

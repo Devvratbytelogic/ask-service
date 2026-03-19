@@ -82,10 +82,17 @@ export function clearAuthCookies(): void {
     Cookies.remove('user_role', { path: '/' })
 }
 
-/** Clear all cookies for the current domain and reload the page (e.g. after logout). */
+/** Cookie name for FCM token; preserved on logout so push can be re-associated after next login. */
+const FCM_TOKEN_COOKIE = 'fcm_token'
+
+/** Clear all cookies for the current domain and reload the page (e.g. after logout). Preserves fcm_token. */
 export function clearAllCookiesAndReload(homePath: string = '/'): void {
     const all = Cookies.get()
+    const fcmToken = all[FCM_TOKEN_COOKIE]
     Object.keys(all).forEach((name) => Cookies.remove(name, { path: '/' }))
+    if (fcmToken) {
+        Cookies.set(FCM_TOKEN_COOKIE, fcmToken, COOKIE_OPTIONS)
+    }
     window.location.href = homePath
 }
 

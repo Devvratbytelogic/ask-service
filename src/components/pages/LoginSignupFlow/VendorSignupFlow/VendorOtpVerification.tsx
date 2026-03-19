@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { getVendorDashboardRoutePath } from "@/routes/routes"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -31,6 +32,7 @@ const VendorOtpVerification = () => {
 
     const [vendorVerifyOtp, { isLoading: isVerifying }] = useVendorVerifyOtpMutation()
     const [vendorResendOtp, { isLoading: isResendingOtp }] = useVendorResendOtpMutation()
+    const fcmToken = getFcmTokenFromCookie()
 
     const handleEmailResend = useCallback(async () => {
         if (emailResendCooldown > 0 || !email) return
@@ -57,6 +59,7 @@ const VendorOtpVerification = () => {
                 type: "SIGNUP",
                 email,
                 ...(toVerify && { otp_email: toVerify }),
+                ...(fcmToken && { fcm_token: fcmToken }),
             }).unwrap()
             const data = (response).data
             setAuthAndRefetchProfile({
@@ -87,7 +90,7 @@ const VendorOtpVerification = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [email, emailOtp, vendorVerifyOtp, dispatch])
+    }, [email, emailOtp, vendorVerifyOtp, dispatch, fcmToken])
 
     useEffect(() => {
         if (emailResendCooldown <= 0) return

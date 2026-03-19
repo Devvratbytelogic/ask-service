@@ -2,6 +2,7 @@
 
 import Cookies from "js-cookie";
 import { getFirebaseAuth } from "./FirebaseConfig";
+import { getFcmTokenFromCookie } from "./getFcmTokenn";
 import type { IGoogleLoginAPIResponse } from "@/redux/rtkQueries/authApi";
 import { API_BASE_URL } from "@/utils/config";
 
@@ -28,13 +29,18 @@ export const loginWithGoogle = async (
     //   expires: 7,
     // });
 
+    const fcmToken = typeof window !== "undefined" ? getFcmTokenFromCookie() : null;
     const response = await fetch(`${API_BASE_URL}/user/google-login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${idToken}`,
       },
-      body: JSON.stringify({ idToken, role_type: roleType }),
+      body: JSON.stringify({
+        idToken,
+        role_type: roleType,
+        ...(fcmToken && { fcm_token: fcmToken }),
+      }),
     });
 
     const data: IGoogleLoginAPIResponse = await response.json();

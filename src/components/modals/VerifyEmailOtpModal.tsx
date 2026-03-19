@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { getMyAccountRoutePath } from "@/routes/routes"
 import ImageComponent from "../library/ImageComponent"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -24,6 +25,7 @@ export default function VerifyEmailOtpModal() {
     const returnToRequestFlow = (data as { returnToRequestFlow?: boolean })?.returnToRequestFlow
     const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
 
+    const fcmToken = getFcmTokenFromCookie()
     const [verifyEmail, { isLoading: isVerifying }] = useVerifyEmailMutation()
     const [resendEmailVerification, { isLoading: isResending }] = useResendEmailVerificationMutation()
 
@@ -34,7 +36,11 @@ export default function VerifyEmailOtpModal() {
         const toVerify = otp ?? otpValue
         if (toVerify.length !== OTP_LENGTH || !email) return
         try {
-            const res = await verifyEmail({ email, otp: toVerify }).unwrap()
+            const res = await verifyEmail({
+                email,
+                otp: toVerify,
+                ...(fcmToken && { fcm_token: fcmToken }),
+            }).unwrap()
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -55,7 +61,7 @@ export default function VerifyEmailOtpModal() {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [email, otpValue, verifyEmail, dispatch, returnToRequestFlow, requestFlowData])
+    }, [email, otpValue, verifyEmail, dispatch, returnToRequestFlow, requestFlowData, fcmToken])
 
     const handleResend = useCallback(async () => {
         if (resendCooldown > 0 || !email) return

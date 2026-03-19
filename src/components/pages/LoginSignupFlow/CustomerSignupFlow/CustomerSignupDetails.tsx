@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
 import { yupRequiredEmail, yupOptionalEmail } from "@/utils/validation"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 export interface CustomerSignupFormValues {
     firstName: string
@@ -60,6 +61,7 @@ const CustomerSignupDetails = () => {
     const [signup, { isLoading: isSigningUp }] = useSignupMutation()
 
     const userSignupType = data?.userData?.userSignupType as string | undefined
+    const fcmToken = getFcmTokenFromCookie()
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
@@ -92,12 +94,14 @@ const CustomerSignupDetails = () => {
                     last_name: values.lastName.trim(),
                     email: values.email.trim(),
                     password: values.password,
+                    ...(fcmToken && { fcm_token: fcmToken }),
                 }
                 : {
                     first_name: values.firstName.trim(),
                     last_name: values.lastName.trim(),
                     phone: values.phoneNumber,
                     password: values.password,
+                    ...(fcmToken && { fcm_token: fcmToken }),
                 }
             try {
                 await signup(payload).unwrap()

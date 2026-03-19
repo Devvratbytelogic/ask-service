@@ -20,6 +20,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
 import { yupRequiredEmail } from "@/utils/validation"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 export interface VendorSignupFormValues {
     firstName: string
@@ -58,6 +59,7 @@ const VendorSignupDetails = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const [isGoogleLoading, setIsGoogleLoading] = useState(false)
     const [vendorRegister, { isLoading: isRegistering }] = useVendorRegisterMutation()
+    const fcmToken = getFcmTokenFromCookie()
 
     const handleGoogleLogin = async () => {
         setIsGoogleLoading(true)
@@ -101,6 +103,7 @@ const VendorSignupDetails = () => {
                     phone: values.phoneNumber,
                     password: values.password,
                     businessName: values.businessName,
+                    ...(fcmToken && { fcm_token: fcmToken }),
                 }).unwrap()
                 addToast({
                     title: "Verification code sent",

@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { getMyAccountRoutePath } from "@/routes/routes"
+import { getFcmTokenFromCookie } from "@/firebase/getFcmTokenn"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -63,11 +64,17 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         )
     }
 
+    const fcmToken = getFcmTokenFromCookie()
+
     const handleVerify = useCallback(async (otp?: string) => {
         const toVerify = otp ?? otpValue
         if (toVerify.length !== OTP_LENGTH || !displayValue) return
         try {
-            const res = await verifyEmail({ email: displayValue, otp: toVerify }).unwrap()
+            const res = await verifyEmail({
+                email: displayValue,
+                otp: toVerify,
+                ...(fcmToken && { fcm_token: fcmToken }),
+            }).unwrap()
             const responseData = (res as { data?: unknown })?.data
             if (responseData && typeof responseData === "object") {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -84,7 +91,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         } catch {
             // Error toast from rtkQuerieSetup
         }
-    }, [otpValue, displayValue, verifyEmail, dispatch, router])
+    }, [otpValue, displayValue, verifyEmail, dispatch, router, fcmToken])
 
     const canVerify = otpValue.length === OTP_LENGTH
     const isVerifying = isVerifyingEmail
