@@ -140,7 +140,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
         return (
             <div className={`overflow-hidden ${bubbleClass}`}>
                 <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="block">
-                    <div className="relative max-w-60 min-h-30 sm:max-w-70">
+                    <div className="relative max-w-60 min-h-30 sm:max-w-70 min-w-30 flex items-center justify-center">
                         <div className='w-full h-auto max-h-75'>
                             <ImageComponent
                                 url={mediaUrl}

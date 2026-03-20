@@ -27,6 +27,7 @@ export interface UsersEntity {
   profile_pic: string;
   kyc_status: string;
   role: Role;
+  business_name?: string | null;
   itsMe: boolean;
   totalReviews?: number | null;
   averageRating?: number | null;

@@ -1,5 +1,6 @@
 'use client';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { Button } from '@heroui/react';
 import MessagesList from './MessagesList';
@@ -8,6 +9,7 @@ import DiscussionContextBar from './DiscussionContextBar';
 import MessagesChatBox from './MessagesChatBox';
 import { EmojiIconSVG, MessageIconSVG, PaperClipIconSVG, PhotographIconSVG, SendIconSVG } from '@/components/library/AllSVG';
 import { useUserSendMessageMutation, useVendorSendMessageMutation } from '@/redux/rtkQueries/allPostApi';
+import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import { useChatSocket, type NewMessagePayload } from '@/hooks/useChatSocket';
 import { getUserId, getUserRole } from '@/utils/authCookies';
 import type { RootState } from '@/redux/appStore';
@@ -78,9 +80,32 @@ export default function MessageLayout() {
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedChat, setSelectedChat] = useState<IAllChatListData | null>(null);
+  const autoSelectedRef = useRef(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const targetChatId = searchParams.get('chatId');
 
   const role = getUserRole();
   const isVendor = (role ?? '').toLowerCase() === 'vendor';
+
+  const { data: userChatsData } = useGetUserChatsQuery(undefined, { skip: isVendor });
+  const { data: vendorChatsData } = useGetVendorChatsQuery(undefined, { skip: !isVendor });
+  const chats = Array.isArray(isVendor ? vendorChatsData?.data : userChatsData?.data)
+    ? (isVendor ? vendorChatsData?.data : userChatsData?.data) as IAllChatListData[]
+    : [];
+
+  useEffect(() => {
+    if (!targetChatId || autoSelectedRef.current || chats.length === 0) return;
+    const chat = chats.find((c) => c._id === targetChatId);
+    if (chat) {
+      autoSelectedRef.current = true;
+      setSelectedChat(chat);
+      setSelectedChatId(chat._id);
+      setMobileView('chat');
+    }
+  }, [targetChatId, chats]);
+
   const userId = getUserId();
   const userDisplayName = isVendor ? 'Vendor' : 'User';
 
@@ -122,6 +147,7 @@ export default function MessageLayout() {
     setSelectedChat(chat);
     setSelectedChatId(chat._id);
     setMobileView('chat');
+    router.replace(`?chatId=${chat._id}`, { scroll: false });
   };
 
   const canSend = Boolean(selectedChatId && (messageInput.trim() || attachedFile) && !isSending);

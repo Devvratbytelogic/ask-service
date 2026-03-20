@@ -68,12 +68,16 @@ export default function QuoteDetailModal() {
     const handleChatWithVendor = async () => {
         if (!requestId || !vendor._id) return addToast({ title: 'Error', description: 'Please try again later', color: 'danger' })
         try {
-            await userAccessChat({
+            const response = await userAccessChat({
                 userId: vendor._id,
                 quote_id: quoteId ?? '',
             }).unwrap()
+            const chatId = response?.data?._id ?? response?._id
             dispatch(closeModal())
-            router.push(getMessageRoutePath())
+            const url = chatId
+                ? `${getMessageRoutePath()}?chatId=${chatId}`
+                : getMessageRoutePath()
+            router.push(url)
         } catch {
             // Error handled by RTK Query / can add toast here
         }

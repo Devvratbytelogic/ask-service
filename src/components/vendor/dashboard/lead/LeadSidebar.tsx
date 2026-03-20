@@ -25,16 +25,19 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuo
     const [vendorAccessChat, { isLoading: isAccessingChat }] = useVendorAccessChatMutation()
 
     const handleMessageCustomer = async () => {
-        const url = leadId ? `/vendor/message?leadId=${leadId}` : '/vendor/message'
         if (leadId) {
             try {
-                await vendorAccessChat({ userId: userId }).unwrap()
+                const response = await vendorAccessChat({ userId: userId }).unwrap()
+                const chatId = response?.data?._id ?? response?._id
+                const url = chatId
+                    ? `/vendor/message?chatId=${chatId}`
+                    : `/vendor/message?leadId=${leadId}`
                 router.push(url)
             } catch {
                 // Error handled by RTK Query / can add toast here
             }
         } else {
-            router.push(url)
+            router.push('/vendor/message')
         }
     }
     return (

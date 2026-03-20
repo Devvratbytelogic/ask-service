@@ -3,8 +3,6 @@
 import React, { useMemo, useState } from 'react';
 import { EditIconSVG, HeartIconSVG, SearchIconSVG } from '@/components/library/AllSVG';
 import { Input } from '@heroui/react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/redux/appStore';
 import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
 import ImageComponent from '@/components/library/ImageComponent';
@@ -17,7 +15,8 @@ function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
 function getDisplayName(chat: IAllChatListData): string {
     const u = getOtherUser(chat);
     if (!u) return 'Unknown';
-    if (u.first_name && u.last_name) return `${u.first_name} ${u.last_name}`;
+    const isVendor = (u.role?.name ?? '').toLowerCase() === 'vendor';
+    if (isVendor && u.business_name?.trim()) return u.business_name.trim();
     const first = (u.first_name ?? '').trim();
     const last = (u.last_name ?? '').trim();
     return [first, last].filter(Boolean).join(' ') || 'Unknown';

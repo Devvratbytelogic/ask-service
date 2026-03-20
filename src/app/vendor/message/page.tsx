@@ -1,5 +1,5 @@
 import MessageLayout from '@/components/common/message/MessageLayout'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 export default function MessagePage() {
     return (
@@ -11,7 +11,9 @@ export default function MessagePage() {
                     maxHeight: 'calc(100dvh - 6rem)',
                 }}
             >
-                <MessageLayout />
+                <Suspense>
+                    <MessageLayout />
+                </Suspense>
             </div>
         </>
     )
