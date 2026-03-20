@@ -132,7 +132,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
         ? 'rounded-2xl rounded-tr-md bg-primaryColor text-white'
         : 'rounded-2xl rounded-tl-md bg-[#F3F4F6] text-fontBlack';
 
-    // Image: type "image" or "media" with image URL — show thumbnail (not PDF/doc)
+    // Image: type "image" or "media" with image URL — show thumbnail + optional caption
     const showAsImage =
         mediaUrl &&
         (type === 'image' || (type === 'media' && isImageUrl(mediaUrl)));
@@ -151,11 +151,14 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
                         </div>
                     </div>
                 </a>
+                {content && (
+                    <p className="px-3 pb-2.5 pt-1.5 text-sm">{content}</p>
+                )}
             </div>
         );
     }
 
-    // Video: type "video" or "media" with video URL — thumbnail + play icon like WhatsApp
+    // Video: type "video" or "media" with video URL — thumbnail + play icon + optional caption
     const showAsVideo = (type === 'video' && mediaUrl) || (type === 'media' && mediaUrl && isVideoUrl(mediaUrl));
     if (showAsVideo) {
         return (
@@ -178,31 +181,39 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
                         </div>
                     </div>
                 </a>
+                {content && (
+                    <p className="px-3 pb-2.5 pt-1.5 text-sm">{content}</p>
+                )}
             </div>
         );
     }
 
-    // Document/File: type "file", "document", or "media" (non-image, non-video) — icon + name like WhatsApp
+    // Document/File: type "file", "document", or "media" (non-image, non-video) — icon + name + optional caption
     const showAsFile =
         mediaUrl &&
         ((type === 'file' || type === 'document') || (type === 'media' && !isImageUrl(mediaUrl) && !isVideoUrl(mediaUrl)));
     if (showAsFile) {
-        const fileName = content || getFileNameFromUrl(mediaUrl, 'Document');
+        const fileName = getFileNameFromUrl(mediaUrl, 'Document');
         return (
-            <a
-                href={mediaUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center gap-3 px-4 py-2.5 text-sm ${bubbleClass} hover:opacity-90 min-w-0`}
-            >
-                <span className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-black/10">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                </span>
-                <span className="truncate min-w-0 flex-1">{fileName}</span>
-                <span className="shrink-0 text-xs opacity-80">↗</span>
-            </a>
+            <div className={`overflow-hidden ${bubbleClass}`}>
+                <a
+                    href={mediaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:opacity-90 min-w-0"
+                >
+                    <span className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-black/10">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </span>
+                    <span className="truncate min-w-0 flex-1">{fileName}</span>
+                    <span className="shrink-0 text-xs opacity-80">↗</span>
+                </a>
+                {content && (
+                    <p className="px-4 pb-2.5 text-sm border-t border-black/10 pt-1.5">{content}</p>
+                )}
+            </div>
         );
     }
 

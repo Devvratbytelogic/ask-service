@@ -10,7 +10,8 @@ function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
 function getDisplayName(chat: IAllChatListData): string {
     const u = getOtherUser(chat);
     if (!u) return 'Unknown';
-    if (u.first_name && u.last_name) return `${u.first_name} ${u.last_name}`;
+    const isVendor = (u.role?.name ?? '').toLowerCase() === 'vendor';
+    if (isVendor && u.business_name?.trim()) return u.business_name.trim();
     const first = (u.first_name ?? '').trim();
     const last = (u.last_name ?? '').trim();
     return [first, last].filter(Boolean).join(' ') || 'Unknown';
