@@ -20,7 +20,7 @@ interface ChatMessageRow {
     content?: string;
     media_url?: string | null;
     type?: string;
-    sender?: { _id?: string; first_name?: string; last_name?: string } | string;
+    sender?: { _id?: string; first_name?: string; last_name?: string; profile_image?: string } | string;
     createdAt?: string;
     isSentByMe?: boolean;
     readBy?: ReadByEntry[] | null;
@@ -50,7 +50,7 @@ function formatTime(createdAt?: string): string {
     if (!createdAt) return '';
     try {
         const d = new Date(createdAt);
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     } catch {
         return '';
     }
@@ -423,6 +423,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                         const isYou = msg.isSentByMe ?? (currentUserId != null && senderId === currentUserId);
                         const senderName = isYou ? 'You' : getSenderDisplay(msg.sender);
                         const initial = getInitial(senderName);
+                        const senderImage = typeof msg.sender === 'object' ? msg.sender?.profile_image : undefined;
                         const time = formatTime(msg.createdAt);
 
                         const isReadByOther = Boolean(otherUserId && isReadByUser(msg.readBy, otherUserId));
@@ -432,13 +433,13 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                                 key={msg._id ?? Math.random()}
                                 className="mb-4 flex flex-row-reverse items-end gap-2"
                             >
-                                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primaryColor text-xs font-semibold text-white">
-                                    {initial}
+                                <div className="flex size-8 shrink-0 overflow-hidden items-center justify-center rounded-full bg-primaryColor text-xs font-semibold text-white">
+                                    <ImageComponent url={senderImage} img_title={initial} />
                                 </div>
                                 <div className="flex max-w-[85%] sm:max-w-[75%] flex-col items-end">
                                     <span className="text-sm font-semibold text-fontBlack">
                                         {time}
-                                        <span className="font-medium text-fontBlack">{senderName}</span>
+                                        <span className="font-medium text-fontBlack"> ({senderName})</span>
                                     </span>
                                     <MessageContent msg={msg} isYou={true} />
                                     <span className="mt-0.5 flex items-center">
@@ -448,8 +449,8 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                             </div>
                         ) : (
                             <div key={msg._id ?? Math.random()} className="mb-4 flex items-start gap-2">
-                                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#D1D5DC] text-xs font-semibold text-white">
-                                    {initial}
+                                <div className="flex size-8 shrink-0 overflow-hidden items-center justify-center rounded-full bg-[#D1D5DC] text-xs font-semibold text-white">
+                                    <ImageComponent url={senderImage} img_title={initial} />
                                 </div>
                                 <div className="flex max-w-[85%] sm:max-w-[75%] flex-col">
                                     <span className="mb-1 flex items-center gap-2 text-xs text-darkSilver">
