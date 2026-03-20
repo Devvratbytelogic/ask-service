@@ -2,13 +2,7 @@
 
 import { BackArrowSVG, CalendarSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import {
-    useGetCreditsPackagesQuery,
-    useGetVendorDashboardDataQuery,
-    useGetVendorDashboardTransactionHistoryQuery,
-    useLazyGetCreditsTransactionHistoryExportCSVQuery,
-    useLazyGetCreditsTransactionHistoryExportPDFQuery,
-} from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery, useLazyGetCreditsTransactionHistoryExportCSVQuery, useLazyGetCreditsTransactionHistoryExportPDFQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { usePurchaseCreditsMutation, useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
@@ -117,13 +111,13 @@ export default function CreditsWallet() {
                 })
                 .catch(() => {
                     setPaymentStatus('fail')
-                    addToast({ title: 'Payment verification failed. Please contact support.', color: 'danger', timeout: 5000 })
+                    // addToast({ title: 'Payment verification failed. Please contact support.', color: 'danger', timeout: 5000 })
                 })
                 .finally(() => setIsVerifying(false))
         } else if (stripeStatus === 'fail') {
             setPaymentStatus('fail')
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Fallback: handle redirect-based return (popup blocked)
@@ -133,7 +127,7 @@ export default function CreditsWallet() {
             handleStripeResult(rawStripeStatus, searchParams.get('session_id'))
             router.replace('/vendor/credits')
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const getExportParams = useMemo(() => {
@@ -210,7 +204,7 @@ export default function CreditsWallet() {
         } catch (err) {
             console.error(err)
             setSelectedPackageId(null)
-            addToast({ title: err instanceof Error ? err.message : 'Failed to initiate payment', color: 'danger', timeout: 3000 })
+            // addToast({ title: err instanceof Error ? err.message : 'Failed to initiate payment', color: 'danger', timeout: 3000 })
         }
     }
     return (

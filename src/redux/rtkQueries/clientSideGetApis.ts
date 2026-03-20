@@ -21,6 +21,7 @@ import { IAllChatsMessagesAPIResponse } from '@/types/allChatsMessages';
 import { IAllTestimonialsAPIResponse } from '@/types/testimonial';
 import { IAllFaqsAPIResponse } from '@/types/faqs';
 import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
+import { IPopupNotificationsAPIResponse } from '@/types/popupNotifications';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -246,6 +247,20 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg?.type != null && arg.type !== '' && { params: { type: arg.type } }),
             }),
         }),
+        getVendorNotifications: builder.query<IPopupNotificationsAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/notification/all`,
+                method: 'GET',
+            }),
+            providesTags: ['VendorNotifications'],
+        }),
+        getUserNotifications: builder.query<IPopupNotificationsAPIResponse, void>({
+            query: () => ({
+                url: `/user/notification/all`,
+                method: 'GET',
+            }),
+            providesTags: ['UserNotifications'],
+        }),
     }),
 });
 
@@ -282,8 +297,8 @@ export const {
     // Vendor Chat APIs
     useGetVendorChatsQuery,
     useGetVendorAllMessagesQuery,
-    // Testimonials APIs
     useGetTestimonialsQuery,
-    // FAQs
     useGetFaqsQuery,
+    useGetVendorNotificationsQuery,
+    useGetUserNotificationsQuery,
 } = clientSideGetApis;

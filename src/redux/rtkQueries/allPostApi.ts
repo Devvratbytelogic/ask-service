@@ -203,6 +203,22 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorTransactions', 'VendorDashboard'],
     }),
+    vendorReadNotification: builder.mutation({
+      query: ({id, body}) => ({
+        url: `/vendor/notification/markAsRead/${id}`,
+        method: 'PUT',
+        // body,
+      }),
+      invalidatesTags: ['VendorNotifications'],
+    }),
+    userReadNotification: builder.mutation({
+      query: ({id, body}) => ({
+        url: `/user/notification/markAsRead/${id}`,
+        method: 'PUT',
+        // body,
+      }),
+      invalidatesTags: ['UserNotifications'],
+    }),
   }),
 });
 
@@ -235,4 +251,6 @@ export const {
   useVendorAccessChatMutation,
   useStripePaymentMutation,
   useVerifyStripePaymentMutation,
+  useVendorReadNotificationMutation,
+  useUserReadNotificationMutation,
 } = postApi;

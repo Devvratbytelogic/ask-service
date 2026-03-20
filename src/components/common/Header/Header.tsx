@@ -1,6 +1,7 @@
 'use client'
 import ImageComponent from "../../library/ImageComponent";
 import NavbarComponent from "./NavbarComponent";
+import NotificationsPopover from "./NotificationsPopover";
 import { BellIconSVG, ChevronDownIconSVG, DocumentIconSVG, LightningIconSVG, ProfileIconSVG, SignOutIconSVG } from "@/components/library/AllSVG"
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react"
 import Link from "next/link";
@@ -161,16 +162,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                     </span>
                                 )}
                             </Link>
-                            <button
-                                type="button"
-                                className="relative p-1.5 rounded-full hover:bg-borderDark transition-colors text-fontBlack"
-                                aria-label="Notifications"
-                            >
-                                <BellIconSVG />
-                                <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center">
-                                    2
-                                </span>
-                            </button>
+                            <NotificationsPopover isVendor={isVendor} isAuthenticated={isAuthenticated} />
                             {isVendor ? (
                                 <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
                                     <PopoverTrigger>
@@ -311,12 +303,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                             )}
                         </nav>
                         <div className="flex md:hidden items-center gap-2">
-                            <Link href={isVendor ? getVendorMessageRoutePath() : getMessageRoutePath()} className="relative p-2">
-                                <BellIconSVG />
-                                <span className="absolute top-1 right-1 min-w-3.5 h-3.5 rounded-full bg-primaryColor text-white text-[10px] font-medium flex items-center justify-center">
-                                    2
-                                </span>
-                            </Link>
+                            <NotificationsPopover isVendor={isVendor} isAuthenticated={isAuthenticated} />
                             {isVendor ? (
                                 <Popover placement="bottom-end" showArrow={false} classNames={{ content: "p-0 min-w-[240px] rounded-2xl shadow-lg border border-borderDark" }}>
                                     <PopoverTrigger>
