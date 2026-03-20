@@ -9,11 +9,11 @@ import {
     useLazyGetCreditsTransactionHistoryExportCSVQuery,
     useLazyGetCreditsTransactionHistoryExportPDFQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
-import { useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
+import { usePurchaseCreditsMutation, useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
@@ -52,6 +52,7 @@ export default function CreditsWallet() {
     const [itemsPerPage, setItemsPerPage] = useState('10')
     const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null)
     const [paymentStatus, setPaymentStatus] = useState<'success' | 'fail' | null>(null)
+    const [isVerifying, setIsVerifying] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const verifyCalledRef = useRef(false)
@@ -81,6 +82,7 @@ export default function CreditsWallet() {
 
     const [stripePayment, { isLoading: stripeLoading }] = useStripePaymentMutation()
     const [verifyStripePayment] = useVerifyStripePaymentMutation()
+    const [purchaseCredits] = usePurchaseCreditsMutation()
     const [fetchCSV] = useLazyGetCreditsTransactionHistoryExportCSVQuery()
     const [fetchPDF] = useLazyGetCreditsTransactionHistoryExportPDFQuery()
     const { data: creditsResponse, isLoading: packagesLoading } = useGetCreditsPackagesQuery()
@@ -92,29 +94,46 @@ export default function CreditsWallet() {
             .map(mapPackageToDisplay)
     }, [creditsResponse?.data])
 
-    useEffect(() => {
-        const stripeStatus = searchParams.get('stripe_payment_status')
-        const sessionId = searchParams.get('session_id')
-        console.log('sessionId out of if condition', sessionId)
-        console.log('stripeStatus out of if condition', stripeStatus);
+    const handleStripeResult = useCallback((rawStripeStatus: string, rawSessionId: string | null) => {
+        // Stripe sometimes returns ?session_id= instead of &session_id= in the redirect URL,
+        // causing both values to be merged into a single query param.
+        const [stripeStatus, sessionIdFromStatus] = rawStripeStatus.includes('?session_id=')
+            ? rawStripeStatus.split('?session_id=')
+            : [rawStripeStatus, null]
+
+        const sessionId = rawSessionId ?? sessionIdFromStatus
 
         if (stripeStatus === 'success' && sessionId && !verifyCalledRef.current) {
-            console.log('sessionId', sessionId)
-            console.log('stripeStatus', stripeStatus);
-
             verifyCalledRef.current = true
+            const packageId = localStorage.getItem('stripe_package_id')
+            setIsVerifying(true)
             verifyStripePayment({ transactionId: sessionId })
                 .unwrap()
+                .then(() => purchaseCredits({ transactionId: sessionId, ...(packageId ? { package_id: packageId } : {}) }).unwrap())
                 .then(() => {
+                    localStorage.removeItem('stripe_package_id')
                     setPaymentStatus('success')
                     addToast({ title: 'Payment verified! Credits have been added to your account.', color: 'success', timeout: 5000 })
                 })
                 .catch(() => {
                     setPaymentStatus('fail')
+                    addToast({ title: 'Payment verification failed. Please contact support.', color: 'danger', timeout: 5000 })
                 })
+                .finally(() => setIsVerifying(false))
         } else if (stripeStatus === 'fail') {
             setPaymentStatus('fail')
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // Fallback: handle redirect-based return (popup blocked)
+    useEffect(() => {
+        const rawStripeStatus = searchParams.get('stripe_payment_status') ?? ''
+        if (rawStripeStatus) {
+            handleStripeResult(rawStripeStatus, searchParams.get('session_id'))
+            router.replace('/vendor/credits')
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const getExportParams = useMemo(() => {
@@ -148,17 +167,62 @@ export default function CreditsWallet() {
     const handlePurchase = async (pkg: CreditPackageDisplay) => {
         try {
             setSelectedPackageId(pkg.id)
-            const result = await stripePayment({ amount: Math.round(parseFloat(pkg.price) * 100) }).unwrap() as { data?: { payment_url?: string } }
+            const result = await stripePayment({ amount: (parseFloat(pkg.price)) }).unwrap() as { data?: { payment_url?: string } }
             const paymentUrl = result?.data?.payment_url
             if (!paymentUrl) throw new Error('No payment URL returned')
-            window.location.href = paymentUrl
+            localStorage.setItem('stripe_package_id', pkg.id)
+
+            // Open Stripe checkout in a centered popup
+            const w = 600, h = 700
+            const left = window.screenX + (window.outerWidth - w) / 2
+            const top = window.screenY + (window.outerHeight - h) / 2
+            const popup = window.open(paymentUrl, 'stripe_checkout', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`)
+
+            if (!popup) {
+                // Popup was blocked — fall back to same-tab redirect
+                window.location.href = paymentUrl
+                return
+            }
+
+            // Poll until Stripe redirects back to our domain
+            const timer = setInterval(() => {
+                if (!popup || popup.closed) {
+                    clearInterval(timer)
+                    setSelectedPackageId(null)
+                    return
+                }
+                try {
+                    const popupUrl = popup.location.href
+                    if (popupUrl.includes('stripe_payment_status=')) {
+                        clearInterval(timer)
+                        const params = new URL(popupUrl).searchParams
+                        popup.close()
+                        setSelectedPackageId(null)
+                        handleStripeResult(
+                            params.get('stripe_payment_status') ?? '',
+                            params.get('session_id')
+                        )
+                    }
+                } catch {
+                    // Still on Stripe's domain (cross-origin) — keep polling
+                }
+            }, 500)
         } catch (err) {
             console.error(err)
             setSelectedPackageId(null)
+            addToast({ title: err instanceof Error ? err.message : 'Failed to initiate payment', color: 'danger', timeout: 3000 })
         }
     }
     return (
         <div className="space-y-8">
+            {/* Verification Loader Overlay */}
+            {isVerifying && (
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-white/80 backdrop-blur-sm">
+                    <Spinner size="lg" color="primary" classNames={{ circle1: 'border-b-primaryColor', circle2: 'border-b-primaryColor' }} />
+                    <p className="text-sm font-medium text-fontBlack">Verifying your payment, please wait…</p>
+                </div>
+            )}
+
             {/* Payment Status Banner */}
             {paymentStatus === 'success' && (
                 <div className="flex items-start gap-3 rounded-2xl border border-[#4CAF50] bg-[#E8F5E9] px-5 py-4">

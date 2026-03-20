@@ -146,7 +146,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         body: payload,
       }),
     }),
-    purchaseCredits: builder.mutation<unknown, { package_id: string }>({
+    purchaseCredits: builder.mutation<unknown, { package_id?: string; transactionId?: string }>({
       query: (payload) => ({
         url: `/vendor/credits/purchase`,
         method: 'POST',
