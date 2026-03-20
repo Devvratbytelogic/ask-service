@@ -23,9 +23,11 @@ function getInitial(name: string): string {
 interface ChatHeaderProps {
     onBack?: () => void;
     selectedChat?: IAllChatListData | null;
+    isOnline?: boolean;
+    isTyping?: boolean;
 }
 
-export default function ChatHeader({ onBack, selectedChat }: ChatHeaderProps) {
+export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }: ChatHeaderProps) {
     const otherUser = selectedChat ? getOtherUser(selectedChat) : undefined;
     const name = selectedChat ? getDisplayName(selectedChat) : 'Select a conversation';
     const profilePic = otherUser?.profile_pic ?? null;
@@ -75,7 +77,23 @@ export default function ChatHeader({ onBack, selectedChat }: ChatHeaderProps) {
                                 </>
                             )}
                         </div>
-                        {selectedChat && <p className="text-xs text-[#00A63E]">Active now</p>}
+                        {selectedChat && (
+                            isTyping ? (
+                                <p className="flex items-center gap-1.5 text-xs font-medium text-[#00A63E]">
+                                    <span className="flex items-end gap-0.75 h-3">
+                                        <span className="inline-block w-1 h-1 rounded-full bg-[#00A63E] animate-bounce [animation-delay:0ms]" />
+                                        <span className="inline-block w-1 h-1 rounded-full bg-[#00A63E] animate-bounce [animation-delay:150ms]" />
+                                        <span className="inline-block w-1 h-1 rounded-full bg-[#00A63E] animate-bounce [animation-delay:300ms]" />
+                                    </span>
+                                    typing...
+                                </p>
+                            ) : (
+                                <p className={`flex items-center gap-1 text-xs font-medium ${isOnline ? 'text-[#00A63E]' : 'text-darkSilver'}`}>
+                                    <span className={`inline-block size-1.5 rounded-full ${isOnline ? 'bg-[#00A63E]' : 'bg-darkSilver'}`} />
+                                    {isOnline ? 'Active now' : 'Offline'}
+                                </p>
+                            )
+                        )}
                     </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">

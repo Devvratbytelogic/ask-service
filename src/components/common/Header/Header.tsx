@@ -62,6 +62,11 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         skip: !isAuthenticated || isVendor,
     });
 
+    const { data: vendorChats } = clientSideGetApis.useGetVendorChatsQuery(undefined, { skip: !isAuthenticated || !isVendor });
+    const { data: userChats } = clientSideGetApis.useGetUserChatsQuery(undefined, { skip: !isAuthenticated || isVendor });
+    const totalUnread = (isVendor ? vendorChats?.data : userChats?.data)
+        ?.reduce((sum, chat) => sum + (chat.unreadCount ?? 0), 0) ?? 0;
+
     // Auto logout only when these two profile APIs return 401
     useEffect(() => {
         const httpStatus = (vendorProfileError as { data?: { httpStatus?: number } } | undefined)?.data?.httpStatus;
@@ -150,9 +155,11 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                 className="relative inline-flex items-center gap-1.5 text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors"
                             >
                                 Mes messages
-                                <span className="min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center px-1">
-                                    2
-                                </span>
+                                {totalUnread > 0 && (
+                                    <span className="min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center px-1">
+                                        {totalUnread > 99 ? '99+' : totalUnread}
+                                    </span>
+                                )}
                             </Link>
                             <button
                                 type="button"

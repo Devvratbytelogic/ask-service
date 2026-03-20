@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { io, type Socket } from 'socket.io-client';
 import { clientSideGetApis } from '@/redux/rtkQueries/clientSideGetApis';
@@ -105,6 +105,13 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
   const disconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   selectedChatIdRef.current = selectedChatId;
 
+  /** Set of user IDs currently online, updated via socket events */
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+
+  /** True while the other user in the selected chat is typing */
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const emitNewMessage = useCallback((payload: NewMessagePayload) => {
     const socket = socketRef.current;
     if (socket?.connected) {
@@ -113,6 +120,24 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
         console.log('[ChatSocket] Emitted new message', payload.content);
       }
     }
+  }, []);
+
+  /** Emit message:seen so the backend marks the message as read and notifies the sender. */
+  const emitMessageSeen = useCallback((messageId: string, chatId: string) => {
+    const socket = socketRef.current;
+    if (socket?.connected && userId) {
+      socket.emit('message:seen', { messageId, chatId, userId });
+    }
+  }, [userId]);
+
+  /** Emit typing event to the current chat room */
+  const emitTyping = useCallback((chatId: string) => {
+    socketRef.current?.emit('typing', chatId);
+  }, []);
+
+  /** Emit stop typing event to the current chat room */
+  const emitStopTyping = useCallback((chatId: string) => {
+    socketRef.current?.emit('stop typing', chatId);
   }, []);
 
   /** Update RTK cache with a message we just sent so fetch-chats and all-messages are not refetched. Also clear unread for this chat since we're viewing it. */
@@ -282,10 +307,44 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     socket.on(MESSAGE_RECEIVED_EVENT, handleMessageReceived);
     socket.on(MESSAGE_RECEIVED_ALT, handleMessageReceived);
 
-    /** When backend marks messages as read it emits message:seen:update. Clear unread for that chat if chatId is in payload (backend should send it). */
+    /** Check if userId already exists in readBy — handles both populated objects and plain string IDs */
+    const isAlreadyInReadBy = (readBy: MessagesEntity['readBy'], uid: string) => {
+      if (!readBy) return false;
+      return readBy.some((entry) =>
+        typeof entry === 'string' ? entry === uid : (entry as { _id?: string })._id === uid
+      );
+    };
+
+    /** When backend marks messages as read it emits message:seen:update. Patch readBy on the message (for blue ticks) and clear unread badge. */
     const handleMessageSeenUpdate = (payload: { messageId?: string; userId?: string; chatId?: string }) => {
       const chatId = payload.chatId ?? selectedChatIdRef.current;
-      if (chatId && payload.userId === userId) {
+      if (!chatId || !payload.messageId || !payload.userId) return;
+
+      // Patch readBy on the specific message so sender sees blue ticks immediately
+      if (isVendor) {
+        dispatch(
+          clientSideGetApis.util.updateQueryData('getVendorAllMessages', { chatId, index: 1 }, (draft) => {
+            const msg = draft?.data?.messages?.find((m) => m._id === payload.messageId);
+            if (msg) {
+              if (!msg.readBy) msg.readBy = [];
+              if (!isAlreadyInReadBy(msg.readBy, payload.userId!)) msg.readBy.push(payload.userId!);
+            }
+          })
+        );
+      } else {
+        dispatch(
+          clientSideGetApis.util.updateQueryData('getUserAllMessages', { chatId, index: 1 }, (draft) => {
+            const msg = draft?.data?.messages?.find((m) => m._id === payload.messageId);
+            if (msg) {
+              if (!msg.readBy) msg.readBy = [];
+              if (!isAlreadyInReadBy(msg.readBy, payload.userId!)) msg.readBy.push(payload.userId!);
+            }
+          })
+        );
+      }
+
+      // Clear unread badge when the current user themselves reads messages
+      if (payload.userId === userId) {
         if (isVendor) {
           dispatch(
             clientSideGetApis.util.updateQueryData('getVendorChats', undefined, (draft) => {
@@ -311,10 +370,55 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
       }
     });
 
+    // Typing indicators — auto-clear after 3 s in case "stop typing" is missed
+    const handleTyping = () => {
+      setIsOtherTyping(true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => setIsOtherTyping(false), 3000);
+    };
+
+    const handleStopTyping = () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      setIsOtherTyping(false);
+    };
+
+    socket.on('typing', handleTyping);
+    socket.on('stop typing', handleStopTyping);
+
+    // Seed the full online list when we first connect (fixes stale "Offline" for already-online users)
+    const handleOnlineUsersList = (userIds: string[]) => {
+      setOnlineUsers(new Set(userIds));
+    };
+
+    const handleUserOnline = (onlineUserId: string) => {
+      setOnlineUsers((prev) => {
+        const next = new Set(prev);
+        next.add(onlineUserId);
+        return next;
+      });
+    };
+
+    const handleUserOffline = (offlineUserId: string) => {
+      setOnlineUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(offlineUserId);
+        return next;
+      });
+    };
+
+    socket.on('online:users', handleOnlineUsersList);
+    socket.on('user:online', handleUserOnline);
+    socket.on('user:offline', handleUserOffline);
+
     return () => {
       socket.off(MESSAGE_RECEIVED_EVENT, handleMessageReceived);
       socket.off(MESSAGE_RECEIVED_ALT, handleMessageReceived);
       socket.off('message:seen:update', handleMessageSeenUpdate);
+      socket.off('typing', handleTyping);
+      socket.off('stop typing', handleStopTyping);
+      socket.off('online:users', handleOnlineUsersList);
+      socket.off('user:online', handleUserOnline);
+      socket.off('user:offline', handleUserOffline);
       disconnectTimeoutRef.current = setTimeout(() => {
         socket.removeAllListeners();
         socket.disconnect();
@@ -324,6 +428,11 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
       }, DISCONNECT_DELAY_MS);
     };
   }, [userId, userDisplayName, isVendor, dispatch]);
+
+  useEffect(() => {
+    setIsOtherTyping(false);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+  }, [selectedChatId]);
 
   useEffect(() => {
     const socket = socketRef.current;
@@ -341,5 +450,5 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     if (selectedChatId) clearUnreadForChat(selectedChatId);
   }, [selectedChatId, clearUnreadForChat]);
 
-  return { emitNewMessage, addSentMessageToCache };
+  return { emitNewMessage, addSentMessageToCache, emitMessageSeen, emitTyping, emitStopTyping, isOtherTyping, onlineUsers };
 }

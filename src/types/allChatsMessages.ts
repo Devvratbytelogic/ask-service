@@ -19,7 +19,7 @@ export interface MessagesEntity {
   media_url?: string | null;
   chat: Chat;
   type: string;
-  readBy?: (null)[] | null;
+  readBy?: (string | { _id: string; first_name?: string; last_name?: string; profile_pic?: string })[] | null;
   reactions?: (null)[] | null;
   createdAt: string;
   updatedAt: string;

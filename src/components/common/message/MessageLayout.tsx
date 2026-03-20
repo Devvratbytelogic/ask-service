@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@heroui/react';
 import MessagesList from './MessagesList';
@@ -84,12 +84,35 @@ export default function MessageLayout() {
   const userId = getUserId();
   const userDisplayName = isVendor ? 'Vendor' : 'User';
 
-  const { emitNewMessage, addSentMessageToCache } = useChatSocket({
+  const { emitNewMessage, addSentMessageToCache, emitMessageSeen, emitTyping, emitStopTyping, isOtherTyping, onlineUsers } = useChatSocket({
     userId,
     userDisplayName,
     selectedChatId,
     isVendor,
   });
+
+  const otherUserId = selectedChat?.users?.find((u) => !u.itsMe)?._id;
+  const isOtherUserOnline = Boolean(otherUserId && onlineUsers.has(otherUserId));
+
+  // Debounced typing indicator — emit "stop typing" 2 s after the user stops pressing keys
+  const typingDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef = useRef(false);
+
+  const handleInputChange = useCallback((value: string) => {
+    setMessageInput(value);
+    if (!selectedChatId) return;
+
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      emitTyping(selectedChatId);
+    }
+
+    if (typingDebounceRef.current) clearTimeout(typingDebounceRef.current);
+    typingDebounceRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      emitStopTyping(selectedChatId);
+    }, 2000);
+  }, [selectedChatId, emitTyping, emitStopTyping]);
 
   const [userSendMessage, { isLoading: isUserSending }] = useUserSendMessageMutation();
   const [vendorSendMessage, { isLoading: isVendorSending }] = useVendorSendMessageMutation();
@@ -138,6 +161,13 @@ export default function MessageLayout() {
       }
     } catch {
       // Error can be handled via toast or inline UI if needed
+    } finally {
+      // Always stop typing indicator when message is sent or errored
+      if (selectedChatId) {
+        if (typingDebounceRef.current) clearTimeout(typingDebounceRef.current);
+        isTypingRef.current = false;
+        emitStopTyping(selectedChatId);
+      }
     }
   };
 
@@ -204,7 +234,7 @@ export default function MessageLayout() {
             <>
               {/* Chat header */}
               <header>
-                <ChatHeader selectedChat={selectedChat} onBack={() => setMobileView('list')} />
+                <ChatHeader selectedChat={selectedChat} onBack={() => setMobileView('list')} isOnline={isOtherUserOnline} isTyping={isOtherTyping} />
               </header>
 
               {/* Discussion context bar */}
@@ -214,7 +244,11 @@ export default function MessageLayout() {
 
               {/* Messages - scrollable, leaves room for input */}
               <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6">
-                <MessagesChatBox selectedChatId={selectedChatId} />
+                <MessagesChatBox
+                  selectedChatId={selectedChatId}
+                  otherUserId={otherUserId}
+                  onMessageSeen={emitMessageSeen}
+                />
               </div>
 
               {/* Message input - WhatsApp-style: text, images & documents (no video) */}
@@ -263,7 +297,7 @@ export default function MessageLayout() {
                       type="text"
                       placeholder="Type your message..."
                       value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
+                      onChange={(e) => handleInputChange(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                       className="min-w-0 flex-1 bg-transparent text-sm text-fontBlack placeholder:text-placeHolderText focus:outline-none"
                     />

@@ -7,7 +7,12 @@ import ImageComponent from '@/components/library/ImageComponent';
 
 interface MessagesChatBoxProps {
     selectedChatId: string | null;
+    otherUserId?: string;
+    onMessageSeen?: (messageId: string, chatId: string) => void;
 }
+
+// readBy entries can be populated user objects (from API) or plain string IDs (from socket cache patches)
+type ReadByEntry = string | { _id?: string };
 
 // Shape we expect from API for a single message (backend may vary)
 interface ChatMessageRow {
@@ -18,6 +23,15 @@ interface ChatMessageRow {
     sender?: { _id?: string; first_name?: string; last_name?: string } | string;
     createdAt?: string;
     isSentByMe?: boolean;
+    readBy?: ReadByEntry[] | null;
+}
+
+/** Handles both populated objects ({ _id }) and plain string IDs from socket patches */
+function isReadByUser(readBy: ReadByEntry[] | null | undefined, userId: string): boolean {
+    if (!readBy || !userId) return false;
+    return readBy.some((entry) =>
+        typeof entry === 'string' ? entry === userId : entry._id === userId
+    );
 }
 
 function getSenderDisplay(sender: ChatMessageRow['sender']): string {
@@ -92,6 +106,21 @@ function getFileNameFromUrl(url: string, fallback: string): string {
     } catch {
         return fallback;
     }
+}
+
+/** WhatsApp-style read receipt ticks shown on sent messages.
+ *  Grey double tick = sent (not read). Blue double tick = read by other user. */
+function ReadReceipt({ isRead }: { isRead: boolean }) {
+    const color = isRead ? '#3B82F6' : '#9CA3AF';
+    return (
+        <span className="inline-flex items-center shrink-0 ml-0.5" aria-label={isRead ? 'Read' : 'Sent'}>
+            {/* Double tick — second tick overlaps first slightly, like WhatsApp */}
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden>
+                <path d="M1 5.5L4.5 9L10 3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 5.5L9.5 9L15 3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        </span>
+    );
 }
 
 // WhatsApp-style: text, image, video, and document with media_url support
@@ -185,7 +214,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
     );
 }
 
-export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps) {
+export default function MessagesChatBox({ selectedChatId, otherUserId, onMessageSeen }: MessagesChatBoxProps) {
     const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
@@ -295,6 +324,23 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
         }
     }, [selectedChatId, page1Messages.length, index, messages.length]);
 
+    // Emit message:seen only for page-1 messages (the current/recent window).
+    // Using page1Messages directly (not the full accumulated list) prevents re-emitting
+    // historical older-page messages every time a new real-time message arrives.
+    useEffect(() => {
+        if (!selectedChatId || !onMessageSeen || !currentUserId) return;
+        page1Messages.forEach((msg) => {
+            if (!msg._id) return;
+            const senderId = typeof msg.sender === 'object' ? msg.sender?._id : null;
+            // Only mark messages sent by the other person that we haven't already read
+            if (!senderId || senderId === currentUserId) return;
+            if (!isReadByUser(msg.readBy, currentUserId)) {
+                onMessageSeen(msg._id, selectedChatId);
+            }
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedChatId, page1Messages.length]);
+
     if (!selectedChatId) {
         return (
             <div className="flex flex-1 items-center justify-center py-12 text-center">
@@ -368,6 +414,8 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
                         const initial = getInitial(senderName);
                         const time = formatTime(msg.createdAt);
 
+                        const isReadByOther = Boolean(otherUserId && isReadByUser(msg.readBy, otherUserId));
+
                         return isYou ? (
                             <div
                                 key={msg._id ?? Math.random()}
@@ -382,6 +430,9 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
                                         <span className="font-medium text-fontBlack">{senderName}</span>
                                     </span>
                                     <MessageContent msg={msg} isYou={true} />
+                                    <span className="mt-0.5 flex items-center">
+                                        <ReadReceipt isRead={isReadByOther} />
+                                    </span>
                                 </div>
                             </div>
                         ) : (
