@@ -1,6 +1,6 @@
 'use client'
 
-import { BackArrowSVG, CalendarSVG, DollarSignIconSVG } from '@/components/library/AllSVG'
+import { BackArrowSVG, CalendarSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 import {
     useGetCreditsPackagesQuery,
@@ -9,11 +9,11 @@ import {
     useLazyGetCreditsTransactionHistoryExportCSVQuery,
     useLazyGetCreditsTransactionHistoryExportPDFQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
-import { usePurchaseCreditsMutation } from '@/redux/rtkQueries/allPostApi'
+import { useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
-import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
@@ -51,7 +51,10 @@ export default function CreditsWallet() {
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState('10')
     const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null)
+    const [paymentStatus, setPaymentStatus] = useState<'success' | 'fail' | null>(null)
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const verifyCalledRef = useRef(false)
 
     const queryParams = useMemo(() => {
         const base = { page, limit: Number(itemsPerPage) }
@@ -76,7 +79,8 @@ export default function CreditsWallet() {
     const totalItems = apiData?.total ?? 0
     const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
 
-    const [purchaseCredits] = usePurchaseCreditsMutation()
+    const [stripePayment, { isLoading: stripeLoading }] = useStripePaymentMutation()
+    const [verifyStripePayment] = useVerifyStripePaymentMutation()
     const [fetchCSV] = useLazyGetCreditsTransactionHistoryExportCSVQuery()
     const [fetchPDF] = useLazyGetCreditsTransactionHistoryExportPDFQuery()
     const { data: creditsResponse, isLoading: packagesLoading } = useGetCreditsPackagesQuery()
@@ -87,6 +91,31 @@ export default function CreditsWallet() {
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
             .map(mapPackageToDisplay)
     }, [creditsResponse?.data])
+
+    useEffect(() => {
+        const stripeStatus = searchParams.get('stripe_payment_status')
+        const sessionId = searchParams.get('session_id')
+        console.log('sessionId out of if condition', sessionId)
+        console.log('stripeStatus out of if condition', stripeStatus);
+
+        if (stripeStatus === 'success' && sessionId && !verifyCalledRef.current) {
+            console.log('sessionId', sessionId)
+            console.log('stripeStatus', stripeStatus);
+
+            verifyCalledRef.current = true
+            verifyStripePayment({ transactionId: sessionId })
+                .unwrap()
+                .then(() => {
+                    setPaymentStatus('success')
+                    addToast({ title: 'Payment verified! Credits have been added to your account.', color: 'success', timeout: 5000 })
+                })
+                .catch(() => {
+                    setPaymentStatus('fail')
+                })
+        } else if (stripeStatus === 'fail') {
+            setPaymentStatus('fail')
+        }
+    }, [])
 
     const getExportParams = useMemo(() => {
         if (period === 'all' || !period) return undefined
@@ -116,70 +145,58 @@ export default function CreditsWallet() {
         }
     }
 
-    const openPurchaseModal = async (pkg: CreditPackageDisplay) => {
-        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
-        if (!keyId) {
-            alert(
-                'Razorpay not configured. Add NEXT_PUBLIC_RAZORPAY_KEY_ID, RAZORPAY_KEY_ID, and RAZORPAY_KEY_SECRET to .env.local (get free test keys from Razorpay Dashboard)'
-            )
-            return
-        }
+    const handlePurchase = async (pkg: CreditPackageDisplay) => {
         try {
-            const res = await fetch('/api/razorpay/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    amount: parseFloat(pkg.price),
-                    currency: 'INR',
-                    receipt: `credits_${pkg.id}`,
-                }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error ?? 'Failed to create order')
-            const { orderId } = data
-
-            const packageId = pkg.id
-            const openCheckout = () => {
-                const Razorpay = (window as unknown as { Razorpay: new (o: object) => { open: () => void } }).Razorpay
-                const options = {
-                    key: keyId,
-                    amount: Math.round(parseFloat(pkg.price) * 100),
-                    currency: 'INR',
-                    name: 'Credits Purchase',
-                    description: `${pkg.credits} credits${pkg.bonus ? ` + ${pkg.bonus} bonus` : ''}`,
-                    order_id: orderId,
-                    handler: async () => {
-                        try {
-                            await purchaseCredits({ package_id: packageId }).unwrap()
-                            addToast({ title: 'Credits purchased successfully', color: 'success', timeout: 2000 })
-                            setSelectedPackageId(null)
-                        } catch (err) {
-                            console.error(err)
-                            alert(err instanceof Error ? err.message : 'Failed to complete purchase')
-                        }
-                    },
-                }
-                const rzp = new Razorpay(options)
-                rzp.open()
-            }
-
-            const Razorpay = (window as unknown as { Razorpay?: new (o: object) => { open: () => void } }).Razorpay
-            if (Razorpay) {
-                openCheckout()
-                return
-            }
-            const script = document.createElement('script')
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-            script.async = true
-            script.onload = openCheckout
-            document.body.appendChild(script)
+            setSelectedPackageId(pkg.id)
+            const result = await stripePayment({ amount: Math.round(parseFloat(pkg.price) * 100) }).unwrap() as { data?: { payment_url?: string } }
+            const paymentUrl = result?.data?.payment_url
+            if (!paymentUrl) throw new Error('No payment URL returned')
+            window.location.href = paymentUrl
         } catch (err) {
             console.error(err)
-            alert(err instanceof Error ? err.message : 'Failed to open payment')
+            setSelectedPackageId(null)
         }
     }
     return (
         <div className="space-y-8">
+            {/* Payment Status Banner */}
+            {paymentStatus === 'success' && (
+                <div className="flex items-start gap-3 rounded-2xl border border-[#4CAF50] bg-[#E8F5E9] px-5 py-4">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4CAF50] text-white">
+                        <HiPlus className="size-3" />
+                    </span>
+                    <div className="flex-1">
+                        <p className="font-semibold text-[#2E7D32]">Payment Successful</p>
+                        <p className="text-sm text-[#2E7D32]/80">Your credits have been added to your account.</p>
+                    </div>
+                    <button
+                        onClick={() => setPaymentStatus(null)}
+                        className="text-[#2E7D32]/60 hover:text-[#2E7D32] transition-colors"
+                        aria-label="Dismiss"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+            {paymentStatus === 'fail' && (
+                <div className="flex items-start gap-3 rounded-2xl border border-danger bg-[#FFEBEE] px-5 py-4">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-danger text-white">
+                        <HiMinus className="size-3" />
+                    </span>
+                    <div className="flex-1">
+                        <p className="font-semibold text-[#C62828]">Payment Failed</p>
+                        <p className="text-sm text-[#C62828]/80">Your payment was not completed. Please try again.</p>
+                    </div>
+                    <button
+                        onClick={() => setPaymentStatus(null)}
+                        className="text-[#C62828]/60 hover:text-[#C62828] transition-colors"
+                        aria-label="Dismiss"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
@@ -271,7 +288,9 @@ export default function CreditsWallet() {
                                     </div>
                                     <Button
                                         className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-[#F3F4F6]'} w-full`}
-                                        onPress={() => openPurchaseModal(pkg)}
+                                        isLoading={stripeLoading && selectedPackageId === pkg.id}
+                                        isDisabled={stripeLoading}
+                                        onPress={() => handlePurchase(pkg)}
                                     >
                                         Purchase Credits
                                     </Button>
@@ -378,14 +397,14 @@ export default function CreditsWallet() {
                                                 <td className="px-4 py-4">
                                                     <span
                                                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${txn.type?.toLowerCase() === 'purchase'
-                                                                ? 'bg-[#E8F5E9] text-[#2E7D32]'
-                                                                : 'bg-[#FFEBEE] text-[#C62828]'
+                                                            ? 'bg-[#E8F5E9] text-[#2E7D32]'
+                                                            : 'bg-[#FFEBEE] text-[#C62828]'
                                                             }`}
                                                     >
                                                         <span
                                                             className={`flex size-5 shrink-0 items-center justify-center rounded-full ${txn.type?.toLowerCase() === 'purchase'
-                                                                    ? 'bg-[#4CAF50] text-white'
-                                                                    : 'bg-danger text-white'
+                                                                ? 'bg-[#4CAF50] text-white'
+                                                                : 'bg-danger text-white'
                                                                 }`}
                                                         >
                                                             {txn.type?.toLowerCase() === 'purchase' ? (

@@ -171,7 +171,6 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['UserChats'],
     }),
-
     // Vendor Chat APIs
     vendorSendMessage: builder.mutation({
       query: (body) => ({
@@ -188,6 +187,21 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         body,
       }),
       invalidatesTags: ['VendorChats'],
+    }),
+
+    stripePayment: builder.mutation({
+      query: (body) => ({
+        url: `/vendor/stipe-checkout`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    verifyStripePayment: builder.mutation({
+      query: ({ transactionId }) => ({
+        url: `/vendor/verify-payment/${transactionId}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['VendorTransactions', 'VendorDashboard'],
     }),
   }),
 });
@@ -219,4 +233,6 @@ export const {
   // Vendor Chat APIs
   useVendorSendMessageMutation,
   useVendorAccessChatMutation,
+  useStripePaymentMutation,
+  useVerifyStripePaymentMutation,
 } = postApi;
