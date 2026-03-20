@@ -19,6 +19,7 @@ import { ISingleServiceAPIResponse } from '@/types/singleService';
 import { IAllChatListAPIResponse } from '@/types/allChatList';
 import { IAllChatsMessagesAPIResponse } from '@/types/allChatsMessages';
 import { IAllTestimonialsAPIResponse } from '@/types/testimonial';
+import { IAllFaqsAPIResponse } from '@/types/faqs';
 import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
@@ -238,6 +239,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
             }),
         }),
+        getFaqs: builder.query<IAllFaqsAPIResponse, { type?: string } | void>({
+            query: (arg) => ({
+                url: `/user/faqs`,
+                method: 'GET',
+                ...(arg?.type != null && arg.type !== '' && { params: { type: arg.type } }),
+            }),
+        }),
     }),
 });
 
@@ -276,4 +284,6 @@ export const {
     useGetVendorAllMessagesQuery,
     // Testimonials APIs
     useGetTestimonialsQuery,
+    // FAQs
+    useGetFaqsQuery,
 } = clientSideGetApis;

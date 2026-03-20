@@ -14,6 +14,7 @@ import { getDashboardPathForRole } from "@/routes/routes"
 import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css"
 import { IoPencilOutline } from "react-icons/io5"
+import { formatPhoneWithCountryCode } from "@/utils/formatPhone"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -238,7 +239,13 @@ const MobileOtpVerification = () => {
                     phone number
                     <div className="flex items-center gap-0.5">
                         <span className="text-primaryColor font-medium">
-                            {phoneNumber}
+                            {/* {(() => {
+                                const parts = formatPhoneWithCountryCode(phoneNumber)
+                                return parts.countryCode
+                                    ? <>{parts.countryCode} {parts.nationalNumber}</>
+                                    : phoneNumber
+                            })()} */}
+                            {phoneNumber ? formatPhoneWithCountryCode(phoneNumber, "FR").formatted : "—"}
                         </span>
                         <button
                             type="button"

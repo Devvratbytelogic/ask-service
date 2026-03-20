@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGetUserAllMessagesQuery, useGetVendorAllMessagesQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import { getUserId, getUserRole } from '@/utils/authCookies';
 import ImageComponent from '@/components/library/ImageComponent';
@@ -190,38 +190,110 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
     const currentUserId = getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
-    const [index, setIndex] = useState(1);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const loadMoreScrollRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
+    // Pair index with the chatId it belongs to. On the first render after selectedChatId changes the stored chatId
+    // won't match yet, so the derived index below is immediately 1 — preventing a stale pageN request and stale
+    // accumulated pages from being used before the reset effect fires.
+    const [pageState, setPageState] = useState<{ chatId: string | null; index: number }>({ chatId: null, index: 1 });
+    const index = pageState.chatId === selectedChatId ? pageState.index : 1;
+    // Older pages (2, 3, ...) accumulated when user clicks "Load more"; page 1 always from query for real-time
+    const [accumulatedOlderPages, setAccumulatedOlderPages] = useState<ChatMessageRow[][]>([]);
+    const lastAccumulatedIndexRef = useRef(0);
 
-    const { data: userMessages, isLoading: userLoading, isFetching: userFetching, } = useGetUserAllMessagesQuery(
-        { chatId: selectedChatId!, index },
+    // Reset pagination and accumulated pages when switching to a different chat
+    useEffect(() => {
+        setPageState({ chatId: selectedChatId, index: 1 });
+        setAccumulatedOlderPages([]);
+        lastAccumulatedIndexRef.current = 0;
+        loadMoreScrollRef.current = null;
+    }, [selectedChatId]);
+
+    // Always fetch page 1 so real-time socket updates (which patch cache for index 1) are visible
+    const { data: userPage1, isLoading: userPage1Loading, isFetching: userPage1Fetching } = useGetUserAllMessagesQuery(
+        { chatId: selectedChatId!, index: 1 },
         { skip: !selectedChatId || isVendor }
     );
-    const { data: vendorMessages, isLoading: vendorLoading, isFetching: vendorFetching, } = useGetVendorAllMessagesQuery(
-        { chatId: selectedChatId!, index },
+    const { data: vendorPage1, isLoading: vendorPage1Loading, isFetching: vendorPage1Fetching } = useGetVendorAllMessagesQuery(
+        { chatId: selectedChatId!, index: 1 },
         { skip: !selectedChatId || !isVendor }
     );
 
-    const messagesData = isVendor ? vendorMessages : userMessages;
-    const isLoading = isVendor ? vendorLoading : userLoading;
-    const isFetching = isVendor ? vendorFetching : userFetching;
-    const rawMessages = (messagesData?.data?.messages as ChatMessageRow[] | undefined) ?? [];
-    // Oldest at top, newest at bottom (ascending chronological order)
-    const messages = [...rawMessages].sort((a, b) => {
+    // When index > 1, fetch the next older page
+    const { data: userPageN, isFetching: userPageNFetching } = useGetUserAllMessagesQuery(
+        { chatId: selectedChatId!, index },
+        { skip: !selectedChatId || isVendor || index <= 1 }
+    );
+    const { data: vendorPageN, isFetching: vendorPageNFetching } = useGetVendorAllMessagesQuery(
+        { chatId: selectedChatId!, index },
+        { skip: !selectedChatId || !isVendor || index <= 1 }
+    );
+
+    const page1Data = isVendor ? vendorPage1 : userPage1;
+    const pageNData = isVendor ? vendorPageN : userPageN;
+    const isLoadingPage1 = isVendor ? vendorPage1Loading : userPage1Loading;
+    const isFetchingPage1 = isVendor ? vendorPage1Fetching : userPage1Fetching;
+    const isFetchingPageN = isVendor ? vendorPageNFetching : userPageNFetching;
+
+    const totalPages = page1Data?.data?.totalPages ?? 0;
+    const hasMorePages = totalPages === 0 || index < totalPages;
+    const page1Messages = (page1Data?.data?.messages as ChatMessageRow[] | undefined) ?? [];
+
+    // When we receive a new older page (index > 1), prepend it to accumulated so we don't lose existing messages.
+    // Guard with !isFetchingPageN: when index increments, RTK Query starts a new fetch but pageNData may still hold
+    // the previous page's stale data. Without this guard the stale data gets accumulated under the new index and
+    // lastAccumulatedIndexRef is bumped early, causing the real response to be skipped on every subsequent load.
+    useEffect(() => {
+        if (index <= 1 || index <= lastAccumulatedIndexRef.current || isFetchingPageN || !pageNData?.data?.messages) return;
+        const raw = (pageNData.data.messages as ChatMessageRow[]) ?? [];
+        lastAccumulatedIndexRef.current = index;
+        setAccumulatedOlderPages((prev) => [raw, ...prev]);
+    }, [index, pageNData, isFetchingPageN]);
+
+    // Keep scroll position when "Load more" prepends content (no jump); restore before paint
+    useLayoutEffect(() => {
+        if (!loadMoreScrollRef.current || !messagesContainerRef.current) return;
+        const scrollEl = messagesContainerRef.current.parentElement;
+        if (scrollEl && typeof scrollEl.scrollHeight === 'number') {
+            const { scrollHeight: oldH, scrollTop: oldT } = loadMoreScrollRef.current;
+            scrollEl.scrollTop = oldT + (scrollEl.scrollHeight - oldH);
+        }
+        loadMoreScrollRef.current = null;
+    }, [accumulatedOlderPages.length]);
+
+    // Combine: older pages (accumulated) + latest page (page 1, for real-time). Dedupe by _id, then sort by date.
+    const olderFlat = accumulatedOlderPages.flat();
+    const combinedRaw = index > 1 ? [...olderFlat, ...page1Messages] : page1Messages;
+    const seenIds = new Set<string>();
+    const deduped = combinedRaw.filter((m) => {
+        const id = m._id ?? '';
+        if (seenIds.has(id)) return false;
+        seenIds.add(id);
+        return true;
+    });
+    const messages = [...deduped].sort((a, b) => {
         const tA = new Date(a.createdAt ?? 0).getTime();
         const tB = new Date(b.createdAt ?? 0).getTime();
         return tA - tB;
     });
 
-    // Show loading when initial load OR when refetching (e.g. after switching chat).
-    // This prevents showing the previous chat's messages while the new chat's request is pending.
-    const showLoading = isLoading || isFetching;
+    // Full-screen loading only on initial load of page 1; when loading next page, keep showing current messages
+    const showInitialLoading = isLoadingPage1 || (index === 1 && isFetchingPage1);
 
-    // WhatsApp-style: scroll to bottom when messages load or change
+    // Scroll to bottom when opening a chat, on first load of page 1, or when new messages arrive (real-time); not when loading older pages
+    const prevPage1LengthRef = useRef(0);
+    const prevChatIdRef = useRef<string | null>(null);
     useEffect(() => {
-        if (messages.length > 0) {
+        if (messages.length === 0) return;
+        const page1Len = page1Messages.length;
+        const hadPage1Increase = page1Len > prevPage1LengthRef.current;
+        const chatJustChanged = selectedChatId !== prevChatIdRef.current;
+        prevPage1LengthRef.current = page1Len;
+        prevChatIdRef.current = selectedChatId;
+        if (chatJustChanged || hadPage1Increase || index === 1) {
             scrollBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [selectedChatId, messages.length]);
+    }, [selectedChatId, page1Messages.length, index, messages.length]);
 
     if (!selectedChatId) {
         return (
@@ -231,7 +303,7 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
         );
     }
 
-    if (showLoading) {
+    if (showInitialLoading) {
         return (
             <div className="flex flex-1 items-center justify-center py-12">
                 <p className="text-sm text-darkSilver">Loading messages...</p>
@@ -249,9 +321,37 @@ export default function MessagesChatBox({ selectedChatId }: MessagesChatBoxProps
 
     const grouped = groupMessagesByDate(messages);
 
+    const handleLoadMore = () => {
+        const scrollEl = messagesContainerRef.current?.parentElement;
+        if (scrollEl && scrollEl.scrollHeight > scrollEl.clientHeight) {
+            loadMoreScrollRef.current = { scrollHeight: scrollEl.scrollHeight, scrollTop: scrollEl.scrollTop };
+        }
+        setPageState({ chatId: selectedChatId!, index: index + 1 });
+    };
+
     return (
-        <div className="flex flex-col min-h-full">
-            {/* <button onClick={() => setIndex(index + 1)}>Load more</button> */}
+        <div ref={messagesContainerRef} className="flex flex-col min-h-full">
+            {hasMorePages && <>
+                {isFetchingPageN ?
+                    <div className="flex justify-center py-3">
+                        <span className="inline-flex items-center gap-2 text-sm text-darkSilver">
+                            <span className="size-5 animate-spin rounded-full border-2 border-primaryColor border-t-transparent" aria-hidden />
+                            Loading older messages...
+                        </span>
+                    </div>
+                    :
+                    <div className="flex justify-center py-2">
+                        <button
+                            type="button"
+                            onClick={handleLoadMore}
+                            disabled={isFetchingPageN}
+                            className="rounded-full cursor-pointer bg-[#E5E7EB] px-4 py-2 text-sm font-medium text-fontBlack hover:bg-[#D1D5DB] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Load more
+                        </button>
+                    </div>
+                }
+            </>}
             {grouped.map(({ dateLabel, messages: groupMsgs }) => (
                 <div key={dateLabel}>
                     <div className="flex justify-center my-3">
