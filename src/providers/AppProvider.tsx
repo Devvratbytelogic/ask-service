@@ -16,10 +16,8 @@ interface ProvidersProps {
 export default function AppProviders({ children }: ProvidersProps) {
   useEffect(() => {
     const run = async () => {
-      console.log("[FCM] AppProvider: requesting FCM token...");
       const token = await getFcmToken();
       if (token) {
-        console.log("[FCM] AppProvider: token ready, registering foreground handler");
         await registerForegroundMessageHandler();
       } else {
         console.warn("[FCM] AppProvider: no FCM token (permission denied or unsupported)");
