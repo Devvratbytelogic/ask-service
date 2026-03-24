@@ -11,24 +11,24 @@ import { useMemo, useState } from 'react'
 import moment from 'moment'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
-import { useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 export default function VendorDashboard() {
     const dispatch = useDispatch()
     const router = useRouter()
-    const [locationFilter, setLocationFilter] = useState('all')
+    const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all')
     const [sortFilter, setSortFilter] = useState('newest')
 
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: dashboardData, isLoading: dashboardLoading } = useGetVendorDashboardDataQuery()
     const dashboard = dashboardData?.data;
 
     const leadsParams = useMemo(
         () => ({
-            location: locationFilter !== 'all' ? locationFilter : undefined,
+            service: serviceCategoryFilter !== 'all' ? serviceCategoryFilter : undefined,
             sort: sortFilter,
         }),
-        [locationFilter, sortFilter],
+        [serviceCategoryFilter, sortFilter],
     )
     const searchParams = useSearchParams()
     const showPurchasedOnly = searchParams.get('leads') === 'purchased'
@@ -75,11 +75,10 @@ export default function VendorDashboard() {
         }))
     }
 
-    const locationOptions = [
-        { key: 'all', label: 'Toutes les villes' },
-        { key: 'london', label: 'London' },
-        { key: 'manchester', label: 'Manchester' },
-    ]
+    const serviceCategoryOptions = useMemo(() => [
+        { key: 'all', label: 'Tous les services' },
+        ...(serviceCategoriesData?.data ?? []).map((cat) => ({ key: cat._id, label: cat.title })),
+    ], [serviceCategoriesData])
 
     const sortOptions = [
         { key: 'newest', label: 'Les plus récents' },
@@ -176,17 +175,17 @@ export default function VendorDashboard() {
                                         className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-35 shadow-none"
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
-                                        {locationOptions.find((o) => o.key === locationFilter)?.label ?? 'Toutes les villes'}
+                                        {serviceCategoryOptions.find((o) => o.key === serviceCategoryFilter)?.label ?? 'Tous les services'}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label="Location filter"
-                                    items={locationOptions}
-                                    selectedKeys={[locationFilter]}
+                                    aria-label="Service category filter"
+                                    items={serviceCategoryOptions}
+                                    selectedKeys={[serviceCategoryFilter]}
                                     selectionMode="single"
                                     onSelectionChange={(keys) => {
                                         const key = Array.from(keys as Set<string>)[0]
-                                        if (key) setLocationFilter(key)
+                                        if (key) setServiceCategoryFilter(key)
                                     }}
                                 >
                                     {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}

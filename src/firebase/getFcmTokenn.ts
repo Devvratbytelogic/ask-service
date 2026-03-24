@@ -3,7 +3,7 @@
 import Cookies from "js-cookie";
 import { getMessagingInstance } from "./FirebaseConfig";
 
-const VAPID_KEY = 'BIYqEPG8qSacFWKEAHVoTBbCKO_dspY3epEaEzyptnI8EKSfBB7fR7gu-pl6-3fSbIuAo4juyuXapyCjXOj67dk';
+const VAPID_KEY = 'BIYqEPG8qSacFWKEAHVoTBbCKO_dspY3epEaEzyptnI8EKSfBB7fR7gu-pl6-3fSbIuAo4juyuXapyCjXOj67dk';  // from askservice934@gmail.com
 
 export const FCM_COOKIE_NAME = "fcm_token";
 const FCM_COOKIE_DAYS = 7;

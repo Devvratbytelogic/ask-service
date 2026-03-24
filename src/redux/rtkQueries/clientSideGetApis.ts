@@ -120,7 +120,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorDashboard'],
         }),
-        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { location?: string; sort?: string; page?: number; limit?: number; quoted?: boolean } | void>({
+        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; page?: number; limit?: number; quoted?: boolean } | void>({
             query: (arg) => ({
                 url: `/vendor/available-leads`,
                 method: 'GET',
