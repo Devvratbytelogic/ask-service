@@ -202,7 +202,7 @@ export default function CreditsWallet() {
     const initiateStripeCheckout = useCallback(async (pkg: CreditPackageDisplay) => {
         try {
             setSelectedPackageId(pkg.id)
-            const result = await stripePayment({ amount: (parseFloat(pkg.price)) }).unwrap() as { data?: { payment_url?: string } }
+            const result = await stripePayment({ amount: parseFloat(pkg.totalPrice)}).unwrap() as { data?: { payment_url?: string } }
             const paymentUrl = result?.data?.payment_url
             if (!paymentUrl) throw new Error('No payment URL returned')
             localStorage.setItem('stripe_package_id', pkg.id)
