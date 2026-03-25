@@ -1,15 +1,23 @@
+'use client'
+
 import React from 'react'
 import ContactForm from '@/components/pages/contact-us/ContactForm'
 import ContactFaq from '@/components/pages/contact-us/ContactFaq'
 import AskQuestionCallout from '@/components/pages/contact-us/AskQuestionCallout'
-import { AddressIconSVG, ClockIconSVG } from '@/components/library/AllSVG'
+import { AddressIconSVG, EmailIconSVG, PhoneIconSVG } from '@/components/library/AllSVG'
+import { useGetGlobalSettingsQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import Link from 'next/link'
 
 export default function ContactUsPage() {
-    const ADDRESS = '1258 Maplewood Avenue, Suite 402'
-    const OFFICE_HOURS = 'Monday to Friday: 9:00 AM - 6:00 PM'
+    const { data: globalSettings } = useGetGlobalSettingsQuery()
+    const settings = globalSettings?.data
+
+    const address = settings?.address || '1258 Maplewood Avenue, Suite 402'
+    const email = settings?.email || 'connect@askservice.com'
+    const phone = settings?.phone || '01 987654321'
+
     return (
         <>
-            {/* <div style={{ backgroundImage: 'url(/images/home/banner_gradient.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}> */}
             <div className="min-h-screen body_x_axis_padding container_y_padding_lg w-full max-w-2xl md:max-w-none md:w-2/3 mx-auto space-y-10 sm:space-y-12 md:space-y-16">
                 <section className="w-full md:w-2/4 md:mx-auto">
                     <div
@@ -35,16 +43,25 @@ export default function ContactUsPage() {
                         </span>
                         <div className="min-w-0">
                             <p className="text-xs sm:text-sm text-darkSilver mb-0.5">Address</p>
-                            <p className="text-sm font-medium text-fontBlack wrap-break-word">{ADDRESS}</p>
+                            <p className="text-sm font-medium text-fontBlack wrap-break-word">{address}</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-3 items-start w-full sm:w-auto min-w-0">
+                        <span className="rounded-xl p-3 sm:p-4 bg-primary/10 text-darkSilver shrink-0">
+                            <EmailIconSVG />
+                        </span>
+                        <div className="min-w-0">
+                            <p className="text-xs sm:text-sm text-darkSilver mb-0.5">Email</p>
+                            <Link href={`mailto:${email}`} className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors">{email}</Link>
                         </div>
                     </div>
                     {/* <div className="flex gap-3 items-start w-full sm:w-auto min-w-0">
                         <span className="rounded-xl p-3 sm:p-4 bg-primary/10 text-darkSilver shrink-0">
-                            <ClockIconSVG />
+                            <PhoneIconSVG />
                         </span>
                         <div className="min-w-0">
-                            <p className="text-xs sm:text-sm text-darkSilver mb-0.5">Office Hours</p>
-                            <p className="text-sm font-medium text-fontBlack wrap-break-word">{OFFICE_HOURS}</p>
+                            <p className="text-xs sm:text-sm text-darkSilver mb-0.5">Phone</p>
+                            <Link href={`tel:${phone.replace(/\s/g, '')}`} className="text-sm font-medium text-fontBlack hover:text-primaryColor transition-colors">{phone}</Link>
                         </div>
                     </div> */}
                 </section>
@@ -55,7 +72,6 @@ export default function ContactUsPage() {
                     <AskQuestionCallout />
                 </section>
             </div>
-            {/* </div> */}
         </>
     )
 }

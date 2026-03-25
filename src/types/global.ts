@@ -5,8 +5,8 @@ export interface IGlobalSettingsAPIResponse {
     data: IGlobalSettingsAPIResponseData;
     message: string;
     timestamp: string;
-}
-export interface IGlobalSettingsAPIResponseData {
+  }
+  export interface IGlobalSettingsAPIResponseData {
     _id: string;
     email: string;
     google_analytics_id: string;
@@ -33,4 +33,7 @@ export interface IGlobalSettingsAPIResponseData {
     createdAt: string;
     updatedAt: string;
     __v: number;
-}
+    platformDescription: string;
+    platformName: string;
+  }
+  
