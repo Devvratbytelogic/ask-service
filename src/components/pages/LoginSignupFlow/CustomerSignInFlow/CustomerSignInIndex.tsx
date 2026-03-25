@@ -79,7 +79,7 @@ const CustomerSignInIndex = () => {
     return (
         <>
             <div className="space-y-3 xl:space-y-6">
-                <h1 className="header_text flex items-center gap-0.5">
+                <h1 className="header_text flex flex-wrap items-center gap-0.5">
                     {/* <BiArrowBack
                         className="modal_back_icon"
                         onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'SelectUserType' }, modalSize: 'full' }))}

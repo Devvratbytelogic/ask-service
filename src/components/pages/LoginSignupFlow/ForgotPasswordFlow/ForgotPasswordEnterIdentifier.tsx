@@ -107,7 +107,7 @@ const ForgotPasswordEnterIdentifier = () => {
         <>
             <div className="space-y-10">
                 <div className="space-y-3 xl:space-y-6 w-11/12">
-                    <h2 className="header_text flex items-center gap-0.5">
+                    <h2 className="header_text flex flex-wrap items-center gap-0.5">
                         <BiArrowBack
                             className="modal_back_icon"
                             onClick={goBack}
