@@ -166,6 +166,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
         }),
+        getCreditsTransactionInvoice: builder.query<Blob, { transactionId: string }>({
+            query: ({ transactionId }) => ({
+                url: `/vendor/transactions/${transactionId}/invoice`,
+                method: 'GET',
+                responseHandler: (response) => response.blob(),
+            }),
+        }),
         getCreditsPackages: builder.query<IAllCreditsAPIResponse, void>({
             query: () => ({
                 url: `/vendor/credits/packages`,
@@ -287,6 +294,7 @@ export const {
     useGetVendorDashboardTransactionHistoryQuery,
     useLazyGetCreditsTransactionHistoryExportCSVQuery,
     useLazyGetCreditsTransactionHistoryExportPDFQuery,
+    useLazyGetCreditsTransactionInvoiceQuery,
     useGetCreditsPackagesQuery,
     useGetCreatedServicesQuery,
     useGetServiceRequestQuotesQuery,

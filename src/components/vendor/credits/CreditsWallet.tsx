@@ -2,7 +2,7 @@
 
 import { BackArrowSVG, CalendarSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery, useLazyGetCreditsTransactionHistoryExportCSVQuery, useLazyGetCreditsTransactionHistoryExportPDFQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery, useLazyGetCreditsTransactionHistoryExportCSVQuery, useLazyGetCreditsTransactionHistoryExportPDFQuery, useLazyGetCreditsTransactionInvoiceQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { usePurchaseCreditsMutation, useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
@@ -79,6 +79,8 @@ export default function CreditsWallet() {
     const [purchaseCredits] = usePurchaseCreditsMutation()
     const [fetchCSV] = useLazyGetCreditsTransactionHistoryExportCSVQuery()
     const [fetchPDF] = useLazyGetCreditsTransactionHistoryExportPDFQuery()
+    const [fetchInvoice] = useLazyGetCreditsTransactionInvoiceQuery()
+    const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<string | null>(null)
     const { data: creditsResponse, isLoading: packagesLoading } = useGetCreditsPackagesQuery()
     const creditPackages = useMemo(() => {
         const list = creditsResponse?.data ?? []
@@ -113,7 +115,10 @@ export default function CreditsWallet() {
                     setPaymentStatus('fail')
                     // addToast({ title: 'Payment verification failed. Please contact support.', color: 'danger', timeout: 5000 })
                 })
-                .finally(() => setIsVerifying(false))
+                .finally(() => {
+                    setIsVerifying(false)
+                    verifyCalledRef.current = false
+                })
         } else if (stripeStatus === 'fail') {
             setPaymentStatus('fail')
         }
@@ -155,6 +160,25 @@ export default function CreditsWallet() {
             addToast({ title: `Downloaded as ${format.toUpperCase()}`, color: 'success', timeout: 2000 })
         } catch {
             addToast({ title: 'Download failed', color: 'danger', timeout: 3000 })
+        }
+    }
+
+    const handleDownloadInvoice = async (transactionId: string) => {
+        try {
+            setDownloadingInvoiceId(transactionId)
+            const result = await fetchInvoice({ transactionId }).unwrap()
+            const blob = result as Blob
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `invoice-${transactionId}.pdf`
+            a.click()
+            URL.revokeObjectURL(url)
+            addToast({ title: 'Invoice downloaded', color: 'success', timeout: 2000 })
+        } catch {
+            console.error('Failed to download invoice')
+        } finally {
+            setDownloadingInvoiceId(null)
         }
     }
 
@@ -432,18 +456,21 @@ export default function CreditsWallet() {
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
                                         Date
                                     </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {isLoading ? (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-12 text-center">
+                                        <td colSpan={6} className="px-4 py-12 text-center">
                                             <Spinner size="lg" color="primary" />
                                         </td>
                                     </tr>
                                 ) : transactions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-12 text-center text-sm text-darkSilver">
+                                        <td colSpan={6} className="px-4 py-12 text-center text-sm text-darkSilver">
                                             No transactions found
                                         </td>
                                     </tr>
@@ -488,6 +515,23 @@ export default function CreditsWallet() {
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-darkSilver">
                                                     {txn.date}
+                                                </td>
+                                                <td className="px-4 py-4">
+                                                    {txn.type?.toLowerCase() === 'purchase' && (
+                                                        <Button
+                                                            isIconOnly
+                                                            size="sm"
+                                                            variant="flat"
+                                                            className="bg-[#F3F4F6] text-fontBlack hover:bg-[#E5E7EB]"
+                                                            isLoading={downloadingInvoiceId === txn._id}
+                                                            onPress={() => handleDownloadInvoice(txn._id)}
+                                                            aria-label="Download invoice"
+                                                        >
+                                                            {downloadingInvoiceId !== txn._id && (
+                                                                <HiOutlineArrowDownTray className="size-4" />
+                                                            )}
+                                                        </Button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         )
