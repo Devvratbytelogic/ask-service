@@ -8,7 +8,7 @@ import { BsFacebook, BsInstagram } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoDocumentSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
-import { PiPhone } from "react-icons/pi";
+// import { PiPhone } from "react-icons/pi";
 import { useGetGlobalSettingsQuery } from "@/redux/rtkQueries/clientSideGetApis";
 
 const MESSAGE_PATHS = [getMessageRoutePath(), getVendorMessageRoutePath()];

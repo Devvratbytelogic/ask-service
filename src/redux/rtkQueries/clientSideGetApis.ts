@@ -175,7 +175,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
         }),
         getCreditsTransactionInvoice: builder.query<Blob, { transactionId: string }>({
             query: ({ transactionId }) => ({
-                url: `/vendor/transactions/${transactionId}/invoice`,
+                url: `/vendor/credits/invoice/${transactionId}`,
                 method: 'GET',
                 responseHandler: (response) => response.blob(),
             }),
