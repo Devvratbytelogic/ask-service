@@ -8,13 +8,14 @@ export interface FormattedPhone {
 }
 
 /**
- * Parses a raw phone value (e.g. from react-phone-input-2: "33687687687")
+ * Parses a raw phone value (e.g. from react-phone-input-2: "919650321876")
  * and returns country code and national number for separate display.
- * Uses FR as default country when the number is entered in the French flow.
+ * Prepends "+" so libphonenumber-js auto-detects the country from the dialing code.
  */
 export function formatPhoneWithCountryCode(
   raw: string | null | undefined,
-  defaultCountry: "FR" | "US" = "FR"
+  // kept for backward-compat; no longer used for parsing
+  _defaultCountry?: "FR" | "US"
 ): FormattedPhone {
   const fallback: FormattedPhone = {
     countryCode: "",
@@ -23,7 +24,8 @@ export function formatPhoneWithCountryCode(
   }
   if (!raw?.trim()) return fallback
 
-  const parsed = parsePhoneNumberFromString(raw.trim(), defaultCountry)
+  const normalized = raw.trim().startsWith("+") ? raw.trim() : `+${raw.trim()}`
+  const parsed = parsePhoneNumberFromString(normalized)
   if (!parsed) return fallback
 
   // Use international format for national part so we don't get leading 0 (e.g. FR "06...").
