@@ -28,7 +28,7 @@ const Footer = () => {
     const twitterUrl = settings?.x_link || getTwitterUrl();
     const instagramUrl = settings?.instagram_link || getInstagramUrl();
     const email = settings?.email || "connect@askservice.com";
-    const phone = settings?.phone || "01 987654321";
+    // const phone = settings?.phone || "01 987654321"
     const address = settings?.address || "4517 Washington Ave. Manchester, Kentucky 39495";
     const marketplaceName = globalSettings?.data?.marketplace_name || "Ask Service";
 
