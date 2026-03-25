@@ -1,12 +1,13 @@
 'use client'
 
-import { DocumentIconSVG, LocationSVG } from '@/components/library/AllSVG'
+import { BusinessNameIconSVG, DocumentIconSVG, LocationSVG } from '@/components/library/AllSVG'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
 import { addToast, Button, Input, Modal, ModalBody, ModalContent } from '@heroui/react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 const billingValidationSchema = Yup.object({
+    businessName: Yup.string().required('Business name is required'),
     businessAddress: Yup.string().required('Business address is required'),
     postcode: Yup.string().required('Postcode is required'),
     city: Yup.string().required('City is required'),
@@ -19,6 +20,7 @@ type BillingInfoModalProps = {
     onClose: () => void
     onConfirm: () => void
     initialValues: {
+        businessName: string
         businessAddress: string
         postcode: string
         city: string
@@ -36,6 +38,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
         validationSchema: billingValidationSchema,
         onSubmit: async (formValues) => {
             const formData = new FormData()
+            formData.append('business_name', formValues.businessName)
             formData.append('address', formValues.businessAddress)
             formData.append('postal_code', formValues.postcode)
             formData.append('city', formValues.city)
@@ -92,6 +95,24 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Business Name */}
+                            <div>
+                                <label className="mb-1.5 block text-sm font-medium text-fontBlack">
+                                    Nom de l'entreprise <span className="text-danger">*</span>
+                                </label>
+                                <Input
+                                    name="businessName"
+                                    value={values.businessName}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={!!(touched.businessName && errors.businessName)}
+                                    errorMessage={touched.businessName && errors.businessName}
+                                    classNames={{ inputWrapper: 'account_input_design' }}
+                                    startContent={<BusinessNameIconSVG />}
+                                    placeholder=""
+                                />
+                            </div>
+
                             {/* Business Address */}
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-fontBlack">
@@ -124,7 +145,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                                         isInvalid={!!(touched.postcode && errors.postcode)}
                                         errorMessage={touched.postcode && errors.postcode}
                                         classNames={{ inputWrapper: 'account_input_design' }}
-                                        placeholder="75001"
+                                        placeholder=""
                                     />
                                 </div>
                                 <div>
@@ -139,7 +160,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                                         isInvalid={!!(touched.city && errors.city)}
                                         errorMessage={touched.city && errors.city}
                                         classNames={{ inputWrapper: 'account_input_design' }}
-                                        placeholder="Paris"
+                                        placeholder=""
                                     />
                                 </div>
                             </div>
@@ -159,7 +180,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                                         errorMessage={touched.vatNumber && errors.vatNumber}
                                         classNames={{ inputWrapper: 'account_input_design' }}
                                         startContent={<DocumentIconSVG />}
-                                        placeholder="FR12345678901"
+                                        placeholder=""
                                     />
                                 </div>
                                 <div>
@@ -175,7 +196,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                                         errorMessage={touched.companyRegistrationNumber && errors.companyRegistrationNumber}
                                         classNames={{ inputWrapper: 'account_input_design' }}
                                         startContent={<DocumentIconSVG />}
-                                        placeholder="123456789"
+                                        placeholder=""
                                     />
                                 </div>
                             </div>

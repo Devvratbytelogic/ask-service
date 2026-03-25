@@ -267,6 +267,7 @@ export default function CreditsWallet() {
         setPendingPackage(null)
     }
     const billingInitialValues = {
+        businessName: profileData?.business_name ?? '',
         businessAddress: profileData?.address ?? '',
         postcode: profileData?.postal_code ?? '',
         city: profileData?.city ?? '',

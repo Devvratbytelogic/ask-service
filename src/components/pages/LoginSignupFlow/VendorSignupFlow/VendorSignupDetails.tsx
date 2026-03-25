@@ -102,7 +102,7 @@ const VendorSignupDetails = () => {
                     email: values.email,
                     phone: values.phoneNumber,
                     password: values.password,
-                    businessName: values.businessName,
+                    business_name: values.businessName,
                     ...(fcmToken && { fcm_token: fcmToken }),
                 }).unwrap()
                 addToast({
