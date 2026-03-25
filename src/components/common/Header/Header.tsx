@@ -10,7 +10,7 @@ import { HiOutlineCog6Tooth } from "react-icons/hi2"
 import { useSelector } from "react-redux";
 import { getHomeRoutePath, getMyRequestRoutePath, getVendorMessageRoutePath, getMessageRoutePath, getVendorProfileRoutePath, getVendorAccountRoutePath, getVendorDashboardRoutePath, getMyAccountRoutePath } from "@/routes/routes";
 import { getUserRole, clearAllCookiesAndReload, getAuthToken, setUserRoleCookie } from "@/utils/authCookies";
-import { clientSideGetApis } from "@/redux/rtkQueries/clientSideGetApis";
+import { clientSideGetApis, useGetGlobalSettingsQuery } from "@/redux/rtkQueries/clientSideGetApis";
 import type { RootState } from "@/redux/appStore";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -63,6 +63,9 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         skip: !isAuthenticated || isVendor,
     });
 
+    const { data: globalSettings } = useGetGlobalSettingsQuery();
+    const logoUrl = globalSettings?.data?.logo;
+    const marketplaceName = globalSettings?.data?.marketplace_name || "Ask Service";
     const { data: vendorChats } = clientSideGetApis.useGetVendorChatsQuery(undefined, { skip: !isAuthenticated || !isVendor });
     const { data: userChats } = clientSideGetApis.useGetUserChatsQuery(undefined, { skip: !isAuthenticated || isVendor });
     const totalUnread = (isVendor ? vendorChats?.data : userChats?.data)
@@ -120,7 +123,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
             <div className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-10`} id="main_navbar">
                 <div className="px-4 py-2 backdrop-blur-lg bg-navBgColor rounded-full flex justify-between items-center">
                     <Link href={getHomeRoutePath()} className="h-12 w-50 shrink-0 inline-flex items-center justify-start">
-                        <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" object_contain />
+                        <ImageComponent url={logoUrl || "/images/navbar/ask_service_logo.png"} img_title={`${marketplaceName} logo`} object_contain />
                     </Link>
                     <NavbarComponent />
                 </div>
@@ -133,10 +136,18 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                 <header className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-50 bg-white border-b border-borderDark`} id="main_navbar">
                     <div className="flex items-center justify-between py-2">
                         <Link href={getHomeRoutePath()} className="flex items-center gap-2 shrink-0">
-                            <span className="h-9 w-9 rounded-full bg-primaryColor flex items-center justify-center shrink-0">
-                                <LightningIconSVG />
-                            </span>
-                            <span className="font-bold text-lg text-fontBlack hidden sm:inline">Ask Service</span>
+                            {logoUrl ? (
+                                <span className="h-9 w-36 shrink-0 inline-flex items-center">
+                                    <ImageComponent url={logoUrl} img_title={`${marketplaceName} logo`} object_contain />
+                                </span>
+                            ) : (
+                                <>
+                                    <span className="h-9 w-9 rounded-full bg-primaryColor flex items-center justify-center shrink-0">
+                                        <LightningIconSVG />
+                                    </span>
+                                    <span className="font-bold text-lg text-fontBlack hidden sm:inline">{marketplaceName}</span>
+                                </>
+                            )}
                         </Link>
                         <nav className="hidden md:flex items-center gap-6">
                             {isVendor && <Link

@@ -11,13 +11,17 @@ import { useMemo, useState } from 'react'
 import moment from 'moment'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
-import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 export default function VendorDashboard() {
     const dispatch = useDispatch()
     const router = useRouter()
     const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all')
     const [sortFilter, setSortFilter] = useState('newest')
+
+    const { data: globalSettings } = useGetGlobalSettingsQuery()
+    const quoteLimit = globalSettings?.data?.quote_limit ?? 5
+    const quoteExpired = globalSettings?.data?.quote_expired ?? 7
 
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: dashboardData, isLoading: dashboardLoading } = useGetVendorDashboardDataQuery()
@@ -54,7 +58,6 @@ export default function VendorDashboard() {
         },
         { pollingInterval: 10000 },
     )
-    console.log('leadsData', leadsData)
     const allLeads = leadsData?.data ?? []
 
     const leads = useMemo(
@@ -261,9 +264,9 @@ export default function VendorDashboard() {
                                             </span>
                                         )}
                                         <div className="flex items-center gap-2 text-sm text-darkSilver">
-                                            <span>{lead?.quotes_count}/5 professionnel{lead?.quotes_count !== 1 ? 's ont' : ' a'} répondu</span>
+                                            <span>{lead?.quotes_count}/{quoteLimit} professionnel{lead?.quotes_count !== 1 ? 's ont' : ' a'} répondu</span>
                                             {!lead?.unlocked && (
-                                                <Tooltip content="This request will stay open for 7 days. After that, it will close automatically.">
+                                                <Tooltip content={`This request will stay open for ${quoteExpired} days. After that, it will close automatically.`}>
                                                     <span className="inline-flex cursor-help"><InfoSVG /></span>
                                                 </Tooltip>
                                             )}

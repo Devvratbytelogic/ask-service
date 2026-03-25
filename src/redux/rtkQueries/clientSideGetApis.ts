@@ -22,9 +22,16 @@ import { IAllTestimonialsAPIResponse } from '@/types/testimonial';
 import { IAllFaqsAPIResponse } from '@/types/faqs';
 import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
 import { IPopupNotificationsAPIResponse } from '@/types/popupNotifications';
+import { IGlobalSettingsAPIResponse } from '@/types/global';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
+        getGlobalSettings: builder.query<IGlobalSettingsAPIResponse, void>({
+            query: () => ({
+                url: `/user/get-global`,
+                method: 'GET',
+            }),
+        }),
         getServiceCategories: builder.query<IAllServiceCategoriesAPIResponse, void>({
             query: () => ({
                 url: `/user/service-categories`,
@@ -272,6 +279,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
 });
 
 export const {
+    useGetGlobalSettingsQuery,
     useGetServiceCategoriesQuery,
     useGetServiceCategoryQuery,
     useGetServicesQuetionsQuery,

@@ -15,12 +15,11 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
   const [hasError, setHasError] = useState(false);
 
   const objectFitClass = object_contain ? 'object-contain' : object_cover ? 'object-cover' : '';
-
   const fallbackLetters = img_title
     ? img_title
-        .replace(/\s+/g, '')
-        .slice(0, 2)
-        .toUpperCase()
+      .replace(/\s+/g, '')
+      .slice(0, 2)
+      .toUpperCase()
     : '??';
 
   if (hasError || !url) {

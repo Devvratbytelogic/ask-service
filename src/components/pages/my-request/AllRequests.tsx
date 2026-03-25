@@ -1,7 +1,7 @@
 'use client'
 import { CalendarSVG, HorizontalDotsSVG, InfoSVG, LocationSVG, RequestNumberSVG } from '@/components/library/AllSVG'
 import RequestFilters from '@/components/pages/my-request/RequestFilters'
-import { useGetCreatedServicesQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { getCreateRequestRoutePath } from '@/routes/routes'
 import type { RequestServiceFormValues } from '@/components/pages/RequestServiceFlow/RequestServiceFlowIndex'
@@ -71,6 +71,8 @@ export default function AllRequests() {
     const [statusFilter, setStatusFilter] = useState<'all' | 'ACTIVE' | 'CANCELLED'>('all')
     const [serviceFilter, setServiceFilter] = useState<string>('all')
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    const { data: globalSettings } = useGetGlobalSettingsQuery()
+    const quoteExpired = globalSettings?.data?.quote_expired ?? 7
 
     useEffect(() => {
         const t = setTimeout(() => setDebouncedSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS)
@@ -152,7 +154,7 @@ export default function AllRequests() {
                                         <FiInfo size={14} />
                                         Waiting for quotes
                                     </span>}
-                                    <Tooltip content="This request will stay open for 7 days. After that, it will close automatically.">
+                                    <Tooltip content={`This request will stay open for ${quoteExpired} days. After that, it will close automatically.`}>
                                         <span className="inline-flex cursor-help">
                                             <InfoSVG />
                                         </span>
