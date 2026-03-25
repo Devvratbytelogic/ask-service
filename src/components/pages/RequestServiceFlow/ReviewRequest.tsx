@@ -134,7 +134,7 @@ const ReviewRequest = ({
             </div>
             <dl className="space-y-1.5">
               {card.rows.map((row) => (
-                <div key={row.label} className="flex gap-2 text-sm">
+                <div key={row.label} className="flex gap-2 text-sm flex-wrap">
                   <dt className="text-darkSilver shrink-0">{row.label}</dt>
                   <dd className="text-fontBlack wrap-break-word">
                     {row.phoneParts ? (

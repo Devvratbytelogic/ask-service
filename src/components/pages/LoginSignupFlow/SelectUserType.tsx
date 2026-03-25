@@ -41,7 +41,7 @@ const SelectUserType = () => {
                 </p>
             </div>
             <div className="w-full space-y-3.5">
-                <div className="border border-borderDark rounded-3xl p-3 md:p-5 space-y-3.5 w-11/12 cursor-pointer hover:border-darkSilver" onClick={() => setUserType("customer")}>
+                <div className="border border-borderDark rounded-3xl p-3 md:p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("customer")}>
                     <div className="flex justify-between items-start">
                         <div className='flex gap-5'>
                             <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
@@ -61,7 +61,7 @@ const SelectUserType = () => {
                     </div>
 
                 </div>
-                <div className="border border-borderDark rounded-3xl p-5 space-y-3.5 w-11/12 cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
+                <div className="border border-borderDark rounded-3xl p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
                     <div className="flex justify-between items-start">
                         <div className='flex gap-5'>
                             <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
@@ -80,7 +80,7 @@ const SelectUserType = () => {
 
                 </div>
             </div>
-            <div className="w-11/12 space-y-6.25">
+            <div className="w-full space-y-6.25">
                 <Button className="btn_bg_blue btn_radius btn_padding font-medium text-sm w-full" onPress={() => startSignupForUser()}>
                     Continuer
                 </Button>

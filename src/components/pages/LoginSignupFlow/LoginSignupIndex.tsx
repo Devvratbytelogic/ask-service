@@ -58,7 +58,7 @@ const LoginSignupIndex = () => {
 
     return (
         <div className="relative flex flex-col md:flex-row h-full">
-            <div className="flex flex-col h-full items-start justify-between w-full md:w-[45%] mt-0 gap-4 xl:gap-auto max-h-[95svh] overflow-y-auto pe-10">
+            <div className="flex flex-col h-full items-start justify-between w-full md:w-[45%] mt-0 gap-4 xl:gap-auto max-h-[95svh] overflow-y-auto md:pe-10">
                 <button
                     type="button"
                     onClick={() => dispatch(closeModal())}
