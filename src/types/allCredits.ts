@@ -15,6 +15,7 @@ export interface IAllCreditsAPIResponse {
     currency: string;
     per_credit_price: number;
     is_most_popular: boolean;
+    vat_rate: number;
     sort_order: number;
     status: string;
     createdBy: string;

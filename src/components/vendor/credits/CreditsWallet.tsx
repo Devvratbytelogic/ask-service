@@ -2,7 +2,7 @@
 
 import { BackArrowSVG, CalendarSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery, useLazyGetCreditsTransactionHistoryExportCSVQuery, useLazyGetCreditsTransactionHistoryExportPDFQuery, useLazyGetCreditsTransactionInvoiceQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreditsPackagesQuery, useGetVendorDashboardDataQuery, useGetVendorDashboardTransactionHistoryQuery, useGetVendorProfileInfoQuery, useLazyGetCreditsTransactionHistoryExportCSVQuery, useLazyGetCreditsTransactionHistoryExportPDFQuery, useLazyGetCreditsTransactionInvoiceQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { usePurchaseCreditsMutation, useStripePaymentMutation, useVerifyStripePaymentMutation } from '@/redux/rtkQueries/allPostApi'
 import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
+import BillingInfoModal from './BillingInfoModal'
 
 type CreditPackageDisplay = {
     id: string
@@ -19,17 +20,27 @@ type CreditPackageDisplay = {
     price: string
     unitPrice: string
     popular: boolean
+    vatRate: number
+    vatAmount: string
+    totalPrice: string
 }
 
 function mapPackageToDisplay(entity: IAllCreditsDataEntity): CreditPackageDisplay {
+    const basePrice = entity.price
+    const vatRate = entity.vat_rate ?? 0
+    const vatAmount = basePrice * (vatRate / 100)
+    const totalPrice = basePrice + vatAmount
     return {
         id: entity._id,
         name: entity.name ?? '',
         credits: entity.credits,
         bonus: entity.bonus_credits > 0 ? entity.bonus_credits : null,
-        price: String(entity.price),
-        unitPrice: String(entity.per_credit_price),
+        price: basePrice.toFixed(2),
+        unitPrice: entity.per_credit_price.toFixed(4).replace(/\.?0+$/, ''),
         popular: entity.is_most_popular,
+        vatRate,
+        vatAmount: vatAmount.toFixed(2),
+        totalPrice: totalPrice.toFixed(2),
     }
 }
 
@@ -73,6 +84,12 @@ export default function CreditsWallet() {
     const transactions = apiData?.transactions ?? []
     const totalItems = apiData?.total ?? 0
     const totalPages = Math.max(1, Math.ceil(totalItems / Number(itemsPerPage)))
+
+    const [billingModalOpen, setBillingModalOpen] = useState(false)
+    const [pendingPackage, setPendingPackage] = useState<CreditPackageDisplay | null>(null)
+
+    const { data: vendorProfileData } = useGetVendorProfileInfoQuery()
+    const profileData = vendorProfileData?.data
 
     const [stripePayment, { isLoading: stripeLoading }] = useStripePaymentMutation()
     const [verifyStripePayment] = useVerifyStripePaymentMutation()
@@ -182,7 +199,7 @@ export default function CreditsWallet() {
         }
     }
 
-    const handlePurchase = async (pkg: CreditPackageDisplay) => {
+    const initiateStripeCheckout = useCallback(async (pkg: CreditPackageDisplay) => {
         try {
             setSelectedPackageId(pkg.id)
             const result = await stripePayment({ amount: (parseFloat(pkg.price)) }).unwrap() as { data?: { payment_url?: string } }
@@ -228,11 +245,44 @@ export default function CreditsWallet() {
         } catch (err) {
             console.error(err)
             setSelectedPackageId(null)
-            // addToast({ title: err instanceof Error ? err.message : 'Failed to initiate payment', color: 'danger', timeout: 3000 })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stripePayment, handleStripeResult])
+
+    const handlePurchase = (pkg: CreditPackageDisplay) => {
+        setPendingPackage(pkg)
+        setBillingModalOpen(true)
+    }
+
+    const handleBillingConfirm = () => {
+        setBillingModalOpen(false)
+        if (pendingPackage) {
+            initiateStripeCheckout(pendingPackage)
+            setPendingPackage(null)
         }
     }
+
+    const handleBillingClose = () => {
+        setBillingModalOpen(false)
+        setPendingPackage(null)
+    }
+    const billingInitialValues = {
+        businessAddress: profileData?.address ?? '',
+        postcode: profileData?.postal_code ?? '',
+        city: profileData?.city ?? '',
+        vatNumber: profileData?.vat_number ?? '',
+        companyRegistrationNumber: profileData?.company_registration_number ?? '',
+    }
+
     return (
         <div className="space-y-8">
+            <BillingInfoModal
+                isOpen={billingModalOpen}
+                onClose={handleBillingClose}
+                onConfirm={handleBillingConfirm}
+                initialValues={billingInitialValues}
+            />
+
             {/* Verification Loader Overlay */}
             {isVerifying && (
                 <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-white/80 backdrop-blur-sm">
@@ -365,8 +415,18 @@ export default function CreditsWallet() {
                                                 +{pkg.bonus} bonus
                                             </span>
                                         )}
-                                        <p className="mt-3 font-bold text-xl text-fontBlack">€{pkg.price}</p>
+                                        <p className="mt-3 font-bold text-xl text-fontBlack">€{pkg.totalPrice}</p>
                                         <p className="text-xs text-darkSilver">€{pkg.unitPrice} per credit</p>
+                                        <div className="mt-1.5 space-y-0.5 text-left text-xs text-darkSilver border-t border-borderDark pt-1.5">
+                                            <div className="flex justify-between gap-4">
+                                                <span>Subtotal</span>
+                                                <span>€{pkg.price}</span>
+                                            </div>
+                                            <div className="flex justify-between gap-4">
+                                                <span>VAT ({pkg.vatRate}%)</span>
+                                                <span>€{pkg.vatAmount}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <Button
                                         className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-[#F3F4F6]'} w-full`}
