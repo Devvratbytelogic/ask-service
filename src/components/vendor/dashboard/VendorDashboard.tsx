@@ -54,6 +54,7 @@ export default function VendorDashboard() {
         },
         { pollingInterval: 10000 },
     )
+    console.log('leadsData', leadsData)
     const allLeads = leadsData?.data ?? []
 
     const leads = useMemo(

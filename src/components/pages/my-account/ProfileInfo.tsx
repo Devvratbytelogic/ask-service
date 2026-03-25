@@ -113,6 +113,7 @@ export default function ProfileInfo() {
                 data: {
                     phoneNumber: profileData?.phone ?? values.phone ?? '',
                     otpType: 'VERIFY_PHONE',
+                    stayOnPage: true,
                 },
                 modalSize: 'md',
             })
@@ -363,10 +364,10 @@ export default function ProfileInfo() {
                                     inputStyle={{ height: '52px' }}
                                     dropdownClass="!z-[9999]"
                                     dropdownStyle={{ zIndex: 9999 }}
-                                    disabled
+                                    // disabled
                                 />
                             </div>
-                            {profileData?.is_phone_verified === false && profileData?.phone !== null && (
+                            {!isEditing && profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
                                     Vérifier
                                 </Button>

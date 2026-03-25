@@ -78,12 +78,12 @@ const RealStoriesIndex = () => {
                     )}
                 </div>
                 {/* Bottom gradient overlay */}
-                <div
+                {/* <div
                     className="absolute bottom-0 left-0 right-0 h-200 pointer-events-none"
                     style={{
                         background: "linear-gradient(to top, #F9FAFB 0%, transparent 100%)",
                     }}
-                />
+                /> */}
             </div>
         </div>
     )

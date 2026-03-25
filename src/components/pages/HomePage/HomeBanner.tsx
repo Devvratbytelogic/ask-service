@@ -16,11 +16,11 @@ type PostalEntry = { code: string; name: string }
 const getPostalKey = (item: PostalEntry) => `${item.code}|${item.name}`
 
 const HomeBanner = () => {
-    const defaultKey = useMemo(() => {
-        const first = (francePostalCodes as PostalEntry[]).find((p) => p.code === "75001")
-        return first ? getPostalKey(first) : null
-    }, [])
-    const [selectedPostalKey, setSelectedPostalKey] = useState<string | null>(defaultKey)
+    // const defaultKey = useMemo(() => {
+    //     const first = (francePostalCodes as PostalEntry[]).find((p) => p.code === "75001")
+    //     return first ? getPostalKey(first) : null
+    // }, [])
+    const [selectedPostalKey, setSelectedPostalKey] = useState<string | null>('')
     const selectedPinCode = selectedPostalKey ? selectedPostalKey.split("|")[0] : ""
     const { data } = useGetServiceCategoriesQuery();
     const grandParentServicesList = data?.data ?? [];
@@ -51,12 +51,12 @@ const HomeBanner = () => {
     }
 
     return (
-       <>
+        <>
             <div className="mx-auto w-11/12 flex flex-col items-center gap-8 relative home-banner-bg py-10">
                 <div className="flex justify-center items-center flex-col text-fontBlack text-[30px] md:text-[35px]/[44px] xl:text-[54px]/[74px] font-bold tracking-[-2px]">
                     <div className="flex items-center gap-4 flex-wrap justify-center">
                         <h2 className="text-center">
-                            Trouvez rapidement des professionnels de confiance pour tous vos besoins
+                            Trouvez des professionnels fiables pour tous vos besoins
                         </h2>
                         {/* <span></span> */}
                         <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-white/80">
@@ -75,7 +75,7 @@ const HomeBanner = () => {
                     </div>
                 </div>
                 <p className="text-center text-lightBlack text-lg xl:text-xl w-11/12 md:w-1/2 2xl:w-[40vw] 2xl:max-w-[40svw]">
-                    Indiquez votre besoin et recevez rapidement des devis de professionnels vérifiés dans votre région. Sans appels indésirables. Sans spam. Juste les bons experts.
+                Recevez des devis de professionnels vérifiés pour tous vos besoins. Sans appels. Sans spam. Juste des experts qualifiés.
                 </p>
                 <div id="banner-search" className="flex gap-2 flex-wrap justify-center">
                     <div className="w-[90vw] md:w-[30vw] max-w-full mx-auto">
@@ -167,7 +167,7 @@ const HomeBanner = () => {
                     )}
                 </div> */}
             </div>
-       </>
+        </>
     )
 }
 

@@ -38,6 +38,7 @@ const MobileOtpVerification = () => {
     const otpType = (data as { otpType?: string })?.otpType ?? "SERVICE_REQUEST"
     const email = (data?.email as string) || ""
     const googleLoginCompleted = !!(data as { googleLoginCompleted?: boolean })?.googleLoginCompleted
+    const stayOnPage = !!(data as { stayOnPage?: boolean })?.stayOnPage
 
     const [phoneNumber, setPhoneNumber] = useState(initialPhone)
     const [codeSent, setCodeSent] = useState(skipToCodeEntry)
@@ -46,7 +47,7 @@ const MobileOtpVerification = () => {
     const [otpExpirySeconds, setOtpExpirySeconds] = useState(skipToCodeEntry ? OTP_EXPIRY_SEC : 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    const isPhoneValid = phoneNumber.length >= 10
+    const isPhoneValid = phoneNumber.length >= 5
 
     const handleSendCode = useCallback(async () => {
         if (!isPhoneValid) return
@@ -120,7 +121,9 @@ const MobileOtpVerification = () => {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
                 const authData = responseData as AuthResponseData
-                if (data?.callBackModal || data?.parentCallBackModal) {
+                if (stayOnPage) {
+                    dispatch(closeModal())
+                } else if (data?.callBackModal || data?.parentCallBackModal) {
                     dispatch(
                         openModal({
                             componentName: data?.parentCallBackModal ? data?.parentCallBackModal : "LoginSignupIndex",
@@ -133,8 +136,8 @@ const MobileOtpVerification = () => {
                     )
                 } else {
                     dispatch(closeModal())
+                    router.push(getDashboardPathForRole(authData.role))
                 }
-                router.push(getDashboardPathForRole(authData.role))
             } else {
                 if (data?.callBackModal || data?.parentCallBackModal) {
                     dispatch(
@@ -161,7 +164,7 @@ const MobileOtpVerification = () => {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "The code you entered is incorrect. Please try again."
             setErrorMessage(message)
         }
-    }, [phoneNumber, otpValue, data, dispatch, verifyPhone])
+    }, [phoneNumber, otpValue, data, stayOnPage, dispatch, verifyPhone, router])
 
     const canVerify = otpValue.length === OTP_LENGTH
 

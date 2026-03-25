@@ -3,11 +3,10 @@
 import DocumentUploadCard from "@/components/library/DocumentUploadCard"
 import { clientSideGetApis, useGetAllServicesDocumentsRequiredQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { useUploadVendorDocumentsMutation } from "@/redux/rtkQueries/allPostApi"
-import { RootState } from "@/redux/appStore"
 import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { addToast, Button } from "@heroui/react"
 import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { IoArrowBackOutline } from "react-icons/io5"
 import ImageComponent from "@/components/library/ImageComponent"
 
@@ -16,7 +15,6 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
 
 const VendorDocumentVerification = () => {
     const dispatch = useDispatch()
-    const { data } = useSelector((state: RootState) => state.allCommonModal)
     const { data: documentsResponse, isLoading, isError } = useGetAllServicesDocumentsRequiredQuery()
     const documents = documentsResponse?.data ?? []
     const [uploadVendorDocuments, { isLoading: isUploading }] = useUploadVendorDocumentsMutation()
@@ -44,7 +42,7 @@ const VendorDocumentVerification = () => {
     }
 
     const requiredIds = documents.filter((doc) => doc.is_required).map((doc) => doc._id)
-    const allRequiredUploaded = requiredIds.length > 0 && requiredIds.every((id) => files[id] != null)
+    const allRequiredUploaded = requiredIds.every((id) => files[id] != null)
 
     const handleSubmit = async () => {
         const formData = new FormData()
@@ -109,7 +107,6 @@ const VendorDocumentVerification = () => {
                             Verify <span className="text-darkSilver">documents</span>
                         </h1>
                     </div>
-
 
                     <p className="text-fontBlack text-base/[21px] max-w-xl text-center mx-auto">
                         Upload the required documents to complete your vendor

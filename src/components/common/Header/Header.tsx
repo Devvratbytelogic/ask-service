@@ -2,7 +2,7 @@
 import ImageComponent from "../../library/ImageComponent";
 import NavbarComponent from "./NavbarComponent";
 import NotificationsPopover from "./NotificationsPopover";
-import { BellIconSVG, ChevronDownIconSVG, DocumentIconSVG, LightningIconSVG, ProfileIconSVG, SignOutIconSVG } from "@/components/library/AllSVG"
+import { BellIconSVG, ChevronDownIconSVG, DocumentIconSVG, LightningIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG } from "@/components/library/AllSVG"
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -77,7 +77,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         }
     }, [isVendorProfileError, vendorProfileError, isUserProfileError, userProfileError]);
     const profile = isVendor ? vendorProfile?.data : userProfile?.data;
-    
+
     // console.log("refetchVendorProfile", refetchVendorProfile);
     // console.log("refetchUserProfile", refetchUserProfile);
     const firstName = isVendor ? vendorProfile?.data?.business_name : profile?.first_name;
@@ -270,6 +270,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
                                                 </Link>
+                                                <Link
+                                                    href={getMyAccountRoutePath({ section: 'security' })}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                                >
+                                                    <HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" />
+                                                    Paramètres
+                                                </Link>
                                             </div>
                                             {showSwitchToVendor && (
                                                 <>
@@ -420,6 +427,13 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                                                 >
                                                     <span className="size-5 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
                                                     Mon Profil
+                                                </Link>
+                                                <Link
+                                                    href={getMyAccountRoutePath({ section: 'security' })}
+                                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-normal hover:bg-borderDark/50 transition-colors"
+                                                >
+                                                    <span className="size-5 shrink-0 flex text-darkSilver"><HiOutlineCog6Tooth className="size-5 shrink-0 text-darkSilver" /></span>
+                                                    Paramètres
                                                 </Link>
                                                 <Link
                                                     href={getMessageRoutePath()}

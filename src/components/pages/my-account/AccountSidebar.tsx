@@ -31,7 +31,7 @@ const defaultNavItems: NavItem[] = [
 ]
 
 export const customerNavItems: NavItem[] = [
-    { id: 'my-requests', label: 'Mes demandes', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
+    // { id: 'my-requests', label: 'Mes demandes', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
     { id: 'profile', label: 'Profil Public', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getMyAccountRoutePath({ section: 'notifications' }) },
