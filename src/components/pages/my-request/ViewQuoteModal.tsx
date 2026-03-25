@@ -9,10 +9,10 @@ import { useState } from 'react'
 import { useGetServiceRequestQuotesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 const SORT_OPTIONS = [
-    { key: 'price_low', label: 'Price : Low to High' },
-    { key: 'price_high', label: 'Price : High to Low' },
-    { key: 'rating', label: 'Rating' },
-    { key: 'reviews', label: 'Most reviews' },
+    { key: 'price_low', label: 'Prix croissant' },
+    { key: 'price_high', label: 'Prix décroissant' },
+    { key: 'rating', label: 'Mieux notés' },
+    { key: 'reviews', label: 'Le plus d\'avis' },
 ]
 
 export default function ViewQuoteModal() {
@@ -46,11 +46,11 @@ export default function ViewQuoteModal() {
                             <BackArrowSVG />
                         </Button>
                         <div className="space-y-1">
-                            <h2 className="font-bold text-xl text-fontBlack">{`Quotes for ${request?.service_title ?? 'Unknown Service'}`}</h2>
+                            <h2 className="font-bold text-xl text-fontBlack">{`Devis – ${request?.service_title ?? 'Unknown Service'}`}</h2>
                             <p className="text-xs text-darkSilver">
-                                Request {request?.request_id ?? 'Unknown Request'}
+                                Demande {request?.request_id ?? 'Unknown Request'}
                                 <span className="mx-1.5">•</span>
-                                {request?.quotes_count ?? 0} quotes received
+                                {request?.quotes_count ?? 0} devis reçu
                             </p>
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-darkSilver">
                                 <span className="flex items-center gap-1.5">
@@ -77,16 +77,16 @@ export default function ViewQuoteModal() {
                             )
                         }
                     >
-                        Close request
+                        Clôturer la demande
                     </Button>
                 </div>
                 {/* Summary & Sort */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-2 border-b border-borderDark bg-[#F9FAFB] p-4 px-6">
                     <p className="text-sm text-fontBlack">
-                        Showing {request?.quotes_count ?? 0} quotes • Compare and select the best for you
+                        {request?.quotes_count ?? 0} devis reçu • Comparez et choisissez le Meilleur
                     </p>
                     <div className="flex flex-nowrap items-center gap-2">
-                        <span className="text-sm w-full text-fontBlack font-medium">Sort by:</span>
+                        <span className="text-sm w-full text-fontBlack font-medium">Trier par :</span>
                         <Select
                             className="min-w-50"
                             selectedKeys={[sortBy]}
@@ -137,18 +137,18 @@ export default function ViewQuoteModal() {
                                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
                                     <span className="flex items-center gap-1.5">
                                         <TimeIconSVG />
-                                        Responded in {quote?.responded_in_hours} hours
+                                        répondu il y&apos;a {quote?.responded_in_hours} heures
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                         <NoteIconSVG />
-                                        {quote?.price_display} per visit
+                                        {quote?.price_display} prix TTC
                                     </span>
                                 </div>
                             </div>
                             <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0 border-t sm:border-t-0 pt-4 sm:pt-0 border-borderDark sm:border-0">
                                 <div className="text-left sm:text-right">
-                                    <p className="font-bold text-xl text-fontBlack">€{quote?.price}</p>
-                                    <p className="text-sm text-darkSilver">per visit</p>
+                                    <p className="font-bold text-xl text-fontBlack">{quote?.price} €</p>
+                                    <p className="text-sm text-darkSilver">Prix TTC</p>
                                 </div>
                                 <Button
                                     size="sm"
@@ -170,7 +170,7 @@ export default function ViewQuoteModal() {
                                         )
                                     }
                                 >
-                                    View details
+                                    Voir les détails
                                 </Button>
                             </div>
                         </div>
@@ -184,12 +184,12 @@ export default function ViewQuoteModal() {
 
             {/* Footer */}
             <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 px-6 mt-auto border-t border-borderDark bg-[#F9FAFB]">
-                <p className="text-sm text-darkSilver">Your contact details remain private until you accept a quote</p>
+                <p className="text-sm text-darkSilver">Vos coordonnées restent confidentielles jusqu&apos;à l&apos;acceptation d&apos;un devis</p>
                 <Button
                     onPress={handleClose}
                     className="btn_radius btn_bg_white"
                 >
-                    Back to dashboard
+                    Retour au tableau de bord
                 </Button>
             </div>
         </>

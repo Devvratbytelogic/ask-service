@@ -53,13 +53,6 @@ function requestToInitialFormValues(request: DataEntity): RequestServiceFormValu
 
 const ITEMS_PER_PAGE = 5
 
-/** Maps UI filter key to API status param. Omit status for 'all' so backend can return all. */
-function statusFilterToApi(statusFilter: string): string | undefined {
-    if (statusFilter === 'all') return 'ACTIVE'
-    if (statusFilter === 'pending') return 'PENDING'
-    if (statusFilter === 'completed') return 'COMPLETED'
-    return 'ACTIVE'
-}
 
 function formatRequestDate(dateStr: string) {
     if (!dateStr) return '—'
@@ -75,7 +68,7 @@ export default function AllRequests() {
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState('')
     const [debouncedSearch, setDebouncedSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all')
+    const [statusFilter, setStatusFilter] = useState<'all' | 'ACTIVE' | 'CANCELLED'>('all')
     const [serviceFilter, setServiceFilter] = useState<string>('all')
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
 
@@ -90,7 +83,7 @@ export default function AllRequests() {
 
     const { data, isLoading, isError } = useGetCreatedServicesQuery({
         ...(debouncedSearch && { search: debouncedSearch }),
-        status: statusFilterToApi(statusFilter),
+        ...(statusFilter !== 'all' && { status: statusFilter }),
         ...(serviceFilter && serviceFilter !== 'all' && { service: serviceFilter }),
         page,
         limit: ITEMS_PER_PAGE,
@@ -140,7 +133,7 @@ export default function AllRequests() {
                             search={searchInput}
                             onSearchChange={setSearchInput}
                             statusFilter={statusFilter}
-                            onStatusFilterChange={(key) => setStatusFilter(key as 'all' | 'pending' | 'completed')}
+                            onStatusFilterChange={setStatusFilter}
                             serviceFilter={serviceFilter}
                             onServiceFilterChange={setServiceFilter}
                         />
@@ -201,7 +194,7 @@ export default function AllRequests() {
                                             hideCloseButton: true,
                                         }))}
                                     >
-                                        View {request?.quotes_count} quotes
+                                        Voir {request?.quotes_count} devis
                                     </Button>
                                 ) : (
                                     <>

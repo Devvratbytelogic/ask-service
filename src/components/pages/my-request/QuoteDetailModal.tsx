@@ -15,7 +15,7 @@ import { getMessageRoutePath } from '@/routes/routes'
 function formatQuoteDate(dateStr: string) {
     if (!dateStr) return '—'
     const d = new Date(dateStr)
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 function getValidUntilDate(availableStartDate: string, quoteValidDays: number | undefined): string {
@@ -139,19 +139,19 @@ export default function QuoteDetailModal() {
                 {/* Quote price card */}
                 <div className="shrink-0 mt-4 p-4 rounded-2xl border border-[#BEDBFF] bg-linear-to-br from-[#EFF6FF] to-[#EEF2FF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <p className="text-xs text-darkSilver">Quote price</p>
+                        <p className="text-xs text-darkSilver">Prix du devis</p>
                         <p className="font-bold text-2xl text-fontBlack mt-0.5">
-                            {quote.currency ? `${quote.currency} ${quote.quote_price}` : `€${quote.quote_price}`}
+                            {quote.currency ? `${quote.quote_price} ${quote.currency}` : `${quote.quote_price} €`}
                         </p>
-                        <p className="text-xs text-darkSilver">per visit</p>
+                        <p className="text-xs text-darkSilver">Prix TTC</p>
                     </div>
                     <div className="text-left sm:text-right">
-                        <p className="text-xs text-darkSilver">Valid until</p>
+                        <p className="text-xs text-darkSilver">Valide jusqu&apos;au</p>
                         <p className="text-sm text-fontBlack font-semibold mt-0.5">
                             {getValidUntilDate(quote.available_start_date, quote.quote_valid_days)}
                         </p>
                         {quote.quote_valid_days != null && (
-                            <p className="text-xs text-darkSilver mt-1">Quote valid for {quote.quote_valid_days} days</p>
+                            <p className="text-xs text-darkSilver mt-1">Devis valable {quote.quote_valid_days} jours</p>
                         )}
                     </div>
                 </div>
@@ -159,17 +159,17 @@ export default function QuoteDetailModal() {
                 {/* Service Description */}
                 {quote.service_description && (
                     <div className="mt-6">
-                        <h3 className="font-semibold text-base text-fontBlack">Service Description</h3>
+                        <h3 className="font-semibold text-base text-fontBlack">Description du service</h3>
                         <p className="text-sm text-darkSilver mt-2 leading-relaxed">{quote.service_description}</p>
                     </div>
                 )}
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
-                        <p className="text-xs text-darkSilver">Availability</p>
+                        <p className="text-xs text-darkSilver">Disponibilité</p>
                         <p className="text-sm text-fontBlack mt-1">{quote.available_start_date ? moment(quote.available_start_date).format('DD MMM YYYY') : '—'}</p>
                     </div>
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
-                        <p className="text-xs text-darkSilver">Quote valid for</p>
+                        <p className="text-xs text-darkSilver">Devis valable pour</p>
                         <p className="text-sm text-fontBlack mt-1">{quote.quote_valid_days}</p>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ export default function QuoteDetailModal() {
                 {/* Quote from vendor (attachment) */}
                 {quote.attachment_url && (
                     <div className="mt-6">
-                        <h3 className="font-semibold text-base text-fontBlack">Quote from the vendor</h3>
+                        <h3 className="font-semibold text-base text-fontBlack">Proposition du prestataire</h3>
                         <button
                             type="button"
                             onClick={handleDownloadPdf}
@@ -185,8 +185,8 @@ export default function QuoteDetailModal() {
                         >
                             <FileUploadIconSVG />
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-fontBlack">View quote document</p>
-                                <p className="text-xs text-darkSilver">Click to open</p>
+                                <p className="text-sm font-medium text-fontBlack">Consulter le devis</p>
+                                <p className="text-xs text-darkSilver">Cliquez pour ouvrir</p>
                             </div>
                             <HiOutlineArrowDownTray className="size-5 shrink-0 text-fontBlack" />
                         </button>
@@ -202,7 +202,7 @@ export default function QuoteDetailModal() {
                     isLoading={isIgnoring}
                     className="btn_radius btn_bg_white w-full"
                 >
-                    Ignore quote
+                    Refuser le devis
                 </Button>
                 <Button
                     onPress={handleChatWithVendor}
@@ -210,7 +210,7 @@ export default function QuoteDetailModal() {
                     isLoading={isAccessingChat}
                     className="btn_radius btn_bg_blue w-full"
                 >
-                    Chat with vendor
+                    Contacter le prestataire
                 </Button>
             </div>
         </>

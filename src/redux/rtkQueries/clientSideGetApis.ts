@@ -175,10 +175,10 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
         getCreatedServices: builder.query<IAllRequestsAPIResponse, { search?: string | null; service?: string | null; status?: string; fromDate?: string | null; toDate?: string | null; page?: number; limit?: number } | void>({
             query: (arg) => {
                 const params: Record<string, string | number> = {
-                    status: arg?.status ?? 'ACTIVE',
                     page: arg?.page ?? 1,
                     limit: arg?.limit ?? 10,
                 };
+                if (arg?.status != null && String(arg.status).trim() !== '') params.status = String(arg.status).trim();
                 if (arg?.search != null && String(arg.search).trim() !== '') params.search = String(arg.search).trim();
                 if (arg?.service != null && String(arg.service).trim() !== '') params.service = String(arg.service).trim();
                 if (arg?.fromDate != null && String(arg.fromDate).trim() !== '') params.fromDate = String(arg.fromDate).trim();

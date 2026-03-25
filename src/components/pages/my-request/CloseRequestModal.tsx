@@ -11,11 +11,11 @@ import { useDispatch, useSelector } from 'react-redux'
 const OTHER_REASON_KEY = 'Other reason'
 
 const CLOSE_REASONS = [
-    { key: 'No longer need the service', label: 'No longer need the service' },
-    { key: 'Found a provider elsewhere', label: 'Found a provider elsewhere' },
-    { key: 'Quotes are too expensive', label: 'Quotes are too expensive' },
-    { key: 'Changed my mind', label: 'Changed my mind' },
-    { key: OTHER_REASON_KEY, label: 'Other reason' },
+    { key: 'No longer need the service', label: 'Je n\'ai plus besoin de ce service' },
+    { key: 'Found a provider elsewhere', label: 'J\'ai trouvé un prestataire ailleurs' },
+    { key: 'Quotes are too expensive', label: 'Les devis sont trop chers' },
+    { key: 'Changed my mind', label: 'J\'ai changé d\'avis' },
+    { key: OTHER_REASON_KEY, label: 'Autre raison' },
 ]
 
 const defaultRequest = {
@@ -55,7 +55,7 @@ export default function CloseRequestModal() {
     return (
         <>
             <div className="p-4 px-6 border-b border-borderDark space-y-1">
-                <h2 className="font-bold text-xl text-fontBlack">Close this request?</h2>
+                <h2 className="font-bold text-xl text-fontBlack">Clôturer cette demande ?</h2>
                 {/* Request summary */}
                 <p className="text-sm text-darkSilver">
                     {request?.title ?? defaultRequest.title}
@@ -79,14 +79,13 @@ export default function CloseRequestModal() {
                 <div className="flex gap-3 p-4 rounded-xl bg-[#FFFBEB] border border-[#FEE685]">
                     <div className='min-w-max'><WarningIconSVG /></div>
                     <p className="text-sm text-[#7B3306]">
-                        Closing this request will permanently end it. You won&apos;t receive any new quotes, and
-                        existing quotes will no longer be available.
+                        La fermeture de cette demande est définitive. Vous ne recevrez plus de nouveaux devis et les devis existants ne seront plus disponibles.
                     </p>
                 </div>
 
                 {/* Reason for closing */}
                 <h3 className="font-medium text-sm text-fontBlack mt-6">
-                    Why are you closing this request?
+                    Pourquoi fermez-vous cette demande ?
                 </h3>
                 <div className="mt-3 space-y-2">
                     {CLOSE_REASONS.map((reason) => (
@@ -119,10 +118,10 @@ export default function CloseRequestModal() {
                 {selectedReason === OTHER_REASON_KEY && (
                     <div className="mt-4">
                         <label className="block text-sm font-medium text-fontBlack mb-2">
-                            Please specify (optional)
+                            Veuillez préciser (facultatif)
                         </label>
                         <Textarea
-                            placeholder="Describe your reason..."
+                            placeholder="Décrivez votre raison"
                             value={reasonComment}
                             onValueChange={setReasonComment}
                             minRows={3}
@@ -150,7 +149,7 @@ export default function CloseRequestModal() {
                     isLoading={isClosing}
                     spinner={<Spinner size="sm" color="primary" />}
                 >
-                    Close request
+                    Clôturer la demande
                 </Button>
             </div>
         </>

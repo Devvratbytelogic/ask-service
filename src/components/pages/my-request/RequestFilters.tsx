@@ -6,13 +6,17 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@h
 import { Button } from "@heroui/react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
-const statusFilterItems = [{ key: 'all', label: 'All Status' }, { key: 'pending', label: 'Pending Services' }, { key: 'completed', label: 'Completed Services' }]
+const statusFilterItems = [
+    { key: 'all', label: 'Tous les statuts' },
+    { key: 'ACTIVE', label: 'Demandes en attente' },
+    { key: 'CANCELLED', label: 'Demandes annulées' },
+]
 
 export interface RequestFiltersProps {
     search: string
     onSearchChange: (value: string) => void
-    statusFilter: 'all' | 'pending' | 'completed'
-    onStatusFilterChange: (key: 'all' | 'pending' | 'completed') => void
+    statusFilter: 'all' | 'ACTIVE' | 'CANCELLED'
+    onStatusFilterChange: (key: 'all' | 'ACTIVE' | 'CANCELLED') => void
     serviceFilter: string
     onServiceFilterChange: (serviceId: string) => void
 }
@@ -84,7 +88,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                         selectedKeys={[statusFilter]}
                         onSelectionChange={(keys) => {
                             const key = Array.from(keys as Set<string>)[0];
-                            if (key) onStatusFilterChange(key as 'all' | 'pending' | 'completed');
+                            if (key) onStatusFilterChange(key as 'all' | 'ACTIVE' | 'CANCELLED');
                         }}
                     >
                         {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
