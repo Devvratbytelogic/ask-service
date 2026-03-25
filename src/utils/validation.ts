@@ -89,7 +89,7 @@ export const vendorProfileInfoValidationSchema = Yup.object({
     city: Yup.string().required('City is required'),
     vatNumber: Yup.string().required('VAT number is required'),
     companyRegistrationNumber: Yup.string().required('Company registration number is required'),
-    yearsOfActivity: Yup.string().required('Years of activity is required'),
-    // companySize: Yup.string().required('Company size is required'),
-    aboutCompany: Yup.string().required('About company is required'),
+    yearsOfActivity: Yup.string().required("Les années d'activités sont requises"),
+    // companySize: Yup.string().required('La taille de l\'entreprise est requise'),
+    aboutCompany: Yup.string().required("La description de l'entreprise est requise"),
 })

@@ -229,7 +229,7 @@ export default function VendorProfileInfo() {
         <>
             {/* Section header with actions */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-lg font-bold text-fontBlack">Business Information</h2>
+                <h2 className="text-lg font-bold text-fontBlack">Information de l'entreprise</h2>
                 {!isEditing ? (
                     <Button
                         className="btn_radius btn_bg_blue px-6"
@@ -514,7 +514,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Numéro d'immatriculation de l'entreprise
+                            Numéro de SIREN
                         </label>
                         <Input
                             name="companyRegistrationNumber"
@@ -534,11 +534,11 @@ export default function VendorProfileInfo() {
                     </div>
                 </div>
 
-                {/* Years of activity | Company size */}
+                {/* Années d'activités | La taille de l'entreprise */}
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Years of activity
+                            Années d'activités
                         </label>
                         <Input
                             name="yearsOfActivity"
@@ -554,7 +554,7 @@ export default function VendorProfileInfo() {
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Company size
+                            La taille de l'entreprise
                         </label>
                         <Select
                             name="companySize"
@@ -564,7 +564,7 @@ export default function VendorProfileInfo() {
                                 if (key) setFieldValue('companySize', key)
                             }}
                             classNames={{ trigger: 'account_input_design flex-1 min-h-10' }}
-                            aria-label="Company size"
+                            aria-label="La taille de l'entreprise"
                             isDisabled={!isEditing}
                             startContent={<UsersIconSVG />}
                         >
@@ -575,10 +575,10 @@ export default function VendorProfileInfo() {
                     </div>
                 </div>
 
-                {/* About company */}
+                {/* A propos de l'entreprise */}
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        About company
+                        A propos de l'entreprise
                     </label>
                     <Textarea
                         name="aboutCompany"

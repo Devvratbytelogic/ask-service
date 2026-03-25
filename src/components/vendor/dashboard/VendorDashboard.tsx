@@ -38,10 +38,10 @@ export default function VendorDashboard() {
     const leadsTabForLink: 'purchased' | 'quoted' | 'available' | undefined = showPurchasedOnly
         ? 'purchased'
         : showQuotedOnly
-          ? 'quoted'
-          : showLockedOnly
-            ? 'available'
-            : undefined
+            ? 'quoted'
+            : showLockedOnly
+                ? 'available'
+                : undefined
     // const isActiveAvailable = !showLockedOnly && !showPurchasedOnly && !showQuotedOnly
     const isActiveAvailable = !showLockedOnly && !showQuotedOnly
     const isActiveLocked = showLockedOnly
@@ -102,7 +102,7 @@ export default function VendorDashboard() {
                             <Link
                                 href={getVendorDashboardRoutePath({ leads: 'purchased' })}
                                 className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActivePurchased ? 'border-[#4CAF50] bg-[#4CAF50]/10' : 'border-borderDark bg-white hover:border-[#4CAF50]/30 hover:bg-[#4CAF50]/5'}`}
-                                >
+                            >
                                 <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F5E9] mb-3">
                                     <LockOpenGreenIconSVG className="size-5 text-[#4CAF50]" />
                                 </div>
@@ -118,7 +118,7 @@ export default function VendorDashboard() {
                             <Link
                                 href={getVendorDashboardRoutePath({ leads: 'available' })}
                                 className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveLocked ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
-                                >
+                            >
                                 <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F4FD] mb-3">
                                     <LockPrimaryColorSVG className="size-5 text-primaryColor" />
                                 </div>
@@ -235,10 +235,7 @@ export default function VendorDashboard() {
                             </div>
                         )} */}
                         {leads && leads?.length > 0 && leads?.map((lead, index) => (
-                            <div
-                                key={index}
-                                className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4"
-                            >
+                            <div key={index} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
                                 <Link
                                     href={generateLeadDetailRoutePath(lead?._id, leadsTabForLink ? { from: leadsTabForLink } : undefined)}
                                     className="flex-1 min-w-0 space-y-3 cursor-pointer hover:opacity-90 transition-opacity block"
@@ -284,34 +281,50 @@ export default function VendorDashboard() {
                                         </span>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-4 text-sm">
-                                        {/* {lead?.unlocked ? (
-                                                <> */}
-                                        <span className="flex items-center gap-1.5 text-fontBlack">
-                                            <CheckGreenIconSVG />
-                                            {lead?.contact_details?.phone}
-                                        </span>
-                                        <span className="flex items-center gap-1.5 text-fontBlack">
-                                            <EnvelopeIconSVG />
-                                            {lead?.contact_details?.email}
-                                        </span>
-                                        {/* </>
-                                            ) : (
-                                                <>
-                                                    <span className="flex items-center gap-1.5 text-fontBlack">
-                                                        <CheckGreenIconSVG />
-                                                        {lead?.contact_details?.phone}
+                                    {lead?.contact_details?.phone || lead?.contact_details?.email ? (
+                                        <div className="flex flex-wrap gap-4 text-sm">
+                                            {lead?.contact_details?.phone && (
+                                                <span className="flex items-center gap-1.5 text-fontBlack">
+                                                    <CheckGreenIconSVG />
+                                                    {lead.contact_details.phone}
+                                                </span>
+                                            )}
+                                            {lead?.contact_details?.email && (
+                                                <span className="flex items-center gap-1.5 text-fontBlack">
+                                                    <EnvelopeIconSVG />
+                                                    {lead.contact_details.email}
+                                                </span>
+                                            )}
+                                        </div>
+                                    ) : null}
+
+                                    {/* Dynamic answers — blurred for locked leads to drive conversion */}
+                                    {lead?.dynamic_answers && lead.dynamic_answers.length > 0 && (
+                                        <div className="flex flex-wrap gap-2">
+                                            {lead.dynamic_answers.slice(0, 4).map((a, i) => (
+                                                <span
+                                                    key={a._id || i}
+                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs"
+                                                >
+                                                    <span className="text-darkSilver shrink-0">{a.label}:</span>
+                                                    <span className={`font-medium text-fontBlack `}>
+                                                        {a.value || '—'}
                                                     </span>
-                                                    <span className="flex items-center gap-1.5 text-fontBlack">
-                                                        <EnvelopeIconSVG />
-                                                        {lead?.contact_details?.email}
-                                                    </span>
-                                                </>
-                                            )} */}
-                                    </div>
-                                    <p className="text-sm text-darkSilver leading-relaxed">
-                                        {lead.note}
-                                    </p>
+                                                </span>
+                                            ))}
+                                            {lead.dynamic_answers.length > 4 && (
+                                                <span className="inline-flex items-center rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs text-darkSilver">
+                                                    +{lead.dynamic_answers.length - 4} autres
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {lead.note && (
+                                        <p className="text-sm text-darkSilver leading-relaxed line-clamp-2">
+                                            {lead.note}
+                                        </p>
+                                    )}
                                 </Link>
                                 <div className="flex flex-col items-start lg:items-end shrink-0 gap-2">
                                     {lead?.unlocked ? (

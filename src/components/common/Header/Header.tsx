@@ -33,13 +33,13 @@ function getDisplayName(firstName?: string | null, lastName?: string | null, ema
     const last = lastName?.trim();
     if (first && last) return `${first}.${last.charAt(0)}`;
     if (first) return first;
-    if (email?.trim()) return email.split("@")[0] ?? "User";
-    return "User";
+    if (email?.trim()) return email.split("@")[0] ?? "Utilisateur";
+    return "Utilisateur";
 }
 
 /** Full name for popover */
 function getFullName(firstName?: string | null, lastName?: string | null): string {
-    return [firstName, lastName].filter(Boolean).join(" ").trim() || "User";
+    return [firstName, lastName].filter(Boolean).join(" ").trim() || "Utilisateur";
 }
 
 interface HeaderProps {

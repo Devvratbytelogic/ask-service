@@ -8,10 +8,10 @@ export default function VendorAccountPage() {
                 {/* Header - centered */}
                 <div className="text-center mb-10 lg:mb-12">
                     <h1 className="text-2xl md:text-5xl font-bold text-fontBlack mb-2">
-                        Account <span className="text-darkSilver">Settings</span>
+                        Paramètres <span className="text-darkSilver">du compte</span>
                     </h1>
                     <p className="text-sm md:text-base text-darkSilver">
-                        Manage your profile, security, and preferences
+                        Gérez votre profil, votre sécurité et vos préférences
                     </p>
                 </div>
 

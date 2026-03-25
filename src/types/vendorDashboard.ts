@@ -55,6 +55,14 @@ export interface IVendorAvailableLeads {
     unlocked: boolean;
     creditsToUnlock: number;
     quotes_count: number;
+    dynamic_answers?: DynamicAnswer[] | null;
+}
+export interface DynamicAnswer {
+    question_id: string;
+    key: string;
+    label: string;
+    value: string;
+    _id: string;
 }
 export interface ServiceCategory {
     _id: string;
