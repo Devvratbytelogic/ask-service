@@ -45,7 +45,7 @@ export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuo
             <aside className="w-full lg:w-[320px] shrink-0 space-y-4">
                 {/* Actions - only show when lead is not yet unlocked */}
                 {unlocked && (
-                    <div className="hidden lg:block rounded-2xl border border-borderDark bg-white p-5">
+                    <div className="block rounded-2xl border border-borderDark bg-white p-5">
                         <h3 className="font-semibold text-fontBlack mb-4">Options</h3>
                         <div className="flex flex-col gap-3">
                             {canQuote && <Button

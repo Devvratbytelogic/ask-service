@@ -2,6 +2,7 @@ import ImageComponent from "@/components/library/ImageComponent"
 import { RootState } from "@/redux/appStore";
 import { closeModal } from "@/redux/slices/allModalSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { useGetGlobalSettingsQuery } from "@/redux/rtkQueries/clientSideGetApis";
 import SelectUserType from "./SelectUserType";
 import CustomerSignupIndex from "./CustomerSignupFlow/CustomerSignupIndex";
 import CustomerSignupDetails from "./CustomerSignupFlow/CustomerSignupDetails";
@@ -19,6 +20,9 @@ import ForgotPasswordSetNew from "./ForgotPasswordFlow/ForgotPasswordSetNew";
 const LoginSignupIndex = () => {
     const dispatch = useDispatch();
     const { data } = useSelector((state: RootState) => state.allCommonModal);
+    const { data: globalSettings } = useGetGlobalSettingsQuery();
+    const logoUrl = globalSettings?.data?.logo || "/images/navbar/ask_service_logo.png";
+    const marketplaceName = globalSettings?.data?.marketplace_name || "Ask Service";
 
     const renderComponent = () => {
 
@@ -65,7 +69,7 @@ const LoginSignupIndex = () => {
                     className="h-12 w-50 shrink-0 inline-flex items-center justify-start cursor-pointer hover:opacity-80 transition-opacity"
                     aria-label="Close and go to Ask Service"
                 >
-                    <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" />
+                    <ImageComponent url={logoUrl} img_title={`${marketplaceName} logo`} object_contain />
                 </button>
                 {
                     renderComponent()
