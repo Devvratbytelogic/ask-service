@@ -124,14 +124,14 @@ export default function ViewQuoteModal() {
                                     <h3 className="font-bold text-base text-fontBlack">{quote?.provider_name}</h3>
                                     {quote?.status === 'IGNORED' && (
                                         <span className="rounded-full bg-red-500 text-white text-xs font-medium px-2 py-0.5">
-                                            Ignored
+                                            Refusé
                                         </span>
                                     )}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-sm text-darkSilver">
                                     <StarRatingIconSVG />
                                     <span className="font-medium text-fontBlack">{quote?.rating}</span>
-                                    <span>({quote?.reviews_count} reviews)</span>
+                                    <span>({quote?.reviews_count} avis)</span>
                                 </div>
                                 <p className="text-sm text-fontBlack">{quote?.service_description}</p>
                                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
@@ -177,7 +177,7 @@ export default function ViewQuoteModal() {
                     </div>
                 )) : (
                     <div className="flex items-center justify-center h-full">
-                        <p className="text-sm text-fontBlack">No quotes found</p>
+                        <p className="text-sm text-fontBlack">Aucun devis trouvé</p>
                     </div>
                 )}
             </div>
