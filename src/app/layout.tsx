@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import "../styles/globals.css";
 import Header from "@/components/common/Header/Header";
 import Footer from "@/components/common/Footer/Footer";
+import CookieBanner from "@/components/common/CookieBanner/CookieBanner";
 import AppProviders from "@/providers/AppProvider";
 
 const inter = Inter({
@@ -41,6 +42,7 @@ export default async function RootLayout({
             {children}
             {/* </div> */}
             <Footer />
+            <CookieBanner />
           </div>
         </AppProviders >
       </body>
