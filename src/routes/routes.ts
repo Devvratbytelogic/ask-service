@@ -78,6 +78,9 @@ export function getTermsRoutePath() {
 export function getPrivacyRoutePath() {
     return `/privacy`;
 }
+export function getCookiesRoutePath() {
+    return `/cookies`;
+}
 
 // External / social links (for footer etc.)
 export function getFacebookUrl() {

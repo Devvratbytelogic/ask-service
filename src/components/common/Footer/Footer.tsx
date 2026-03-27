@@ -2,8 +2,8 @@
 import ImageComponent from "@/components/library/ImageComponent";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl, getMessageRoutePath, getVendorMessageRoutePath } from "@/routes/routes";
-import { BiBuilding, BiShield } from "react-icons/bi";
+import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getCookiesRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl, getMessageRoutePath, getVendorMessageRoutePath } from "@/routes/routes";
+import { BiBuilding, BiShield, BiCookie } from "react-icons/bi";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoDocumentSharp } from "react-icons/io5";
@@ -88,6 +88,10 @@ const Footer = () => {
                     <Link href={getPrivacyRoutePath()} className="text-customWhite flex items-center text-sm gap-2 hover:underline cursor-pointer transition-colors">
                         <span><BiShield /></span>
                         Privacy Policy
+                    </Link>
+                    <Link href={getCookiesRoutePath()} className="text-customWhite flex items-center text-sm gap-2 hover:underline cursor-pointer transition-colors">
+                        <span><BiCookie /></span>
+                        Politique cookies
                     </Link>
                 </div>
             </div>
