@@ -21,6 +21,7 @@ export interface IGlobalSettingsAPIResponse {
     search_console: string;
     instagram_link: string;
     facebook_link: string;
+    linkedin_link: string;
     x_link: string;
     address: string;
     quote_limit: number;

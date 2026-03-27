@@ -92,3 +92,6 @@ export function getTwitterUrl() {
 export function getInstagramUrl() {
     return `https://instagram.com`;
 }
+export function getLinkedinUrl() {
+    return `https://linkedin.com`;
+}

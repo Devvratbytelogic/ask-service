@@ -2,9 +2,9 @@
 import ImageComponent from "@/components/library/ImageComponent";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getCookiesRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl, getMessageRoutePath, getVendorMessageRoutePath } from "@/routes/routes";
+import { getContactUsRoutePath, getHelpCenterRoutePath, getFaqRoutePath, getTermsRoutePath, getPrivacyRoutePath, getCookiesRoutePath, getFacebookUrl, getTwitterUrl, getInstagramUrl, getLinkedinUrl, getMessageRoutePath, getVendorMessageRoutePath } from "@/routes/routes";
 import { BiBuilding, BiShield, BiCookie } from "react-icons/bi";
-import { BsFacebook, BsInstagram } from "react-icons/bs";
+import { BsFacebook, BsInstagram, BsLinkedin } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoDocumentSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
@@ -27,6 +27,7 @@ const Footer = () => {
     const facebookUrl = settings?.facebook_link || getFacebookUrl();
     const twitterUrl = settings?.x_link || getTwitterUrl();
     const instagramUrl = settings?.instagram_link || getInstagramUrl();
+    const linkedinUrl = settings?.linkedin_link || getLinkedinUrl();
     const email = settings?.email || "connect@askservice.com";
     // const phone = settings?.phone || "01 987654321"
     const address = settings?.address || "4517 Washington Ave. Manchester, Kentucky 39495";
@@ -54,6 +55,9 @@ const Footer = () => {
                             </Link>
                             <Link href={instagramUrl} className="footer_icons" target="_blank" rel="noopener noreferrer">
                                 <BsInstagram />
+                            </Link>
+                            <Link href={linkedinUrl} className="footer_icons" target="_blank" rel="noopener noreferrer">
+                                <BsLinkedin />
                             </Link>
                         </div>
                     </div>

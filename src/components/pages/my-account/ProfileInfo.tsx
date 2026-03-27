@@ -75,28 +75,18 @@ export default function ProfileInfo() {
         validationSchema: profileInfoValidationSchema,
         onSubmit: async (formValues) => {
             try {
+                const formData = new FormData()
+                formData.append('first_name', formValues.firstName)
+                formData.append('last_name', formValues.lastName)
+                formData.append('email', formValues.email)
+                formData.append('phone', formValues.phone)
+                formData.append('address', formValues.streetAddress)
+                formData.append('postal_code', formValues.postcode)
+                formData.append('city', formValues.city)
                 if (profilePicFile) {
-                    const formData = new FormData()
-                    formData.append('first_name', formValues.firstName)
-                    formData.append('last_name', formValues.lastName)
-                    formData.append('email', formValues.email)
-                    formData.append('phone', formValues.phone)
-                    formData.append('address', formValues.streetAddress)
-                    formData.append('postal_code', formValues.postcode)
-                    formData.append('city', formValues.city)
                     formData.append('profile_pic', profilePicFile)
-                    await updateUserProfileInfo(formData).unwrap()
-                } else {
-                    await updateUserProfileInfo({
-                        first_name: formValues.firstName,
-                        last_name: formValues.lastName,
-                        email: formValues.email,
-                        phone: formValues.phone,
-                        address: formValues.streetAddress,
-                        postal_code: formValues.postcode,
-                        city: formValues.city,
-                    }).unwrap()
                 }
+                await updateUserProfileInfo(formData).unwrap()
                 addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 setIsEditing(false)
