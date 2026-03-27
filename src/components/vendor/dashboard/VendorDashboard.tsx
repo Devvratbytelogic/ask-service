@@ -245,7 +245,7 @@ export default function VendorDashboard() {
                                 >
                                     <div className="flex flex-wrap items-center gap-2">
                                         <h3 className="font-bold text-lg text-fontBlack">
-                                            {lead.service_category.title}
+                                            Service de {lead.service_category.title}
                                         </h3>
                                         {lead?.reference_no && (
                                             <span className="inline-flex items-center rounded-full bg-gray-100 border border-borderDark px-2.5 py-0.5 text-xs font-medium text-darkSilver">
@@ -307,7 +307,7 @@ export default function VendorDashboard() {
                                             {lead.dynamic_answers.slice(0, 4).map((a, i) => (
                                                 <span
                                                     key={a._id || i}
-                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs"
+                                                    className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs"
                                                 >
                                                     <span className="text-darkSilver shrink-0">{a.label}:</span>
                                                     <span className={`font-medium text-fontBlack `}>
