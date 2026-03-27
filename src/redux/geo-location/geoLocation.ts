@@ -14,7 +14,7 @@ export const geoLocation = geoLocationApiService.injectEndpoints({
             query: (address) => `/json?address=${address}&key=${GOOGLE_API_KEY}`,
         }),
         getAddressFromPincode: builder.query<GoogleGeocodeResponse, string>({
-            query: (pincode) => `/json?address=${encodeURIComponent(pincode)}&key=${GOOGLE_API_KEY}`,
+            query: (pincode) => `/json?address=${encodeURIComponent(pincode)}&components=country:FR&key=${GOOGLE_API_KEY}`,
         }),
     })
 })
