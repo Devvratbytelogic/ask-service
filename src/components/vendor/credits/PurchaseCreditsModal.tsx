@@ -173,7 +173,7 @@
 //                         </Link>{' '}
 //                         and{' '}
 //                         <Link href="/privacy" className="text-primaryColor underline">
-//                             Privacy Policy
+//                             Politique De Confidentialité
 //                         </Link>
 //                         .
 //                     </p>

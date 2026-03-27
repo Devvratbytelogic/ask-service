@@ -320,7 +320,7 @@ const VendorSignupDetails = () => {
                             </Link>{" "}
                             and{" "}
                             <Link href={getPrivacyRoutePath()} className="text-primaryColor underline underline-offset-2">
-                                Privacy Policy
+                                Politique De Confidentialité
                             </Link>
                         </span>
                     </Checkbox>

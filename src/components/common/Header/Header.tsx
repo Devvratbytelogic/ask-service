@@ -63,7 +63,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
         skip: !isAuthenticated || isVendor,
     });
 
-    const { data: globalSettings } = useGetGlobalSettingsQuery();
+    const { data: globalSettings, isLoading: isGlobalSettingsLoading } = useGetGlobalSettingsQuery();
     const logoUrl = globalSettings?.data?.logo;
     const marketplaceName = globalSettings?.data?.marketplace_name || "Ask Service";
     const { data: vendorChats } = clientSideGetApis.useGetVendorChatsQuery(undefined, { skip: !isAuthenticated || !isVendor });
@@ -123,7 +123,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
             <div className={`navbar_x_axis_padding navbar_y_axis_padding sticky top-0 left-0 right-0 z-10`} id="main_navbar">
                 <div className="px-4 py-2 backdrop-blur-lg bg-navBgColor rounded-full flex justify-between items-center relative">
                     <Link href={getHomeRoutePath()} className="h-12 w-50 shrink-0 inline-flex items-center justify-start">
-                        <ImageComponent url={logoUrl || "/images/navbar/ask_service_logo.png"} img_title={`${marketplaceName} logo`} object_contain />
+                        {!isGlobalSettingsLoading && (<ImageComponent url={logoUrl || "/images/navbar/ask_service_logo.png"} img_title={`${marketplaceName} logo`} object_contain />)}
                     </Link>
                     <NavbarComponent />
                 </div>
@@ -138,7 +138,7 @@ const Header = ({ initialIsAuthenticated = false }: HeaderProps) => {
                         <Link href={getHomeRoutePath()} className="flex items-center gap-2 shrink-0">
                             {logoUrl ? (
                                 <span className="h-9 w-36 shrink-0 inline-flex items-center">
-                                    <ImageComponent url={logoUrl} img_title={`${marketplaceName} logo`} object_contain />
+                                   {!isGlobalSettingsLoading && (<ImageComponent url={logoUrl} img_title={`${marketplaceName} logo`} object_contain />)}
                                 </span>
                             ) : (
                                 <>

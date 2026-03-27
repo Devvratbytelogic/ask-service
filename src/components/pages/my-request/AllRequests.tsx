@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { FiArrowUpRight, FiInfo } from 'react-icons/fi'
 import { useDispatch } from 'react-redux'
 import moment from 'moment'
+import 'moment/locale/fr'
 
 /** Format API ISO date (e.g. 2026-03-14T00:00:00.000Z) to yyyy-MM-dd for date inputs. */
 function apiDateToInputValue(isoDate?: string | null): string {
@@ -152,7 +153,7 @@ export default function AllRequests() {
                                     <h3 className="font-bold text-lg text-fontBlack">{request?.service_category?.title}</h3>
                                     {request?.status_label !== 'Quotes received' && <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 text-amber-800 px-3 py-1.5 text-sm font-medium">
                                         <FiInfo size={14} />
-                                        Waiting for quotes
+                                        En attente de devis
                                     </span>}
                                     <Tooltip content={`This request will stay open for ${quoteExpired} days. After that, it will close automatically.`}>
                                         <span className="inline-flex cursor-help">
@@ -163,7 +164,7 @@ export default function AllRequests() {
                                 <div className="flex flex-wrap gap-x-6 text-sm text-darkSilver">
                                     <span className="flex items-center gap-1.5">
                                         <CalendarSVG />
-                                        Created {moment(request?.createdAt ?? '').fromNow()} ({moment(request?.createdAt ?? '').format('DD MMM YYYY, h:mm A')})
+                                        Créée {moment(request?.createdAt ?? '').locale('fr').fromNow()} ({moment(request?.createdAt ?? '').locale('fr').format('DD MMM YYYY [à] HH:mm')})
                                     </span>
                                     {request?.preferred_start_date !== null && <span className="flex items-center gap-1.5">
                                         <CalendarSVG />

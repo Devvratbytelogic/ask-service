@@ -35,7 +35,7 @@ export const customerNavItems: NavItem[] = [
     { id: 'profile', label: 'Profil Public', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getMyAccountRoutePath({ section: 'notifications' }) },
-    { id: 'create-request', label: 'Créer une nouvelle demande', icon: <HiPlus className="size-5 shrink-0" />, href: getCreateRequestRoutePath() },
+    // { id: 'create-request', label: 'Créer une nouvelle demande', icon: <HiPlus className="size-5 shrink-0" />, href: getCreateRequestRoutePath() },
 ]
 
 export const vendorNavItems: NavItem[] = [
