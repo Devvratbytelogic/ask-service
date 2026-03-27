@@ -104,6 +104,7 @@ export default function ProfileInfo() {
                     phoneNumber: profileData?.phone ?? values.phone ?? '',
                     otpType: 'VERIFY_PHONE',
                     stayOnPage: true,
+                    readonlyPhone: true,
                 },
                 modalSize: 'md',
             })

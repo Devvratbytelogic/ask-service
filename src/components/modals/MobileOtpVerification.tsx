@@ -39,6 +39,7 @@ const MobileOtpVerification = () => {
     const email = (data?.email as string) || ""
     const googleLoginCompleted = !!(data as { googleLoginCompleted?: boolean })?.googleLoginCompleted
     const stayOnPage = !!(data as { stayOnPage?: boolean })?.stayOnPage
+    const readonlyPhone = !!(data as { readonlyPhone?: boolean })?.readonlyPhone
 
     const [phoneNumber, setPhoneNumber] = useState(initialPhone)
     const [codeSent, setCodeSent] = useState(skipToCodeEntry)
@@ -196,15 +197,18 @@ const MobileOtpVerification = () => {
                             enableSearch
                             value={phoneNumber}
                             onChange={(value) => {
+                                if (readonlyPhone) return
                                 setPhoneNumber(value)
                                 setErrorMessage(null)
                             }}
                             inputProps={{
                                 name: "phoneNumber",
                                 "aria-label": "Phone number",
+                                readOnly: readonlyPhone,
                             }}
+                            disabled={readonlyPhone}
                             containerClass="!w-full"
-                            inputClass="!w-full !rounded-[12px] !border-borderDark"
+                            inputClass={`!w-full !rounded-[12px] !border-borderDark${readonlyPhone ? " !bg-gray-100 !cursor-not-allowed !opacity-70" : ""}`}
                             inputStyle={{ height: "52px" }}
                             dropdownClass="!z-[9999]"
                             dropdownStyle={{ zIndex: 9999 }}
@@ -250,14 +254,16 @@ const MobileOtpVerification = () => {
                             })()} */}
                             {phoneNumber ? formatPhoneWithCountryCode(phoneNumber, "FR").formatted : "—"}
                         </span>
-                        <button
-                            type="button"
-                            onClick={handleChangePhone}
-                            className="text-primaryColor p-1 rounded hover:bg-primaryColor/10"
-                            aria-label="Change phone number"
-                        >
-                            <IoPencilOutline className="size-4" />
-                        </button>
+                        {!readonlyPhone && (
+                            <button
+                                type="button"
+                                onClick={handleChangePhone}
+                                className="text-primaryColor p-1 rounded hover:bg-primaryColor/10"
+                                aria-label="Change phone number"
+                            >
+                                <IoPencilOutline className="size-4" />
+                            </button>
+                        )}
                     </div>
                 </p>
             </div>
