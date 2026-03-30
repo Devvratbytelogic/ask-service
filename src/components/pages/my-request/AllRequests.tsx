@@ -201,7 +201,7 @@ export default function AllRequests() {
                                     </Button>
                                 ) : (
                                     <>
-                                        <p className="text-sm text-darkSilver">Waiting for responses...</p>
+                                        {/* <p className="text-sm text-darkSilver">Waiting for responses...</p> */}
                                         {request?._id && (
                                             <Button
                                                 className="btn_radius btn_bg_white font-medium"
@@ -226,7 +226,7 @@ export default function AllRequests() {
                                                     }))
                                                 }}
                                             >
-                                                Edit
+                                                Modifier
                                             </Button>
                                         )}
                                     </>

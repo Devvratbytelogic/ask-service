@@ -1,5 +1,6 @@
 'use client'
 
+import moment from 'moment'
 import { BackArrowSVG, CalendarSVG, LocationSVG, NoteIconSVG, StarRatingIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
 import { RootState } from '@/redux/appStore'
 import { closeModal, openModal } from '@/redux/slices/allModalSlice'
@@ -31,6 +32,7 @@ export default function ViewQuoteModal() {
     const request = apiData?.data?.request ?? null
     const handleClose = () => dispatch(closeModal())
     // console.log ('apiData in view quote modal', apiData);
+    // console.log('Vendor up', quote?.responded_in_hours);
     
     return (
         <>
@@ -55,7 +57,7 @@ export default function ViewQuoteModal() {
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-darkSilver">
                                 <span className="flex items-center gap-1.5">
                                     <CalendarSVG />
-                                    {request?.date ?? 'Unknown Date'}
+                                    {request?.date ? moment(request.date).format('DD-MM-YYYY [à] HH:mm') : 'Unknown Date'}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <LocationSVG />

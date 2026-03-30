@@ -190,7 +190,7 @@ export default function ProfileInfo() {
                 <h2 className="text-lg font-bold text-fontBlack">Informations du profil</h2>
                 {!isEditing ? (
                     <Button className="btn_radius btn_bg_blue px-6" onPress={() => setIsEditing(true)}>
-                        Edit Profile
+                        Modifier le profil
                     </Button>
                 ) : (
                     <div className="flex shrink-0 gap-2">
@@ -201,7 +201,7 @@ export default function ProfileInfo() {
                             isDisabled={isLoading}
                             onPress={() => handleSubmit()}
                         >
-                            Save Changes
+                            Enregistrer les modifications
                         </Button>
                     </div>
                 )}
@@ -355,7 +355,7 @@ export default function ProfileInfo() {
                                     inputStyle={{ height: '52px' }}
                                     dropdownClass="!z-[9999]"
                                     dropdownStyle={{ zIndex: 9999 }}
-                                    // disabled
+                                // disabled
                                 />
                             </div>
                             {!isEditing && profileData?.is_phone_verified === false && profileData?.phone !== null && (
