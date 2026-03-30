@@ -33,13 +33,13 @@ export interface VendorSignupFormValues {
 }
 
 const vendorSignupValidationSchema = Yup.object({
-    firstName: Yup.string().trim().required("This field is required"),
-    lastName: Yup.string().trim().required("This field is required"),
-    businessName: Yup.string().trim().required("This field is required"),
-    email: yupRequiredEmail("This field is required"),
+    firstName: Yup.string().trim().required("Ce champ est obligatoire"),
+    lastName: Yup.string().trim().required("Ce champ est obligatoire"),
+    businessName: Yup.string().trim().required("Ce champ est obligatoire"),
+    email: yupRequiredEmail("Ce champ est obligatoire"),
     phoneNumber: Yup.string().trim(),
-    password: Yup.string().trim().required("This field is required"),
-    agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the terms").required(),
+    password: Yup.string().trim().required("Ce champ est obligatoire"),
+    agreeToTerms: Yup.boolean().oneOf([true], "Vous devez accepter les conditions d'utilisation").required(),
 })
 
 const initialValues: VendorSignupFormValues = {
@@ -211,10 +211,10 @@ const VendorSignupDetails = () => {
                             <Input
                                 name="businessName"
                                 variant="bordered"
-                                label="Company Name"
+                                label="Nom de l'entreprise"
                                 labelPlacement="outside"
                                 isRequired
-                                placeholder="Company Name"
+                                placeholder="Nom de l'entreprise"
                                 value={values.businessName}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -228,10 +228,10 @@ const VendorSignupDetails = () => {
                             <Input
                                 name="email"
                                 variant="bordered"
-                                label="Email address"
+                                label="Email"
                                 labelPlacement="outside"
                                 isRequired
-                                placeholder="example@xyz.com"
+                                placeholder="exemple@xyz.com"
                                 type="email"
                                 value={values.email}
                                 onChange={handleChange}
@@ -248,10 +248,10 @@ const VendorSignupDetails = () => {
                             <Input
                                 name="password"
                                 variant="bordered"
-                                label="Password"
+                                label="Mot de passe"
                                 isRequired
                                 labelPlacement="outside"
-                                placeholder="Password"
+                                placeholder="Mot de passe"
                                 type={isPasswordVisible ? "text" : "password"}
                                 value={values.password}
                                 onChange={handleChange}
@@ -275,7 +275,7 @@ const VendorSignupDetails = () => {
                             />
 
                             <div className="w-full relative z-100">
-                                <p className="custom_label_text_light text-darkSilver font-medium mb-1.5">Phone number</p>
+                                <p className="custom_label_text_light text-darkSilver font-medium mb-1.5">Téléphone</p>
                                 <div className="mt-1.5">
                                     <PhoneInput
                                         country="fr"
@@ -314,13 +314,13 @@ const VendorSignupDetails = () => {
                         }}
                     >
                         <span className="text-fontBlack text-sm">
-                            By creating an account, I agree to our{" "}
+                            En créant un compte, j&apos;accepte les{" "}
                             <Link href={getTermsRoutePath()} className="text-primaryColor underline underline-offset-2">
-                                Terms of use
+                                conditions d&apos;utilisation
                             </Link>{" "}
-                            and{" "}
+                            et la{" "}
                             <Link href={getPrivacyRoutePath()} className="text-primaryColor underline underline-offset-2">
-                                Politique De Confidentialité
+                                politique de confidentialité
                             </Link>
                         </span>
                     </Checkbox>

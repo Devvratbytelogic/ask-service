@@ -28,13 +28,13 @@ export interface CustomerSignInFormValues {
 
 const getSignInValidationSchema = (signInType: string | undefined) => {
     const base = {
-        password: Yup.string().trim().required("This field is required"),
+        password: Yup.string().trim().required("Ce champ est obligatoire"),
         rememberMe: Yup.boolean(),
     }
     if (signInType === "email") {
         return Yup.object({
             ...base,
-            email: yupRequiredEmail("This field is required"),
+            email: yupRequiredEmail("Ce champ est obligatoire"),
             phoneNumber: Yup.string(),
         })
     }
@@ -42,7 +42,7 @@ const getSignInValidationSchema = (signInType: string | undefined) => {
         return Yup.object({
             ...base,
             email: yupOptionalEmail(),
-            phoneNumber: Yup.string().trim().required("This field is required"),
+            phoneNumber: Yup.string().trim().required("Ce champ est obligatoire"),
         })
     }
     return Yup.object({
@@ -256,7 +256,7 @@ const CustomerSignInDetails = () => {
                                     variant="bordered"
                                     label="Email"
                                     labelPlacement="outside"
-                                    placeholder="example@my.com"
+                                    placeholder="exemple@xyz.com"
                                     type="email"
                                     value={values.email}
                                     onChange={handleChange}
@@ -298,9 +298,9 @@ const CustomerSignInDetails = () => {
                             <Input
                                 name="password"
                                 variant="bordered"
-                                label="Password"
+                                label="Mot de passe"
                                 labelPlacement="outside"
-                                placeholder="Password"
+                                placeholder="Mot de passe"
                                 type={isPasswordVisible ? "text" : "password"}
                                 value={values.password}
                                 onChange={handleChange}
@@ -331,7 +331,7 @@ const CustomerSignInDetails = () => {
                                     onBlur={handleBlur}
                                     classNames={{ wrapper: "before:border-borderDark" }}
                                 >
-                                    <span className="text-fontBlack text-sm">Remember me</span>
+                                    <span className="text-fontBlack text-sm">Se souvenir de moi</span>
                                 </Checkbox>
                                 <button
                                     type="button"
@@ -355,7 +355,7 @@ const CustomerSignInDetails = () => {
                                     }
                                     className="text-primaryColor text-sm underline underline-offset-2 cursor-pointer"
                                 >
-                                    Forgot password?
+                                    Mot de passe oublié ?
                                 </button>
                             </div>
 

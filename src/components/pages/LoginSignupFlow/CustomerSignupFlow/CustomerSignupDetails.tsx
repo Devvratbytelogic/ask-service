@@ -28,15 +28,15 @@ export interface CustomerSignupFormValues {
 
 const getSignupValidationSchema = (userSignupType: string | undefined) => {
     const base = {
-        firstName: Yup.string().trim().required("This field is required"),
-        lastName: Yup.string().trim().required("This field is required"),
-        password: Yup.string().trim().required("This field is required"),
-        agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the terms").required(),
+        firstName: Yup.string().trim().required("Ce champ est obligatoire"),
+        lastName: Yup.string().trim().required("Ce champ est obligatoire"),
+        password: Yup.string().trim().required("Ce champ est obligatoire"),
+        agreeToTerms: Yup.boolean().oneOf([true], "Vous devez accepter les conditions d'utilisation").required(),
     }
     if (userSignupType === "email") {
         return Yup.object({
             ...base,
-            email: yupRequiredEmail("This field is required"),
+            email: yupRequiredEmail("Ce champ est obligatoire"),
             phoneNumber: Yup.string(),
         })
     }
@@ -44,7 +44,7 @@ const getSignupValidationSchema = (userSignupType: string | undefined) => {
         return Yup.object({
             ...base,
             email: yupOptionalEmail(),
-            phoneNumber: Yup.string().trim().required("This field is required"),
+            phoneNumber: Yup.string().trim().required("Ce champ est obligatoire"),
         })
     }
     return Yup.object({
@@ -255,10 +255,10 @@ const CustomerSignupDetails = () => {
                         <Input
                             name="password"
                             variant="bordered"
-                            label="Password"
+                            label="Mot de passe"
                             labelPlacement="outside"
                             isRequired
-                            placeholder="Password"
+                            placeholder="Mot de passe"
                             type={isPasswordVisible ? "text" : "password"}
                             value={values.password}
                             onChange={handleChange}
@@ -296,13 +296,13 @@ const CustomerSignupDetails = () => {
                         }}
                     >
                         <span className="text-fontBlack text-sm">
-                            By creating an account, I agree to our{" "}
+                            En créant un compte, j&apos;accepte les{" "}
                             <Link href={getTermsRoutePath()} className="text-primaryColor underline underline-offset-2">
-                                Terms of use
+                                conditions d&apos;utilisation
                             </Link>{" "}
-                            and{" "}
+                            et la{" "}
                             <Link href={getPrivacyRoutePath()} className="text-primaryColor underline underline-offset-2">
-                                Politique De Confidentialité
+                                politique de confidentialité
                             </Link>
                         </span>
                     </Checkbox>

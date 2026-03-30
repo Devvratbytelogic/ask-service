@@ -31,7 +31,7 @@ const ServiceCard = ({serviceImage,serviceName,serviceDescription, onPostRequest
                 className="cursor-pointer text-fontBlack group flex gap-2 items-center"
             >
                 <span className="group-hover:opacity-75">
-                    Post a request
+                    Faire une demande
                 </span>
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                     <FiArrowRight/>
