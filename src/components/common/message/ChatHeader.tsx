@@ -64,10 +64,10 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                                 <>
                                     {isVerified ? <p className="inline-flex items-center gap-1 rounded-full border border-[#BEDBFF] bg-[#EFF6FF] px-2 py-1 text-xs font-medium text-[#1447E6]">
                                         <VerifiedShieldIconSVG />
-                                        Verified
+                                        Vérifié
                                     </p> :
                                         <p className="inline-flex items-center gap-1 rounded-full border border-[#BEDBFF] bg-[#EFF6FF] px-2 py-1 text-xs font-medium text-[#1447E6]">
-                                            Not Verified
+                                            Non vérifié
                                         </p>}
                                     {(rating != null || reviewCount != null) && (
                                         <p className="inline-flex items-center gap-1 text-sm ">
@@ -86,12 +86,12 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                                         <span className="inline-block w-1 h-1 rounded-full bg-[#00A63E] animate-bounce [animation-delay:150ms]" />
                                         <span className="inline-block w-1 h-1 rounded-full bg-[#00A63E] animate-bounce [animation-delay:300ms]" />
                                     </span>
-                                    typing...
+                                    en train d&apos;écrire…
                                 </p>
                             ) : (
                                 <p className={`flex items-center gap-1 text-xs font-medium ${isOnline ? 'text-[#00A63E]' : 'text-darkSilver'}`}>
                                     <span className={`inline-block size-1.5 rounded-full ${isOnline ? 'bg-[#00A63E]' : 'bg-darkSilver'}`} />
-                                    {isOnline ? 'Active now' : 'Offline'}
+                                    {isOnline ? 'En ligne' : 'Hors ligne'}
                                 </p>
                             )
                         )}

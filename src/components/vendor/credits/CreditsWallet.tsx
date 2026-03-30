@@ -44,6 +44,14 @@ function mapPackageToDisplay(entity: IAllCreditsDataEntity): CreditPackageDispla
     }
 }
 
+function translateTxnDescription(description: string): string {
+    if (!description) return description
+    // "Unlocked Lead {service} in {city}" → "Demande débloquée ({service} – {city})"
+    const match = description.match(/^Unlocked Lead (.+?) in (.+)$/i)
+    if (match) return `Demande débloquée (${match[1]} – ${match[2]})`
+    return description
+}
+
 const PERIOD_OPTIONS = [
     { key: 'all', label: 'All time' },
     { key: '7', label: 'Last 7 days' },
@@ -338,10 +346,10 @@ export default function CreditsWallet() {
                     </Button>
                     <div>
                         <h1 className="font-bold text-xl md:text-2xl text-fontBlack">
-                            Credits & Wallet
+                            Points & Portefeuille
                         </h1>
                         <p className="text-sm text-darkSilver mt-0.5">
-                            Manage your credit balance and purchase history
+                            Gérez votre solde de points et votre historique d&apos;achats
                         </p>
                     </div>
                 </div>
@@ -357,13 +365,13 @@ export default function CreditsWallet() {
             {/* Current Credit Balance Card */}
             <div className="rounded-2xl bg-primaryColor p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden">
                 <div>
-                    <p className="text-white/90 text-sm font-medium">Current Credit Balance</p>
+                    <p className="text-white/90 text-sm font-medium">Votre solde de points</p>
                     {balanceLoading ? (
                         <div className="mt-1">
                             <Spinner size="lg" color="white" classNames={{ circle1: 'border-b-white', circle2: 'border-b-white' }} />
                         </div>
                     ) : (
-                        <p className="text-4xl md:text-5xl font-bold text-white mt-1">{creditBalance} credits</p>
+                        <p className="text-4xl md:text-5xl font-bold text-white mt-1">{creditBalance} points</p>
                     )}
                 </div>
                 <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-white/20">
@@ -373,7 +381,7 @@ export default function CreditsWallet() {
 
             {/* Buy Credits Section */}
             <div>
-                <h2 className="font-bold text-lg text-fontBlack mb-4">Buy Credits</h2>
+                <h2 className="font-bold text-lg text-fontBlack mb-4">Acheter des Points</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {packagesLoading ? (
                         <div className="col-span-full flex justify-center py-12">
@@ -410,22 +418,22 @@ export default function CreditsWallet() {
                                         <p className="font-bold text-xl text-fontBlack mt-1">
                                             {pkg.credits}
                                         </p>
-                                        <p className='text-sm text-darkSilver'>credits</p>
+                                        <p className='text-sm text-darkSilver'>points</p>
                                         {pkg.bonus && (
                                             <span className="inline-flex mt-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
                                                 +{pkg.bonus} bonus
                                             </span>
                                         )}
-                                        <p className="mt-3 font-bold text-xl text-fontBlack">€{pkg.totalPrice}</p>
-                                        <p className="text-xs text-darkSilver">€{pkg.unitPrice} per credit</p>
+                                        <p className="mt-3 font-bold text-xl text-fontBlack">{pkg.totalPrice} €</p>
+                                        <p className="text-xs text-darkSilver">{pkg.unitPrice} € par point</p>
                                         <div className="mt-1.5 space-y-0.5 text-left text-xs text-darkSilver border-t border-borderDark pt-1.5">
                                             <div className="flex justify-between gap-4">
-                                                <span>Subtotal</span>
-                                                <span>€{pkg.price}</span>
+                                                <span>Prix HT</span>
+                                                <span>{pkg.price} €</span>
                                             </div>
                                             <div className="flex justify-between gap-4">
-                                                <span>VAT ({pkg.vatRate}%)</span>
-                                                <span>€{pkg.vatAmount}</span>
+                                                <span>TVA ({pkg.vatRate}%)</span>
+                                                <span>{pkg.vatAmount} €</span>
                                             </div>
                                         </div>
                                     </div>
@@ -435,7 +443,7 @@ export default function CreditsWallet() {
                                         isDisabled={stripeLoading}
                                         onPress={() => handlePurchase(pkg)}
                                     >
-                                        Purchase Credits
+                                        Acheter
                                     </Button>
                                 </div>
                             )
@@ -509,7 +517,7 @@ export default function CreditsWallet() {
                                         Description
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
-                                        Credits
+                                        Points
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
                                         Balance After
@@ -563,7 +571,7 @@ export default function CreditsWallet() {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-fontBlack">
-                                                    {txn.description}
+                                                    {translateTxnDescription(txn.description)}
                                                 </td>
                                                 <td
                                                     className={`px-4 py-4 text-sm font-medium ${creditsNum > 0 ? 'text-[#4CAF50]' : 'text-danger'
@@ -572,7 +580,7 @@ export default function CreditsWallet() {
                                                     {creditsNum > 0 ? `${txn.credits}` : txn.credits}
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-fontBlack">
-                                                    {txn.balanceAfter} credits
+                                                    {txn.balanceAfter} points
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-darkSilver">
                                                     {txn.date}

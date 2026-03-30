@@ -248,10 +248,10 @@ export default function MessageLayout() {
                 </div>
                 <div className="space-y-1">
                   <h2 className="text-lg font-semibold text-fontBlack md:text-xl">
-                    Select a chat to start messaging
+                    Sélectionnez une conversation pour discuter
                   </h2>
                   <p className="text-sm text-darkSilver">
-                    Choose a conversation from the list or start a new one.
+                    Choisissez une conversation ou démarrez-en une nouvelle
                   </p>
                 </div>
               </div>

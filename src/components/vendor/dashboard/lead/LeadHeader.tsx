@@ -52,7 +52,7 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                             {data?.title}
                         </h1>
                         <p className="text-sm text-darkSilver">
-                            Lead {data?.id}
+                            Prospect {data?.id}
                             <span className="mx-1.5">•</span>
                             {data?.postedAt}
                         </p>

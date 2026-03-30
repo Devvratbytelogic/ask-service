@@ -50,7 +50,7 @@ function formatTime(createdAt?: string): string {
     if (!createdAt) return '';
     try {
         const d = new Date(createdAt);
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
     } catch {
         return '';
     }
@@ -62,9 +62,9 @@ function getDateLabel(dateStr: string): string {
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        if (d.toDateString() === today.toDateString()) return 'Today';
-        if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
-        return d.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
+        if (d.toDateString() === today.toDateString()) return 'Aujourd\'hui';
+        if (d.toDateString() === yesterday.toDateString()) return 'Hier';
+        return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     } catch {
         return '';
     }
@@ -421,7 +421,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                             ? String((msg.sender as { _id?: string })._id)
                             : null;
                         const isYou = msg.isSentByMe ?? (currentUserId != null && senderId === currentUserId);
-                        const senderName = isYou ? 'You' : getSenderDisplay(msg.sender);
+                        const senderName = isYou ? 'Vous' : getSenderDisplay(msg.sender);
                         const initial = getInitial(senderName);
                         const senderImage = typeof msg.sender === 'object' ? msg.sender?.profile_image : undefined;
                         const time = formatTime(msg.createdAt);

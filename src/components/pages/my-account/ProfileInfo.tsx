@@ -372,7 +372,7 @@ export default function ProfileInfo() {
 
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Street Address
+                        Adresse postale
                     </label>
                     <Input
                         name="streetAddress"

@@ -5,6 +5,7 @@ import { generateLeadDetailRoutePath, getVendorDashboardRoutePath } from '@/rout
 import { Button } from '@heroui/react'
 import Link from 'next/link'
 import moment from 'moment'
+import 'moment/locale/fr'
 import { useGetVendorAllQuotesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllQuotes } from '@/types/allquotes'
 import SupportAlert from './SupportAlert'
@@ -13,7 +14,8 @@ import { useRouter } from 'next/navigation'
 export default function VendorAllQuotes() {
     const router = useRouter()
     const { data, isLoading } = useGetVendorAllQuotesQuery()
-    const quotes = data?.data ?? []
+    const rawQuotes = data?.data ?? []
+    const quotes = [...rawQuotes].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
     return (
         <>
@@ -73,31 +75,43 @@ export default function VendorAllQuotes() {
     )
 }
 
+const STATUS_LABELS: Record<string, string> = {
+    SENT: 'Envoyé',
+    IGNORED: 'Réjeté',
+    ACCEPTED: 'Accepté',
+    REJECTED: 'Réjeté',
+}
+
+function translateStatus(status: string): string {
+    return STATUS_LABELS[status] ?? status
+}
+
 function QuoteCard({ quote }: { quote: IAllQuotes }) {
+    const currencySymbol = quote.currency === 'EUR' ? '€' : (quote.currency ?? '€')
     return (
         <div className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
             <div className="flex-1 min-w-0 space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-bold text-lg text-fontBlack">
-                        {quote.service_description || 'Quote'}
+                        {quote.service_description || 'Devis'}
                     </h3>
                     <span className="inline-flex items-center rounded-full bg-[#F3E5F5] px-2.5 py-0.5 text-xs font-medium text-[#9C27B0]">
-                        {quote.status}
+                        {translateStatus(quote.status)} 
                     </span>
                 </div>
                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
                     <span>
-                        <span className="font-medium text-fontBlack">{quote.quote_price}</span> {quote.currency}
+                        <span className="font-medium text-fontBlack">{quote.quote_price}</span> {currencySymbol}
                     </span>
                     {quote.available_start_date && (
-                        <span>From {moment(quote.available_start_date).format('DD MMM YYYY')}</span>
+                        <span>Depuis {moment(quote.available_start_date).format('DD MMM YYYY')}</span>
                     )}
                     {quote.quote_valid_days != null && (
-                        <span>Valid {quote.quote_valid_days} days</span>
+                        <span>Valable {quote.quote_valid_days} jours</span>
                     )}
                 </div>
                 <p className="text-sm text-darkSilver">
-                    Sent {moment(quote.createdAt).fromNow()}
+                    Envoyé {moment(quote.createdAt).locale('fr').fromNow()}
                 </p>
             </div>
             <div className="shrink-0">
@@ -106,7 +120,7 @@ function QuoteCard({ quote }: { quote: IAllQuotes }) {
                     href={generateLeadDetailRoutePath(quote.service_request_id)}
                     className="btn_radius btn_bg_blue"
                 >
-                    View Lead
+                    Voir le prospect
                 </Button>
             </div>
         </div>

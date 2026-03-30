@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import moment from 'moment'
+import 'moment/locale/fr'
 import { Spinner } from '@heroui/react'
 import { LocationSVG } from '@/components/library/AllSVG'
 import LeadHeader from './LeadHeader'
@@ -21,6 +22,21 @@ export interface LeadFullDetailsData {
 
 interface LeadFullDetailsProps {
     id: string
+}
+
+function formatFrenchPhone(phone: string): string {
+    if (!phone) return phone
+    const digits = phone.replace(/\D/g, '')
+    if (digits.startsWith('33') && digits.length >= 11) {
+        return '0' + digits.slice(2)
+    }
+    return phone
+}
+
+function translateClientType(type: string): string {
+    if (type === 'Company' || type === 'Entreprise') return 'Entreprise'
+    if (type === 'Individual' || type === 'Particulier') return 'Particulier'
+    return type
 }
 
 function formatLocation(lead: ISingleLeadAPIResponseData | undefined): string {
@@ -46,7 +62,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
         return {
             title: (lead.service_category?.title || lead.child_category) ?? undefined,
             id: lead.reference_no,
-            postedAt: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : undefined,
+            postedAt: lead.createdAt ? moment(lead.createdAt).format('DD-MM-YYYY') : undefined,
             creditsToUnlock: leadExt.creditsToUnlock ?? 0,
             unlocked: lead.unlocked,
             canQuote: lead.canQuote,
@@ -64,13 +80,14 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             clientInitials,
             clientName: clientName || 'N/A',
             businessType: lead.service_category?.title || lead.child_category || 'N/A',
-            memberSince: lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : 'N/A',
+            memberSince: lead.createdAt ? moment(lead.createdAt).format('DD MMM YYYY') : 'N/A',
+            // phoneMasked: formatFrenchPhone(contact?.phone || lead.user?.phone || 'N/A'),
             phoneMasked: contact?.phone || lead.user?.phone || 'N/A',
             emailMasked: contact?.email || lead.user?.email || 'N/A',
             location: formatLocation(lead),
             serviceType: lead.service_category?.title || lead.child_category || 'N/A',
             frequency: rawLead.frequency || 'N/A',
-            clientType: lead.contact_details?.client_type || 'N/A',
+            clientType: lead.contact_details?.client_type ? translateClientType(lead.contact_details.client_type) : 'N/A',
             preferredStartDate: rawLead.preferred_start_date ? moment(rawLead.preferred_start_date).format('LL') : 'N/A',
             preferredTime: rawLead.preferred_time_of_day || 'N/A',
             startDate: rawLead.start_date ? moment(rawLead.start_date).format('LL') : undefined,
@@ -114,11 +131,11 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                     </span>
                                 </div>
                                 <p className="text-sm text-darkSilver mt-0.5">
-                                    Member since {displayData.memberSince}
+                                    Inscrit depuis le {displayData.memberSince}
                                 </p>
                                 <div className="border-t border-borderDark space-y-1 mt-4 pt-4">
                                     <div className='flex items-center justify-between gap-2'>
-                                        <p className='text-sm text-darkSilver'>Phone</p>
+                                        <p className='text-sm text-darkSilver'>Téléphone</p>
                                         <p className='text-sm text-fontBlack'>{displayData.phoneMasked}</p>
                                     </div>
                                     <div className='flex items-center justify-between gap-2'>
@@ -136,7 +153,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                                 <LocationSVG className='text-primary' />
                             </span>
-                            <h3 className="font-bold text-fontBlack">Service Location</h3>
+                            <h3 className="font-bold text-fontBlack">Localisation</h3>
                         </div>
                         <p className="text-fontBlack">
                             {displayData.location}
@@ -148,7 +165,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                         <h3 className="font-bold text-fontBlack mb-4">Exigences du service</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="rounded-xl border border-borderDark px-4 py-3">
-                                <p className="text-xs text-darkSilver mb-1">Service Type</p>
+                                <p className="text-xs text-darkSilver mb-1">Type de service</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.serviceType}
                                 </p>
@@ -160,7 +177,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 </p>
                             </div>}
                             {displayData.clientType !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3 sm:col-span-2">
-                                <p className="text-xs text-darkSilver mb-1">Client Type</p>
+                                <p className="text-xs text-darkSilver mb-1">Type de client</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.clientType}
                                 </p>

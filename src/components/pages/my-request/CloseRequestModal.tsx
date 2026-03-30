@@ -10,6 +10,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const OTHER_REASON_KEY = 'Other reason'
 
+function formatDate(isoDate?: string | null): string {
+    if (!isoDate) return '—'
+    const d = new Date(isoDate)
+    if (Number.isNaN(d.getTime())) return '—'
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
 const CLOSE_REASONS = [
     { key: 'No longer need the service', label: 'Je n\'ai plus besoin de ce service' },
     { key: 'Found a provider elsewhere', label: 'J\'ai trouvé un prestataire ailleurs' },
@@ -18,17 +25,11 @@ const CLOSE_REASONS = [
     { key: OTHER_REASON_KEY, label: 'Autre raison' },
 ]
 
-const defaultRequest = {
-    title: 'House Cleaning',
-    requestId: 'REQ-A7X9K2',
-    date: '14 Jan 2026',
-    location: 'London, SW1A 1AA',
-}
 
 export default function CloseRequestModal() {
     const dispatch = useDispatch()
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
-    const request = modalData?.request ?? modalData ?? defaultRequest
+    const request = modalData?.request
     const requestId = (request as { _id?: string; id?: string })?._id ?? (request as { id?: string })?.id
     const [selectedReason, setSelectedReason] = useState<string | null>(null)
     const [reasonComment, setReasonComment] = useState('')
@@ -51,6 +52,7 @@ export default function CloseRequestModal() {
             // Error toast is handled by RTK base query
         }
     }
+    console.log('request', request);
 
     return (
         <>
@@ -58,18 +60,18 @@ export default function CloseRequestModal() {
                 <h2 className="font-bold text-xl text-fontBlack">Clôturer cette demande ?</h2>
                 {/* Request summary */}
                 <p className="text-sm text-darkSilver">
-                    {request?.title ?? defaultRequest.title}
+                    {request?.service_title}
                     <span className="mx-1.5">•</span>
-                    {request?.requestId ?? defaultRequest.requestId}
+                    {request?.request_id}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-darkSilver">
                     <span className="flex items-center gap-1.5">
                         <CalendarSVG />
-                        {request?.date ?? defaultRequest.date}
+                        {formatDate(request?.createdAt)}
                     </span>
                     <span className="flex items-center gap-1.5">
                         <LocationSVG />
-                        {request?.location ?? defaultRequest.location}
+                        {request?.location}
                     </span>
                 </div>
             </div>
