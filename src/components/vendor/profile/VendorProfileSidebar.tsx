@@ -53,7 +53,7 @@ export default function VendorProfileSidebar({ profile }: VendorProfileSidebarPr
                 <div className="mb-4 flex items-center justify-center gap-1.5">
                     <StarRatingIconSVG />
                     <span className="text-sm font-bold text-fontBlack">{averageRating || '4.9'}</span>
-                    <span className="text-sm text-darkSilver">({totalReviews || 127} reviews)</span>
+                    <span className="text-sm text-darkSilver">({totalReviews || 127} notes)</span>
                 </div>
 
                 {/* Services */}

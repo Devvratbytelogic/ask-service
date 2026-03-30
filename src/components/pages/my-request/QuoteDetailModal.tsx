@@ -123,7 +123,7 @@ export default function QuoteDetailModal() {
                         <span className="flex items-center gap-1.5">
                             <StarRatingIconSVG />
                             <span className="font-medium text-fontBlack">{vendor.rating}</span>
-                            <span>({vendor.reviews_count} reviews)</span>
+                            <span>({vendor.reviews_count} notes)</span>
                         </span>
                         {vendor.years_in_business && (
                             <>
