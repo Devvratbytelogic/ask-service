@@ -22,7 +22,7 @@ const Footer = () => {
         return null;
     }
 
-    const logoUrl = settings?.logo || "/images/footer/ask_service_white.png";
+    const logoUrl = settings?.footer_logo || "/images/footer/ask_service_white.png";
     const platformDescription = settings?.platformDescription || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut";
     const facebookUrl = settings?.facebook_link || getFacebookUrl();
     const twitterUrl = settings?.x_link || getTwitterUrl();
