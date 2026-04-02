@@ -1,36 +1,45 @@
-import ImageComponent from "@/components/library/ImageComponent"
-import { FaPlay } from "react-icons/fa6"
+"use client"
+import { useGetGlobalSettingsQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import StepsToWorkCard from "./StepsToWorkCard"
 
+const getYoutubeEmbedUrl = (url: string): string | null => {
+    try {
+        const parsed = new URL(url)
+        let videoId: string | null = null
+        if (parsed.hostname.includes("youtu.be")) {
+            videoId = parsed.pathname.slice(1)
+        } else if (parsed.hostname.includes("youtube.com")) {
+            videoId = parsed.searchParams.get("v")
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0` : null
+    } catch {
+        return null
+    }
+}
+
 const HowDoesItWorkIndex = () => {
+    const { data: globalSettings, isLoading } = useGetGlobalSettingsQuery()
+    const youtubeLink = globalSettings?.data?.home_youtube_link
+    const embedUrl = youtubeLink ? getYoutubeEmbedUrl(youtubeLink) : null
+
     return (
         <div className="space_y_header_body container_y_padding pt-0!">
             <h2 className="header_text text-center font-bold">
                 <span className="text-fontBlack">Comment ça marche?</span>
             </h2>
             <div className="space-y-7.5">
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden group cursor-pointer h-[40svh] md:h-[70svh]">
-                    {/* Background image */}
-                    <div className="absolute inset-0">
-                        <ImageComponent
-                            url="/images/home/howWork.jpg"
-                            img_title="How it works video thumbnail"
+                <div className="relative w-full rounded-xl overflow-hidden h-[40svh] md:h-[70svh]">
+                    {isLoading ? (
+                        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-xl" />
+                    ) : embedUrl ? (
+                        <iframe
+                            src={embedUrl}
+                            title="How it works"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0 w-full h-full border-0"
                         />
-                    </div>
-                    {/* Dark overlay */}
-                    <div className="absolute inset-0 bg-linear-to-r from-fontBlack/95 to-fontBlack/35" />
-                    {/* Centered play button */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-black flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                            <FaPlay className="text-xl md:text-2xl ml-1" />
-                        </span>
-                    </div>
-                    {/* Bottom-left text */}
-                    <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-white">
-                        <p className="text-lg md:text-[36px]/[43.2px] leading-tight w-2/3">
-                            Trouvez le bon professionnel en quelques étapes simples.
-                        </p>
-                    </div>
+                    ) : null}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {

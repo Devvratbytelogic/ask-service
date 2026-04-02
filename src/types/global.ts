@@ -38,4 +38,5 @@ export interface IGlobalSettingsAPIResponseData {
   linkedin_link: string;
   linkedin_logo: string;
   footer_logo: string;
+  home_youtube_link?: string;
 }
