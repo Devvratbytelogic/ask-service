@@ -4,6 +4,10 @@ import React from 'react'
 import { Button } from '@heroui/react'
 import { SendIconSVG } from '@/components/library/AllSVG'
 
+function scrollToContactForm() {
+  document.getElementById('contact-us-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 export default function AskQuestionCallout() {
   return (
     <>
@@ -20,8 +24,10 @@ export default function AskQuestionCallout() {
         {/* Right: button with avatar overlapping its top-right corner */}
         <div className="relative shrink-0 pt-2 pr-2">
           <Button
+            type="button"
             className="btn_bg_blue btn_radius"
-            startContent={<SendIconSVG/>}
+            startContent={<SendIconSVG />}
+            onPress={scrollToContactForm}
           >
             Ask a Question
           </Button>

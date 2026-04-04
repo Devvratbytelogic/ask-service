@@ -12,6 +12,7 @@ import moment from 'moment'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
 import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { formatPhoneWithCountryCode } from '@/utils/formatPhone'
 
 export default function VendorDashboard() {
     const dispatch = useDispatch()
@@ -289,7 +290,7 @@ export default function VendorDashboard() {
                                             {lead?.contact_details?.phone && (
                                                 <span className="flex items-center gap-1.5 text-fontBlack">
                                                     <CheckGreenIconSVG />
-                                                    {lead.contact_details.phone}
+                                                    {formatPhoneWithCountryCode(lead.contact_details.phone).formatted}
                                                 </span>
                                             )}
                                             {lead?.contact_details?.email && (

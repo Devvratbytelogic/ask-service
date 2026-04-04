@@ -10,6 +10,7 @@ import LeadSidebar from './LeadSidebar'
 import SubmitQuoteForm from './SubmitQuoteForm'
 import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { ISingleLeadAPIResponseData, DynamicAnswersEntity } from '@/types/singleLead'
+import { formatPhoneWithCountryCode } from '@/utils/formatPhone'
 
 export interface LeadFullDetailsData {
     title?: string
@@ -136,7 +137,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 <div className="border-t border-borderDark space-y-1 mt-4 pt-4">
                                     <div className='flex items-center justify-between gap-2'>
                                         <p className='text-sm text-darkSilver'>Téléphone</p>
-                                        <p className='text-sm text-fontBlack'>{displayData.phoneMasked}</p>
+                                        <p className='text-sm text-fontBlack'>{formatPhoneWithCountryCode(displayData.phoneMasked).formatted}</p>
                                     </div>
                                     <div className='flex items-center justify-between gap-2'>
                                         <p className='text-sm text-darkSilver'>Email</p>

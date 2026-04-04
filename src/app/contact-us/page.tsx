@@ -19,7 +19,7 @@ export default function ContactUsPage() {
     return (
         <>
             <div className="min-h-screen body_x_axis_padding container_y_padding_lg w-full max-w-2xl md:max-w-none md:w-2/3 mx-auto space-y-10 sm:space-y-12 md:space-y-16">
-                <section className="w-full md:w-2/4 md:mx-auto">
+                <section className="w-full md:w-2/4 md:mx-auto scroll-mt-24" id="contact-us-form">
                     <div
                         className="absolute inset-0 top-0 left-0 h-48 sm:h-64 md:h-80 from-[#F8F9FC] to-transparent rounded-b-2xl pointer-events-none"
                         aria-hidden
