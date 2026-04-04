@@ -1,7 +1,9 @@
 import React from 'react'
+import Link from 'next/link'
 import { BackArrowSVG, StarRatingIconSVG, VerifiedShieldIconSVG, VerticalChatDotsSVG } from '@/components/library/AllSVG';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
 import ImageComponent from '@/components/library/ImageComponent';
+import { getVendorProfileRoutePath } from '@/routes/routes';
 
 function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
     return chat.users?.find((u) => !u.itsMe);
@@ -35,6 +37,20 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
     const rating = otherUser?.averageRating ?? null;
     const reviewCount = otherUser?.totalReviews ?? null;
     const isVerified = otherUser?.kyc_status === 'ACTIVE';
+    const isVendor =
+        !!otherUser && (otherUser.role?.name ?? '').toLowerCase() === 'vendor';
+    const vendorProfileHref =
+        selectedChat && otherUser && isVendor && otherUser._id
+            ? getVendorProfileRoutePath(otherUser._id)
+            : null;
+    const avatarClassName =
+        'flex size-10 md:size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] font-semibold text-white text-base md:text-lg';
+    const avatarInner =
+        selectedChat && profilePic ? (
+            <ImageComponent url={profilePic} img_title={name} />
+        ) : (
+            getInitial(name)
+        );
     return (
         <>
             <div className="flex shrink-0 items-start justify-between gap-3 md:gap-4 border-b border-borderDark bg-white px-4 py-3 md:px-6 md:py-4">
@@ -50,13 +66,17 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                             <BackArrowSVG />
                         </button>
                     )}
-                    <div className="flex size-10 md:size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] font-semibold text-white text-base md:text-lg">
-                        {selectedChat && profilePic ? (
-                            <ImageComponent url={profilePic} img_title={name} />
-                        ) : (
-                            getInitial(name)
-                        )}
-                    </div>
+                    {vendorProfileHref ? (
+                        <Link
+                            href={vendorProfileHref}
+                            className={`${avatarClassName} cursor-pointer transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fontBlack`}
+                            aria-label={`Voir le profil de ${name}`}
+                        >
+                            {avatarInner}
+                        </Link>
+                    ) : (
+                        <div className={avatarClassName}>{avatarInner}</div>
+                    )}
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
                             <h2 className="font-bold text-fontBlack text-sm md:text-base truncate">{name}</h2>
@@ -97,7 +117,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                         )}
                     </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                {/* <div className="flex shrink-0 items-center gap-2">
                     <button
                         type="button"
                         className="rounded p-1.5 text-darkSilver hover:bg-borderDark"
@@ -105,7 +125,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                     >
                         <VerticalChatDotsSVG />
                     </button>
-                </div>
+                </div> */}
             </div>
         </>
     )
