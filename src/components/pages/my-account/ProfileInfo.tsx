@@ -31,6 +31,7 @@ export default function ProfileInfo() {
     const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
+    const [profilePicRenderKey, setProfilePicRenderKey] = useState(0)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const { data, isLoading } = useGetUserProfileInfoQuery()
     const [updateUserProfileInfo, { isLoading: isUpdating }] = useUpdateUserProfileInfoMutation()
@@ -86,9 +87,11 @@ export default function ProfileInfo() {
                 if (profilePicFile) {
                     formData.append('profile_pic', profilePicFile)
                 }
+                const hadProfilePicUpload = !!profilePicFile
                 await updateUserProfileInfo(formData).unwrap()
                 addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
+                if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
                 setIsEditing(false)
             } catch {
                 // addToast({ title: 'Failed to update profile', color: 'danger', timeout: 2000 })
@@ -219,8 +222,9 @@ export default function ProfileInfo() {
                         aria-label="Upload profile picture"
                     />
                     {avatarSrc ? (
-                        <div className='size-16 shrink-0 rounded-full overflow-hidden'>
+                        <div className='size-16 shrink-0 rounded-full overflow-hidden border border-gray-200'>
                             <ImageComponent
+                                key={`${profilePicRenderKey}-${avatarSrc}`}
                                 url={avatarSrc}
                                 img_title="Profile"
                                 object_cover={true}

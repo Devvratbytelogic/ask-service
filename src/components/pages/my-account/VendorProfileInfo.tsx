@@ -45,6 +45,7 @@ export default function VendorProfileInfo() {
     const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
+    const [profilePicRenderKey, setProfilePicRenderKey] = useState(0)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const [updateVendorProfileInfo, { isLoading: isUpdating }] = useUpdateVendorProfileInfoMutation()
     const { data } = useGetVendorProfileInfoQuery()
@@ -109,9 +110,11 @@ export default function VendorProfileInfo() {
             }
 
             try {
+                const hadProfilePicUpload = !!profilePicFile
                 await updateVendorProfileInfo(formData).unwrap()
                 addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
+                if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
                 setIsEditing(false)
             } catch {
                 // Error is handled by RTK Query / toast
@@ -267,8 +270,9 @@ export default function VendorProfileInfo() {
                         aria-label="Upload profile picture"
                     />
                     {avatarSrc ? (
-                        <div className='size-16 shrink-0 rounded-full overflow-hidden'>
+                        <div className='size-16 shrink-0 rounded-full overflow-hidden border border-gray-200'>
                             <ImageComponent
+                                key={`${profilePicRenderKey}-${avatarSrc}`}
                                 url={avatarSrc}
                                 img_title="Profile"
                                 object_cover={true}

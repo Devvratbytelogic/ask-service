@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ImageComponentProps {
   url?: string;
@@ -13,6 +13,10 @@ interface ImageComponentProps {
 
 export default function ImageComponent({ url, img_title, object_cover = true, object_contain = false }: ImageComponentProps) {
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [url]);
 
   const objectFitClass = object_contain ? 'object-contain' : object_cover ? 'object-cover' : '';
   const fallbackLetters = img_title
