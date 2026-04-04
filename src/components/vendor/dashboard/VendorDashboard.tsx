@@ -2,12 +2,12 @@
 
 import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from '@heroui/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Tooltip } from '@heroui/react'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import 'moment/locale/fr'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -15,11 +15,14 @@ import SupportAlert from './SupportAlert'
 import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { formatPhoneWithCountryCode } from '@/utils/formatPhone'
 
+const LEADS_PER_PAGE = 10
+
 export default function VendorDashboard() {
     const dispatch = useDispatch()
     const router = useRouter()
     const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all')
     const [sortFilter, setSortFilter] = useState('newest')
+    const [leadsPage, setLeadsPage] = useState(1)
 
     const { data: globalSettings } = useGetGlobalSettingsQuery()
     const quoteLimit = globalSettings?.data?.quote_limit ?? 5
@@ -53,14 +56,23 @@ export default function VendorDashboard() {
     const isActiveLocked = showLockedOnly
     const isActivePurchased = showPurchasedOnly
 
+    useEffect(() => {
+        setLeadsPage(1)
+    }, [serviceCategoryFilter, sortFilter, showPurchasedOnly, showQuotedOnly, showLockedOnly])
+
     const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery(
         {
             ...leadsParams,
             ...(showQuotedOnly && { quoted: true }),
+            page: leadsPage,
+            limit: LEADS_PER_PAGE,
         },
         { pollingInterval: 10000 },
     )
-    const allLeads = leadsData?.data ?? []
+    const rawLeads = leadsData?.data?.items
+    const leadsTotal = leadsData?.data?.total ?? 0
+    const leadsTotalPages = leadsData?.data?.totalPages ?? 0
+    const allLeads = Array.isArray(rawLeads) ? rawLeads : []
 
     const leads = useMemo(
         () => {
@@ -79,6 +91,11 @@ export default function VendorDashboard() {
             data: { leadId: lead._id, creditsToUnlock: lead.creditsToUnlock },
             modalSize: 'sm',
         }))
+    }
+
+    const handleLeadsPageChange = (page: number) => {
+        setLeadsPage(page)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     const serviceCategoryOptions = useMemo(() => [
@@ -219,7 +236,11 @@ export default function VendorDashboard() {
                                     {(item) => <DropdownItem key={item.key}>{item.label}</DropdownItem>}
                                 </DropdownMenu>
                             </Dropdown>
-                            <span className="text-sm text-darkSilver">{leads.length} prospect{leads.length !== 1 ? 's' : ''} affiché{leads.length !== 1 ? 's' : ''}</span>
+                            <span className="text-sm text-darkSilver">
+                                {leadsTotal > 0
+                                    ? `${Math.min((leadsPage - 1) * LEADS_PER_PAGE + 1, leadsTotal)}–${Math.min(leadsPage * LEADS_PER_PAGE, leadsTotal)} sur ${leadsTotal} prospect${leadsTotal !== 1 ? 's' : ''}`
+                                    : `${leads.length} prospect${leads.length !== 1 ? 's' : ''} affiché${leads.length !== 1 ? 's' : ''}`}
+                            </span>
                         </div>
                     </div>
 
@@ -239,8 +260,8 @@ export default function VendorDashboard() {
                                 </Link>
                             </div>
                         )} */}
-                        {leads && leads?.length > 0 && leads?.map((lead, index) => (
-                            <div key={index} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
+                        {leads && leads?.length > 0 && leads?.map((lead) => (
+                            <div key={lead._id} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
                                 <Link
                                     href={generateLeadDetailRoutePath(lead?._id, leadsTabForLink ? { from: leadsTabForLink } : undefined)}
                                     className="flex-1 min-w-0 space-y-3 cursor-pointer hover:opacity-90 transition-opacity block"
@@ -366,6 +387,25 @@ export default function VendorDashboard() {
                             </div>
                         ))}
                     </div>
+                    {leadsTotalPages > 1 && (
+                        <div className="flex justify-center pt-2">
+                            <Pagination
+                                total={leadsTotalPages}
+                                page={leadsPage}
+                                onChange={handleLeadsPageChange}
+                                showControls
+                                color="primary"
+                                radius="full"
+                                classNames={{
+                                    cursor: 'bg-primaryColor text-white',
+                                    item: 'cursor-pointer',
+                                    prev: 'cursor-pointer',
+                                    next: 'cursor-pointer',
+                                    ellipsis: 'cursor-pointer',
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Support Banner */}

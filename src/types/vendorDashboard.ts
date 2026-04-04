@@ -23,21 +23,31 @@ export interface IVendorAvailableLeadsAPIResponse {
     http_status_code: number;
     http_status_msg: string;
     success: boolean;
-    data?: (IVendorAvailableLeads)[] | null;
+    data: IVendorAvailableLeadsData;
     message: string;
     timestamp: string;
-}
-export interface IVendorAvailableLeads {
+  }
+  export interface IVendorAvailableLeadsData {
+    items?: (ItemsEntity)[] | null;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }
+  export interface ItemsEntity {
     _id: string;
     reference_no: string;
     user: string;
     service_category: ServiceCategory;
-    child_category: string;
+    child_category?: null;
     manual_child_category?: null;
-    frequency: string;
-    selected_options?: (string | null)[] | null;
-    preferred_start_date: string;
-    preferred_time_of_day: string;
+    selected_options?: (null)[] | null;
+    preferred_start_date?: null;
+    preferred_time_of_day?: null;
+    start_date?: null;
+    start_time?: null;
+    end_date?: null;
+    end_time?: null;
     note?: string | null;
     address_1: string;
     address_2: string;
@@ -45,33 +55,36 @@ export interface IVendorAvailableLeads {
     state: string;
     country: string;
     pincode: string;
-    status: string;
     contact_details: ContactDetails;
+    status: string;
     deletedAt?: null;
     reason?: null;
+    dynamic_answers?: (DynamicAnswersEntity)[] | null;
     createdAt: string;
     updatedAt: string;
     __v: number;
     unlocked: boolean;
     creditsToUnlock: number;
     quotes_count: number;
-    dynamic_answers?: DynamicAnswer[] | null;
-}
-export interface DynamicAnswer {
-    question_id: string;
-    key: string;
-    label: string;
-    value: string;
-    _id: string;
-}
-export interface ServiceCategory {
+  }
+  export interface ServiceCategory {
     _id: string;
     title: string;
-}
-export interface ContactDetails {
+    company_credit: number;
+    credit: number;
+  }
+  export interface ContactDetails {
     first_name: string;
     last_name: string;
     client_type: string;
     phone: string;
     email: string;
-}
+  }
+  export interface DynamicAnswersEntity {
+    question_id: string;
+    key: string;
+    label: string;
+    value: string;
+    _id: string;
+  }
+  
