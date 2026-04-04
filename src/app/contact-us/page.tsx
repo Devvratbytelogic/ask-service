@@ -12,9 +12,9 @@ export default function ContactUsPage() {
     const { data: globalSettings } = useGetGlobalSettingsQuery()
     const settings = globalSettings?.data
 
-    const address = settings?.address || '1258 Maplewood Avenue, Suite 402'
-    const email = settings?.email || 'connect@askservice.com'
-    const phone = settings?.phone || '01 987654321'
+    const address = settings?.address || ''
+    const email = settings?.email || ''
+    const phone = settings?.phone || ''
 
     return (
         <>

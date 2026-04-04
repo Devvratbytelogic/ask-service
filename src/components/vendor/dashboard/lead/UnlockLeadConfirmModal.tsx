@@ -41,7 +41,7 @@ export default function UnlockLeadConfirmModal() {
             <div className="p-4 px-6 border-b border-borderDark space-y-4">
                 <h2 className="font-bold text-xl text-fontBlack">Débloquer ce prospect?</h2>
                 <p className="text-sm text-darkSilver">
-                    Cette action utilisera <span className="font-semibold text-fontBlack">{creditsToUnlock} crédits</span> pour accéder aux détails complets de la demande. Cette action est irréversible.
+                    Cette action utilisera <span className="font-semibold text-fontBlack">{creditsToUnlock} points</span> pour accéder aux détails complets de la demande. Cette action est irréversible.
                 </p>
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-primaryColor/5 border border-primaryColor/20">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primaryColor/10">

@@ -11,6 +11,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import BillingInfoModal from './BillingInfoModal'
+import moment from 'moment'
+import 'moment/locale/fr'
 
 type CreditPackageDisplay = {
     id: string
@@ -50,6 +52,16 @@ function translateTxnDescription(description: string): string {
     const match = description.match(/^Unlocked Lead (.+?) in (.+)$/i)
     if (match) return `Demande débloquée (${match[1]} – ${match[2]})`
     return description
+}
+
+function formatCreditsTransactionDate(iso: string | undefined | null): string {
+    if (!iso) return '—'
+    const d = new Date(iso)
+    if (Number.isNaN(d.getTime())) return iso
+    return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(d)
 }
 
 const PERIOD_OPTIONS = [
@@ -308,7 +320,7 @@ export default function CreditsWallet() {
                     </span>
                     <div className="flex-1">
                         <p className="font-semibold text-[#2E7D32]">Payment Successful</p>
-                        <p className="text-sm text-[#2E7D32]/80">Your credits have been added to your account.</p>
+                        <p className="text-sm text-[#2E7D32]/80">Your points have been added to your account.</p>
                     </div>
                     <button
                         onClick={() => setPaymentStatus(null)}
@@ -583,7 +595,7 @@ export default function CreditsWallet() {
                                                     {txn.balanceAfter} points
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-darkSilver">
-                                                    {txn.date}
+                                                    {moment(txn.date).locale('fr').fromNow()} ({moment(txn.date).locale('fr').format('DD MMMM YYYY, h:mm A')})
                                                 </td>
                                                 <td className="px-4 py-4">
                                                     {txn.type?.toLowerCase() === 'purchase' && (

@@ -1,5 +1,5 @@
 import { useFormik } from "formik"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import ProgressStepBar from "@/components/library/ProgressStepBar"
 import ContactInformation from "./ContactInformation"
 import DynamicQuestionsStep from "./DynamicQuestionsStep"
@@ -100,6 +100,8 @@ const RequestServiceFlowIndex = () => {
         child_services?: unknown[]
         isEditMode?: boolean
         request?: { _id: string; [key: string]: unknown }
+        autoSubmitAfterEmailVerification?: boolean
+        autoSubmitAfterPhoneVerification?: boolean
         [key: string]: unknown
     } | undefined
     const data = modalData
@@ -281,12 +283,18 @@ const RequestServiceFlowIndex = () => {
                 const ref = res?.data?.request?.reference_no
                 setSubmissionRef(ref ?? null)
                 if (res?.data?.flow === flowTypes.PHONE_VERIFICATION_REQUIRED) {
+                    const phoneVerifyRequestFlowData = {
+                        ...data,
+                        initialFormValues: values,
+                        initialStep: reviewStepIndex,
+                    }
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
                         data: {
                             ...values,
                             phoneNumber: values?.customerPhoneNumber,
-                            parentCallBackModal: 'SubmissionSuccess',
+                            returnToRequestFlowAfterPhoneVerify: true,
+                            requestFlowData: phoneVerifyRequestFlowData,
                             codeRef: ref,
                             nextModalSize: 'lg',
                             skipToCodeEntry: true,
@@ -386,15 +394,19 @@ const RequestServiceFlowIndex = () => {
                 if (isPhoneVerificationRequired) {
                     const ref = "REQ-" + Math.random().toString(36).slice(2, 9).toUpperCase()
                     setSubmissionRef(ref)
+                    const phoneVerifyRequestFlowData = {
+                        ...data,
+                        initialFormValues: values,
+                        initialStep: reviewStepIndex,
+                    }
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
                         data: {
                             ...data,
                             ...values,
-                            initialStep: reviewStepIndex,
-                            initialFormValues: values,
                             phoneNumber: values?.customerPhoneNumber,
-                            parentCallBackModal: 'RequestServiceFlowIndex',
+                            returnToRequestFlowAfterPhoneVerify: true,
+                            requestFlowData: phoneVerifyRequestFlowData,
                             codeRef: ref,
                             nextModalSize: 'lg',
                             skipToCodeEntry: true,
@@ -445,6 +457,35 @@ const RequestServiceFlowIndex = () => {
     const currentQuestionStep = questionSteps[getStepCount - 1]
     const questionsForStep = currentQuestionStep != null ? questionsByStep[currentQuestionStep] ?? [] : []
     const isQuestionsApiLoading = !!categoryId && isQuestionsLoading
+
+    const submitFormRef = useRef(formik.submitForm)
+    submitFormRef.current = formik.submitForm
+    const autoSubmitAfterVerifyScheduledRef = useRef(false)
+
+    const shouldAutoSubmitAfterVerification =
+        !!(modalData?.autoSubmitAfterEmailVerification || modalData?.autoSubmitAfterPhoneVerification)
+
+    useEffect(() => {
+        if (!shouldAutoSubmitAfterVerification) return
+        if (autoSubmitAfterVerifyScheduledRef.current) return
+        if (isQuestionsApiLoading || !categoryId) return
+        if (getStepCount !== reviewStepIndex) return
+
+        autoSubmitAfterVerifyScheduledRef.current = true
+        const t = window.setTimeout(() => {
+            void submitFormRef.current()
+        }, 0)
+        return () => {
+            window.clearTimeout(t)
+            autoSubmitAfterVerifyScheduledRef.current = false
+        }
+    }, [
+        shouldAutoSubmitAfterVerification,
+        isQuestionsApiLoading,
+        categoryId,
+        getStepCount,
+        reviewStepIndex,
+    ])
 
     return (
         <>

@@ -122,7 +122,27 @@ const MobileOtpVerification = () => {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
                 const authData = responseData as AuthResponseData
-                if (stayOnPage) {
+                const returnToRequestFlowAfterPhoneVerify = !!(
+                    data as { returnToRequestFlowAfterPhoneVerify?: boolean }
+                )?.returnToRequestFlowAfterPhoneVerify
+                const requestFlowData = (data as { requestFlowData?: unknown })?.requestFlowData
+                if (
+                    returnToRequestFlowAfterPhoneVerify &&
+                    requestFlowData &&
+                    typeof requestFlowData === "object"
+                ) {
+                    dispatch(closeModal())
+                    dispatch(
+                        openModal({
+                            componentName: "RequestServiceFlowIndex",
+                            data: {
+                                ...(requestFlowData as Record<string, unknown>),
+                                autoSubmitAfterPhoneVerification: true,
+                            },
+                            modalSize: "lg",
+                        })
+                    )
+                } else if (stayOnPage) {
                     dispatch(closeModal())
                 } else if (data?.callBackModal || data?.parentCallBackModal) {
                     dispatch(

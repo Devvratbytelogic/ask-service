@@ -47,11 +47,14 @@ export default function VerifyEmailOtpModal() {
                 router.refresh()
             }
             addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
-            if (returnToRequestFlow && requestFlowData) {
+            if (returnToRequestFlow && requestFlowData && typeof requestFlowData === "object") {
                 dispatch(closeModal())
                 dispatch(openModal({
                     componentName: "RequestServiceFlowIndex",
-                    data: requestFlowData,
+                    data: {
+                        ...(requestFlowData as Record<string, unknown>),
+                        autoSubmitAfterEmailVerification: true,
+                    },
                     modalSize: "lg",
                 }))
             } else {
@@ -94,7 +97,7 @@ export default function VerifyEmailOtpModal() {
                 Verify Your Email
             </h2>
             <p className="text-darkSilver text-sm text-center mt-2">
-                A 6-digit code has been sent to{" "}
+                A {OTP_LENGTH}-digit code has been sent to{" "}
                 <span className="text-fontBlack font-medium">{email}</span>
             </p>
 

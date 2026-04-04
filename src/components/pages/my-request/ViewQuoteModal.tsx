@@ -143,7 +143,7 @@ export default function ViewQuoteModal() {
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                         <NoteIconSVG />
-                                        {quote?.price_display} prix TTC
+                                        {quote?.price_display}
                                     </span>
                                 </div>
                             </div>

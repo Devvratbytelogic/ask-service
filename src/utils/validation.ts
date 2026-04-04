@@ -81,7 +81,7 @@ export const contactFormValidationSchema = Yup.object({
 export const vendorProfileInfoValidationSchema = Yup.object({
     businessName: Yup.string().required('Business name is required'),
     ownerName: Yup.string().required('Owner name is required'),
-    serviceCategory: Yup.string().required('Service category is required'),
+    // serviceCategory: Yup.string().required('Service category is required'),
     email: yupRequiredEmail(),
     phone: Yup.string().required('Phone number is required'),
     businessAddress: Yup.string().required('Business address is required'),

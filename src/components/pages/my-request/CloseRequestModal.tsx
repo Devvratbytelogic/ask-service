@@ -5,17 +5,13 @@ import { useCloseServiceRequestMutation } from '@/redux/rtkQueries/allPostApi'
 import { RootState } from '@/redux/appStore'
 import { closeModal } from '@/redux/slices/allModalSlice'
 import { Button, Checkbox, Spinner, Textarea } from '@heroui/react'
+import moment from 'moment'
+import 'moment/locale/fr'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const OTHER_REASON_KEY = 'Other reason'
 
-function formatDate(isoDate?: string | null): string {
-    if (!isoDate) return '—'
-    const d = new Date(isoDate)
-    if (Number.isNaN(d.getTime())) return '—'
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-}
 
 const CLOSE_REASONS = [
     { key: 'No longer need the service', label: 'Je n\'ai plus besoin de ce service' },
@@ -67,7 +63,15 @@ export default function CloseRequestModal() {
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-darkSilver">
                     <span className="flex items-center gap-1.5">
                         <CalendarSVG />
-                        {formatDate(request?.createdAt)}
+                        {/* {request?.date ? moment(request.date).format('DD-MM-YYYY [à] HH:mm') : 'Unknown Date'} */}
+
+                        {request?.date ? (
+                            <>
+                                {moment(request.date).format('DD-MM-YYYY [à] HH:mm')}
+                            </>
+                        ) : (
+                            '—'
+                        )}
                     </span>
                     <span className="flex items-center gap-1.5">
                         <LocationSVG />

@@ -60,7 +60,7 @@ const baseQueryWithAuth: BaseQueryFn<
                 return { data: responseData as IAPIResponse };
             }
             // if (status === 401) {
-                addToast({ title: "Error", description: responseData?.message ?? "Unknown error", color: "danger", timeout: 2000 })
+                addToast({ title: "", description: responseData?.message ?? "Unknown error", color: "danger", timeout: 2000 })
             // }
             console.error(`API: ${args}, Failed to fetch data`);
             return {

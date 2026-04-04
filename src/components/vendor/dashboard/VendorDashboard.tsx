@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import moment from 'moment'
+import 'moment/locale/fr'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
 import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -281,7 +282,7 @@ export default function VendorDashboard() {
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <TimeIconSVG />
-                                            Posted {moment(lead.createdAt).fromNow()} ({moment(lead.createdAt).format('DD MMM YYYY, h:mm A')})
+                                            Posted {moment(lead.createdAt).locale('fr').fromNow()} ({moment(lead.createdAt).locale('fr').format('DD MMMM YYYY, h:mm A')})
                                         </span>
                                     </div>
 

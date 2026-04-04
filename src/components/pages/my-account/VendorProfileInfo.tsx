@@ -26,7 +26,7 @@ const COMPANY_SIZE_OPTIONS = [
 const defaultInitialValues = {
     businessName: '',
     ownerName: '',
-    serviceCategory: '',
+    // serviceCategory: '',
     email: '',
     phone: '',
     businessAddress: '',
@@ -69,7 +69,7 @@ export default function VendorProfileInfo() {
     const initialValues = {
         businessName: profileData?.business_name ?? defaultInitialValues.businessName,
         ownerName: [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' '),
-        serviceCategory: profileData?.service?.title ?? defaultInitialValues.serviceCategory,
+        // serviceCategory: profileData?.service?.title ?? defaultInitialValues.serviceCategory,
         email: profileData?.email ?? defaultInitialValues.email,
         phone: profileData?.phone ?? defaultInitialValues.phone,
         businessAddress: profileData?.address ?? defaultInitialValues.businessAddress,
@@ -104,6 +104,7 @@ export default function VendorProfileInfo() {
             formData.append('years_of_activity', formValues.yearsOfActivity)
             formData.append('company_size', formValues.companySize)
             formData.append('about_company', formValues.aboutCompany)
+            // formData.append('service', formValues.serviceCategory)
 
             if (profilePicFile) {
                 formData.append('profile_pic', profilePicFile)
@@ -353,7 +354,7 @@ export default function VendorProfileInfo() {
                             startContent={<ProfileIconSVG />}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Type de service
                         </label>
@@ -368,7 +369,7 @@ export default function VendorProfileInfo() {
                             isDisabled={!isEditing}
                             startContent={<BriefcaseIconSVG />}
                         />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Email | Phone */}
