@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { GlobeIconSVG } from '@/components/library/AllSVG'
-import type { IVendorProfileInfoData } from '@/types/vendorProfile'
+import { IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails'
 
 interface VendorLinksProps {
-    profile?: IVendorProfileInfoData | null
+    profile?: IVendorDetailsAPIResponseDataVendor | null
 }
 
 export default function VendorLinks({ profile }: VendorLinksProps) {

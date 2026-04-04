@@ -1,18 +1,18 @@
 import { CalendarSVG, UsersIconSVG, TimeIconSVG, EnvelopeIconSVG, PhoneIconSVG } from '@/components/library/AllSVG';
 import Link from 'next/link';
-import type { IVendorProfileInfoData } from '@/types/vendorProfile';
+import { IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails';
 
 interface VendorAboutProps {
-    profile?: IVendorProfileInfoData | null
+    profile?: IVendorDetailsAPIResponseDataVendor | null
 }
 
 export default function VendorAbout({ profile }: VendorAboutProps) {
-    const aboutText = profile?.about_company || 'Securatim is a leading private security and guarding company, offering a full range of security services for businesses. Our security officers are trained to handle all emergency situations, and we are committed to providing our clients with superior security solutions.';
-    const yearsOfActivity = profile?.years_of_activity || '2 years';
-    const companySize = profile?.company_size || '2-10';
-    const responseTime = profile?.response_time || '17 hours';
-    const email = profile?.email || 'contact@securatim.co.uk';
-    const phone = profile?.phone || '020 7123 4567';
+    const aboutText = profile?.about_company || '-';
+    const yearsOfActivity = profile?.years_of_activity || '-';
+    const companySize = profile?.company_size || '-';
+    const responseTime = profile?.response_time || '-';
+    const email = profile?.email || '-';
+    const phone = profile?.phone || '-';
 
     return (
         <>

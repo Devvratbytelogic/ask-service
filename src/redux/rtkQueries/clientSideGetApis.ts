@@ -23,6 +23,7 @@ import { IAllFaqsAPIResponse } from '@/types/faqs';
 import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
 import { IPopupNotificationsAPIResponse } from '@/types/popupNotifications';
 import { IGlobalSettingsAPIResponse } from '@/types/global';
+import { IVendorDetailsAPIResponse } from '@/types/vendorDetails';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -68,6 +69,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
             }),
             providesTags: ['VendorProfile'],
+        }),
+        getVendorDetailsById: builder.query<IVendorDetailsAPIResponse, { vendorId: string }>({
+            query: ({ vendorId }) => ({
+                url: `/user/vendor-details/${vendorId}`,
+                method: 'GET',
+            }),
         }),
         getUserProfileInfo: builder.query<IUserProfileInfoAPIResponse, void>({
             query: () => ({
@@ -127,7 +134,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorDashboard'],
         }),
-        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; page?: number; limit?: number; quoted?: boolean } | void>({
+        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; page?: number; limit?: number; quoted?: boolean, unlocked?: boolean } | void>({
             query: (arg) => ({
                 url: `/vendor/available-leads`,
                 method: 'GET',
@@ -286,6 +293,7 @@ export const {
     useGetAllServicesQuery,
     useGetAllServicesDocumentsRequiredQuery,
     useGetVendorProfileInfoQuery,
+    useGetVendorDetailsByIdQuery,
     useGetUserProfileInfoQuery,
     useGetUserNotificationQuery,
     useGetAllVendorDocumentsQuery,

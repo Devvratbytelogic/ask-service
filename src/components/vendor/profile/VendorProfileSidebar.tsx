@@ -5,12 +5,12 @@ import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { FlagIconSVG, LocationSVG, ShieldSecurityIconSVG, StarRatingIconSVG, VerifiedGreenShieldIconSVG } from '@/components/library/AllSVG'
 import { Button } from '@heroui/react'
-import type { IVendorProfileInfoData } from '@/types/vendorProfile'
 import { useGetAllVendorReviewsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import ImageComponent from '@/components/library/ImageComponent'
+import { IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails'
 
 interface VendorProfileSidebarProps {
-    profile?: IVendorProfileInfoData | null
+    profile?: IVendorDetailsAPIResponseDataVendor | null
 }
 
 export default function VendorProfileSidebar({ profile }: VendorProfileSidebarProps) {
@@ -27,7 +27,7 @@ export default function VendorProfileSidebar({ profile }: VendorProfileSidebarPr
         <>
             <div className="rounded-2xl border border-borderDark p-6">
                 {/* Logo */}
-                <div className="mb-4 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FB2C36] p-3 m-auto">
+                <div className="mb-4 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FB2C36] m-auto">
                     {profile?.profile_pic ? (
                         <ImageComponent url={profile.profile_pic} img_title="profile_pic" object_cover={true} />
                     ) : (

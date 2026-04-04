@@ -5,15 +5,16 @@ import VendorAbout from './VendorAbout'
 import VendorReviews from './VendorReviews'
 import VendorLinks from './VendorLinks'
 import VendorServices from './VendorServices'
-import type { IVendorProfileInfoData } from '@/types/vendorProfile'
+import { IVendorDetailsAPIResponseDataVendor, IVendorDetailsAPIResponseDataReview } from '@/types/vendorDetails'
 
 type TabId = 'about' | 'reviews' | 'links' | 'services';
 
 interface VendorProfileDetailsProps {
-    profile?: IVendorProfileInfoData | null
+    profile?: IVendorDetailsAPIResponseDataVendor | null
+    review?: IVendorDetailsAPIResponseDataReview | null
 }
 
-export default function VendorProfileDetails({ profile }: VendorProfileDetailsProps) {
+export default function VendorProfileDetails({ profile, review }: VendorProfileDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>('about');
 
     return (
@@ -34,7 +35,7 @@ export default function VendorProfileDetails({ profile }: VendorProfileDetailsPr
                     <Tab key="about" title="About">
                         <div className='space-y-6'>
                             <VendorAbout profile={profile} />
-                            <VendorReviews />
+                            <VendorReviews review={review} />
                             <VendorLinks profile={profile} />
                             <VendorServices profile={profile} />
                         </div>

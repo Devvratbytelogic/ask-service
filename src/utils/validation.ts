@@ -92,4 +92,15 @@ export const vendorProfileInfoValidationSchema = Yup.object({
     yearsOfActivity: Yup.string().required("Les années d'activités sont requises"),
     // companySize: Yup.string().required('La taille de l\'entreprise est requise'),
     aboutCompany: Yup.string().required("La description de l'entreprise est requise"),
+    websiteLink: Yup.string()
+        .trim()
+        .test('empty-or-url', 'URL invalide', (value) => {
+            if (!value) return true
+            try {
+                const u = new URL(value)
+                return u.protocol === 'http:' || u.protocol === 'https:'
+            } catch {
+                return false
+            }
+        }),
 })

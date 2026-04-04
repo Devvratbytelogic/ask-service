@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { HiOutlineArrowDownTray } from 'react-icons/hi2'
 import moment from 'moment'
 import { useRouter } from 'next/navigation'
-import { getMessageRoutePath } from '@/routes/routes'
+import { getMessageRoutePath, getVendorProfileRoutePath } from '@/routes/routes'
 
 function formatQuoteDate(dateStr: string) {
     if (!dateStr) return '—'
@@ -118,7 +118,7 @@ export default function QuoteDetailModal() {
                     <BackArrowSVG />
                 </Button>
                 <div className="min-w-0">
-                    <h2 className="font-bold text-xl text-fontBlack">{vendor.provider_name}</h2>
+                    <h2 className="font-bold text-xl text-fontBlack cursor-pointer" onClick={() => {router.push(getVendorProfileRoutePath(vendor._id)), dispatch(closeModal())}}>{vendor.provider_name}</h2>
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-sm text-darkSilver">
                         <span className="flex items-center gap-1.5">
                             <StarRatingIconSVG />

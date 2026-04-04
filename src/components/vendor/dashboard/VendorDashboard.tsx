@@ -43,6 +43,7 @@ export default function VendorDashboard() {
     const showPurchasedOnly = searchParams.get('leads') === 'purchased'
     const showQuotedOnly = searchParams.get('leads') === 'quoted'
     const showLockedOnly = searchParams.get('leads') === 'available'
+    console.log('showLockedOnly', showLockedOnly);
 
     const leadsTabForLink: 'purchased' | 'quoted' | 'available' | undefined = showPurchasedOnly
         ? 'purchased'
@@ -64,6 +65,7 @@ export default function VendorDashboard() {
         {
             ...leadsParams,
             ...(showQuotedOnly && { quoted: true }),
+            unlocked: showLockedOnly ? false : true,
             page: leadsPage,
             limit: LEADS_PER_PAGE,
         },
@@ -73,16 +75,6 @@ export default function VendorDashboard() {
     const leadsTotal = leadsData?.data?.total ?? 0
     const leadsTotalPages = leadsData?.data?.totalPages ?? 0
     const allLeads = Array.isArray(rawLeads) ? rawLeads : []
-
-    const leads = useMemo(
-        () => {
-            if (showQuotedOnly) return allLeads
-            if (showPurchasedOnly) return allLeads.filter((l) => l?.unlocked)
-            if (showLockedOnly) return allLeads.filter((l) => !l?.unlocked)
-            return allLeads
-        },
-        [showPurchasedOnly, showQuotedOnly, showLockedOnly, allLeads],
-    )
     const isLoading = dashboardLoading || leadsLoading
 
     const handleUnlockLeadClick = (lead: { _id: string; creditsToUnlock?: number }) => {
@@ -239,7 +231,7 @@ export default function VendorDashboard() {
                             <span className="text-sm text-darkSilver">
                                 {leadsTotal > 0
                                     ? `${Math.min((leadsPage - 1) * LEADS_PER_PAGE + 1, leadsTotal)}–${Math.min(leadsPage * LEADS_PER_PAGE, leadsTotal)} sur ${leadsTotal} prospect${leadsTotal !== 1 ? 's' : ''}`
-                                    : `${leads.length} prospect${leads.length !== 1 ? 's' : ''} affiché${leads.length !== 1 ? 's' : ''}`}
+                                    : `${allLeads?.length} prospect${allLeads?.length !== 1 ? 's' : ''} affiché${allLeads?.length !== 1 ? 's' : ''}`}
                             </span>
                         </div>
                     </div>
@@ -260,7 +252,7 @@ export default function VendorDashboard() {
                                 </Link>
                             </div>
                         )} */}
-                        {leads && leads?.length > 0 && leads?.map((lead) => (
+                        {allLeads && allLeads?.length > 0 && allLeads?.map((lead) => (
                             <div key={lead._id} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
                                 <Link
                                     href={generateLeadDetailRoutePath(lead?._id, leadsTabForLink ? { from: leadsTabForLink } : undefined)}

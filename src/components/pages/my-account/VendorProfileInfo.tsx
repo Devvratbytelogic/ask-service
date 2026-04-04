@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import PhoneInput from 'react-phone-input-2'
-import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
+import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, GlobeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
@@ -37,6 +37,7 @@ const defaultInitialValues = {
     yearsOfActivity: '',
     companySize: '',
     aboutCompany: '',
+    websiteLink: '',
 }
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -80,6 +81,7 @@ export default function VendorProfileInfo() {
         yearsOfActivity: profileData?.years_of_activity ?? defaultInitialValues.yearsOfActivity,
         companySize: profileData?.company_size ?? defaultInitialValues.companySize,
         aboutCompany: profileData?.about_company ?? defaultInitialValues.aboutCompany,
+        websiteLink: profileData?.website_link ?? defaultInitialValues.websiteLink,
     }
 
     const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue } = useFormik({
@@ -104,6 +106,7 @@ export default function VendorProfileInfo() {
             formData.append('years_of_activity', formValues.yearsOfActivity)
             formData.append('company_size', formValues.companySize)
             formData.append('about_company', formValues.aboutCompany)
+            formData.append('website_link', formValues.websiteLink.trim())
             // formData.append('service', formValues.serviceCategory)
 
             if (profilePicFile) {
@@ -282,8 +285,8 @@ export default function VendorProfileInfo() {
                     ) : (
                         <div
                             className={`flex size-16 shrink-0 items-center justify-center rounded-full text-lg font-bold ${hasBusinessDetails
-                                    ? 'bg-primaryColor text-white'
-                                    : 'bg-primaryColor/20 text-primaryColor'
+                                ? 'bg-primaryColor text-white'
+                                : 'bg-primaryColor/20 text-primaryColor'
                                 }`}
                         >
                             {avatarInitials}
@@ -422,7 +425,7 @@ export default function VendorProfileInfo() {
                                     inputStyle={{ height: '52px' }}
                                     dropdownClass="!z-[9999]"
                                     dropdownStyle={{ zIndex: 9999 }}
-                                    // disabled
+                                // disabled
                                 />
                             </div>
                             {!isEditing && profileData?.is_phone_verified === false && profileData?.phone !== null && (
@@ -578,6 +581,26 @@ export default function VendorProfileInfo() {
                                 <SelectItem key={opt}>{opt}</SelectItem>
                             ))}
                         </Select>
+                    </div>
+                    <div>
+                        <label className="mb-1.5 block text-sm font-medium text-fontBlack">
+                            Lien du site web
+                        </label>
+                        <Input
+                            name="websiteLink"
+                            type="url"
+                            inputMode="url"
+                            autoComplete="url"
+                            placeholder="https://"
+                            value={values.websiteLink}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!(touched.websiteLink && errors.websiteLink)}
+                            errorMessage={touched.websiteLink && errors.websiteLink}
+                            classNames={{ inputWrapper: 'account_input_design flex-1' }}
+                            isDisabled={!isEditing}
+                            startContent={<span className="text-darkSilver"><GlobeIconSVG /></span>}
+                        />
                     </div>
                 </div>
 

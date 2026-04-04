@@ -3,39 +3,18 @@
 import React from 'react'
 import { Accordion, AccordionItem } from '@heroui/react'
 import { ChevronDownIconSVG } from '@/components/library/AllSVG'
-import type { IVendorProfileInfoData } from '@/types/vendorProfile'
+import { IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails'
 
-const DEFAULT_SERVICES = [
-    {
-        key: 'private-security',
-        title: 'private security guard',
-        description: 'Professional security guards for events, businesses, and residential properties.',
-    },
-    {
-        key: 'fire-safety',
-        title: 'fire safety officer',
-        description: 'Trained fire safety officers to ensure compliance and emergency preparedness at your premises.',
-    },
-    {
-        key: 'isolated-workers',
-        title: 'protection of isolated workers',
-        description: 'Dedicated support and monitoring for staff working alone or in remote locations.',
-    },
-    {
-        key: 'night-surveillance',
-        title: 'Night surveillance',
-        description: 'Around-the-clock night surveillance and patrol services for your property.',
-    },
-]
+
 
 interface VendorServicesProps {
-    profile?: IVendorProfileInfoData | null
+    profile?: IVendorDetailsAPIResponseDataVendor | null
 }
 
 export default function VendorServices({ profile }: VendorServicesProps) {
     const services = profile?.service
         ? [{ key: profile.service.id, title: profile.service.title, description: profile.service.description || '' }]
-        : DEFAULT_SERVICES;
+        : [];
     return (
         <div className="space-y-6">
             <h2 className="text-xl font-bold text-fontBlack">Services</h2>

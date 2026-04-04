@@ -10,6 +10,9 @@ import { useGetVendorAllQuotesQuery } from '@/redux/rtkQueries/clientSideGetApis
 import type { IAllQuotes } from '@/types/allquotes'
 import SupportAlert from './SupportAlert'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+const DESCRIPTION_TOGGLE_MIN_CHARS = 200
 
 export default function VendorAllQuotes() {
     const router = useRouter()
@@ -88,15 +91,31 @@ function translateStatus(status: string): string {
 
 function QuoteCard({ quote }: { quote: IAllQuotes }) {
     const currencySymbol = quote.currency === 'EUR' ? '€' : (quote.currency ?? '€')
+    const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+    const descriptionText = quote.service_description || 'Devis'
+    const showDescriptionToggle = descriptionText.length > DESCRIPTION_TOGGLE_MIN_CHARS
     return (
         <div className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
             <div className="flex-1 min-w-0 space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-bold text-lg text-fontBlack">
-                        {quote.service_description || 'Devis'}
-                    </h3>
-                    <span className="inline-flex items-center rounded-full bg-[#F3E5F5] px-2.5 py-0.5 text-xs font-medium text-[#9C27B0]">
-                        {translateStatus(quote.status)} 
+                <div className="flex flex-wrap items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                        <p
+                            className={`font-bold text-lg text-fontBlack ${showDescriptionToggle && !descriptionExpanded ? 'line-clamp-4' : ''}`}
+                        >
+                            {descriptionText}
+                        </p>
+                        {showDescriptionToggle && (
+                            <button
+                                type="button"
+                                onClick={() => setDescriptionExpanded((v) => !v)}
+                                className="mt-1 text-sm cursor-pointer font-medium text-primaryColor hover:underline"
+                            >
+                                {descriptionExpanded ? 'Voir moins' : 'Voir plus'}
+                            </button>
+                        )}
+                    </div>
+                    <span className="inline-flex items-center rounded-full bg-[#F3E5F5] px-2.5 py-0.5 text-xs font-medium text-[#9C27B0] shrink-0">
+                        {translateStatus(quote.status)}
                     </span>
                 </div>
                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
