@@ -4,7 +4,6 @@ import { Button, Avatar } from '@heroui/react'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { StarRatingIconSVG, StarOutlineIconSVG, ThumbUpIconSVG, RequestNumberSVG } from '@/components/library/AllSVG'
-import { useGetAllVendorReviewsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllVendorReviewsReviewsEntity, RatingDistribution } from '@/types/review'
 import { IVendorDetailsAPIResponseDataReview } from '@/types/vendorDetails'
 
@@ -50,11 +49,12 @@ interface VendorReviewsProps {
     /** When true (e.g. vendor viewing own account), hide "Leave a review" button */
     hideLeaveReviewButton?: boolean
     review?: IVendorDetailsAPIResponseDataReview | null
+    /** Vendor Mongo id for submit-review API */
+    vendorId?: string
 }
 
-export default function VendorReviews({ hideLeaveReviewButton = false, review }: VendorReviewsProps) {
+export default function VendorReviews({ hideLeaveReviewButton = false, review, vendorId }: VendorReviewsProps) {
     const dispatch = useDispatch()
-    console.log('review', review);
     const averageRating = review?.averageRating ?? 0
     const totalReviews = review?.totalReviews ?? 0
     const distribution = review?.ratingDistribution
@@ -78,6 +78,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review }:
                                         componentName: 'LeaveReviewModal',
                                         modalSize: 'xl',
                                         modalPadding: 'px-6 py-6',
+                                        data: vendorId ? { vendorId } : undefined,
                                     })
                                 )
                             }

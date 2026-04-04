@@ -108,6 +108,22 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       invalidatesTags: ['VendorReviews'],
     }),
+    submitReview: builder.mutation({
+      query: (body) => ({
+        url: `/user/submit-review`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['VendorReviews'],
+    }),
+    reportVendor: builder.mutation({
+      query: (body) => ({
+        url: `/user/report-vendor`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['VendorProfile'],
+    }),
     unlockLead: builder.mutation({
       query: (leadId: string) => ({
         url: `/vendor/leads/${leadId}/unlock`,
@@ -204,7 +220,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       invalidatesTags: ['VendorTransactions', 'VendorDashboard'],
     }),
     vendorReadNotification: builder.mutation({
-      query: ({id, body}) => ({
+      query: ({ id, body }) => ({
         url: `/vendor/notification/markAsRead/${id}`,
         method: 'PUT',
         // body,
@@ -212,7 +228,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       invalidatesTags: ['VendorNotifications'],
     }),
     userReadNotification: builder.mutation({
-      query: ({id, body}) => ({
+      query: ({ id, body }) => ({
         url: `/user/notification/markAsRead/${id}`,
         method: 'PUT',
         // body,
@@ -229,7 +245,8 @@ export const {
   useUpdateVendorServicesMutation,
   useUploadVendorDocumentsMutation,
   useUpdateVendorProfileInfoMutation,
-  useUpdateUserProfileInfoMutation,
+  useUpdateUserProfileInfoMutation, 
+  useReportVendorMutation,
   useChangeVendorPasswordMutation,
   useChangeUserPasswordMutation,
   useDeleteVendorAccountMutation,
@@ -237,6 +254,7 @@ export const {
   useVendorNotificationPreferencesMutation,
   useUserNotificationPreferencesMutation,
   useVendorLeaveReviewMutation,
+  useSubmitReviewMutation,
   useUnlockLeadMutation,
   useSubmitQuoteMutation,
   useCloseServiceRequestMutation,

@@ -1,35 +1,71 @@
 'use client'
 
 import { StarRatingIconSVG, StarOutlineIconSVG } from '@/components/library/AllSVG'
+import { useGetCreatedServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { closeModal } from '@/redux/slices/allModalSlice'
-import { Avatar, Button, Select, SelectItem, Textarea } from '@heroui/react'
-import { useDispatch } from 'react-redux'
-import { useState } from 'react'
+import type { DataEntity } from '@/types/allRequests'
+import { addToast, Autocomplete, AutocompleteItem, Avatar, Button, Spinner, Textarea } from '@heroui/react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useMemo, useState } from 'react'
+import { useSubmitReviewMutation } from '@/redux/rtkQueries/allPostApi'
+import { RootState } from '@/redux/appStore'
 
-const REQUEST_IDS = [
-    { key: 'REQ-A7X9K2', label: 'REQ-A7X9K2' },
-    { key: 'REQ-B2K4M8', label: 'REQ-B2K4M8' },
-    { key: 'REQ-C9P1L3', label: 'REQ-C9P1L3' },
-]
+const CREATED_SERVICES_SELECT_LIMIT = 500
 
 const MIN_REVIEW_LENGTH = 20
 
 export default function LeaveReviewModal() {
     const dispatch = useDispatch()
+    const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
-    const [requestId, setRequestId] = useState<string | null>(null)
+    const [selectedServiceRequestId, setSelectedServiceRequestId] = useState<string | null>(null)
+    const [requestInput, setRequestInput] = useState('')
     const [reviewText, setReviewText] = useState('')
+    const [submitReview, { isLoading: isSubmitting }] = useSubmitReviewMutation()
+    const vendorId = modalData?.vendorId
+
+    const { data, isLoading, isError } = useGetCreatedServicesQuery({
+        page: 1,
+        limit: CREATED_SERVICES_SELECT_LIMIT,
+    })
+    const requests = data?.data?.data ?? []
+
+    const filteredRequests = useMemo(() => {
+        const q = requestInput.trim().toLowerCase()
+        if (!q) return requests
+        return requests.filter((r) => (r.request_id ?? '').toLowerCase().includes(q))
+    }, [requests, requestInput])
 
     const displayRating = hoverRating || rating
     const charCount = reviewText.length
-    const canSubmit = requestId && reviewText.length >= MIN_REVIEW_LENGTH && rating > 0
+    const canSubmit =
+        selectedServiceRequestId &&
+        reviewText.length >= MIN_REVIEW_LENGTH &&
+        rating > 0
+
+    const selectPlaceholder = isLoading
+        ? 'Loading requests…'
+        : isError
+            ? 'Could not load requests'
+            : requests.length === 0
+                ? 'No requests yet'
+                : 'Select request ID'
 
     const handleCancel = () => dispatch(closeModal())
-    const handleSubmit = () => {
-        if (!canSubmit) return
-        // TODO: API call to submit review
-        dispatch(closeModal())
+    const handleSubmit = async () => {
+        try {
+            await submitReview({
+                service_request_id: selectedServiceRequestId,
+                vendor: vendorId,
+                rating,
+                review: reviewText.trim(),
+            }).unwrap()
+            addToast({ title: 'Review submitted successfully', color: 'success', timeout: 2000 })
+            dispatch(closeModal())
+        } catch {
+            // Error toast handled by RTK base query
+        }
     }
 
     return (
@@ -62,27 +98,74 @@ export default function LeaveReviewModal() {
 
             {/* Select request ID */}
             <div className="mt-3">
-                <label className="text-sm text-fontBlack font-medium block mb-1">
-                    Select your request ID <span className="text-red-500">*</span>
+                <label className="text-sm text-fontBlack font-medium flex items-center gap-2 mb-1">
+                    <span>
+                        Select your request ID <span className="text-red-500">*</span>
+                    </span>
+                    {isLoading && <Spinner size="sm" color="primary" />}
                 </label>
-                <Select
-                    placeholder="Select request ID"
-                    selectedKeys={requestId ? [requestId] : []}
-                    onSelectionChange={(keys) => {
-                        const key = Array.from(keys as Set<string>)[0]
-                        setRequestId(key ?? null)
+                <Autocomplete<DataEntity>
+                    placeholder={selectPlaceholder}
+                    inputValue={requestInput}
+                    onInputChange={(value) => {
+                        setRequestInput(value)
+                        const sel =
+                            selectedServiceRequestId &&
+                            requests.find((r) => r._id === selectedServiceRequestId)
+                        if (sel && value !== sel.request_id) {
+                            setSelectedServiceRequestId(null)
+                        }
                     }}
-                    classNames={{
-                        trigger: 'border border-borderDark bg-white shadow-none',
-                        value: 'text-placeHolderText data-[placeholder=true]:text-[#9CA3AF]',
-                        label: 'hidden',
+                    selectedKey={selectedServiceRequestId}
+                    onSelectionChange={(key) => {
+                        const id = key != null ? String(key) : null
+                        setSelectedServiceRequestId(id)
+                        if (id) {
+                            const item = requests.find((r) => r._id === id)
+                            setRequestInput(item?.request_id ?? '')
+                        }
                     }}
+                    items={filteredRequests}
+                    isDisabled={isLoading || isError || requests.length === 0}
+                    variant="bordered"
                     aria-label="Select request ID"
+                    allowsEmptyCollection
+                    onClear={() => {
+                        setSelectedServiceRequestId(null)
+                        setRequestInput('')
+                    }}
+                    isVirtualized={filteredRequests.length > 50}
+                    itemHeight={40}
+                    maxListboxHeight={280}
+                    classNames={{
+                        base: 'w-full',
+                        listboxWrapper: 'max-h-[280px]',
+                    }}
+                    inputProps={{
+                        classNames: {
+                            inputWrapper: [
+                                'shadow-none rounded-xl',
+                                'border border-borderDark bg-white',
+                                'data-[hover=true]:bg-white',
+                                'group-data-[focus=true]:bg-white',
+                            ],
+                            input: 'text-fontBlack placeholder:text-[#9CA3AF]',
+                        },
+                    }}
+                    listboxProps={{
+                        emptyContent: isError
+                            ? 'Could not load requests.'
+                            : requests.length === 0
+                                ? 'No requests yet.'
+                                : 'No matching request ID.',
+                    }}
                 >
-                    {REQUEST_IDS.map((opt) => (
-                        <SelectItem key={opt.key}>{opt.label}</SelectItem>
-                    ))}
-                </Select>
+                    {(item) => (
+                        <AutocompleteItem key={item._id} textValue={item.request_id ?? ''}>
+                            {item.request_id}
+                        </AutocompleteItem>
+                    )}
+                </Autocomplete>
             </div>
 
             {/* Your Review */}
@@ -141,7 +224,7 @@ export default function LeaveReviewModal() {
                     isDisabled={!canSubmit}
                     className="btn_radius btn_bg_blue min-w-35 font-medium"
                 >
-                    Submit review
+                    {isSubmitting ? 'Submitting...' : 'Submit review'}
                 </Button>
             </div>
         </div>

@@ -1,9 +1,12 @@
 'use client'
 
 import { closeModal, openModal } from '@/redux/slices/allModalSlice'
-import { Button, Select, SelectItem, Textarea } from '@heroui/react'
-import { useDispatch } from 'react-redux'
+import { addToast, Button, Select, SelectItem, Textarea } from '@heroui/react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
+import { useReportVendorMutation } from '@/redux/rtkQueries/allPostApi'
+import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { RootState } from '@/redux/appStore'
 
 const REPORT_REASONS = [
     { key: 'spam', label: 'Spam' },
@@ -18,25 +21,40 @@ const MIN_DETAILS_LENGTH = 20
 
 export default function ReportProfileModal() {
     const dispatch = useDispatch()
+    const modalData = useSelector((state: RootState) => state.allCommonModal.data)
+    const { data: userProfileResponse } = useGetUserProfileInfoQuery()
+    const userEmail = userProfileResponse?.data?.email?.trim() ?? ''
+
     const [reason, setReason] = useState<string | null>(null)
     const [details, setDetails] = useState('')
-
+    const [reportVendor, { isLoading: isSubmitting }] = useReportVendorMutation()
+    const vendorId = modalData?.vendorId
     const charCount = details.length
     const canSubmit = reason && details.length >= MIN_DETAILS_LENGTH
-
+    
     const handleCancel = () => dispatch(closeModal())
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!canSubmit) return
-        // TODO: API call to submit report; use response for referenceId and email
-        dispatch(closeModal())
-        dispatch(
-            openModal({
-                componentName: 'ReportSubmittedModal',
-                data: { referenceId: 'REQ-VOGC6WH', email: 'yourxyz@example.com' },
-                modalSize: 'xl',
-                modalPadding: 'px-6 py-8',
-            })
-        )
+        try {
+            await reportVendor({
+                reported_user: vendorId,
+                reason: reason,
+                description: details,
+            }).unwrap()
+            addToast({ title: 'Report submitted successfully', color: 'success', timeout: 2000 })
+            dispatch(closeModal())
+            dispatch(
+                openModal({
+                    componentName: 'ReportSubmittedModal',
+                    data: { referenceId: 'REQ-VOGC6WH', email: userEmail },
+                    modalSize: 'xl',
+                    modalPadding: 'px-6 py-8',
+                })
+            )
+        } catch {
+            // Error toast handled by RTK base query
+        }
+
     }
 
     return (
@@ -107,10 +125,11 @@ export default function ReportProfileModal() {
                 </Button>
                 <Button
                     onPress={handleSubmit}
-                    isDisabled={!canSubmit}
+                    isDisabled={!canSubmit || isSubmitting}
+                    isLoading={isSubmitting}
                     className="btn_radius btn_bg_blue min-w-35 font-medium"
                 >
-                    Submit
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                 </Button>
             </div>
         </div>

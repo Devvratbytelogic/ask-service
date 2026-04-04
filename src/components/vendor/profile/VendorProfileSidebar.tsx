@@ -1,24 +1,20 @@
 'use client'
-import React from 'react'
-import Image from 'next/image'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { FlagIconSVG, LocationSVG, ShieldSecurityIconSVG, StarRatingIconSVG, VerifiedGreenShieldIconSVG } from '@/components/library/AllSVG'
 import { Button } from '@heroui/react'
-import { useGetAllVendorReviewsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import ImageComponent from '@/components/library/ImageComponent'
-import { IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails'
+import { IVendorDetailsAPIResponseDataReview, IVendorDetailsAPIResponseDataVendor } from '@/types/vendorDetails'
 
 interface VendorProfileSidebarProps {
     profile?: IVendorDetailsAPIResponseDataVendor | null
+    review?: IVendorDetailsAPIResponseDataReview | null
 }
 
-export default function VendorProfileSidebar({ profile }: VendorProfileSidebarProps) {
+export default function VendorProfileSidebar({ profile, review }: VendorProfileSidebarProps) {
     const dispatch = useDispatch()
-    const { data: reviewsData } = useGetAllVendorReviewsQuery()
-    const averageRating = reviewsData?.data?.averageRating ?? 0
-    const totalReviews = reviewsData?.data?.totalReviews ?? 0
-    // console.log("profile", profile)
+    const averageRating = review?.averageRating ?? 0
+    const totalReviews = review?.totalReviews ?? 0
     const businessName = profile?.business_name || 'Securatim Security Services'
     const displayAddress = profile?.address || (profile?.city ? [profile.city, profile.postal_code].filter(Boolean).join(', ') : null) || '9-11 Avenue Michelet, Saint-Ouen-sur-Seine'
     const serviceTitle = profile?.service?.title
@@ -52,8 +48,8 @@ export default function VendorProfileSidebar({ profile }: VendorProfileSidebarPr
                 {/* Rating */}
                 <div className="mb-4 flex items-center justify-center gap-1.5">
                     <StarRatingIconSVG />
-                    <span className="text-sm font-bold text-fontBlack">{averageRating || '4.9'}</span>
-                    <span className="text-sm text-darkSilver">({totalReviews || 127} notes)</span>
+                    {averageRating ? <span className="text-sm font-bold text-fontBlack">{averageRating}</span> : null}
+                    {totalReviews ? <span className="text-sm text-darkSilver">({totalReviews} notes)</span> : null}
                 </div>
 
                 {/* Services */}
@@ -82,6 +78,7 @@ export default function VendorProfileSidebar({ profile }: VendorProfileSidebarPr
                                     componentName: 'ReportProfileModal',
                                     modalSize: 'lg',
                                     modalPadding: 'px-6 py-6',
+                                    data: { vendorId: profile?._id },
                                 })
                             )
                         }

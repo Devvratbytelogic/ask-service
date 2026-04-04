@@ -75,6 +75,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 url: `/user/vendor-details/${vendorId}`,
                 method: 'GET',
             }),
+            providesTags: ['VendorReviews'],
         }),
         getUserProfileInfo: builder.query<IUserProfileInfoAPIResponse, void>({
             query: () => ({

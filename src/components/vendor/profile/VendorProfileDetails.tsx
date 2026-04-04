@@ -35,13 +35,13 @@ export default function VendorProfileDetails({ profile, review }: VendorProfileD
                     <Tab key="about" title="About">
                         <div className='space-y-6'>
                             <VendorAbout profile={profile} />
-                            <VendorReviews review={review} />
+                            <VendorReviews review={review} vendorId={profile?._id} />
                             <VendorLinks profile={profile} />
                             <VendorServices profile={profile} />
                         </div>
                     </Tab>
                     <Tab key="reviews" title="Reviews">
-                        <VendorReviews />
+                        <VendorReviews vendorId={profile?._id} />
                     </Tab>
                     <Tab key="links" title="Links">
                         <VendorLinks profile={profile} />

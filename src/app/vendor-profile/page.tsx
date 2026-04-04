@@ -36,7 +36,7 @@ export default function VendorProfilePage() {
             <div className="min-h-screen body_x_axis_padding">
                 <div className="flex flex-col lg:flex-row gap-6">
                     <aside className="w-full lg:w-[320px] shrink-0 self-start sticky top-24 z-40">
-                        <VendorProfileSidebar profile={profile?.vendor} />
+                        <VendorProfileSidebar profile={profile?.vendor} review={profile?.review} />
                     </aside>
                     <section className="relative flex-1 min-w-0">
                         <VendorProfileDetails profile={profile?.vendor} review={profile?.review} />

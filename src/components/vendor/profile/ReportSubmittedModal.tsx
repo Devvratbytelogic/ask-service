@@ -15,7 +15,7 @@ export default function ReportSubmittedModal() {
         | { referenceId?: string; email?: string }
         | undefined
     const referenceId = data?.referenceId ?? DEFAULT_REFERENCE
-    const email = data?.email ?? DEFAULT_EMAIL
+    const email = data?.email?.trim() ? data.email.trim() : DEFAULT_EMAIL
 
     const handleClose = () => dispatch(closeModal())
 
@@ -37,10 +37,10 @@ export default function ReportSubmittedModal() {
             </p>
 
             {/* Reference */}
-            <p className="mt-3 text-sm text-[#6B7280]">
+            {/* <p className="mt-3 text-sm text-[#6B7280]">
                 Reference:{' '}
                 <span className="font-bold text-primaryColor">{referenceId}</span>
-            </p>
+            </p> */}
 
             {/* Email confirmation box */}
             <div className="mt-5 w-full rounded-xl bg-[#EFF6FF] px-4 py-3">
