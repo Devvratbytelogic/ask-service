@@ -137,7 +137,7 @@ export default function VendorDashboard() {
                                     <LockPrimaryColorSVG className="size-5 text-primaryColor" />
                                 </div>
                                 <p className="text-2xl font-bold text-fontBlack">
-                                    {isLoading ? '—' : Math.max(0, (dashboard?.availableLeadsCount ?? 0) - (dashboard?.purchasedLeadsCount ?? 0))}
+                                    {isLoading ? '—' : dashboard?.availableLeadsCount ?? 0}
                                 </p>
                                 <p className="text-sm text-darkSilver mt-0.5">Prospects disponibles</p>
                                 <span className="inline-block mt-2 text-sm font-medium text-primaryColor">
