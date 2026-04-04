@@ -24,6 +24,7 @@ import { IAllServiceQuestionsAPIResponse } from '@/types/serviceQuestions';
 import { IPopupNotificationsAPIResponse } from '@/types/popupNotifications';
 import { IGlobalSettingsAPIResponse } from '@/types/global';
 import { IVendorDetailsAPIResponse } from '@/types/vendorDetails';
+import { IAllCitiesAPIResponse } from '@/types/allCities';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -135,7 +136,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorDashboard'],
         }),
-        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; page?: number; limit?: number; quoted?: boolean, unlocked?: boolean } | void>({
+        getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; city?: string; page?: number; limit?: number; quoted?: boolean, unlocked?: boolean } | void>({
             query: (arg) => ({
                 url: `/vendor/available-leads`,
                 method: 'GET',
@@ -283,6 +284,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['UserNotifications'],
         }),
+        getAllServiceRequestCities: builder.query<IAllCitiesAPIResponse, void>({
+            query: () => ({
+                url: `/user/service-request-cities`,
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
@@ -326,4 +333,5 @@ export const {
     useGetFaqsQuery,
     useGetVendorNotificationsQuery,
     useGetUserNotificationsQuery,
+    useGetAllServiceRequestCitiesQuery,
 } = clientSideGetApis;

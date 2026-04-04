@@ -41,6 +41,7 @@ export interface ISingleLeadAPIResponseData {
 export interface User {
   _id: string;
   first_name: string;
+  profile_pic?: string | null;
   last_name: string;
   email: string;
   phone: string;

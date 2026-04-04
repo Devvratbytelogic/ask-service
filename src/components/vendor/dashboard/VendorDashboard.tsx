@@ -2,7 +2,7 @@
 
 import { CheckGreenIconSVG, CreditCardIconSVG, DocumentArrowIconSVG, DocumentIconSVG, EnvelopeIconSVG, InfoBlueIconSVG, InfoSVG, LocationSVG, LockGreenIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, LockUnlockedIconSVG, ProfileIconSVG, SecurityIconSVG, SignOutIconSVG, TimeIconSVG } from '@/components/library/AllSVG'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Tooltip } from '@heroui/react'
+import { Autocomplete, AutocompleteItem, Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Tooltip } from '@heroui/react'
 import { useDispatch } from 'react-redux'
 import { openModal } from '@/redux/slices/allModalSlice'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ import moment from 'moment'
 import 'moment/locale/fr'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import SupportAlert from './SupportAlert'
-import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { formatPhoneWithCountryCode } from '@/utils/formatPhone'
 
 const LEADS_PER_PAGE = 10
@@ -22,6 +22,7 @@ export default function VendorDashboard() {
     const router = useRouter()
     const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all')
     const [sortFilter, setSortFilter] = useState('newest')
+    const [cityFilter, setCityFilter] = useState<string | null>(null)
     const [leadsPage, setLeadsPage] = useState(1)
 
     const { data: globalSettings } = useGetGlobalSettingsQuery()
@@ -31,19 +32,21 @@ export default function VendorDashboard() {
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: dashboardData, isLoading: dashboardLoading } = useGetVendorDashboardDataQuery()
     const dashboard = dashboardData?.data;
+    const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
+    const allServiceRequestCities = allServiceRequestCitiesData?.data?.cities ?? []
 
     const leadsParams = useMemo(
         () => ({
             service: serviceCategoryFilter !== 'all' ? serviceCategoryFilter : undefined,
             sort: sortFilter,
+            city: cityFilter ? cityFilter : undefined,
         }),
-        [serviceCategoryFilter, sortFilter],
+        [serviceCategoryFilter, sortFilter, cityFilter],
     )
     const searchParams = useSearchParams()
     const showPurchasedOnly = searchParams.get('leads') === 'purchased'
     const showQuotedOnly = searchParams.get('leads') === 'quoted'
     const showLockedOnly = searchParams.get('leads') === 'available'
-    console.log('showLockedOnly', showLockedOnly);
 
     const leadsTabForLink: 'purchased' | 'quoted' | 'available' | undefined = showPurchasedOnly
         ? 'purchased'
@@ -59,7 +62,7 @@ export default function VendorDashboard() {
 
     useEffect(() => {
         setLeadsPage(1)
-    }, [serviceCategoryFilter, sortFilter, showPurchasedOnly, showQuotedOnly, showLockedOnly])
+    }, [serviceCategoryFilter, sortFilter, cityFilter, showPurchasedOnly, showQuotedOnly, showLockedOnly])
 
     const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery(
         {
@@ -101,6 +104,38 @@ export default function VendorDashboard() {
         { key: 'low_to_high', label: 'Du plus bas au plus élevé' },
         { key: 'oldest', label: 'Les plus anciens' },
     ]
+
+    type CityFilterItem = { key: string; label: string }
+    const cityFilterItems = useMemo((): CityFilterItem[] => {
+        const unique = [...new Set(allServiceRequestCities.filter(Boolean))]
+        return [{ key: 'all', label: 'Tous les villes' }, ...unique.map((city) => ({ key: city, label: city }))]
+    }, [allServiceRequestCities])
+
+    const activeFilterChips = useMemo(() => {
+        const chips: { key: string; label: string; onClose: () => void }[] = []
+        if (cityFilter) {
+            chips.push({
+                key: 'city',
+                label: `Ville : ${cityFilter}`,
+                onClose: () => setCityFilter(null),
+            })
+        }
+        if (serviceCategoryFilter !== 'all') {
+            chips.push({
+                key: 'service',
+                label: `Service : ${serviceCategoryOptions.find((o) => o.key === serviceCategoryFilter)?.label ?? serviceCategoryFilter}`,
+                onClose: () => setServiceCategoryFilter('all'),
+            })
+        }
+        if (sortFilter !== 'newest') {
+            chips.push({
+                key: 'sort',
+                label: `Tri : ${sortOptions.find((o) => o.key === sortFilter)?.label ?? sortFilter}`,
+                onClose: () => setSortFilter('newest'),
+            })
+        }
+        return chips
+    }, [cityFilter, serviceCategoryFilter, sortFilter, serviceCategoryOptions])
 
     return (
         <>
@@ -177,6 +212,20 @@ export default function VendorDashboard() {
 
                 {/* Available Leads / My Leads / Quotes Sent Section */}
                 <div className="space-y-4">
+                    {activeFilterChips.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-borderDark bg-[#F9FAFB] px-3 py-2.5">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-darkSilver shrink-0">
+                                Filtres actifs
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                                {activeFilterChips.map((c) => (
+                                    <Chip key={c.key} size="sm" variant="flat" color="primary" onClose={c.onClose}>
+                                        {c.label}
+                                    </Chip>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <h2 className="header_text_md text-fontBlack">
@@ -184,6 +233,53 @@ export default function VendorDashboard() {
                             </h2>
                         </div>
                         <div className="flex flex-wrap justify-end items-center gap-3">
+                            {/* city filter */}
+                            <Autocomplete<CityFilterItem>
+                                aria-label="Filtrer par ville"
+                                placeholder="Rechercher une ville"
+                                selectedKey={cityFilter ?? 'all'}
+                                onSelectionChange={(key) => {
+                                    if (key == null) {
+                                        setCityFilter(null)
+                                        return
+                                    }
+                                    const k = String(key)
+                                    setCityFilter(k === 'all' ? null : k)
+                                }}
+                                onClear={() => setCityFilter(null)}
+                                defaultItems={cityFilterItems}
+                                variant="bordered"
+                                allowsEmptyCollection
+                                isVirtualized={cityFilterItems.length > 50}
+                                itemHeight={40}
+                                maxListboxHeight={280}
+                                classNames={{
+                                    base: 'min-w-35 w-[min(100%,16rem)]',
+                                    listboxWrapper: 'max-h-[280px]',
+                                }}
+                                inputProps={{
+                                    classNames: {
+                                        inputWrapper: [
+                                            'btn_radius h-10! min-h-10!',
+                                            'shadow-none',
+                                            'border border-borderDark bg-white',
+                                            'data-[hover=true]:bg-white',
+                                            'group-data-[focus=true]:bg-white',
+                                        ],
+                                        input: 'text-sm text-fontBlack',
+                                    },
+                                }}
+                                listboxProps={{
+                                    emptyContent: 'Aucune ville trouvée.',
+                                }}
+                            >
+                                {(item) => (
+                                    <AutocompleteItem key={item.key} textValue={item.label}>
+                                        {item.label}
+                                    </AutocompleteItem>
+                                )}
+                            </Autocomplete>
+
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button
@@ -252,7 +348,7 @@ export default function VendorDashboard() {
                                 </Link>
                             </div>
                         )} */}
-                        {allLeads && allLeads?.length > 0 && allLeads?.map((lead) => (
+                        {allLeads && allLeads?.length > 0 ? allLeads?.map((lead) => (
                             <div key={lead._id} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
                                 <Link
                                     href={generateLeadDetailRoutePath(lead?._id, leadsTabForLink ? { from: leadsTabForLink } : undefined)}
@@ -377,7 +473,11 @@ export default function VendorDashboard() {
                                     )}
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                                <p className="text-darkSilver">Aucun prospect trouvé</p>
+                            </div>
+                        )}
                     </div>
                     {leadsTotalPages > 1 && (
                         <div className="flex justify-center pt-2">
@@ -402,7 +502,7 @@ export default function VendorDashboard() {
 
                 {/* Support Banner */}
                 <SupportAlert title="Besoin d'aide ?" content="Contactez l'assistance prestataire pour toute question sur les prospects, les devis ou votre compte." />
-            </div>
+            </div >
         </>
     )
 }

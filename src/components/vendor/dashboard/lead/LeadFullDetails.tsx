@@ -11,6 +11,7 @@ import SubmitQuoteForm from './SubmitQuoteForm'
 import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { ISingleLeadAPIResponseData, DynamicAnswersEntity } from '@/types/singleLead'
 import { formatPhoneWithCountryCode } from '@/utils/formatPhone'
+import ImageComponent from '@/components/library/ImageComponent'
 
 export interface LeadFullDetailsData {
     title?: string
@@ -79,6 +80,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
         const dynamicAnswers: DynamicAnswersEntity[] = rawLead.dynamic_answers && Array.isArray(rawLead.dynamic_answers) ? [...rawLead.dynamic_answers] : []
         return {
             clientInitials,
+            clientProfilePicture: lead.user?.profile_pic || '',
             clientName: clientName || 'N/A',
             businessType: lead.service_category?.title || lead.child_category || 'N/A',
             memberSince: lead.createdAt ? moment(lead.createdAt).format('DD MMM YYYY') : 'N/A',
@@ -119,8 +121,8 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                     {/* Client Information Card */}
                     <div className="rounded-2xl border border-borderDark bg-white p-5">
                         <div className="flex items-start gap-4">
-                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primaryColor text-base font-bold text-white">
-                                {displayData.clientInitials}
+                            <div className="flex w-12 h-12 shrink-0 items-center justify-center rounded-full bg-primaryColor/20 text-base font-bold text-white overflow-hidden">
+                                <ImageComponent url={displayData.clientProfilePicture} img_title={displayData.clientName} object_cover={true} />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
