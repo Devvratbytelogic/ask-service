@@ -146,7 +146,7 @@ export default function CreditsWallet() {
                 .then(() => {
                     localStorage.removeItem('stripe_package_id')
                     setPaymentStatus('success')
-                    addToast({ title: 'Payment verified! Credits have been added to your account.', color: 'success', timeout: 5000 })
+                    addToast({ title: 'Payment verified! Points have been added to your account.', color: 'success', timeout: 5000 })
                 })
                 .catch(() => {
                     setPaymentStatus('fail')

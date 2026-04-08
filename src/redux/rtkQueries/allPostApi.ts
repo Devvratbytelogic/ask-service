@@ -129,7 +129,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         url: `/vendor/leads/${leadId}/unlock`,
         method: 'POST',
       }),
-      invalidatesTags: ['VendorAvailableLeads', 'VendorDashboard'],
+      invalidatesTags: ['VendorAvailableLeads', 'VendorDashboard', 'VendorTransactions'],
     }),
     submitQuote: builder.mutation({
       query: ({ leadId, formData }: { leadId: string; formData: FormData }) => ({

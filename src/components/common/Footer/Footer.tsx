@@ -112,7 +112,7 @@ const Footer = () => {
                                 <div className="space-y-2 footer_nav_item">
                                     <Link href={`mailto:${email}`} className="flex items-center gap-2"><span><MdEmail /></span>{email}</Link>
                                     {/* <Link href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-2"><span><PiPhone /></span>{phone}</Link> */}
-                                    <Link href={getContactUsRoutePath()} className="flex items-start gap-2"><span className="mt-1.5"><BiBuilding /></span>{address}</Link>
+                                    <p className="flex items-start gap-2"><span className="mt-1.5"><BiBuilding /></span>{address}</p>
                                 </div>
                             )}
                         </div>

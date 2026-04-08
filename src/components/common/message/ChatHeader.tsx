@@ -1,9 +1,13 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { BackArrowSVG, StarRatingIconSVG, VerifiedShieldIconSVG, VerticalChatDotsSVG } from '@/components/library/AllSVG';
+import { BackArrowSVG, FlagIconSVG, ProfileIconSVG, StarRatingIconSVG, VerifiedShieldIconSVG, VerticalChatDotsSVG } from '@/components/library/AllSVG';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
 import ImageComponent from '@/components/library/ImageComponent';
 import { getVendorProfileRoutePath } from '@/routes/routes';
+import { useDispatch } from 'react-redux';
+import { openModal } from '@/redux/slices/allModalSlice';
+import { useRouter } from 'next/navigation';
 
 function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
     return chat.users?.find((u) => !u.itsMe);
@@ -31,6 +35,10 @@ interface ChatHeaderProps {
 }
 
 export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }: ChatHeaderProps) {
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const otherUser = selectedChat ? getOtherUser(selectedChat) : undefined;
     const name = selectedChat ? getDisplayName(selectedChat) : 'Select a conversation';
     const profilePic = otherUser?.profile_pic ?? null;
@@ -43,6 +51,31 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
         selectedChat && otherUser && isVendor && otherUser._id
             ? getVendorProfileRoutePath(otherUser._id)
             : null;
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setDropdownOpen(false);
+            }
+        }
+        if (dropdownOpen) document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [dropdownOpen]);
+
+    const handleOpenReport = () => {
+        setDropdownOpen(false);
+        dispatch(openModal({
+            componentName: 'ReportProfileModal',
+            modalSize: 'lg',
+            modalPadding: 'px-6 py-6',
+            data: { vendorId: otherUser?._id },
+        }));
+    };
+
+    const handleGoToProfile = () => {
+        setDropdownOpen(false);
+        if (vendorProfileHref) router.push(vendorProfileHref);
+    };
+
     const avatarClassName =
         'flex size-10 md:size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D1D5DC] font-semibold text-white text-base md:text-lg';
     const avatarInner =
@@ -53,7 +86,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
         );
     return (
         <>
-            <div className="flex shrink-0 items-start justify-between gap-3 md:gap-4 border-b border-borderDark bg-white px-4 py-3 md:px-6 md:py-4">
+            <div className="flex shrink-0 justify-between items-center gap-3 md:gap-4 border-b border-borderDark bg-white px-4 py-3 md:px-6 md:py-4">
                 <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     {/* Back button - mobile only */}
                     {onBack && (
@@ -117,15 +150,42 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                         )}
                     </div>
                 </div>
-                {/* <div className="flex shrink-0 items-center gap-2">
-                    <button
-                        type="button"
-                        className="rounded p-1.5 text-darkSilver hover:bg-borderDark"
-                        aria-label="Options"
-                    >
-                        <VerticalChatDotsSVG />
-                    </button>
-                </div> */}
+                {selectedChat && (
+                    <div className="relative flex shrink-0 items-center gap-2 cursor-pointer" ref={dropdownRef}>
+                        <button
+                            type="button"
+                            onClick={() => setDropdownOpen((prev) => !prev)}
+                            className="rounded p-1.5 text-darkSilver hover:bg-borderDark cursor-pointer"
+                            aria-label="Options"
+                            aria-haspopup="true"
+                            aria-expanded={dropdownOpen}
+                        >
+                            <VerticalChatDotsSVG />
+                        </button>
+                        {dropdownOpen && (
+                            <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border border-borderDark bg-white py-1 shadow-lg">
+                                {vendorProfileHref && (
+                                    <button
+                                        type="button"
+                                        onClick={handleGoToProfile}
+                                        className="cursor-pointer flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-fontBlack hover:bg-borderDark transition-colors"
+                                    >
+                                        <ProfileIconSVG />
+                                        Profile
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={handleOpenReport}
+                                    className="cursor-pointer flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-[#F04438] hover:bg-borderDark transition-colors"
+                                >
+                                    <FlagIconSVG />
+                                    Report
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </>
     )
