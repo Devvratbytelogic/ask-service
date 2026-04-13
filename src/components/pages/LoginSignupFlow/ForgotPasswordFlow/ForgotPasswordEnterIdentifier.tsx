@@ -16,7 +16,7 @@ interface ForgotPasswordIdentifierValues {
 }
 
 const forgotPasswordEmailSchema = Yup.object({
-    email: yupRequiredEmail("This field is required"),
+    email: yupRequiredEmail("Ce champ est obligatoire"),
 })
 
 const ForgotPasswordEnterIdentifier = () => {
@@ -114,7 +114,7 @@ const ForgotPasswordEnterIdentifier = () => {
                             role="button"
                             aria-label="Go back"
                         />
-                        Forgot password? <span className="text-darkSilver ml-1" />
+                        Mot de passe oublié? <span className="text-darkSilver ml-1" />
                     </h2>
                     <p className="text-fontBlack text-base">
                         Enter your registered email address and we&apos;ll help you reset it securely.
@@ -124,7 +124,7 @@ const ForgotPasswordEnterIdentifier = () => {
                     <Input
                         name="email"
                         variant="bordered"
-                        label="Email address"
+                        label="Email"
                         labelPlacement="outside"
                         placeholder="name@example.com"
                         type="email"

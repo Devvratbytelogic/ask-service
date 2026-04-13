@@ -19,12 +19,12 @@ interface ForgotPasswordSetNewValues {
 const validationSchema = Yup.object({
     password: Yup.string()
         .trim()
-        .min(8, "Your new password must have at least 8 characters to keep your account secure.")
-        .required("This field is required"),
+        .min(8, "Votre nouveau mot de passe doit avoir au moins 8 caractères pour sécuriser votre compte.")
+        .required("Ce champ est obligatoire"),
     confirmPassword: Yup.string()
         .trim()
-        .oneOf([Yup.ref("password")], "Passwords do not match.")
-        .required("This field is required"),
+        .oneOf([Yup.ref("password")], "Les mots de passe ne correspondent pas.")
+        .required("Ce champ est obligatoire"),
 })
 
 const ForgotPasswordSetNew = () => {

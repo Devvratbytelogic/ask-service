@@ -50,48 +50,48 @@ export const yupOptionalEmail = () =>
         .test('email', EMAIL_VALIDATION_MESSAGE, (value) => !value || validateEmail(value))
 
 export const profileInfoValidationSchema = Yup.object({
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    firstName: Yup.string().required('Ce champ est obligatoire'),
+    lastName: Yup.string().required('Ce champ est obligatoired'),
     email: yupRequiredEmail(),
-    phone: Yup.string().required('Phone number is required'),
-    streetAddress: Yup.string().required('Street address is required'),
-    postcode: Yup.string().required('Postcode is required'),
-    city: Yup.string().required('City is required'),
+    phone: Yup.string().required('Ce champ est obligatoire'),
+    streetAddress: Yup.string().required('Ce champ est obligatoire'),
+    postcode: Yup.string().required('Ce champ est obligatoire'),
+    city: Yup.string().required('Ce champ est obligatoire'),
 })
 export const submitQuoteValidationSchema = Yup.object({
-    quotePrice: Yup.string().required('Quote price is required'),
-    serviceDescription: Yup.string().required('Service description is required'),
-    availableStartDate: Yup.string().required('Available start date is required'),
+    quotePrice: Yup.string().required('Ce champ est obligatoire'),
+    serviceDescription: Yup.string().required('Ce champ est obligatoire'),
+    availableStartDate: Yup.string().required('Ce champ est obligatoire'),
 })
 
 export const securitySettingsValidationSchema = Yup.object({
-    currentPassword: Yup.string().required('Current password is required'),
-    newPassword: Yup.string().required('New password is required'),
+    currentPassword: Yup.string().required('Ce champ est obligatoire'),
+    newPassword: Yup.string().required('Ce champ est obligatoire'),
     confirmNewPassword: Yup.string()
-        .required('Confirm new password is required')
+        .required('Ce champ est obligatoire')
         .oneOf([Yup.ref('newPassword')], 'Passwords must match'),
 })
 
 export const contactFormValidationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
+    name: Yup.string().required('Ce champ est obligatoire'),
     email: yupRequiredEmail(),
-    message: Yup.string().required('Message is required'),
+    message: Yup.string().required('Ce champ est obligatoire'),
 })
 
 export const vendorProfileInfoValidationSchema = Yup.object({
-    businessName: Yup.string().required('Business name is required'),
-    ownerName: Yup.string().required('Owner name is required'),
+    businessName: Yup.string().required('Ce champ est obligatoire'),
+    ownerName: Yup.string().required('Ce champ est obligatoire'),
     // serviceCategory: Yup.string().required('Service category is required'),
     email: yupRequiredEmail(),
-    phone: Yup.string().required('Phone number is required'),
-    businessAddress: Yup.string().required('Business address is required'),
-    postcode: Yup.string().required('Postcode is required'),
-    city: Yup.string().required('City is required'),
-    vatNumber: Yup.string().required('VAT number is required'),
-    companyRegistrationNumber: Yup.string().required('Company registration number is required'),
-    yearsOfActivity: Yup.string().required("Les années d'activités sont requises"),
+    phone: Yup.string().required('Ce champ est obligatoire'),
+    businessAddress: Yup.string().required('Ce champ est obligatoire'),
+    postcode: Yup.string().required('Ce champ est obligatoire'),
+    city: Yup.string().required('Ce champ est obligatoire'),
+    vatNumber: Yup.string().required('Ce champ est obligatoire'),
+    companyRegistrationNumber: Yup.string().required('Ce champ est obligatoire'),
+    yearsOfActivity: Yup.string().required("Ce champ est obligatoire"),
     // companySize: Yup.string().required('La taille de l\'entreprise est requise'),
-    aboutCompany: Yup.string().required("La description de l'entreprise est requise"),
+    aboutCompany: Yup.string().required("Ce champ est obligatoire"),
     websiteLink: Yup.string()
         .trim()
         .test('empty-or-url', 'URL invalide', (value) => {
