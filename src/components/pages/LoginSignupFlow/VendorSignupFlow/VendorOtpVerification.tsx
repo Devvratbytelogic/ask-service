@@ -43,7 +43,7 @@ const VendorOtpVerification = () => {
                 type: "SIGNUP",
             }).unwrap()
             setEmailResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Code de vérification envoyé", description: "Vérifiez votre e-mail.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
@@ -71,8 +71,8 @@ const VendorOtpVerification = () => {
             }, dispatch)
             router.refresh()
             addToast({
-                title: "Success",
-                description: "Verification Code verification complete. You're signed up!",
+                title: "Succès",
+                description: "Vérification du code terminée. Vous êtes inscrit !",
                 color: "success",
                 timeout: 3000,
             })

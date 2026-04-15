@@ -51,7 +51,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
             } else {
                 await deleteUserAccount({}).unwrap()
             }
-            addToast({ title: 'Account deleted successfully', color: 'success', timeout: 2000 })
+            addToast({ title: 'Compte supprimé avec succès', color: 'success', timeout: 2000 })
             clearAllCookiesAndReload(getHomeRoutePath())
         } catch {
             // Error is handled by RTK Query / toast
@@ -69,7 +69,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 } else {
                     await changeUserPassword(payload).unwrap()
                 }
-                addToast({ title: 'Password updated successfully', color: 'success', timeout: 2000 })
+                addToast({ title: 'Mot de passe mis à jour avec succès', color: 'success', timeout: 2000 })
                 resetForm()
                 setIsChangingPassword(false)
             } catch {

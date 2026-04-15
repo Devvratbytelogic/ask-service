@@ -147,7 +147,7 @@ export default function VendorDocuments() {
     if (formData.entries().next().done) return
     try {
       await uploadVendorDocuments(formData).unwrap()
-      addToast({ title: 'Document(s) uploaded successfully', color: 'success', timeout: 2000 })
+      addToast({ title: 'Document(s) téléchargé(s) avec succès', color: 'success', timeout: 2000 })
       setFilesByDocId({})
     } catch {
       // Error handled by RTK Query / toast

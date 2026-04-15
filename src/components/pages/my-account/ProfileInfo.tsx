@@ -89,7 +89,7 @@ export default function ProfileInfo() {
                 }
                 const hadProfilePicUpload = !!profilePicFile
                 await updateUserProfileInfo(formData).unwrap()
-                addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
+                addToast({ title: 'Profil mis à jour avec succès', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
                 setIsEditing(false)
@@ -119,7 +119,7 @@ export default function ProfileInfo() {
         if (!email) return
         try {
             await resendEmailVerification({ email }).unwrap()
-            addToast({ title: 'Verification code sent', description: 'Check your email.', color: 'success', timeout: 2000 })
+            addToast({ title: 'Code de vérification envoyé', description: 'Vérifiez votre e-mail.', color: 'success', timeout: 2000 })
             dispatch(
                 openModal({
                     componentName: 'VerifyEmailOtpModal',
@@ -147,7 +147,7 @@ export default function ProfileInfo() {
             return
         }
         if (!navigator.geolocation) {
-            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+            addToast({ title: 'Localisation non disponible. Veuillez d\'abord autoriser l\'accès à la localisation.', color: 'warning', timeout: 3000 })
             return
         }
         navigator.geolocation.getCurrentPosition(
@@ -159,7 +159,7 @@ export default function ProfileInfo() {
                 setLatLong(`${newLat},${newLng}`)
             },
             () => {
-                addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+                addToast({ title: 'Localisation non disponible. Veuillez d\'abord autoriser l\'accès à la localisation.', color: 'warning', timeout: 3000 })
             },
             { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
         )

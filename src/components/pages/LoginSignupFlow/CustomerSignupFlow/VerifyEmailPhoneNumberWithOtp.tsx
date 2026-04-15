@@ -39,7 +39,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
         try {
             await resendEmailVerification({ email: displayValue }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Code de vérification envoyé", description: "Vérifiez votre e-mail.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }
@@ -81,8 +81,8 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                 router.refresh()
             }
             addToast({
-                title: "Success",
-                description: "You're signed up!",
+                title: "Succès",
+                description: "Vous êtes inscrit !",
                 color: "success",
                 timeout: 3000,
             })

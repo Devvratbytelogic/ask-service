@@ -115,7 +115,7 @@ const CustomerSignInDetails = () => {
                     setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                     router.refresh()
                 }
-                addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
+                addToast({ title: "Connexion réussie", color: "success", timeout: 2000 })
                 if (returnToRequestFlow && requestFlowData) {
                     dispatch(closeModal())
                     dispatch(openModal({
@@ -169,7 +169,7 @@ const CustomerSignInDetails = () => {
         if (errors.email || !values.email?.trim()) return
         try {
             await loginPhoneEmail({ email: values.email.trim() }).unwrap()
-            addToast({ title: "Verification code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Code de vérification envoyé", description: "Vérifiez votre e-mail.", color: "success", timeout: 2000 })
             dispatch(
                 openModal({
                     componentName: "VerifyEmailOtpModal",

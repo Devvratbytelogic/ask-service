@@ -23,10 +23,10 @@ export default function ContactForm() {
     onSubmit: async (payload) => {
       try {
         await postContactUs({ name: payload.name, email: payload.email, message: payload.message }).unwrap()
-        addToast({ title: 'Message sent successfully', color: 'success', timeout: 3000 })
+        addToast({ title: 'Message envoyé avec succès', color: 'success', timeout: 3000 })
         resetForm()
       } catch {
-        addToast({ title: 'Failed to send message. Please try again.', color: 'danger', timeout: 3000 })
+        addToast({ title: 'Échec de l\'envoi du message. Veuillez réessayer.', color: 'danger', timeout: 3000 })
       }
     },
   })

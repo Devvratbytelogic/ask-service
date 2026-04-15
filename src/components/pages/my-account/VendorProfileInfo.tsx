@@ -116,7 +116,7 @@ export default function VendorProfileInfo() {
             try {
                 const hadProfilePicUpload = !!profilePicFile
                 await updateVendorProfileInfo(formData).unwrap()
-                addToast({ title: 'Profile updated successfully', color: 'success', timeout: 2000 })
+                addToast({ title: 'Profil mis à jour avec succès', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
                 setIsEditing(false)
@@ -146,7 +146,7 @@ export default function VendorProfileInfo() {
             return
         }
         if (!navigator.geolocation) {
-            addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+            addToast({ title: 'Localisation non disponible. Veuillez d\'abord autoriser l\'accès à la localisation.', color: 'warning', timeout: 3000 })
             return
         }
         navigator.geolocation.getCurrentPosition(
@@ -158,7 +158,7 @@ export default function VendorProfileInfo() {
                 setLatLong(`${newLat},${newLng}`)
             },
             () => {
-                addToast({ title: 'Location not available. Please allow location access first.', color: 'warning', timeout: 3000 })
+                addToast({ title: 'Localisation non disponible. Veuillez d\'abord autoriser l\'accès à la localisation.', color: 'warning', timeout: 3000 })
             },
             { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
         )

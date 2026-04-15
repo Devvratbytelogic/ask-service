@@ -46,7 +46,7 @@ export default function VerifyEmailOtpModal() {
                 setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
                 router.refresh()
             }
-            addToast({ title: "Signed in successfully", color: "success", timeout: 2000 })
+            addToast({ title: "Connexion réussie", color: "success", timeout: 2000 })
             if (returnToRequestFlow && requestFlowData && typeof requestFlowData === "object") {
                 dispatch(closeModal())
                 dispatch(openModal({
@@ -71,10 +71,10 @@ export default function VerifyEmailOtpModal() {
         try {
             await resendEmailVerification({ email }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Code de vérification envoyé", description: "Vérifiez votre e-mail.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
-            addToast({ title: "Error", description: "Failed to send verification code", color: "danger", timeout: 2000 })
+            addToast({ title: "Erreur", description: "Échec de l'envoi du code de vérification", color: "danger", timeout: 2000 })
         }
     }, [email, resendCooldown, resendEmailVerification])
 

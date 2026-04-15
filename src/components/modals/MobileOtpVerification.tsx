@@ -176,8 +176,8 @@ const MobileOtpVerification = () => {
                 }
             }
             addToast({
-                title: "Success",
-                description: "Verification Code Verification completed.",
+                title: "Succès",
+                description: "Vérification du code terminée.",
                 color: "success",
                 timeout: 3000,
             })

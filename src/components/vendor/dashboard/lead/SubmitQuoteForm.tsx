@@ -61,7 +61,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
 
                 try {
                     await submitQuote({ leadId, formData }).unwrap()
-                    addToast({ title: 'Quote submitted successfully', color: 'success', timeout: 2000 })
+                    addToast({ title: 'Devis soumis avec succès', color: 'success', timeout: 2000 })
                     onCancel()
                 } catch {
                     // Error toast handled by base query
@@ -79,13 +79,13 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
         const ext = '.' + file.name.split('.').pop()?.toLowerCase()
         if (!ALLOWED_EXTENSIONS.includes(ext)) {
             addToast({
-                title: `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`,
+                title: `Type de fichier invalide. Autorisés : ${ALLOWED_EXTENSIONS.join(', ')}`,
                 color: 'danger',
             })
             return
         }
         if (file.size > MAX_FILE_SIZE_BYTES) {
-            addToast({ title: 'File must be 5MB or smaller', color: 'danger' })
+            addToast({ title: 'Le fichier doit faire 5 Mo ou moins', color: 'danger' })
             return
         }
         setAttachment(file)

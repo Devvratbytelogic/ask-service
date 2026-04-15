@@ -61,7 +61,7 @@ export default function LeaveReviewModal() {
                 rating,
                 review: reviewText.trim(),
             }).unwrap()
-            addToast({ title: 'Review submitted successfully', color: 'success', timeout: 2000 })
+            addToast({ title: 'Avis soumis avec succès', color: 'success', timeout: 2000 })
             dispatch(closeModal())
         } catch {
             // Error toast handled by RTK base query

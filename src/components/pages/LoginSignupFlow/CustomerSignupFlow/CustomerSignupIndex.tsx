@@ -32,17 +32,17 @@ const CustomerSignupIndex = () => {
                 if (authData.token ?? authData.access_token) {
                     setAuthAndRefetchProfile(authData, dispatch);
                     router.refresh();
-                    addToast({ title: "Account created successfully", color: "success", timeout: 2000 });
+                    addToast({ title: "Compte créé avec succès", color: "success", timeout: 2000 });
                     dispatch(closeModal());
                     router.push(getDashboardPathForRole(authData.role ?? roleType));
                     return;
                 }
             }
-            addToast({ title: "Sign up completed", color: "success", timeout: 2000 });
+            addToast({ title: "Inscription terminée", color: "success", timeout: 2000 });
             dispatch(closeModal());
         } catch (err: unknown) {
             const e = err as Error & { responseData?: { message?: string }; message?: string };
-            const message = e.responseData?.message ?? e.message ?? "Google sign up failed";
+            const message = e.responseData?.message ?? e.message ?? "Échec de l'inscription Google";
             addToast({ title: message, color: "danger", timeout: 3000 });
         } finally {
             setIsGoogleLoading(false);

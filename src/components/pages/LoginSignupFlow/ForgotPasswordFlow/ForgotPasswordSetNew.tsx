@@ -57,8 +57,8 @@ const ForgotPasswordSetNew = () => {
                         await newPassword(payload).unwrap()
                     }
                     addToast({
-                        title: "Password updated",
-                        description: "You can sign in with your new password.",
+                        title: "Mot de passe mis à jour",
+                        description: "Vous pouvez vous connecter avec votre nouveau mot de passe.",
                         color: "success",
                         timeout: 3000,
                     })

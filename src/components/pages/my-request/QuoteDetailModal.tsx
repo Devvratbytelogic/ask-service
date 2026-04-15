@@ -66,7 +66,7 @@ export default function QuoteDetailModal() {
     }
 
     const handleChatWithVendor = async () => {
-        if (!requestId || !vendor._id) return addToast({ title: 'Error', description: 'Please try again later', color: 'danger' })
+        if (!requestId || !vendor._id) return addToast({ title: 'Erreur', description: 'Veuillez réessayer plus tard', color: 'danger' })
         try {
             const response = await userAccessChat({
                 userId: vendor._id,

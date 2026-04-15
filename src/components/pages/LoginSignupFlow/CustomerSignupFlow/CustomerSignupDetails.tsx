@@ -107,8 +107,8 @@ const CustomerSignupDetails = () => {
                 await signup(payload).unwrap()
                 if (isEmail) {
                     addToast({
-                        title: "Verification code sent",
-                        description: "Check your email.",
+                        title: "Code de vérification envoyé",
+                        description: "Vérifiez votre e-mail.",
                         color: "success",
                         timeout: 2000,
                     })
@@ -125,8 +125,8 @@ const CustomerSignupDetails = () => {
                     }))
                 } else {
                     addToast({
-                        title: "Sign up successful",
-                        description: "Please sign in with your phone and password.",
+                        title: "Inscription réussie",
+                        description: "Veuillez vous connecter avec votre téléphone et votre mot de passe.",
                         color: "success",
                         timeout: 3000,
                     })

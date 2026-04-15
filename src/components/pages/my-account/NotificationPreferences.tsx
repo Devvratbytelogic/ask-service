@@ -170,7 +170,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
         if (variant === 'vendor') {
             try {
                 await updateVendorNotifications(vendorPayload).unwrap()
-                addToast({ title: 'Notification preferences saved', color: 'success', timeout: 2000 })
+                addToast({ title: 'Préférences de notification enregistrées', color: 'success', timeout: 2000 })
             } catch {
                 // Error handled by RTK Query / toast
             }
@@ -178,7 +178,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
             try {
                 const payload = preferencesToUserPayload(userPreferences)
                 await updateUserNotifications(payload).unwrap()
-                addToast({ title: 'Notification preferences saved', color: 'success', timeout: 2000 })
+                addToast({ title: 'Préférences de notification enregistrées', color: 'success', timeout: 2000 })
             } catch {
                 // Error handled by RTK Query / toast
             }

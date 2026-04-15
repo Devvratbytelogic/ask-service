@@ -39,8 +39,8 @@ const ForgotPasswordEnterIdentifier = () => {
             try {
                 await forgotPassword({ email: submitValues.email.trim() }).unwrap()
                 addToast({
-                    title: "Verification code sent",
-                    description: "Check your email.",
+                    title: "Code de vérification envoyé",
+                    description: "Vérifiez votre e-mail.",
                     color: "success",
                     timeout: 2000,
                 })

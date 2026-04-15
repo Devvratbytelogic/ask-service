@@ -28,7 +28,7 @@ export default function UnlockLeadConfirmModal() {
         if (!leadId) return
         try {
             await unlockLead(leadId).unwrap()
-            addToast({ title: 'Lead unlocked successfully', color: 'success', timeout: 2000 })
+            addToast({ title: 'Prospect débloqué avec succès', color: 'success', timeout: 2000 })
             dispatch(closeModal())
             // router.push(generateLeadDetailRoutePath(leadId))
         } catch {

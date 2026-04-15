@@ -41,7 +41,7 @@ export default function ReportProfileModal() {
                 reason: reason,
                 description: details,
             }).unwrap()
-            addToast({ title: 'Report submitted successfully', color: 'success', timeout: 2000 })
+            addToast({ title: 'Signalement soumis avec succès', color: 'success', timeout: 2000 })
             dispatch(closeModal())
             dispatch(
                 openModal({

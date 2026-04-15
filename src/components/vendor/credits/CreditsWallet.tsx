@@ -146,7 +146,7 @@ export default function CreditsWallet() {
                 .then(() => {
                     localStorage.removeItem('stripe_package_id')
                     setPaymentStatus('success')
-                    addToast({ title: 'Payment verified! Points have been added to your account.', color: 'success', timeout: 5000 })
+                    addToast({ title: 'Paiement vérifié ! Les points ont été ajoutés à votre compte.', color: 'success', timeout: 5000 })
                 })
                 .catch(() => {
                     setPaymentStatus('fail')
@@ -194,9 +194,9 @@ export default function CreditsWallet() {
             a.download = `credits-transaction-history.${format}`
             a.click()
             URL.revokeObjectURL(url)
-            addToast({ title: `Downloaded as ${format.toUpperCase()}`, color: 'success', timeout: 2000 })
+            addToast({ title: `Téléchargé en ${format.toUpperCase()}`, color: 'success', timeout: 2000 })
         } catch {
-            addToast({ title: 'Download failed', color: 'danger', timeout: 3000 })
+            addToast({ title: 'Échec du téléchargement', color: 'danger', timeout: 3000 })
         }
     }
 
@@ -211,7 +211,7 @@ export default function CreditsWallet() {
             a.download = `invoice-${transactionId}.pdf`
             a.click()
             URL.revokeObjectURL(url)
-            addToast({ title: 'Invoice downloaded', color: 'success', timeout: 2000 })
+            addToast({ title: 'Facture téléchargée', color: 'success', timeout: 2000 })
         } catch {
             console.error('Failed to download invoice')
         } finally {

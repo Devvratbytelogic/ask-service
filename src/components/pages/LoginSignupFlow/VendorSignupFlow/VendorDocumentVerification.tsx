@@ -29,13 +29,13 @@ const VendorDocumentVerification = () => {
         const ext = "." + (file.name.split(".").pop() ?? "").toLowerCase()
         if (!ALLOWED_EXTENSIONS.includes(ext)) {
             addToast({
-                title: `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`,
+                title: `Type de fichier invalide. Autorisés : ${ALLOWED_EXTENSIONS.join(", ")}`,
                 color: "danger",
             })
             return
         }
         if (file.size > MAX_FILE_SIZE_BYTES) {
-            addToast({ title: "File must be 5MB or smaller", color: "danger" })
+            addToast({ title: "Le fichier doit faire 5 Mo ou moins", color: "danger" })
             return
         }
         setFiles((prev) => ({ ...prev, [id]: file }))
@@ -139,10 +139,10 @@ const VendorDocumentVerification = () => {
                             onFileRejected={(reason) => {
                                 const message =
                                     reason === "size"
-                                        ? "File must be 5MB or smaller."
-                                        : `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`
+                                        ? "Le fichier doit faire 5 Mo ou moins."
+                                        : `Type de fichier invalide. Autorisés : ${ALLOWED_EXTENSIONS.join(", ")}`
                                 addToast({
-                                    title: "Upload rejected",
+                                    title: "Téléchargement rejeté",
                                     description: message,
                                     color: "danger",
                                     timeout: 3000,

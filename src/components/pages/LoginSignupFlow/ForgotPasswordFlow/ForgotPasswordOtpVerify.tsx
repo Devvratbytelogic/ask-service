@@ -37,7 +37,7 @@ const ForgotPasswordOtpVerify = () => {
         try {
             await resendEmailVerification({ email }).unwrap()
             setResendCooldown(RESEND_COOLDOWN_SEC)
-            addToast({ title: "Verification Code sent", description: "Check your email.", color: "success", timeout: 2000 })
+            addToast({ title: "Code de vérification envoyé", description: "Vérifiez votre e-mail.", color: "success", timeout: 2000 })
         } catch {
             // Error toast from rtkQuerieSetup
         }

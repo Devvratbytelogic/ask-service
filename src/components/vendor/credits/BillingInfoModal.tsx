@@ -47,11 +47,11 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
 
             try {
                 await updateVendorProfileInfo(formData).unwrap()
-                addToast({ title: 'Billing information saved', color: 'success', timeout: 2000 })
+                addToast({ title: 'Informations de facturation enregistrées', color: 'success', timeout: 2000 })
                 resetForm()
                 onConfirm()
             } catch {
-                addToast({ title: 'Failed to save billing information. Please try again.', color: 'danger', timeout: 3000 })
+                addToast({ title: 'Échec de l\'enregistrement des informations de facturation. Veuillez réessayer.', color: 'danger', timeout: 3000 })
             }
         },
     })

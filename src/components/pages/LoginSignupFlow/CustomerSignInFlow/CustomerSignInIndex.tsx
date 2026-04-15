@@ -32,7 +32,7 @@ const CustomerSignInIndex = () => {
                 if (authData.token ?? authData.access_token) {
                     setAuthAndRefetchProfile(authData, dispatch);
                     router.refresh();
-                    addToast({ title: "Signed in successfully", color: "success", timeout: 2000 });
+                    addToast({ title: "Connexion réussie", color: "success", timeout: 2000 });
                     if (returnToRequestFlow && requestFlowData) {
                         dispatch(closeModal());
                         dispatch(openModal({
@@ -47,10 +47,10 @@ const CustomerSignInIndex = () => {
                     return;
                 }
             }
-            addToast({ title: "Sign in completed", color: "success", timeout: 2000 });
+            addToast({ title: "Connexion terminée", color: "success", timeout: 2000 });
             dispatch(closeModal());
         } catch (err: unknown) {
-            const message = (err as Error & { responseData?: { message?: string } })?.responseData?.message ?? (err as Error)?.message ?? "Google sign in failed";
+            const message = (err as Error & { responseData?: { message?: string } })?.responseData?.message ?? (err as Error)?.message ?? "Échec de la connexion Google";
             addToast({ title: message, color: "danger", timeout: 3000 });
         } finally {
             setIsGoogleLoading(false);
