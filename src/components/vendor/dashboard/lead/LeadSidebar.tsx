@@ -18,16 +18,17 @@ interface LeadSidebarProps {
     unlocked?: boolean
     canQuote?: boolean
     userId?: string | null
+    quoteId?: string | null
 }
 
-export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuote, userId }: LeadSidebarProps) {
+export default function LeadSidebar({ leadId, onSendQuoteClick, unlocked, canQuote, userId, quoteId }: LeadSidebarProps) {
     const router = useRouter()
     const [vendorAccessChat, { isLoading: isAccessingChat }] = useVendorAccessChatMutation()
 
     const handleMessageCustomer = async () => {
         if (leadId) {
             try {
-                const response = await vendorAccessChat({ userId: userId }).unwrap()
+                const response = await vendorAccessChat({ userId: userId, quote_id: quoteId }).unwrap()
                 const chatId = response?.data?._id ?? response?._id
                 const url = chatId
                     ? `/vendor/message?chatId=${chatId}`
