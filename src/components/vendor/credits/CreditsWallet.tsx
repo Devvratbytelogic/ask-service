@@ -58,17 +58,17 @@ function formatCreditsTransactionDate(iso: string | undefined | null): string {
     if (!iso) return '—'
     const d = new Date(iso)
     if (Number.isNaN(d.getTime())) return iso
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat('fr-FR', {
         dateStyle: 'medium',
         timeStyle: 'short',
     }).format(d)
 }
 
 const PERIOD_OPTIONS = [
-    { key: 'all', label: 'All time' },
-    { key: '7', label: 'Last 7 days' },
-    { key: '30', label: 'Last 30 days' },
-    { key: '90', label: 'Last 90 days' },
+    { key: 'all', label: 'Tout' },
+    { key: '7', label: '7 derniers jours' },
+    { key: '30', label: '30 derniers jours' },
+    { key: '90', label: '90 derniers jours' },
 ]
 
 export default function CreditsWallet() {
@@ -308,7 +308,7 @@ export default function CreditsWallet() {
             {isVerifying && (
                 <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-white/80 backdrop-blur-sm">
                     <Spinner size="lg" color="primary" classNames={{ circle1: 'border-b-primaryColor', circle2: 'border-b-primaryColor' }} />
-                    <p className="text-sm font-medium text-fontBlack">Verifying your payment, please wait…</p>
+                    <p className="text-sm font-medium text-fontBlack">Vérification de votre paiement, veuillez patienter…</p>
                 </div>
             )}
 
@@ -319,8 +319,8 @@ export default function CreditsWallet() {
                         <HiPlus className="size-3" />
                     </span>
                     <div className="flex-1">
-                        <p className="font-semibold text-[#2E7D32]">Payment Successful</p>
-                        <p className="text-sm text-[#2E7D32]/80">Your points have been added to your account.</p>
+                        <p className="font-semibold text-[#2E7D32]">Paiement réussi</p>
+                        <p className="text-sm text-[#2E7D32]/80">Vos points ont été ajoutés à votre compte.</p>
                     </div>
                     <button
                         onClick={() => setPaymentStatus(null)}
@@ -337,8 +337,8 @@ export default function CreditsWallet() {
                         <HiMinus className="size-3" />
                     </span>
                     <div className="flex-1">
-                        <p className="font-semibold text-[#C62828]">Payment Failed</p>
-                        <p className="text-sm text-[#C62828]/80">Your payment was not completed. Please try again.</p>
+                        <p className="font-semibold text-[#C62828]">Échec du paiement</p>
+                        <p className="text-sm text-[#C62828]/80">Votre paiement n&apos;a pas abouti. Veuillez réessayer.</p>
                     </div>
                     <button
                         onClick={() => setPaymentStatus(null)}
@@ -467,7 +467,7 @@ export default function CreditsWallet() {
             {/* Transaction History */}
             <div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                    <h2 className="font-bold text-lg text-fontBlack">Transaction History</h2>
+                    <h2 className="font-bold text-lg text-fontBlack">Historique des transactions</h2>
                     <div className="flex flex-wrap items-center gap-3">
                         <Dropdown>
                             <DropdownTrigger>
@@ -502,15 +502,15 @@ export default function CreditsWallet() {
                                     startContent={<HiOutlineArrowDownTray className="size-5" />}
                                     endContent={<MdKeyboardArrowDown className="size-5" />}
                                 >
-                                    Download
+                                    Télécharger
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Download format">
                                 <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
-                                    Download as CSV
+                                    Télécharger en CSV
                                 </DropdownItem>
                                 <DropdownItem key="pdf" onPress={() => handleDownload('pdf')}>
-                                    Download as PDF
+                                    Télécharger en PDF
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -532,7 +532,7 @@ export default function CreditsWallet() {
                                         Points
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
-                                        Balance After
+                                        Solde après
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
                                         Date
@@ -552,7 +552,7 @@ export default function CreditsWallet() {
                                 ) : transactions.length === 0 ? (
                                     <tr>
                                         <td colSpan={6} className="px-4 py-12 text-center text-sm text-darkSilver">
-                                            No transactions found
+                                            Aucune transaction trouvée
                                         </td>
                                     </tr>
                                 ) : (
@@ -626,8 +626,8 @@ export default function CreditsWallet() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border-t border-borderDark">
                         <p className="text-sm text-darkSilver">
                             {totalItems === 0
-                                ? '0 items'
-                                : `${(page - 1) * Number(itemsPerPage) + 1}-${Math.min(page * Number(itemsPerPage), totalItems)} of ${totalItems} items`}
+                                ? '0 résultats'
+                                : `${(page - 1) * Number(itemsPerPage) + 1}–${Math.min(page * Number(itemsPerPage), totalItems)} sur ${totalItems} résultats`}
                         </p>
                         <div className="flex items-center gap-4">
                             <Pagination
@@ -661,7 +661,7 @@ export default function CreditsWallet() {
                                 <SelectItem key="20">20</SelectItem>
                                 <SelectItem key="50">50</SelectItem>
                             </Select>
-                            <p className="text-sm text-darkSilver hidden sm:inline text-nowrap">Items per page</p>
+                            <p className="text-sm text-darkSilver hidden sm:inline text-nowrap">Résultats par page</p>
                         </div>
                     </div>
                 </div>

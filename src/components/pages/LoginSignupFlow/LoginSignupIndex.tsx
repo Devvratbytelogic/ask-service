@@ -93,10 +93,10 @@ const LoginSignupIndex = () => {
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-fontBlack text-[22px]/[26.4px] leading-[-0.44px]">
-                                Increased productivity
+                                La solution simple pour trouver ou proposer des services
                             </h3>
                             <p className="text-base/[22.4px] leading-[-0.32px] text-darkSilver">
-                                Enhance group performance and output by automating redundant tasks, refining processes, and speeding up business functions.
+                                Recevez des demandes, comparez des devis et connectez-vous aux bons professionnels.
                             </p>
                         </div>
                     </div>

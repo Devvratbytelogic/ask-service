@@ -8,12 +8,12 @@ export default function FaqPage() {
         <div className="min-h-screen body_x_axis_padding container_y_padding_lg w-full max-w-2xl md:max-w-none md:w-2/3 mx-auto space-y-10">
             <section className="w-full md:w-2/4 md:mx-auto">
                 <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-fontBlack mb-2 md:mb-4">
-                    Frequently Asked Questions
+                    Foire aux questions
                 </h1>
                 <p className="text-sm md:text-base text-darkSilver/90">
-                    Quick answers to common questions. Can&apos;t find what you need?{' '}
+                    Des réponses rapides aux questions fréquentes. Vous ne trouvez pas ce que vous cherchez ?{' '}
                     <Link href={getContactUsRoutePath()} className="text-primary font-medium hover:underline">
-                        Contact us
+                        Contactez-nous
                     </Link>
                     .
                 </p>

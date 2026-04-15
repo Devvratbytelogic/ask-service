@@ -7,9 +7,9 @@ import { useGetFaqsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IFaqItem } from '@/types/faqs'
 
 const FAQ_TAB_TYPES = [
-  { key: 'general', label: 'General' },
-  { key: 'payments', label: 'Payments' },
-  { key: 'licensing', label: 'Licensing' },
+  { key: 'general', label: 'Général' },
+  { key: 'payments', label: 'Paiement' },
+  { key: 'licensing', label: 'Abonnement' },
   { key: 'support', label: 'Assistance' },
 ] as const
 

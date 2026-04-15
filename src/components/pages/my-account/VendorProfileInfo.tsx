@@ -230,7 +230,7 @@ export default function VendorProfileInfo() {
             .toUpperCase() || 'U'
 
     const memberSinceDate = profileData?.createdAt
-        ? new Date(profileData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        ? new Date(profileData.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
         : ''
 
     return (

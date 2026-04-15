@@ -321,7 +321,7 @@ export default function MessageLayout() {
                   <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 rounded-full border border-borderDark bg-[#F9FAFB] px-3 py-2 sm:px-4 sm:py-2.5">
                     <input
                       type="text"
-                      placeholder="Type your message..."
+                      placeholder="Tapez votre message…"
                       value={messageInput}
                       onChange={(e) => handleInputChange(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
@@ -346,7 +346,7 @@ export default function MessageLayout() {
                     <span className="sm:hidden inline-flex"><SendIconSVG /></span>
                     <span className="hidden sm:flex sm:items-center sm:gap-2">
                       <SendIconSVG />
-                      Send
+                      Envoyer
                     </span>
                   </Button>
                 </div>

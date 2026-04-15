@@ -9,7 +9,7 @@ import { IVendorDetailsAPIResponseDataReview } from '@/types/vendorDetails'
 
 function formatReviewDate(createdAt: string) {
     try {
-        return new Date(createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        return new Date(createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
     } catch {
         return createdAt
     }

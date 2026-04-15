@@ -44,10 +44,10 @@ const VendorServiceListPage = () => {
             <div className="space-y-10 w-full">
                 <div className="space-y-3 xl:space-y-6">
                     <h1 className="header_text">
-                        Tell us more about <span className="text-darkSilver">you</span>
+                        Parlez-nous de <span className="text-darkSilver">vous</span>
                     </h1>
                     <p className="text-fontBlack text-base">
-                        What services can you help with?
+                        Quels services souhaitez-vous proposer ?
                     </p>
                 </div>
 

@@ -9,6 +9,7 @@ import { addToast, Button, Spinner } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { HiOutlineArrowDownTray } from 'react-icons/hi2'
 import moment from 'moment'
+import 'moment/locale/fr'
 import { useRouter } from 'next/navigation'
 import { getMessageRoutePath, getVendorProfileRoutePath } from '@/routes/routes'
 
@@ -92,7 +93,7 @@ export default function QuoteDetailModal() {
         return (
             <div className="flex flex-col items-center justify-center min-h-75 p-6">
                 <Spinner size="lg" />
-                <p className="text-sm text-darkSilver mt-4">Loading quote details...</p>
+                <p className="text-sm text-darkSilver mt-4">Chargement du devis…</p>
             </div>
         )
     }
@@ -136,14 +137,12 @@ export default function QuoteDetailModal() {
             </div>
 
             <div className="flex-1 overflow-y-auto px-6">
-                {/* Quote price card */}
                 <div className="shrink-0 mt-4 p-4 rounded-2xl border border-[#BEDBFF] bg-linear-to-br from-[#EFF6FF] to-[#EEF2FF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <p className="text-xs text-darkSilver">Prix du devis</p>
                         <p className="font-bold text-2xl text-fontBlack mt-0.5">
                             {quote.currency ? `${quote.quote_price} ${quote.currency}` : `${quote.quote_price} €`}
                         </p>
-                        <p className="text-xs text-darkSilver">Prix TTC</p>
                     </div>
                     <div className="text-left sm:text-right">
                         <p className="text-xs text-darkSilver">Valide jusqu&apos;au</p>
@@ -166,7 +165,7 @@ export default function QuoteDetailModal() {
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
                         <p className="text-xs text-darkSilver">Disponibilité</p>
-                        <p className="text-sm text-fontBlack mt-1">{quote.available_start_date ? moment(quote.available_start_date).format('DD MMM YYYY') : '—'}</p>
+                        <p className="text-sm text-fontBlack mt-1">{quote.available_start_date ? moment(quote.available_start_date).locale('fr').format('DD MMM YYYY') : '—'}</p>
                     </div>
                     <div className="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
                         <p className="text-xs text-darkSilver">Devis valable pour</p>

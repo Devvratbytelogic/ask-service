@@ -391,7 +391,7 @@ export default function VendorDashboard() {
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <TimeIconSVG />
-                                            Posted {moment(lead.createdAt).locale('fr').fromNow()} ({moment(lead.createdAt).locale('fr').format('DD MMMM YYYY, h:mm A')})
+                                            Publiée {moment(lead.createdAt).locale('fr').fromNow()} ({moment(lead.createdAt).locale('fr').format('DD MMMM YYYY, HH:mm')})
                                         </span>
                                     </div>
 

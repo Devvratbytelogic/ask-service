@@ -48,7 +48,7 @@ function mapApiStatusToPaymentStatus(status: string): PaymentStatus {
 function mapTransactionToRecord(entity: IAllTransactionHistoryTransactionsEntity): PaymentRecord {
     const rawAmount = (entity as { amount_paid?: number | string | null }).amount_paid
     const amount = rawAmount != null ? (typeof rawAmount === 'number' ? rawAmount.toFixed(2) : String(rawAmount)) : '—'
-    const amountPaid = entity.currency ? `${entity.currency} ${amount}` : amount
+    const amountPaid = `${amount} points`
     const paymentMethod = (entity as { payment_method?: string | null }).payment_method
     return {
         id: entity._id,
@@ -231,15 +231,15 @@ export default function VendorPaymentHistory() {
                                     startContent={<DownloadIconSVG className="text-white" />}
                                     endContent={<MdKeyboardArrowDown className="text-lg text-white" />}
                                 >
-                                    Download
+                                    Télécharger
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Download options">
                                 <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
-                                    Download as CSV
+                                    Télécharger en CSV
                                 </DropdownItem>
                                 <DropdownItem key="pdf" onPress={() => handleDownload('pdf')}>
-                                    Download as PDF
+                                    Télécharger en PDF
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -330,8 +330,8 @@ export default function VendorPaymentHistory() {
                 <div className="flex flex-col gap-4 border-t border-borderDark p-4 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-darkSilver">
                         {totalItems === 0
-                            ? '0 items'
-                            : `${start + 1}-${Math.min(start + perPage, totalItems)} of ${totalItems} items`}
+                            ? '0 résultats'
+                            : `${start + 1}–${Math.min(start + perPage, totalItems)} sur ${totalItems} résultats`}
                     </p>
                     <Pagination
                         total={totalPages}
@@ -365,7 +365,7 @@ export default function VendorPaymentHistory() {
                                 ))}
                             </Select>
                             <span className="text-sm text-fontBlack whitespace-nowrap">
-                                Items per page
+                                Résultats par page
                             </span>
                         </div>
                     {/* </div> */}

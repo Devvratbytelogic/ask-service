@@ -101,7 +101,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
             <div className="space-y-10">
                 <div className="space-y-3 xl:space-y-6 w-11/12">
                     <h1 className="header_text">
-                        Authentication <br /> <span className="text-darkSilver"> required</span>
+                        Authentification <br /> <span className="text-darkSilver"> requise</span>
                     </h1>
                     {displayValue && (
                         <>
@@ -112,18 +112,18 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                                     onClick={handleChangeContact}
                                     className="text-primaryColor cursor-pointer underline underline-offset-2"
                                 >
-                                    Change
+                                    Changer
                                 </button>
                             </p>
                             <p className="text-fontBlack text-base">
-                                We&apos;ve sent a Verification Code to the email above. Please enter it to complete verification.
+                                Nous avons envoyé un code de vérification à l&apos;adresse e-mail ci-dessus. Veuillez le saisir pour terminer la vérification.
                             </p>
                         </>
                     )}
                 </div>
 
                 <div className="space-y-4 w-11/12">
-                    <p className="custom_label_text_light">Enter verification code</p>
+                    <p className="custom_label_text_light">Entrez le code de vérification</p>
                     <OtpInput
                         value={otpValue}
                         onChange={setOtpValue}
@@ -134,9 +134,9 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                     />
 
                     <p className="text-fontBlack text-sm">
-                        Didn&apos;t get your code?{" "}
+                        Vous n&apos;avez pas reçu le code ?{" "}
                         {resendCooldown > 0 ? (
-                            <span className="text-primaryColor">Send a new code in {resendCooldown}s</span>
+                            <span className="text-primaryColor">Renvoyer dans {resendCooldown}s</span>
                         ) : (
                             <button
                                 type="button"
@@ -144,7 +144,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                                 disabled={isResendingEmail}
                                 className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50"
                             >
-                                {isResendingEmail ? "Sending…" : "Send a new code"}
+                                {isResendingEmail ? "Envoi…" : "Renvoyer"}
                             </button>
                         )}
                     </p>

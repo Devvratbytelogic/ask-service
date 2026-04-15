@@ -42,7 +42,7 @@ function getLastMessage(chat: IAllChatListData): string {
         type?: string;
         media_url?: string | null;
     } | null | undefined;
-    if (!latest) return 'No messages yet';
+    if (!latest) return 'Aucun message';
     const content = typeof latest.content === 'string' ? latest.content.trim() : '';
     const type = (latest.type ?? 'text').toLowerCase();
     const mediaUrl = latest.media_url ?? '';
@@ -50,10 +50,10 @@ function getLastMessage(chat: IAllChatListData): string {
     if (type === 'media' && mediaUrl) {
         const fileName = getFileNameFromUrl(mediaUrl);
         if (fileName) return fileName;
-        return 'Attachment';
+        return 'Pièce jointe';
     }
     if (content) return content;
-    return 'No messages yet';
+    return 'Aucun message';
 }
 
 interface MessagesListProps {

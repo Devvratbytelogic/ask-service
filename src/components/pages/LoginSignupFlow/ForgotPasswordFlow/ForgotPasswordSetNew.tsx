@@ -108,19 +108,19 @@ const ForgotPasswordSetNew = () => {
             <div className="space-y-10">
                 <div className="space-y-3 xl:space-y-6 w-11/12">
                     <h1 className="header_text">
-                        Set new password <span className="text-darkSilver" />
+                        Créer un nouveau mot de passe <span className="text-darkSilver" />
                     </h1>
                     <p className="text-fontBlack text-base">
-                        Your new password must have at least 8 characters to keep your account secure.
+                        Votre mot de passe doit contenir au moins 8 caractères
                     </p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4 w-11/12 xl:w-full">
                     <Input
                         name="password"
                         variant="bordered"
-                        label="Create password"
+                        label="Créer un mot de passe"
                         labelPlacement="outside"
-                        placeholder="Create password"
+                        placeholder="Créer un mot de passe"
                         type={isPasswordVisible ? "text" : "password"}
                         value={values.password}
                         onChange={handleChange}
@@ -145,9 +145,9 @@ const ForgotPasswordSetNew = () => {
                     <Input
                         name="confirmPassword"
                         variant="bordered"
-                        label="Confirm password"
+                        label="Confirmer le mot de passe"
                         labelPlacement="outside"
-                        placeholder="Confirm password"
+                        placeholder="Confirmer le mot de passe"
                         type={isConfirmVisible ? "text" : "password"}
                         value={values.confirmPassword}
                         onChange={handleChange}
@@ -176,13 +176,13 @@ const ForgotPasswordSetNew = () => {
                         isLoading={isSubmitting}
                         isDisabled={isSubmitting}
                     >
-                        Reset password
+                        Réinitialiser mon mot de passe
                     </Button>
                 </form>
             </div>
             <div className="w-11/12 space-y-6.25">
                 <p className="text-base text-fontBlack text-center">
-                    Remembered your password?{" "}
+                    Mot de passe retrouvé ?{" "}
                     <span
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                         onClick={openSignIn}
@@ -190,7 +190,7 @@ const ForgotPasswordSetNew = () => {
                         role="button"
                         tabIndex={0}
                     >
-                        Sign in
+                        Connectez-vous
                     </span>
                 </p>
             </div>

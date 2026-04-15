@@ -104,14 +104,12 @@ const VendorDocumentVerification = () => {
                             <IoArrowBackOutline className="size-5" />
                         </span>
                         <h1 className="header_text text-center w-full">
-                            Verify <span className="text-darkSilver">documents</span>
+                            Vérifier mes <span className="text-darkSilver">documents</span>
                         </h1>
                     </div>
 
                     <p className="text-fontBlack text-base/[21px] max-w-xl text-center mx-auto">
-                        Upload the required documents to complete your vendor
-                        verification. All information is securely stored and
-                        only used for verification purposes.
+                        Téléchargez les documents requis pour finaliser la vérification de votre compte prestataire. Toutes les informations sont sécurisées et utilisées uniquement à des fins de vérification.
                     </p>
                 </div>
             </div>
@@ -161,7 +159,7 @@ const VendorDocumentVerification = () => {
                     isLoading={isUploading}
                     onPress={handleSubmit}
                 >
-                    Submit for verification
+                    Soumettre pour vérification
                 </Button>
             </div>
         </div>

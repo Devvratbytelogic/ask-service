@@ -123,7 +123,7 @@ function QuoteCard({ quote }: { quote: IAllQuotes }) {
                         <span className="font-medium text-fontBlack">{quote.quote_price}</span> {currencySymbol}
                     </span>
                     {quote.available_start_date && (
-                        <span>Depuis {moment(quote.available_start_date).format('DD MMM YYYY')}</span>
+                        <span>Depuis {moment(quote.available_start_date).locale('fr').format('DD MMM YYYY')}</span>
                     )}
                     {quote.quote_valid_days != null && (
                         <span>Valable {quote.quote_valid_days} jours</span>

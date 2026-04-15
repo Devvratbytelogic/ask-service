@@ -195,7 +195,7 @@ const MobileOtpVerification = () => {
             <div className="space-y-6 w-full max-w-md mx-auto">
                 <div className="space-y-2">
                     <h2 className="text-xl font-semibold text-fontBlack">
-                        Lets get you started
+                        Commençons
                     </h2>
                     {googleLoginCompleted && email && (
                         <p className="text-fontBlack text-sm xl:text-base">
@@ -203,8 +203,7 @@ const MobileOtpVerification = () => {
                         </p>
                     )}
                     <p className="text-darkSilver text-sm xl:text-base">
-                        Enter your phone number and we&apos;ll send a verification
-                        code to verify it.
+                        Saisissez votre numéro de téléphone et nous vous enverrons un code de vérification.
                     </p>
                 </div>
 
@@ -243,7 +242,7 @@ const MobileOtpVerification = () => {
                     isLoading={isResendingPhone || isResendingPhoneGoogle}
                     onPress={handleSendCode}
                 >
-                    Send code
+                    Envoyer le code
                 </Button>
             </div>
         )
@@ -254,7 +253,7 @@ const MobileOtpVerification = () => {
         <div className="space-y-6 w-full max-w-md mx-auto">
             <div className="space-y-2">
                 <h2 className="text-xl font-semibold text-fontBlack">
-                    Enter Verification Code
+                    Entrez le code de vérification
                 </h2>
                 {googleLoginCompleted && email && (
                     <p className="text-fontBlack text-sm xl:text-base">
@@ -262,8 +261,8 @@ const MobileOtpVerification = () => {
                     </p>
                 )}
                 <p className="text-darkSilver text-sm xl:text-base flex items-center flex-wrap">
-                    <span>Enter the {OTP_LENGTH} digit code</span>, we&apos;ve sent to your
-                    phone number
+                    <span>Saisissez le code à {OTP_LENGTH} chiffres</span> envoyé à votre
+                    numéro de téléphone
                     <div className="flex items-center gap-0.5">
                         <span className="text-primaryColor font-medium">
                             {/* {(() => {
@@ -303,16 +302,16 @@ const MobileOtpVerification = () => {
 
                 <ul className="text-darkSilver text-sm xl:text-base space-y-1 list-none">
                     <li>
-                        The Verification Code will be expired in{" "}
+                        Le code de vérification expirera dans{" "}
                         <span className="font-semibold text-fontBlack">
                             {formatExpiry(otpExpirySeconds)}
                         </span>
                     </li>
                     <li>
-                        Didn&apos;t receive the code?{" "}
+                        Vous n&apos;avez pas reçu le code ?{" "}
                         {resendCooldown > 0 ? (
                             <span className="text-primaryColor">
-                                Resend in {resendCooldown}s
+                                Renvoyer dans {resendCooldown}s
                             </span>
                         ) : (
                             <button
@@ -321,7 +320,7 @@ const MobileOtpVerification = () => {
                                 disabled={isResendingPhone || isResendingPhoneGoogle}
                                 className="text-primaryColor cursor-pointer underline underline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isResendingPhone || isResendingPhoneGoogle ? "Sending…" : "Send a new code"}
+                                {isResendingPhone || isResendingPhoneGoogle ? "Envoi…" : "Renvoyer"}
                             </button>
                         )}
                     </li>

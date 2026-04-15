@@ -139,7 +139,13 @@ export default function ViewQuoteModal() {
                                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
                                     <span className="flex items-center gap-1.5">
                                         <TimeIconSVG />
-                                        répondu il y&apos;a {quote?.responded_in_hours} heures
+                                        répondu il y a {(() => {
+                                            const h = parseFloat(quote?.responded_in_hours ?? '0')
+                                            if (h < 1) return `${Math.round(h * 60)} min`
+                                            if (h < 24) return `${Math.round(h)} h`
+                                            const days = Math.round(h / 24)
+                                            return `${days} jour${days > 1 ? 's' : ''}`
+                                        })()}
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                         <NoteIconSVG />
@@ -150,7 +156,6 @@ export default function ViewQuoteModal() {
                             <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0 border-t sm:border-t-0 pt-4 sm:pt-0 border-borderDark sm:border-0">
                                 <div className="text-left sm:text-right">
                                     <p className="font-bold text-xl text-fontBlack">{quote?.price} €</p>
-                                    <p className="text-sm text-darkSilver">Prix TTC</p>
                                 </div>
                                 <Button
                                     size="sm"

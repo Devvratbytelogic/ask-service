@@ -94,7 +94,7 @@ export default function VerifyEmailOtpModal() {
             </div>
 
             <h2 className="text-xl font-bold text-fontBlack text-center">
-                Verify Your Email
+                Code de vérification
             </h2>
             <p className="text-darkSilver text-sm text-center mt-2">
                 A {OTP_LENGTH}-digit code has been sent to{" "}
@@ -113,9 +113,9 @@ export default function VerifyEmailOtpModal() {
             </div>
 
             <p className="text-darkSilver text-sm text-center mt-4">
-                Didn&apos;t get your code?{" "}
+                Vous n&apos;avez pas reçu le code ?{" "}
                 {resendCooldown > 0 ? (
-                    <span className="text-primaryColor">Send a new code in {resendCooldown}s</span>
+                    <span className="text-primaryColor">Renvoyer dans {resendCooldown}s</span>
                 ) : (
                     <button
                         type="button"
@@ -123,7 +123,7 @@ export default function VerifyEmailOtpModal() {
                         disabled={isResending}
                         className="text-primaryColor font-medium cursor-pointer underline underline-offset-2 hover:opacity-90 disabled:opacity-50"
                     >
-                        {isResending ? "Sending…" : "Send a new code"}
+                        {isResending ? "Envoi…" : "Renvoyer"}
                     </button>
                 )}
             </p>

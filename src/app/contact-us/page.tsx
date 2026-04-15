@@ -26,10 +26,10 @@ export default function ContactUsPage() {
                     />
                     <div className="relative">
                         <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-fontBlack mb-2 md:mb-4">
-                            Got questions?
+                            Vous avez des questions ?
                         </h1>
                         <p className="text-sm md:text-base text-darkSilver/90">
-                            Reach out to us and we will try to help you with anything. Whether you&apos;re ready to begin or just have questions.
+                            Besoin d&apos;aide ? Contactez-nous, notre équipe est là pour vous accompagner.
                         </p>
                     </div>
                 </section>

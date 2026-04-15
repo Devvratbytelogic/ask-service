@@ -15,10 +15,10 @@ export default function AskQuestionCallout() {
         {/* Left: text */}
         <div className="flex-1 min-w-0">
           <h3 className="text-base sm:text-lg font-bold text-fontBlack mb-1">
-            Can&apos;t find your answer?
+            Vous ne trouvez pas votre réponse ?
           </h3>
           <p className="text-sm text-darkSilver font-normal">
-            Get in touch with us we are happy to assist you!
+            Contactez-nous, nous serons ravis de vous aider !
           </p>
         </div>
         {/* Right: button with avatar overlapping its top-right corner */}
@@ -29,7 +29,7 @@ export default function AskQuestionCallout() {
             startContent={<SendIconSVG />}
             onPress={scrollToContactForm}
           >
-            Ask a Question
+            Poser une question
           </Button>
         </div>
       </div>

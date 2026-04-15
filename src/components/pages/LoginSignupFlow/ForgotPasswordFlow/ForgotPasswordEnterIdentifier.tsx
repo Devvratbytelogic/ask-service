@@ -117,7 +117,7 @@ const ForgotPasswordEnterIdentifier = () => {
                         Mot de passe oublié? <span className="text-darkSilver ml-1" />
                     </h2>
                     <p className="text-fontBlack text-base">
-                        Enter your registered email address and we&apos;ll help you reset it securely.
+                        Saisissez votre adresse e-mail pour réinitialiser votre mot de passe en toute sécurité
                     </p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4 w-11/12 xl:w-full">
@@ -126,7 +126,7 @@ const ForgotPasswordEnterIdentifier = () => {
                         variant="bordered"
                         label="Email"
                         labelPlacement="outside"
-                        placeholder="name@example.com"
+                        placeholder="exemple@xyz.com"
                         type="email"
                         value={values.email}
                         onChange={handleChange}
@@ -145,13 +145,13 @@ const ForgotPasswordEnterIdentifier = () => {
                         isLoading={isSending}
                         isDisabled={isSending}
                     >
-                        Next
+                        Suivant
                     </Button>
                 </form>
             </div>
             <div className="w-11/12 space-y-6.25">
                 <p className="text-base text-fontBlack text-center">
-                    Remembered your password?{" "}
+                    Mot de passe retrouvé ?{" "}
                     <span
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                         onClick={openSignIn}
@@ -159,7 +159,7 @@ const ForgotPasswordEnterIdentifier = () => {
                         role="button"
                         tabIndex={0}
                     >
-                        Sign in
+                        Connectez-vous
                     </span>
                 </p>
             </div>

@@ -19,9 +19,11 @@ export default function DiscussionContextBar({ selectedChat }: DiscussionContext
                     <p className="text-xs sm:text-sm font-medium text-fontBlack truncate">
                         Discussion : <span className='font-bold'>{title}</span> ({requestId})
                     </p>
-                    <p className="mt-0.5 text-xs sm:text-sm text-darkSilver line-clamp-2 sm:line-clamp-1">
-                        {quote?.service_description ?? 'Regular weekly cleaning for 3-bedroom house'}
-                    </p>
+                    {quote?.service_description && (
+                        <p className="mt-0.5 text-xs sm:text-sm text-darkSilver line-clamp-2 sm:line-clamp-1">
+                            {quote.service_description}
+                        </p>
+                    )}
                 </div>
                 <div className="text-left sm:text-right shrink-0">
                     <p className="text-lg font-bold text-fontBlack">{price}</p>

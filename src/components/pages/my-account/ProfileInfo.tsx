@@ -253,7 +253,7 @@ export default function ProfileInfo() {
                     <p className="text-sm text-darkSilver">{profileData?.email ?? '—'}</p>
                     {profileData?.createdAt && (
                         <p className="mt-0.5 text-xs text-darkSilver">
-                            Inscrit depuis {new Date(profileData.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                            Inscrit depuis {new Date(profileData.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                         </p>
                     )}
                 </div>

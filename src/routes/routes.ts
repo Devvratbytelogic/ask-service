@@ -57,7 +57,7 @@ export function getDashboardPathForRole(
               ? role
               : String(role.name ?? role.id ?? role._id ?? '');
     const rLower = r.toLowerCase();
-    if (rLower === 'vendor') return getVendorDashboardRoutePath({ leads: 'available' });
+    if (rLower === 'vendor') return getVendorDashboardRoutePath();
     return getMyRequestRoutePath();
 }
 export function getContactUsRoutePath() {

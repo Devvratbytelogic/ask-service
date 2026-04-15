@@ -12,7 +12,7 @@ export default function VendorUnderReviewBanner() {
 
     return (
         <div className='bg-[#FFFCF8] py-2 text-center text-fontBlack'>
-            Your documents are currently under review for verification. You cannot purchase leads at this time.
+            Vos documents doivent être vérifiés, vous ne pouvez pas débloquer de prospects pour le moment.
         </div>
     )
 }

@@ -12,9 +12,9 @@ const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.doc', '.docx', '.pdf', '.
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5MB
 
 const QUOTE_VALID_OPTIONS = [
-    { key: '7', label: '7 days' },
-    { key: '14', label: '14 days' },
-    { key: '30', label: '30 days' },
+    { key: '7', label: '7 jours' },
+    { key: '14', label: '14 jours' },
+    { key: '30', label: '30 jours' },
 ]
 
 const initialValues = {
@@ -108,10 +108,9 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Quote Price */}
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Quote Price <span className="text-danger">*</span>
+                        Prix de devis <span className="text-danger">*</span>
                     </label>
                     <Input
                         name="quotePrice"
@@ -124,21 +123,21 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         classNames={{ inputWrapper: 'account_input_design' }}
                     />
                     <p className="mt-1 text-xs text-darkSilver">
-                        Enter your total price per visit or per service
+                        Donner le prix TTC pour la prestation
                     </p>
                 </div>
 
                 {/* Service Description */}
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Service Description <span className="text-danger">*</span>
+                        Description du service <span className="text-danger">*</span>
                     </label>
                     <Textarea
                         name="serviceDescription"
                         value={values.serviceDescription}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        placeholder="Describe what your service includes, materials you'll use, your approach, and any guarantees you offer..."
+                        placeholder="Décrivez votre service et ce qu'il inclut…"
                         isInvalid={!!(touched.serviceDescription && errors.serviceDescription)}
                         errorMessage={touched.serviceDescription && errors.serviceDescription}
                         minRows={4}
@@ -147,16 +146,14 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                             input: 'placeholder:text-placeHolderText',
                         }}
                     />
-                    <p className="mt-1 text-xs text-darkSilver">
-                        Be specific about what&apos;s included and not included
-                    </p>
+                    
                 </div>
 
                 {/* Date and Quote Valid For */}
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Available Start Date <span className="text-danger">*</span>
+                            Date de début de validité <span className="text-danger">*</span>
                         </label>
                         <Input
                             name="availableStartDate"
@@ -173,7 +170,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                     </div>
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Quote Valid For
+                            Devis Valable Pour
                         </label>
                         <Select
                             selectedKeys={[values.quoteValidFor]}
@@ -197,10 +194,10 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                 {/* Attach Document */}
                 <div>
                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                        Attach Document
+                        Joindre le devis
                     </label>
                     <p className="mb-2 text-xs text-darkSilver">
-                        Only support .jpg, .png, .doc, .docx, .pdf and .svg and upto 5MB
+                        Formats acceptés : JPG, PNG, DOC, DOCX, PDF, SVG • Taille max : 5 Mo
                     </p>
                     <Button
                         type="button"
@@ -208,7 +205,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                         className='btn_radius btn_bg_white text-primary!'
                         startContent={<FiUploadCloud className="size-5 text-primaryColor" />}
                     >
-                        Tap to Upload Document
+                        Ajouter un document
                     </Button>
                     {attachment && (
                         <p className="mt-1.5 text-sm text-fontBlack">{attachment.name}</p>

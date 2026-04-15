@@ -35,12 +35,12 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-full min-w-0">
       <div className="min-w-0">
         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-          Name
+          Votre nom
         </label>
         <Input
           name="name"
           type="text"
-          placeholder="Name"
+          placeholder="Votre nom"
           value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -55,12 +55,12 @@ export default function ContactForm() {
       </div>
       <div className="min-w-0">
         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-          Email
+          Votre email
         </label>
         <Input
           name="email"
           type="email"
-          placeholder="Email"
+          placeholder="Votre email"
           value={values.email}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -75,7 +75,7 @@ export default function ContactForm() {
       </div>
       <div className="min-w-0">
         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-          Message
+          Votre message
         </label>
         <div className="relative">
           <span className="absolute left-3 top-3 z-10 text-darkSilver pointer-events-none">
@@ -83,7 +83,7 @@ export default function ContactForm() {
           </span>
           <Textarea
             name="message"
-            placeholder="What can we help you with?"
+            placeholder="Que pouvons-nous faire pour vous ?"
             value={values.message}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -106,7 +106,7 @@ export default function ContactForm() {
           isLoading={isLoading}
           isDisabled={isLoading}
         >
-          Send Message
+          Envoyer le message
         </Button>
       </div>
     </form>
