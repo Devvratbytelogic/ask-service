@@ -137,7 +137,7 @@ export default function ViewQuoteModal() {
                                 </div>
                                 <p className="text-sm text-fontBlack">{quote?.service_description}</p>
                                 <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
-                                    <span className="flex items-center gap-1.5">
+                                    {/* <span className="flex items-center gap-1.5">
                                         <TimeIconSVG />
                                         répondu il y a {(() => {
                                             const h = parseFloat(quote?.responded_in_hours ?? '0')
@@ -146,7 +146,7 @@ export default function ViewQuoteModal() {
                                             const days = Math.round(h / 24)
                                             return `${days} jour${days > 1 ? 's' : ''}`
                                         })()}
-                                    </span>
+                                    </span> */}
                                     <span className="flex items-center gap-1.5">
                                         <NoteIconSVG />
                                         {quote?.price_display}

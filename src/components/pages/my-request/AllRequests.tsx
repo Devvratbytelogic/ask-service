@@ -96,7 +96,7 @@ export default function AllRequests() {
     const totalPages = apiData?.pagination?.totalPages ?? 0
     const totalCount = apiData?.pagination?.total ?? 0
 
-   
+
 
     if (isError) {
         return (
@@ -243,7 +243,8 @@ export default function AllRequests() {
                                             onPress={() => dispatch(openModal({
                                                 componentName: 'CloseRequestModal',
                                                 data: { request },
-                                                modalSize: 'md',
+                                                modalSize: 'lg',
+                                                modalPadding: 'p-0!',
                                             }))}
                                         >
                                             <HorizontalDotsSVG />

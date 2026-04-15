@@ -48,30 +48,23 @@ export default function CloseRequestModal() {
             // Error toast is handled by RTK base query
         }
     }
-    console.log('request', request);
-
     return (
         <>
             <div className="p-4 px-6 border-b border-borderDark space-y-1">
                 <h2 className="font-bold text-xl text-fontBlack">Clôturer cette demande ?</h2>
                 {/* Request summary */}
                 <p className="text-sm text-darkSilver">
-                    {request?.service_title}
+                    {request?.service_category?.title ?? request?.service_title}
                     <span className="mx-1.5">•</span>
                     {request?.request_id}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-darkSilver">
                     <span className="flex items-center gap-1.5">
                         <CalendarSVG />
-                        {/* {request?.date ? moment(request.date).format('DD-MM-YYYY [à] HH:mm') : 'Unknown Date'} */}
-
-                        {request?.date ? (
-                            <>
-                                {moment(request.date).format('DD-MM-YYYY [à] HH:mm')}
-                            </>
-                        ) : (
-                            '—'
-                        )}
+                        {(() => {
+                            const dateVal = request?.createdAt ?? request?.date
+                            return dateVal ? moment(dateVal).format('DD-MM-YYYY [à] HH:mm') : '—'
+                        })()}
                     </span>
                     <span className="flex items-center gap-1.5">
                         <LocationSVG />
