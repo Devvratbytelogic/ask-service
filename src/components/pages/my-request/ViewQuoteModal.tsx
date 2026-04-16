@@ -48,20 +48,20 @@ export default function ViewQuoteModal() {
                             <BackArrowSVG />
                         </Button>
                         <div className="space-y-1">
-                            <h2 className="font-bold text-xl text-fontBlack">{`Devis – ${request?.service_title ?? 'Unknown Service'}`}</h2>
+                            <h2 className="font-bold text-xl text-fontBlack">{`Devis – ${request?.service_title ?? 'Service inconnu'}`}</h2>
                             <p className="text-xs text-darkSilver">
-                                Demande {request?.request_id ?? 'Unknown Request'}
+                                Demande {request?.request_id ?? 'Demande inconnue'}
                                 <span className="mx-1.5">•</span>
                                 {request?.quotes_count ?? 0} devis reçu
                             </p>
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-darkSilver">
                                 <span className="flex items-center gap-1.5">
                                     <CalendarSVG />
-                                    {request?.date ? moment(request.date).format('DD-MM-YYYY [à] HH:mm') : 'Unknown Date'}
+                                    {request?.date ? moment(request.date).format('DD-MM-YYYY [à] HH:mm') : 'Date inconnue'}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <LocationSVG />
-                                    {request?.location ?? 'Unknown Location'}
+                                    {request?.location ?? 'Localisation inconnue'}
                                 </span>
                             </div>
                         </div>

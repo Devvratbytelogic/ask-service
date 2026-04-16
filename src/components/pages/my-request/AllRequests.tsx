@@ -160,7 +160,7 @@ export default function AllRequests() {
                                                 <FiInfo size={14} />
                                                 En attente de devis
                                             </span>}
-                                            <Tooltip content={`This request will stay open for ${quoteExpired} days. After that, it will close automatically.`}>
+                                            <Tooltip content={`Cette demande restera ouverte pendant ${quoteExpired} jours. Après cela, elle se fermera automatiquement.`}>
                                                 <span className="inline-flex cursor-help">
                                                     <InfoSVG />
                                                 </span>
@@ -173,7 +173,7 @@ export default function AllRequests() {
                                             </span>
                                             {request?.preferred_start_date !== null && <span className="flex items-center gap-1.5">
                                                 <CalendarSVG />
-                                                Preferred start {formatRequestDate(request?.preferred_start_date ?? '')}
+                                                Début souhaité {formatRequestDate(request?.preferred_start_date ?? '')}
                                             </span>}
                                             <span className="flex items-center gap-1.5">
                                                 <LocationSVG />

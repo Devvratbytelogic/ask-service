@@ -76,7 +76,7 @@ export default function DocumentUploadCard({
                     </h3>
                     {required && (
                         <span className="px-2 py-0.5 rounded text-xs font-medium bg-danger/10 text-danger">
-                            REQUIRED
+                            OBLIGATOIRE
                         </span>
                     )}
                 </div>
@@ -85,7 +85,7 @@ export default function DocumentUploadCard({
                         <span className="size-4 rounded-full bg-success flex items-center justify-center">
                             <FiCheck className="size-2.5 text-white" />
                         </span>
-                        Uploaded
+                        Téléchargé
                     </span>
                 )}
             </div>
@@ -99,9 +99,9 @@ export default function DocumentUploadCard({
                 accept={accept}
                 maxSizeBytes={maxSizeBytes}
                 onFileRejected={onFileRejected}
-                dragLabel="Drag and drop your file here"
-                browseLabel="Browse files"
-                ariaLabel={`Upload ${title}`}
+                dragLabel="Glissez-déposez votre fichier ici"
+                browseLabel="Parcourir les fichiers"
+                ariaLabel={`Télécharger ${title}`}
             />
         </div>
     )

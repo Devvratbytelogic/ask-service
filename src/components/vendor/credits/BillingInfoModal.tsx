@@ -7,12 +7,12 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 const billingValidationSchema = Yup.object({
-    businessName: Yup.string().required('Business name is required'),
-    businessAddress: Yup.string().required('Business address is required'),
-    postcode: Yup.string().required('Postcode is required'),
-    city: Yup.string().required('City is required'),
-    vatNumber: Yup.string().required('VAT number is required'),
-    companyRegistrationNumber: Yup.string().required('Company registration number is required'),
+    businessName: Yup.string().required('Le nom de l\'entreprise est obligatoire'),
+    businessAddress: Yup.string().required('L\'adresse de l\'entreprise est obligatoire'),
+    postcode: Yup.string().required('Le code postal est obligatoire'),
+    city: Yup.string().required('La ville est obligatoire'),
+    vatNumber: Yup.string().required('Le numéro de TVA est obligatoire'),
+    companyRegistrationNumber: Yup.string().required('Le numéro de SIREN est obligatoire'),
 })
 
 type BillingInfoModalProps = {
@@ -88,9 +88,9 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                 {() => (
                     <ModalBody className="bg-white px-8 py-6 rounded-3xl">
                         <div className="mb-4">
-                            <h2 className="text-xl font-bold text-fontBlack">Billing Information Required</h2>
+                            <h2 className="text-xl font-bold text-fontBlack">Informations de facturation requises</h2>
                             <p className="text-sm text-darkSilver mt-1">
-                                Please fill in your billing details before proceeding to payment.
+                                Veuillez renseigner vos informations de facturation avant de procéder au paiement.
                             </p>
                         </div>
 

@@ -47,7 +47,7 @@ export default function VendorAllQuotes() {
                     <div className="flex flex-col gap-4">
                         {isLoading && (
                             <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
-                                <p className="text-darkSilver">Loading quotes…</p>
+                                <p className="text-darkSilver">Chargement des devis…</p>
                             </div>
                         )}
                         {!isLoading && quotes.length === 0 && (

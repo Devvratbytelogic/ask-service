@@ -45,12 +45,12 @@ export default function LeaveReviewModal() {
         rating > 0
 
     const selectPlaceholder = isLoading
-        ? 'Loading requests…'
+        ? 'Chargement des demandes…'
         : isError
-            ? 'Could not load requests'
+            ? 'Impossible de charger les demandes'
             : requests.length === 0
-                ? 'No requests yet'
-                : 'Select request ID'
+                ? 'Aucune demande pour l\'instant'
+                : 'Sélectionner un ID de demande'
 
     const handleCancel = () => dispatch(closeModal())
     const handleSubmit = async () => {
@@ -71,7 +71,7 @@ export default function LeaveReviewModal() {
     return (
         <div className="flex flex-col">
             {/* Header */}
-            <h2 className="text-xl font-bold text-fontBlack">Leave a Review</h2>
+            <h2 className="text-xl font-bold text-fontBlack">Laisser un avis</h2>
 
             {/* Star rating */}
             <div className="mt-3 flex items-center gap-0.5">
@@ -83,7 +83,7 @@ export default function LeaveReviewModal() {
                         onClick={() => setRating(star)}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
-                        aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                        aria-label={`Attribuer ${star} étoile${star > 1 ? 's' : ''}`}
                     >
                         <span className="inline-block scale-150 origin-center">
                             {star <= displayRating ? (
@@ -100,7 +100,7 @@ export default function LeaveReviewModal() {
             <div className="mt-3">
                 <label className="text-sm text-fontBlack font-medium flex items-center gap-2 mb-1">
                     <span>
-                        Select your request ID <span className="text-red-500">*</span>
+                        Sélectionnez votre ID de demande <span className="text-red-500">*</span>
                     </span>
                     {isLoading && <Spinner size="sm" color="primary" />}
                 </label>
@@ -128,7 +128,7 @@ export default function LeaveReviewModal() {
                     items={filteredRequests}
                     isDisabled={isLoading || isError || requests.length === 0}
                     variant="bordered"
-                    aria-label="Select request ID"
+                    aria-label="Sélectionner un ID de demande"
                     allowsEmptyCollection
                     onClear={() => {
                         setSelectedServiceRequestId(null)
@@ -154,10 +154,10 @@ export default function LeaveReviewModal() {
                     }}
                     listboxProps={{
                         emptyContent: isError
-                            ? 'Could not load requests.'
+                            ? 'Impossible de charger les demandes.'
                             : requests.length === 0
-                                ? 'No requests yet.'
-                                : 'No matching request ID.',
+                                ? 'Aucune demande pour l\'instant.'
+                                : 'Aucun ID de demande correspondant.',
                     }}
                 >
                     {(item) => (
@@ -171,10 +171,10 @@ export default function LeaveReviewModal() {
             {/* Your Review */}
             <div className="mt-3">
                 <label className="text-sm text-fontBlack font-medium block mb-1">
-                    Your Review <span className="text-red-500">*</span>
+                    Votre avis <span className="text-red-500">*</span>
                 </label>
                 <Textarea
-                    placeholder="Share your experience with this vendor..."
+                    placeholder="Partagez votre expérience avec ce prestataire..."
                     value={reviewText}
                     onValueChange={setReviewText}
                     minRows={4}
@@ -185,7 +185,7 @@ export default function LeaveReviewModal() {
                 />
                 <div className="mt-2 flex items-center justify-between">
                     <span className="text-xs text-[#9CA3AF]">
-                        Minimum {MIN_REVIEW_LENGTH} characters ({charCount})
+                        Minimum {MIN_REVIEW_LENGTH} caractères ({charCount})
                     </span>
                     <div className="flex -space-x-2">
                         <Avatar
@@ -207,7 +207,7 @@ export default function LeaveReviewModal() {
             {/* Info banner */}
             <div className="mt-3 rounded-xl bg-[#EFF6FF] border border-[#BEDBFF] px-4 py-3">
                 <p className="text-sm text-fontBlack">
-                    Your review helps others make informed decisions. Please be honest and constructive.
+                    Votre avis aide les autres à prendre des décisions éclairées. Soyez honnête et constructif.
                 </p>
             </div>
 
@@ -224,7 +224,7 @@ export default function LeaveReviewModal() {
                     isDisabled={!canSubmit}
                     className="btn_radius btn_bg_blue min-w-35 font-medium"
                 >
-                    {isSubmitting ? 'Submitting...' : 'Submit review'}
+                    {isSubmitting ? 'Envoi en cours...' : 'Soumettre l\'avis'}
                 </Button>
             </div>
         </div>

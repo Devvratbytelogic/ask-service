@@ -68,9 +68,9 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                     <div className="flex items-center gap-4 shrink-0">
                         <div className="text-right">
                             <p className="font-bold text-fontBlack">
-                                {data?.creditsToUnlock} Credits
+                                {data?.creditsToUnlock} Crédits
                             </p>
-                            <p className="text-xs text-darkSilver">to unlock</p>
+                            <p className="text-xs text-darkSilver">pour débloquer</p>
                         </div>
                         <Button
                             className="btn_radius btn_bg_blue font-medium shrink-0"

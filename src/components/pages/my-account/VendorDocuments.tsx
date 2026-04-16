@@ -105,20 +105,20 @@ function StatusBadge({ status }: { status: DocStatus }) {
 const FALLBACK_DOCUMENTS: DocumentItem[] = [
   {
     id: 'identity',
-    title: 'Identity Proof',
-    description: 'Valid passport, driver\'s license, or national ID card',
+    title: 'Justificatif d\'identité',
+    description: 'Passeport valide, permis de conduire ou carte d\'identité nationale',
     status: 'action_required',
   },
   {
     id: 'trade-license',
-    title: 'Trade License',
-    description: 'Relevant professional licenses for your service category',
+    title: 'Licence commerciale',
+    description: 'Licences professionnelles pertinentes pour votre catégorie de service',
     status: 'action_required',
   },
   {
     id: 'compliance',
-    title: 'Compliance Declaration',
-    description: 'Relevant professional licenses for your service category',
+    title: 'Déclaration de conformité',
+    description: 'Licences professionnelles pertinentes pour votre catégorie de service',
     status: 'action_required',
   },
 ]
@@ -240,15 +240,15 @@ export default function VendorDocuments() {
                     onChange={(file) => setFileForDoc(doc.id, file)}
                     accept=".pdf,.jpg,.jpeg,.png"
                     maxSizeBytes={5 * 1024 * 1024}
-                    dragLabel="Drag and drop your file here"
-                    browseLabel="Re-upload Document"
-                    ariaLabel={`Upload ${doc.title}`}
+                    dragLabel="Glissez-déposez votre fichier ici"
+                    browseLabel="Re-télécharger le document"
+                    ariaLabel={`Télécharger ${doc.title}`}
                     buttonClassName="btn_radius btn_bg_blue text-white"
                   />
                 </div>
               )}
             </div>
-          )) : <><p className="text-sm text-darkSilver">No documents found</p></>}
+          )) : <><p className="text-sm text-darkSilver">Aucun document trouvé</p></>}
 
           {hasAnyFile && (
             <div className="flex justify-end">
@@ -258,7 +258,7 @@ export default function VendorDocuments() {
                 isLoading={isUploading}
                 isDisabled={isUploading}
               >
-                Upload documents
+                Télécharger les documents
               </Button>
             </div>
           )}

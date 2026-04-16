@@ -37,7 +37,7 @@ export function validateEmail(email: string): boolean {
 const EMAIL_VALIDATION_MESSAGE = 'Veuillez entrer une adresse e-mail valide'
 
 /** Yup field for required email (Formik + Yup). Use in schemas: email: yupRequiredEmail() */
-export const yupRequiredEmail = (requiredMessage = 'Email is required') =>
+export const yupRequiredEmail = (requiredMessage = 'L\'e-mail est obligatoire') =>
     Yup.string()
         .trim()
         .required(requiredMessage)
@@ -51,7 +51,7 @@ export const yupOptionalEmail = () =>
 
 export const profileInfoValidationSchema = Yup.object({
     firstName: Yup.string().required('Ce champ est obligatoire'),
-    lastName: Yup.string().required('Ce champ est obligatoired'),
+    lastName: Yup.string().required('Ce champ est obligatoire'),
     email: yupRequiredEmail(),
     phone: Yup.string().required('Ce champ est obligatoire'),
     streetAddress: Yup.string().required('Ce champ est obligatoire'),
@@ -69,7 +69,7 @@ export const securitySettingsValidationSchema = Yup.object({
     newPassword: Yup.string().required('Ce champ est obligatoire'),
     confirmNewPassword: Yup.string()
         .required('Ce champ est obligatoire')
-        .oneOf([Yup.ref('newPassword')], 'Passwords must match'),
+        .oneOf([Yup.ref('newPassword')], 'Les mots de passe ne correspondent pas'),
 })
 
 export const contactFormValidationSchema = Yup.object({

@@ -92,7 +92,7 @@ const VendorDocumentVerification = () => {
                 type="button"
                 onClick={() => dispatch(closeModal())}
                 className="h-12 w-fit inline-flex items-center justify-start cursor-pointer hover:opacity-80 transition-opacity"
-                aria-label="Close and go to Ask Service"
+                aria-label="Fermer et aller à Ask Service"
             >
                 <ImageComponent url="/images/navbar/ask_service_logo.png" img_title="ask service logo" />
             </button>
@@ -115,10 +115,10 @@ const VendorDocumentVerification = () => {
             </div>
 
             {isLoading && (
-                <p className="text-darkSilver text-sm">Loading required documents...</p>
+                <p className="text-darkSilver text-sm">Chargement des documents requis...</p>
             )}
             {isError && (
-                <p className="text-red-500 text-sm">Failed to load required documents. Please try again.</p>
+                <p className="text-red-500 text-sm">Impossible de charger les documents requis. Veuillez réessayer.</p>
             )}
             {!isLoading && !isError && documents.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">

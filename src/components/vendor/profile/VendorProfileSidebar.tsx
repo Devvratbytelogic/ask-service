@@ -62,7 +62,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                             </Button>
                         ) : (
                             <Button className='btn_radius btn_bg_white'>
-                                Security services
+                                Services de sécurité
                             </Button>
                         )}
                     </div>
@@ -85,7 +85,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                         className="mt-6 w-full cursor-pointer flex items-center justify-center gap-2 text-sm text-[#6A7282] hover:text-fontBlack transition-colors"
                     >
                         <FlagIconSVG />
-                        <span>Report this profile</span>
+                        <span>Signaler ce profil</span>
                     </button>
                 </div>
             </div>

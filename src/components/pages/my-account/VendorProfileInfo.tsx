@@ -15,11 +15,11 @@ import Cookies from 'js-cookie'
 import ImageComponent from '@/components/library/ImageComponent'
 
 const COMPANY_SIZE_OPTIONS = [
-    '1 - 10 employees',
-    '2 - 10 employees',
-    '11 - 50 employees',
-    '51 - 200 employees',
-    '201+ employees',
+    '1 - 10 employés',
+    '2 - 10 employés',
+    '11 - 50 employés',
+    '51 - 200 employés',
+    '201+ employés',
 ]
 
 
@@ -227,7 +227,7 @@ export default function VendorProfileInfo() {
         ]
             .filter(Boolean)
             .join('')
-            .toUpperCase() || 'U'
+            .toUpperCase() || 'P'
 
     const memberSinceDate = profileData?.createdAt
         ? new Date(profileData.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
@@ -256,7 +256,7 @@ export default function VendorProfileInfo() {
                             isLoading={isUpdating}
                             isDisabled={isUpdating}
                         >
-                            Save Changes
+                            Enregistrer les modifications
                         </Button>
                     </div>
                 )}
@@ -271,7 +271,7 @@ export default function VendorProfileInfo() {
                         accept={ACCEPTED_IMAGE_TYPES.join(',')}
                         onChange={handleProfilePicChange}
                         className="hidden"
-                        aria-label="Upload profile picture"
+                        aria-label="Télécharger une photo de profil"
                     />
                     {avatarSrc ? (
                         <div className='size-16 shrink-0 rounded-full overflow-hidden border border-gray-200'>
@@ -417,7 +417,7 @@ export default function VendorProfileInfo() {
                                     onBlur={() => handleBlur({ target: { name: 'phone' } })}
                                     inputProps={{
                                         name: 'phone',
-                                        'aria-label': 'Phone number',
+                                        'aria-label': 'Numéro de téléphone',
                                         disabled: !isEditing,
                                     }}
                                     containerClass="!w-full"
@@ -500,7 +500,7 @@ export default function VendorProfileInfo() {
                     isLoading={isGeoLoading}
                     onPress={handleGetUserGeolocation}
                 >
-                    Use my current location
+                    Utiliser ma position actuelle
                 </Button>
 
                 {/* VAT Number | Company Registration Number */}

@@ -325,7 +325,7 @@ export default function CreditsWallet() {
                     <button
                         onClick={() => setPaymentStatus(null)}
                         className="text-[#2E7D32]/60 hover:text-[#2E7D32] transition-colors"
-                        aria-label="Dismiss"
+                        aria-label="Fermer"
                     >
                         ✕
                     </button>
@@ -343,7 +343,7 @@ export default function CreditsWallet() {
                     <button
                         onClick={() => setPaymentStatus(null)}
                         className="text-[#C62828]/60 hover:text-[#C62828] transition-colors"
-                        aria-label="Dismiss"
+                        aria-label="Fermer"
                     >
                         ✕
                     </button>
@@ -419,7 +419,7 @@ export default function CreditsWallet() {
                                     <div className='space-y-1 text-center'>
                                         {pkg.popular && (
                                             <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 inline-flex rounded-full bg-primaryColor px-3 py-0.5 text-xs font-medium text-white">
-                                                MOST POPULAR
+                                                LE PLUS POPULAIRE
                                             </span>
                                         )}
                                         {pkg.name && (
@@ -476,11 +476,11 @@ export default function CreditsWallet() {
                                     startContent={<CalendarSVG />}
                                     endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                 >
-                                    {PERIOD_OPTIONS.find((o) => o.key === period)?.label ?? 'Last 30 days'}
+                                    {PERIOD_OPTIONS.find((o) => o.key === period)?.label ?? '30 derniers jours'}
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
-                                aria-label="Period filter"
+                                aria-label="Filtre de période"
                                 items={PERIOD_OPTIONS}
                                 selectedKeys={[period]}
                                 selectionMode="single"
@@ -606,7 +606,7 @@ export default function CreditsWallet() {
                                                             className="bg-[#F3F4F6] text-fontBlack hover:bg-[#E5E7EB]"
                                                             isLoading={downloadingInvoiceId === txn._id}
                                                             onPress={() => handleDownloadInvoice(txn._id)}
-                                                            aria-label="Download invoice"
+                                                            aria-label="Télécharger la facture"
                                                         >
                                                             {downloadingInvoiceId !== txn._id && (
                                                                 <HiOutlineArrowDownTray className="size-4" />
@@ -655,7 +655,7 @@ export default function CreditsWallet() {
                                     trigger: 'min-h-9 border border-borderDark bg-white',
                                     value: 'text-sm',
                                 }}
-                                aria-label="Items per page"
+                                aria-label="Éléments par page"
                             >
                                 <SelectItem key="10">10</SelectItem>
                                 <SelectItem key="20">20</SelectItem>

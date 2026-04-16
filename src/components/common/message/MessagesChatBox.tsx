@@ -35,11 +35,11 @@ function isReadByUser(readBy: ReadByEntry[] | null | undefined, userId: string):
 }
 
 function getSenderDisplay(sender: ChatMessageRow['sender']): string {
-    if (!sender) return 'Unknown';
+    if (!sender) return 'Inconnu';
     if (typeof sender === 'string') return sender;
     const first = sender.first_name ?? '';
     const last = sender.last_name ?? '';
-    return [first, last].filter(Boolean).join(' ') || 'Unknown';
+    return [first, last].filter(Boolean).join(' ') || 'Inconnu';
 }
 
 function getInitial(name: string): string {
@@ -113,7 +113,7 @@ function getFileNameFromUrl(url: string, fallback: string): string {
 function ReadReceipt({ isRead }: { isRead: boolean }) {
     const color = isRead ? '#3B82F6' : '#9CA3AF';
     return (
-        <span className="inline-flex items-center shrink-0 ml-0.5" aria-label={isRead ? 'Read' : 'Sent'}>
+        <span className="inline-flex items-center shrink-0 ml-0.5" aria-label={isRead ? 'Lu' : 'Envoyé'}>
             {/* Double tick — second tick overlaps first slightly, like WhatsApp */}
             <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden>
                 <path d="M1 5.5L4.5 9L10 3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -193,7 +193,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
         mediaUrl &&
         ((type === 'file' || type === 'document') || (type === 'media' && !isImageUrl(mediaUrl) && !isVideoUrl(mediaUrl)));
     if (showAsFile) {
-        const fileName = getFileNameFromUrl(mediaUrl, 'Document');
+        const fileName = getFileNameFromUrl(mediaUrl, 'Document');  
         return (
             <div className={`overflow-hidden ${bubbleClass}`}>
                 <a
@@ -355,7 +355,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
     if (!selectedChatId) {
         return (
             <div className="flex flex-1 items-center justify-center py-12 text-center">
-                <p className="text-sm text-darkSilver">Select a conversation to view messages</p>
+                <p className="text-sm text-darkSilver">Sélectionnez une conversation pour voir les messages</p>
             </div>
         );
     }
@@ -363,7 +363,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
     if (showInitialLoading) {
         return (
             <div className="flex flex-1 items-center justify-center py-12">
-                <p className="text-sm text-darkSilver">Loading messages...</p>
+                <p className="text-sm text-darkSilver">Chargement des messages...</p>
             </div>
         );
     }
@@ -371,7 +371,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
     if (!Array.isArray(messages) || messages.length === 0) {
         return (
             <div className="flex flex-1 items-center justify-center py-12 text-center">
-                <p className="text-sm text-darkSilver">No messages yet. Start the conversation.</p>
+                <p className="text-sm text-darkSilver">Aucun message pour l'instant. Démarrez la conversation.</p>
             </div>
         );
     }
@@ -393,7 +393,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                     <div className="flex justify-center py-3">
                         <span className="inline-flex items-center gap-2 text-sm text-darkSilver">
                             <span className="size-5 animate-spin rounded-full border-2 border-primaryColor border-t-transparent" aria-hidden />
-                            Loading older messages...
+                            Chargement des anciens messages...
                         </span>
                     </div>
                     :
@@ -404,7 +404,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                             disabled={isFetchingPageN}
                             className="rounded-full cursor-pointer bg-[#E5E7EB] px-4 py-2 text-sm font-medium text-fontBlack hover:bg-[#D1D5DB] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Load more
+                            Charger plus
                         </button>
                     </div>
                 }

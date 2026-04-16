@@ -97,7 +97,7 @@ export default function VerifyEmailOtpModal() {
                 Code de vérification
             </h2>
             <p className="text-darkSilver text-sm text-center mt-2">
-                A {OTP_LENGTH}-digit code has been sent to{" "}
+                Un code à {OTP_LENGTH} chiffres a été envoyé à{" "}
                 <span className="text-fontBlack font-medium">{email}</span>
             </p>
 

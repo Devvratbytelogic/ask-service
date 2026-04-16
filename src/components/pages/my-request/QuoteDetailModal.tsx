@@ -101,9 +101,9 @@ export default function QuoteDetailModal() {
     if (!apiData?.data?.quote || !apiData?.data?.vendor) {
         return (
             <div className="flex flex-col items-center justify-center min-h-75 p-6">
-                <p className="text-sm text-fontBlack">Quote not found</p>
+                <p className="text-sm text-fontBlack">Devis introuvable</p>
                 <Button onPress={handleClose} className="btn_radius btn_bg_blue mt-4">
-                    Close
+                    Fermer
                 </Button>
             </div>
         )

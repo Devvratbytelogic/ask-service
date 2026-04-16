@@ -108,7 +108,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                         <div className="mt-6 space-y-4 border-t border-borderDark pt-6">
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                                    Current Password
+                                    Mot de passe actuel
                                 </label>
                                 <Input
                                     name="currentPassword"
@@ -116,13 +116,13 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     value={values.currentPassword}
                                     onChange={handleChange}
                                     onBlur={handleBlur}isInvalid={!!(touched.currentPassword && errors.currentPassword)}
-                                    errorMessage={touched.currentPassword && errors.currentPassword}placeholder="Enter current password"
+                                    errorMessage={touched.currentPassword && errors.currentPassword}placeholder="Entrez votre mot de passe actuel"
                                     classNames={inputClasses}
                                 />
                             </div>
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                                    New Password
+                                    Nouveau mot de passe
                                 </label>
                                 <Input
                                     name="newPassword"
@@ -132,17 +132,16 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     onBlur={handleBlur}
                                     isInvalid={!!(touched.newPassword && errors.newPassword)}
                                     errorMessage={touched.newPassword && errors.newPassword}
-                                    placeholder="Enter new password"
+                                    placeholder="Entrez votre nouveau mot de passe"
                                     classNames={inputClasses}
                                 />
                                 <p className="mt-1.5 text-xs text-darkSilver">
-                                    Must be at least 8 characters with uppercase, lowercase, and
-                                    numbers
+                                    Doit contenir au moins 8 caractères avec des majuscules, minuscules et chiffres
                                 </p>
                             </div>
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                                    Confirm New Password
+                                    Confirmer le nouveau mot de passe
                                 </label>
                                 <Input
                                     name="confirmNewPassword"
@@ -156,7 +155,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     errorMessage={
                                         touched.confirmNewPassword && errors.confirmNewPassword
                                     }
-                                    placeholder="Confirm new password"
+                                    placeholder="Confirmez le nouveau mot de passe"
                                     classNames={inputClasses}
                                 />
                             </div>
@@ -166,7 +165,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 isLoading={isChanging}
                                 isDisabled={isChanging}
                             >
-                                Update password
+                                Mettre à jour le mot de passe
                             </Button>
                         </div>
                     )}

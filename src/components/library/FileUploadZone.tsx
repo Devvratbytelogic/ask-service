@@ -38,9 +38,9 @@ export default function FileUploadZone({
     onChange,
     accept = ".pdf,.jpg,.jpeg,.png",
     maxSizeBytes = 5 * 1024 * 1024,
-    dragLabel = "Drag and drop your file here",
-    browseLabel = "Browse files",
-    ariaLabel = "Upload file",
+    dragLabel = "Glissez-déposez votre fichier ici",
+    browseLabel = "Parcourir les fichiers",
+    ariaLabel = "Télécharger un fichier",
     buttonClassName,
     onFileRejected,
 }: FileUploadZoneProps) {
@@ -102,7 +102,7 @@ export default function FileUploadZone({
                     type="button"
                     onClick={() => onChange(null)}
                     className="p-2 rounded-lg text-danger hover:bg-danger/10 transition-colors"
-                    aria-label="Remove file"
+                    aria-label="Supprimer le fichier"
                 >
                     <RiDeleteBinLine className="size-5" />
                 </button>
@@ -122,7 +122,7 @@ export default function FileUploadZone({
         >
             <FiUploadCloud className="size-12 text-placeHolderText" />
             <p className="text-darkSilver text-sm text-center">{dragLabel}</p>
-            <p className="text-placeHolderText text-xs">or</p>
+            <p className="text-placeHolderText text-xs">ou</p>
             <Button
                 type="button"
                 variant={buttonClassName ? "solid" : "bordered"}

@@ -219,7 +219,7 @@ export default function ProfileInfo() {
                         accept={ACCEPTED_IMAGE_TYPES.join(',')}
                         onChange={handleProfilePicChange}
                         className="hidden"
-                        aria-label="Upload profile picture"
+                        aria-label="Télécharger une photo de profil"
                     />
                     {avatarSrc ? (
                         <div className='size-16 shrink-0 rounded-full overflow-hidden border border-gray-200'>
@@ -240,7 +240,7 @@ export default function ProfileInfo() {
                             type="button"
                             onClick={() => profilePicInputRef.current?.click()}
                             className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
-                            aria-label="Change profile picture"
+                            aria-label="Changer la photo de profil"
                         >
                             <CameraIconSVG />
                         </button>
@@ -248,7 +248,7 @@ export default function ProfileInfo() {
                 </div>
                 <div>
                     <h3 className="font-bold text-fontBlack">
-                        {isLoading ? '...' : [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' ') || 'User'}
+                        {isLoading ? '...' : [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' ') || 'Utilisateur'}
                     </h3>
                     <p className="text-sm text-darkSilver">{profileData?.email ?? '—'}</p>
                     {profileData?.createdAt && (
@@ -351,7 +351,7 @@ export default function ProfileInfo() {
                                     onBlur={() => handleBlur({ target: { name: 'phone' } })}
                                     inputProps={{
                                         name: 'phone',
-                                        'aria-label': 'Phone number',
+                                        'aria-label': 'Numéro de téléphone',
                                         readOnly: !isEditing,
                                     }}
                                     containerClass="!w-full"
@@ -438,7 +438,7 @@ export default function ProfileInfo() {
                     isLoading={isGeoLoading}
                     onPress={handleGetUserGeolocation}
                 >
-                    Use my current location
+                    Utiliser ma position actuelle
                 </Button>
             </form>
         </>

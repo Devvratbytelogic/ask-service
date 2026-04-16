@@ -36,32 +36,32 @@ export default SmartHiringIndex
 const SmartHiringData = [
     {
         image_url: '/images/home/saveTime.png',
-        heading: 'Save Time on Every Request',
-        description: 'Tell us what you need once and receive multiple quotes from relevant professionals. No need to contact providers individually or repeat yourself.',
+        heading: 'Gagnez du temps sur chaque demande',
+        description: 'Dites-nous ce dont vous avez besoin une seule fois et recevez plusieurs devis de professionnels qualifiés. Inutile de contacter chaque prestataire individuellement.',
     },
     {
         image_url: '/images/home/verified.png',
-        heading: 'Verified Professionals Only',
-        description: 'Every professional is reviewed and verified before joining. Documents, credentials, and compliance checks ensure higher quality and reliability.',
+        heading: 'Uniquement des professionnels vérifiés',
+        description: 'Chaque professionnel est examiné et vérifié avant de rejoindre la plateforme. Documents, certifications et contrôles de conformité garantissent qualité et fiabilité.',
     },
     {
         image_url: '/images/home/noSpam.png',
-        heading: 'No Spam, No Pressure',
-        description: 'Your contact details stay private. Professionals can only reach out after unlocking your request, keeping communication relevant and controlled.',
+        heading: 'Pas de spam, pas de pression',
+        description: 'Vos coordonnées restent privées. Les professionnels ne peuvent vous contacter qu\'après avoir déverrouillé votre demande, assurant des échanges pertinents et maîtrisés.',
     },
     {
         image_url: '/images/home/compareQuote.png',
-        heading: 'Compare Quotes with Confidence',
-        description: 'Receive structured quotes with pricing and service details. Compare responses easily and choose the professional that fits your needs best.',
+        heading: 'Comparez les devis en toute confiance',
+        description: 'Recevez des devis structurés avec tarifs et détails de prestation. Comparez facilement les réponses et choisissez le professionnel qui correspond le mieux à vos besoins.',
     },
     {
         image_url: '/images/home/work.png',
-        heading: 'Works for Homes and Businesses',
-        description: 'Whether you need a one-time service or ongoing business support, the platform supports both individual and commercial service requests.',
+        heading: 'Pour les particuliers et les entreprises',
+        description: 'Que vous ayez besoin d\'un service ponctuel ou d\'un accompagnement professionnel régulier, la plateforme prend en charge les demandes individuelles et commerciales.',
     },
     {
         image_url: '/images/home/Built.png',
-        heading: 'Built for Quality, Not Noise',
-        description: 'Professionals invest to access leads, which means fewer low-quality responses and more serious service providers competing for your work.',
+        heading: 'Conçu pour la qualité, pas pour le volume',
+        description: 'Les professionnels investissent pour accéder aux demandes, ce qui signifie moins de réponses médiocres et plus de prestataires sérieux en compétition pour votre projet.',
     },
 ]

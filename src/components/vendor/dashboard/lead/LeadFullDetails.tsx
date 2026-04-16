@@ -106,7 +106,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
         return (
             <div className="flex flex-col items-center justify-center min-h-50 gap-4">
                 {leadLoading && <Spinner size="lg" color="primary" />}
-                <p className="text-darkSilver">{leadLoading ? 'Loading lead details...' : 'No lead data found.'}</p>
+                <p className="text-darkSilver">{leadLoading ? 'Chargement des détails du prospect...' : 'Aucune donnée de prospect trouvée.'}</p>
             </div>
         )
     }
@@ -174,7 +174,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 </p>
                             </div>
                             {displayData.frequency !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3">
-                                <p className="text-xs text-darkSilver mb-1">Frequency</p>
+                                <p className="text-xs text-darkSilver mb-1">Fréquence</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.frequency}
                                 </p>
@@ -210,7 +210,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
                     {/* Requested Tasks Card (legacy) */}
                     {displayData.tasks.length > 0 && <div className="rounded-2xl border border-borderDark bg-white p-5">
-                        <h3 className="font-bold text-fontBlack mb-4">Requested Tasks</h3>
+                        <h3 className="font-bold text-fontBlack mb-4">Tâches demandées</h3>
                         <div className="flex flex-wrap gap-2">
                             {displayData.tasks.map((task: string, i: number) => (
                                 <span
@@ -230,7 +230,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {displayData.preferredStartDate !== 'N/A' && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">Preferred Start Date</p>
+                                        <p className="text-xs text-darkSilver mb-1">Date de début souhaitée</p>
                                         <p className="text-sm font-medium text-fontBlack">
                                             {displayData.preferredStartDate}
                                         </p>
@@ -238,7 +238,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 )}
                                 {displayData.preferredTime !== 'N/A' && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">Preferred Time</p>
+                                        <p className="text-xs text-darkSilver mb-1">Heure souhaitée</p>
                                         <p className="text-sm font-medium text-fontBlack">
                                             {displayData.preferredTime}
                                         </p>
@@ -246,25 +246,25 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                 )}
                                 {displayData.startDate && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">Start Date</p>
+                                        <p className="text-xs text-darkSilver mb-1">Date de début</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.startDate}</p>
                                     </div>
                                 )}
                                 {displayData.startTime && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">Start Time</p>
+                                        <p className="text-xs text-darkSilver mb-1">Heure de début</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.startTime}</p>
                                     </div>
                                 )}
                                 {displayData.endDate && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">End Date</p>
+                                        <p className="text-xs text-darkSilver mb-1">Date de fin</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.endDate}</p>
                                     </div>
                                 )}
                                 {displayData.endTime && (
                                     <div className="rounded-xl border border-borderDark px-4 py-3">
-                                        <p className="text-xs text-darkSilver mb-1">End Time</p>
+                                        <p className="text-xs text-darkSilver mb-1">Heure de fin</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.endTime}</p>
                                     </div>
                                 )}

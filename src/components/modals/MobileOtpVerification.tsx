@@ -199,7 +199,7 @@ const MobileOtpVerification = () => {
                     </h2>
                     {googleLoginCompleted && email && (
                         <p className="text-fontBlack text-sm xl:text-base">
-                            Signed in as <span className="font-medium text-primaryColor">{email}</span>
+                            Connecté en tant que <span className="font-medium text-primaryColor">{email}</span>
                         </p>
                     )}
                     <p className="text-darkSilver text-sm xl:text-base">
@@ -208,7 +208,7 @@ const MobileOtpVerification = () => {
                 </div>
 
                 <div className="space-y-2">
-                    <p className="custom_label_text_light">Phone number</p>
+                    <p className="custom_label_text_light">Numéro de téléphone</p>
                     <div className="mt-1.5">
                         <PhoneInput
                             country="fr"
@@ -222,7 +222,7 @@ const MobileOtpVerification = () => {
                             }}
                             inputProps={{
                                 name: "phoneNumber",
-                                "aria-label": "Phone number",
+                                "aria-label": "Numéro de téléphone",
                                 readOnly: readonlyPhone,
                             }}
                             disabled={readonlyPhone}
@@ -255,11 +255,11 @@ const MobileOtpVerification = () => {
                 <h2 className="text-xl font-semibold text-fontBlack">
                     Entrez le code de vérification
                 </h2>
-                {googleLoginCompleted && email && (
-                    <p className="text-fontBlack text-sm xl:text-base">
-                        Verifying phone for <span className="font-medium text-primaryColor">{email}</span>
-                    </p>
-                )}
+                    {googleLoginCompleted && email && (
+                        <p className="text-fontBlack text-sm xl:text-base">
+                            Vérification du téléphone pour <span className="font-medium text-primaryColor">{email}</span>
+                        </p>
+                    )}
                 <p className="text-darkSilver text-sm xl:text-base flex items-center flex-wrap">
                     <span>Saisissez le code à {OTP_LENGTH} chiffres</span> envoyé à votre
                     numéro de téléphone
@@ -278,7 +278,7 @@ const MobileOtpVerification = () => {
                                 type="button"
                                 onClick={handleChangePhone}
                                 className="text-primaryColor p-1 rounded hover:bg-primaryColor/10"
-                                aria-label="Change phone number"
+                                aria-label="Changer le numéro de téléphone"
                             >
                                 <IoPencilOutline className="size-4" />
                             </button>

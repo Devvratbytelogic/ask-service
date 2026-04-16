@@ -14,12 +14,12 @@ function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
 
 function getDisplayName(chat: IAllChatListData): string {
     const u = getOtherUser(chat);
-    if (!u) return 'Unknown';
+    if (!u) return 'Inconnu';
     const isVendor = (u.role?.name ?? '').toLowerCase() === 'vendor';
     if (isVendor && u.business_name?.trim()) return u.business_name.trim();
     const first = (u.first_name ?? '').trim();
     const last = (u.last_name ?? '').trim();
-    return [first, last].filter(Boolean).join(' ') || 'Unknown';
+    return [first, last].filter(Boolean).join(' ') || 'Inconnu';
 }
 
 function getInitial(name: string): string {
@@ -102,14 +102,14 @@ export default function MessagesList({
                         <button
                             type="button"
                             className="rounded p-1.5 text-darkSilver hover:bg-borderDark hover:text-fontBlack"
-                            aria-label="New message"
+                            aria-label="Nouveau message"
                         >
                             <EditIconSVG />
                         </button>
                         <button
                             type="button"
                             className="rounded p-1.5 text-darkSilver hover:bg-borderDark hover:text-fontBlack"
-                            aria-label="Favorites"
+                            aria-label="Favoris"
                         >
                             <HeartIconSVG />
                         </button>
@@ -127,7 +127,7 @@ export default function MessagesList({
                                 'custom_input_design shadow-none btn_radius px-3! border-borderColor!',
                             ],
                         }}
-                        placeholder="Search"
+                        placeholder="Rechercher"
                         startContent={<SearchIconSVG />}
                     />
                 </div>
@@ -136,17 +136,17 @@ export default function MessagesList({
             <div className="min-h-0 flex-1 overflow-y-auto">
                 {isLoading && (
                     <div className="flex items-center justify-center py-8 text-sm text-darkSilver">
-                        Loading conversations...
+                        Chargement des conversations...
                     </div>
                 )}
                 {isError && (
                     <div className="px-4 py-6 text-sm text-red-600">
-                        Failed to load conversations.
+                        Impossible de charger les conversations.
                     </div>
                 )}
                 {!isLoading && !isError && filtered.length === 0 && (
                     <div className="px-4 py-8 text-center text-sm text-darkSilver">
-                        No conversations yet.
+                        Aucune conversation pour l'instant.
                     </div>
                 )}
                 {!isLoading && !isError &&

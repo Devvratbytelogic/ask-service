@@ -290,7 +290,7 @@ export default function VendorDashboard() {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label="Service category filter"
+                                    aria-label="Filtre par catégorie de service"
                                     items={serviceCategoryOptions}
                                     selectedKeys={[serviceCategoryFilter]}
                                     selectionMode="single"
@@ -312,7 +312,7 @@ export default function VendorDashboard() {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label="Sort filter"
+                                    aria-label="Filtre de tri"
                                     items={sortOptions}
                                     selectedKeys={[sortFilter]}
                                     selectionMode="single"
