@@ -79,8 +79,6 @@ export default function MessageLayout() {
   // On mobile: show list or chat. On lg+: always show both
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [selectedChat, setSelectedChat] = useState<IAllChatListData | null>(null);
-  const autoSelectedRef = useRef(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -89,22 +87,24 @@ export default function MessageLayout() {
   const role = getUserRole();
   const isVendor = (role ?? '').toLowerCase() === 'vendor';
 
-  const { data: userChatsData } = useGetUserChatsQuery(undefined, { skip: isVendor });
-  const { data: vendorChatsData } = useGetVendorChatsQuery(undefined, { skip: !isVendor });
+  const { data: userChatsData, isFetching: isUserChatsFetching } = useGetUserChatsQuery(undefined, { skip: isVendor });
+  const { data: vendorChatsData, isFetching: isVendorChatsFetching } = useGetVendorChatsQuery(undefined, { skip: !isVendor });
+  const isChatsFetching = isVendor ? isVendorChatsFetching : isUserChatsFetching;
   const chats = Array.isArray(isVendor ? vendorChatsData?.data : userChatsData?.data)
     ? (isVendor ? vendorChatsData?.data : userChatsData?.data) as IAllChatListData[]
     : [];
 
+  const selectedChat = chats.find((c) => c._id === selectedChatId) ?? null;
+
   useEffect(() => {
-    if (!targetChatId || autoSelectedRef.current || chats.length === 0) return;
-    const chat = chats.find((c) => c._id === targetChatId);
-    if (chat) {
-      autoSelectedRef.current = true;
-      setSelectedChat(chat);
-      setSelectedChatId(chat._id);
-      setMobileView('chat');
+    if (targetChatId && !selectedChatId && chats.length > 0) {
+      const found = chats.find((c) => c._id === targetChatId);
+      if (found) {
+        setSelectedChatId(found._id);
+        setMobileView('chat');
+      }
     }
-  }, [targetChatId, chats]);
+  }, [targetChatId, chats, selectedChatId]);
 
   const userId = getUserId();
   const userDisplayName = isVendor ? 'Vendor' : 'User';
@@ -144,7 +144,6 @@ export default function MessageLayout() {
   const isSending = isUserSending || isVendorSending;
 
   const handleSelectConversation = (chat: IAllChatListData) => {
-    setSelectedChat(chat);
     setSelectedChatId(chat._id);
     setMobileView('chat');
     router.replace(`?chatId=${chat._id}`, { scroll: false });
@@ -263,8 +262,8 @@ export default function MessageLayout() {
                 <ChatHeader selectedChat={selectedChat} onBack={() => setMobileView('list')} isOnline={isOtherUserOnline} isTyping={isOtherTyping} />
               </header>
 
-              {/* Discussion context bar */}
-              {selectedChat?.quote_id && <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
+              {/* Discussion context bar — hidden while fetch-chats is refetching to avoid stale data flash */}
+              {!isChatsFetching && selectedChat?.quote_id && <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
                 <DiscussionContextBar selectedChat={selectedChat} />
               </div>}
 

@@ -185,7 +185,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['UserChats'],
+      invalidatesTags: ['UserChats', 'VendorChats'],
     }),
     // Vendor Chat APIs
     vendorSendMessage: builder.mutation({
@@ -245,7 +245,7 @@ export const {
   useUpdateVendorServicesMutation,
   useUploadVendorDocumentsMutation,
   useUpdateVendorProfileInfoMutation,
-  useUpdateUserProfileInfoMutation, 
+  useUpdateUserProfileInfoMutation,
   useReportVendorMutation,
   useChangeVendorPasswordMutation,
   useChangeUserPasswordMutation,
