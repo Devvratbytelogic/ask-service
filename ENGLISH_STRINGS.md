@@ -305,3 +305,239 @@ All user-facing English strings translated to French across the project.
 | Loading required documents... | Chargement des documents requis... |
 | Failed to load required documents. Please try again. | Impossible de charger les documents requis. Veuillez réessayer. |
 | Close and go to Ask Service (aria-label) | Fermer et aller à Ask Service |
+
+---
+
+## SubmissionSuccess.tsx
+
+| English | French |
+|---------|--------|
+| We match you with professionals | Nous vous mettons en relation avec des professionnels |
+| We're notifying verified professionals in your area who match your requirements | Nous notifions les professionnels vérifiés de votre région qui correspondent à vos besoins |
+| Receive quotes within 24-48 hours | Recevez des devis sous 24-48 heures |
+| Interested professionals will send you personalized quotes via email | Les professionnels intéressés vous enverront des devis personnalisés par e-mail |
+| Compare and choose | Comparez et choisissez |
+| Review profiles, ratings, and quotes to select the best professional for your needs | Consultez les profils, évaluations et devis pour sélectionner le meilleur professionnel selon vos besoins |
+| Get the job done | Le travail est fait |
+| Work directly with your chosen professional to complete the service | Travaillez directement avec le professionnel choisi pour réaliser la prestation |
+| Request Submitted Successfully! | Demande soumise avec succès ! |
+| Your request has been received and is being processed | Votre demande a bien été reçue et est en cours de traitement |
+| Reference: | Référence : |
+| What happens next? | Que se passe-t-il ensuite ? |
+| Check your email | Vérifiez votre e-mail |
+| We've sent a confirmation email with your request details and reference number | Nous vous avons envoyé un e-mail de confirmation avec les détails de votre demande et votre numéro de référence |
+| Return to dashboard | Retour au tableau de bord |
+| Need help? Contact us at | Besoin d'aide ? Contactez-nous à |
+
+---
+
+## ForgotPasswordOtpVerify.tsx
+
+| English | French |
+|---------|--------|
+| Digit (aria label prefix) | Chiffre |
+
+---
+
+## ForgotPasswordSetNew.tsx
+
+| English | French |
+|---------|--------|
+| Hide password (aria-label) | Masquer le mot de passe |
+| Show password (aria-label) | Afficher le mot de passe |
+
+---
+
+## ForgotPasswordEnterIdentifier.tsx
+
+| English | French |
+|---------|--------|
+| Go back (aria-label) | Retour |
+| Email (label) | Adresse e-mail |
+
+---
+
+## CustomerSignInDetails.tsx
+
+| English | French |
+|---------|--------|
+| Go back (aria-label) | Retour |
+| or (divider) | ou |
+| Email (label) | Adresse e-mail |
+| Phone number (aria-label) | Numéro de téléphone |
+| Hide password (aria-label) | Masquer le mot de passe |
+| Show password (aria-label) | Afficher le mot de passe |
+
+---
+
+## CustomerSignupDetails.tsx
+
+| English | French |
+|---------|--------|
+| Go back (aria-label) | Retour |
+| example@xyz.com (placeholder) | exemple@xyz.com |
+| Phone number (aria-label) | Numéro de téléphone |
+| Hide password (aria-label) | Masquer le mot de passe |
+| Show password (aria-label) | Afficher le mot de passe |
+
+---
+
+## VendorSignupDetails.tsx
+
+| English | French |
+|---------|--------|
+| Go back (aria-label) | Retour |
+| Email (label) | Adresse e-mail |
+| Phone number (aria-label) | Numéro de téléphone |
+| Hide password (aria-label) | Masquer le mot de passe |
+| Show password (aria-label) | Afficher le mot de passe |
+
+---
+
+## VendorOtpVerification.tsx
+
+| English | French |
+|---------|--------|
+| Email digit (aria label prefix) | Chiffre e-mail |
+| Don't have an account? | Vous n'avez pas de compte ? |
+| Sign up | S'inscrire |
+
+---
+
+## ApplicationSuccessfull.tsx
+
+| English | French |
+|---------|--------|
+| Application Envoyée | Candidature Envoyée |
+
+---
+
+## VerifyEmailPhoneNumberWithOtp.tsx
+
+| English | French |
+|---------|--------|
+| Digit (aria label prefix) | Chiffre |
+
+---
+
+## VendorServiceListPage.tsx
+
+| English | French |
+|---------|--------|
+| Loading services... | Chargement des services… |
+| Failed to load services. Please try again. | Impossible de charger les services. Veuillez réessayer. |
+| Select {service.title} (aria-label) | Sélectionner {service.title} |
+
+---
+
+## VendorReviews.tsx
+
+| English | French |
+|---------|--------|
+| Leave a review | Laisser un avis |
+| Helpful ({count}) | Utile ({count}) |
+| View More | Voir plus |
+
+---
+
+## ReportProfileModal.tsx
+
+| English | French |
+|---------|--------|
+| Report this profile | Signaler ce profil |
+| Reason for reporting | Motif du signalement |
+| Select a reason (placeholder/aria-label) | Sélectionnez un motif |
+| Inappropriate content | Contenu inapproprié |
+| Fake profile | Faux profil |
+| Harassment | Harcèlement |
+| Fraud or scam | Fraude ou arnaque |
+| Other | Autre |
+| Additional Details | Détails supplémentaires |
+| Please provide specific details... | Veuillez préciser pourquoi vous signalez ce profil. |
+| Minimum {N} characters ({count}/{N}) | Minimum {N} caractères ({count}/{N}) |
+| Important | Important |
+| False reports may result in action being taken against your account. Submit genuine concerns only. | Les faux signalements peuvent entraîner des mesures à l'encontre de votre compte. Ne signalez que des problèmes réels. |
+| Submitting... | Envoi en cours… |
+| Submit | Soumettre |
+
+---
+
+## ReportSubmittedModal.tsx
+
+| English | French |
+|---------|--------|
+| Report Submitted | Signalement envoyé |
+| Thank you for your report. Our team will review it carefully and take appropriate action within 24-48 hours. | Merci pour votre signalement. Notre équipe l'examinera attentivement et prendra les mesures appropriées sous 24 à 48 heures. |
+| We've sent a confirmation email to | Nous avons envoyé un e-mail de confirmation à |
+| Close | Fermer |
+
+---
+
+## VendorProfileDetails.tsx
+
+| English | French |
+|---------|--------|
+| About (tab) | À propos |
+| Reviews (tab) | Avis |
+| Links (tab) | Liens |
+
+---
+
+## VendorAbout.tsx
+
+| English | French |
+|---------|--------|
+| About | À propos |
+| Overview | Vue d'ensemble |
+| In operation for | En activité depuis |
+| Employees | Employés |
+| Response time | Délai de réponse |
+| Contact Information | Coordonnées |
+
+---
+
+## VendorLinks.tsx
+
+| English | French |
+|---------|--------|
+| Links | Liens |
+
+---
+
+## ChatHeader.tsx
+
+| English | French |
+|---------|--------|
+| Unknown (fallback name) | Inconnu |
+| Select a conversation | Sélectionnez une conversation |
+| Back to messages (aria-label) | Retour aux messages |
+| Profile (dropdown item) | Profil |
+| Report (dropdown item) | Signaler |
+
+---
+
+## MessageLayout.tsx
+
+| English | French |
+|---------|--------|
+| Remove | Retirer |
+| Remove attachment (aria-label) | Retirer la pièce jointe |
+| Upload image (aria-label) | Téléverser une image |
+| Upload document (aria-label) | Téléverser un document |
+| Attach document (aria-label) | Joindre un document |
+| Send image (aria-label) | Envoyer une image |
+| Emoji (aria-label) | Émoji |
+| Send (aria-label) | Envoyer |
+
+---
+
+## VendorPaymentHistory.tsx
+
+| English | French |
+|---------|--------|
+| Date range (aria-label) | Période |
+| Filter by status (aria-label) | Filtrer par statut |
+| Download options (aria-label) | Options de téléchargement |
+| Copy transaction ID (aria-label) | Copier l'identifiant de transaction |
+| Download receipt (aria-label) | Télécharger le reçu |
+| Items per page (aria-label) | Éléments par page |

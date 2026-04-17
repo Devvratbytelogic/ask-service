@@ -112,7 +112,7 @@ const ForgotPasswordEnterIdentifier = () => {
                             className="modal_back_icon"
                             onClick={goBack}
                             role="button"
-                            aria-label="Go back"
+                            aria-label="Retour"
                         />
                         Mot de passe oublié? <span className="text-darkSilver ml-1" />
                     </h2>

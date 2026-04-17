@@ -157,7 +157,7 @@ const CustomerSignupDetails = () => {
                             className="modal_back_icon"
                             onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignupIndex' }, modalSize: 'full' }))}
                             role="button"
-                            aria-label="Go back"
+                            aria-label="Retour"
                         />
                         S'inscrire <span className="text-darkSilver ml-1">{' ' + 'maintenant'} </span>
                     </h1>
@@ -211,7 +211,7 @@ const CustomerSignupDetails = () => {
                                 label="Adresse email"
                                 labelPlacement="outside"
                                 isRequired
-                                placeholder="example@xyz.com"
+                                placeholder="exemple@xyz.com"
                                 type="email"
                                 value={values.email}
                                 onChange={handleChange}
@@ -238,7 +238,7 @@ const CustomerSignupDetails = () => {
                                     onBlur={() => setFieldTouched("phoneNumber", true)}
                                     inputProps={{
                                         name: "phoneNumber",
-                                        "aria-label": "Phone number",
+                                        "aria-label": "Numéro de téléphone",
                                     }}
                                     containerClass="!w-full"
                                     inputClass="!w-full !rounded-[12px] !border-borderDark"
@@ -270,7 +270,7 @@ const CustomerSignupDetails = () => {
                                     type="button"
                                     className="focus:outline-none text-lg text-placeHolderText"
                                     onClick={() => setIsPasswordVisible((prev) => !prev)}
-                                    aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                                    aria-label={isPasswordVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                                 >
                                     {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
                                 </button>

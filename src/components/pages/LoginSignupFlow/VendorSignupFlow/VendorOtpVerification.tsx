@@ -148,7 +148,7 @@ const VendorOtpVerification = () => {
                                 length={OTP_LENGTH}
                                 onComplete={handleVerifyOtp}
                                 classNames={{ wrapper: "flex gap-4 max-w-[280px]" }}
-                                ariaLabelPrefix="Email digit"
+                                ariaLabelPrefix="Chiffre e-mail"
                             />
                             <p className="text-fontBlack text-sm">
                                 Vous n&apos;avez pas reçu le code ?{" "}
@@ -184,12 +184,12 @@ const VendorOtpVerification = () => {
                     Continuer
                 </Button>
                 <p className="text-base text-fontBlack text-center">
-                    Don&apos;t have an account?{" "}
+                    Vous n&apos;avez pas de compte ?{" "}
                     <p
                         onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'CustomerSignInIndex' }, modalSize: 'full' }))}
                         className="text-primaryColor cursor-pointer underline underline-offset-2"
                     >
-                        Sign up
+                        S&apos;inscrire
                     </p>
                 </p>
             </div>

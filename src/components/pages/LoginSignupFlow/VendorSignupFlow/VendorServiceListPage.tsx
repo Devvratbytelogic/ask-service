@@ -52,10 +52,10 @@ const VendorServiceListPage = () => {
                 </div>
 
                 {isLoading && (
-                    <p className="text-darkSilver text-sm">Loading services...</p>
+                    <p className="text-darkSilver text-sm">Chargement des services…</p>
                 )}
                 {isError && (
-                    <p className="text-red-500 text-sm">Failed to load services. Please try again.</p>
+                    <p className="text-red-500 text-sm">Impossible de charger les services. Veuillez réessayer.</p>
                 )}
                 <ul className="space-y-4 list-none p-0 m-0">
                     {services && services?.length > 0 && services?.map((service) => {
@@ -93,7 +93,7 @@ const VendorServiceListPage = () => {
                                         classNames={{
                                             wrapper: "shrink-0 before:border-borderDark",
                                         }}
-                                        aria-label={`Select ${service.title}`}
+                                        aria-label={`Sélectionner ${service.title}`}
                                     />
                                 </label>
                             </li>

@@ -32,7 +32,7 @@ export default function VendorProfileDetails({ profile, review }: VendorProfileD
                         // panel: 'overflow-visible',
                     }}
                 >
-                    <Tab key="about" title="About">
+                    <Tab key="about" title="À propos">
                         <div className='space-y-6'>
                             <VendorAbout profile={profile} />
                             <VendorReviews review={review} vendorId={profile?._id} />
@@ -40,10 +40,10 @@ export default function VendorProfileDetails({ profile, review }: VendorProfileD
                             <VendorServices profile={profile} />
                         </div>
                     </Tab>
-                    <Tab key="reviews" title="Reviews">
+                    <Tab key="reviews" title="Avis">
                         <VendorReviews vendorId={profile?._id} />
                     </Tab>
-                    <Tab key="links" title="Links">
+                    <Tab key="links" title="Liens">
                         <VendorLinks profile={profile} />
                     </Tab>
                     <Tab key="services" title="Services">

@@ -188,6 +188,6 @@ import React from 'react'
 
 export default function PurchaseCreditsModal() {
   return (
-    <div>PurchaseCreditsModal</div>
+    <div>Achat de crédits</div>
   )
 }

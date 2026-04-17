@@ -188,7 +188,7 @@ export default function VendorPaymentHistory() {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label="Date range"
+                                    aria-label="Période"
                                     selectedKeys={[dateRange]}
                                     selectionMode="single"
                                     onSelectionChange={(keys) => {
@@ -214,7 +214,7 @@ export default function VendorPaymentHistory() {
                                     trigger: 'min-h-10 border border-borderDark shadow-none bg-white',
                                     value: 'text-sm',
                                 }}
-                                aria-label="Filter by status"
+                                aria-label="Filtrer par statut"
                                 placeholder="Tous les statuts"
                             >
                                 {STATUS_OPTIONS.map((o) => (
@@ -234,7 +234,7 @@ export default function VendorPaymentHistory() {
                                     Télécharger
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Download options">
+                            <DropdownMenu aria-label="Options de téléchargement">
                                 <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
                                     Télécharger en CSV
                                 </DropdownItem>
@@ -290,7 +290,7 @@ export default function VendorPaymentHistory() {
                                                 type="button"
                                                 onClick={() => handleCopyId(row.transactionId)}
                                                 className="text-darkSilver hover:text-fontBlack transition-colors"
-                                                aria-label="Copy transaction ID"
+                                                aria-label="Copier l'identifiant de transaction"
                                             >
                                                 <FiCopy className="size-4" />
                                             </button>
@@ -315,7 +315,7 @@ export default function VendorPaymentHistory() {
                                         <button
                                             type="button"
                                             className="text-darkSilver hover:text-primaryColor transition-colors p-1"
-                                            aria-label="Download receipt"
+                                            aria-label="Télécharger le reçu"
                                         >
                                             <DownloadIconSVG />
                                         </button>
@@ -358,7 +358,7 @@ export default function VendorPaymentHistory() {
                                     trigger: 'min-h-9 border border-borderDark shadow-none bg-white',
                                     value: 'text-sm',
                                 }}
-                                aria-label="Items per page"
+                                aria-label="Éléments par page"
                             >
                                 {ITEMS_PER_PAGE_OPTIONS.map((n) => (
                                     <SelectItem key={n}>{n}</SelectItem>

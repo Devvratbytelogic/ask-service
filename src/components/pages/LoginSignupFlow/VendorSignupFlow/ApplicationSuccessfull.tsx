@@ -24,7 +24,7 @@ const ApplicationSuccessfull = () => {
             <div className="space-y-6 w-11/12">
                 <div className="space-y-3">
                     <h1 className="header_text">
-                        Application <span className="text-darkSilver">Envoyée</span>
+                        Candidature <span className="text-darkSilver">Envoyée</span>
                     </h1>
                     <p className="text-fontBlack text-base">
                         Merci pour la complétion de votre inscription en tant que professionnel. Notre équipe

@@ -11,23 +11,23 @@ import { RootState } from "@/redux/appStore"
 const WHAT_HAPPENS_NEXT = [
   {
     step: 1,
-    title: "We match you with professionals",
-    description: "We're notifying verified professionals in your area who match your requirements",
+    title: "Nous vous mettons en relation avec des professionnels",
+    description: "Nous notifions les professionnels vérifiés de votre région qui correspondent à vos besoins",
   },
   {
     step: 2,
-    title: "Receive quotes within 24-48 hours",
-    description: "Interested professionals will send you personalized quotes via email",
+    title: "Recevez des devis sous 24-48 heures",
+    description: "Les professionnels intéressés vous enverront des devis personnalisés par e-mail",
   },
   {
     step: 3,
-    title: "Compare and choose",
-    description: "Review profiles, ratings, and quotes to select the best professional for your needs",
+    title: "Comparez et choisissez",
+    description: "Consultez les profils, évaluations et devis pour sélectionner le meilleur professionnel selon vos besoins",
   },
   {
     step: 4,
-    title: "Get the job done",
-    description: "Work directly with your chosen professional to complete the service",
+    title: "Le travail est fait",
+    description: "Travaillez directement avec le professionnel choisi pour réaliser la prestation",
   },
 ]
 
@@ -64,19 +64,19 @@ const SubmissionSuccess = () => {
       </div>
       <div>
         <h2 className="text-xl font-bold text-fontBlack xl:text-2xl">
-          Request Submitted Successfully!
+          Demande soumise avec succès !
         </h2>
         <p className="mt-2 text-darkSilver text-sm xl:text-base">
-          Your request has been received and is being processed
+          Votre demande a bien été reçue et est en cours de traitement
         </p>
         <p className="mt-1 text-sm xl:text-base">
-          Reference:{" "}
+          Référence :{" "}
           <span className="font-medium text-primaryColor">{data?.reference}</span>
         </p>
       </div>
 
       <div className="rounded-xl bg-primaryColor/10 p-4 text-left">
-        <h3 className="mb-3 font-semibold text-fontBlack">What happens next?</h3>
+        <h3 className="mb-3 font-semibold text-fontBlack">Que se passe-t-il ensuite ?</h3>
         <ol className="space-y-3">
           {WHAT_HAPPENS_NEXT.map((item) => (
             <li key={item.step} className="flex gap-3">
@@ -97,9 +97,9 @@ const SubmissionSuccess = () => {
           <FiMail className="text-lg" />
         </span>
         <div>
-          <p className="font-semibold text-fontBlack">Check your email</p>
+          <p className="font-semibold text-fontBlack">Vérifiez votre e-mail</p>
           <p className="text-sm text-darkSilver">
-            We&apos;ve sent a confirmation email with your request details and reference number
+            Nous vous avons envoyé un e-mail de confirmation avec les détails de votre demande et votre numéro de référence
           </p>
         </div>
       </div>
@@ -111,7 +111,7 @@ const SubmissionSuccess = () => {
           className="w-full font-medium btn_radius"
           onPress={handleReturnHome}
         >
-          Return to dashboard
+          Retour au tableau de bord
         </Button>
         {/* <Button variant="bordered" onPress={handleSubmitAnother} className="w-full btn_radius">
           Submit another request
@@ -119,7 +119,7 @@ const SubmissionSuccess = () => {
       </div>
 
       <p className="text-placeHolderText text-tiny">
-        Need help? Contact us at{" "}
+        Besoin d&apos;aide ? Contactez-nous à{" "}
         <a
           href="mailto:support@example.com"
           className="text-primaryColor hover:underline"

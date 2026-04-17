@@ -63,9 +63,9 @@ function AttachedFilePreview({
         variant="light"
         className="min-w-0 shrink-0 text-darkSilver"
         onPress={onRemove}
-        aria-label="Remove attachment"
+        aria-label="Retirer la pièce jointe"
       >
-        Remove
+        Retirer
       </Button>
     </div>
   );
@@ -284,7 +284,7 @@ export default function MessageLayout() {
                   accept={IMAGE_ACCEPT}
                   onChange={handleImageChange}
                   className="hidden"
-                  aria-label="Upload image"
+                  aria-label="Téléverser une image"
                 />
                 <input
                   ref={documentInputRef}
@@ -292,7 +292,7 @@ export default function MessageLayout() {
                   accept={DOCUMENT_ACCEPT}
                   onChange={handleDocumentChange}
                   className="hidden"
-                  aria-label="Upload document"
+                  aria-label="Téléverser un document"
                 />
                 {attachedFile && (
                   <AttachedFilePreview
@@ -303,7 +303,7 @@ export default function MessageLayout() {
                 <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     isIconOnly
-                    aria-label="Attach document"
+                    aria-label="Joindre un document"
                     className="btn_radius btn_bg_white hidden sm:flex"
                     onPress={() => documentInputRef.current?.click()}
                   >
@@ -311,7 +311,7 @@ export default function MessageLayout() {
                   </Button>
                   <Button
                     isIconOnly
-                    aria-label="Send image"
+                    aria-label="Envoyer une image"
                     className="btn_radius btn_bg_white hidden sm:flex"
                     onPress={() => imageInputRef.current?.click()}
                   >
@@ -329,7 +329,7 @@ export default function MessageLayout() {
                   </div>
                   <Button
                     isIconOnly
-                    aria-label="Emoji"
+                    aria-label="Émoji"
                     className="btn_radius btn_bg_white hidden sm:flex"
                   >
                     <EmojiIconSVG />
@@ -337,7 +337,7 @@ export default function MessageLayout() {
                   <Button
                     variant="solid"
                     color="primary"
-                    aria-label="Send"
+                    aria-label="Envoyer"
                     className="btn_radius shrink-0 btn_bg_blue min-w-11 sm:min-w-0"
                     isDisabled={!canSend}
                     onPress={handleSendMessage}

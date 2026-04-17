@@ -197,7 +197,7 @@ const CustomerSignInDetails = () => {
                             className="modal_back_icon"
                             onClick={goToSignInIndex}
                             role="button"
-                            aria-label="Go back"
+                            aria-label="Retour"
                         />
                         Se connecter <span className="text-darkSilver ml-1">maintenant</span>
                     </h1>
@@ -228,7 +228,7 @@ const CustomerSignInDetails = () => {
                             />
                             <div className="flex items-center gap-3 w-full">
                                 <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
-                                <span className="text-darkSilver text-sm font-medium">or</span>
+                                <span className="text-darkSilver text-sm font-medium">ou</span>
                                 <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
                             </div>
                             <Button
@@ -282,7 +282,7 @@ const CustomerSignInDetails = () => {
                                             onBlur={() => setFieldTouched("phoneNumber", true)}
                                             inputProps={{
                                                 name: "phoneNumber",
-                                                "aria-label": "Phone number",
+                                                "aria-label": "Numéro de téléphone",
                                             }}
                                             containerClass="!w-full"
                                             inputClass="!w-full !rounded-[12px] !border-borderDark"
@@ -312,7 +312,7 @@ const CustomerSignInDetails = () => {
                                         type="button"
                                         className="focus:outline-none text-lg text-placeHolderText"
                                         onClick={() => setIsPasswordVisible((prev) => !prev)}
-                                        aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                                        aria-label={isPasswordVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                                     >
                                         {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
                                     </button>

@@ -10,11 +10,11 @@ import { RootState } from '@/redux/appStore'
 
 const REPORT_REASONS = [
     { key: 'spam', label: 'Spam' },
-    { key: 'inappropriate', label: 'Inappropriate content' },
-    { key: 'fake', label: 'Fake profile' },
-    { key: 'harassment', label: 'Harassment' },
-    { key: 'fraud', label: 'Fraud or scam' },
-    { key: 'other', label: 'Other' },
+    { key: 'inappropriate', label: 'Contenu inapproprié' },
+    { key: 'fake', label: 'Faux profil' },
+    { key: 'harassment', label: 'Harcèlement' },
+    { key: 'fraud', label: 'Fraude ou arnaque' },
+    { key: 'other', label: 'Autre' },
 ]
 
 const MIN_DETAILS_LENGTH = 20
@@ -60,15 +60,15 @@ export default function ReportProfileModal() {
     return (
         <div className="flex flex-col">
             {/* Header */}
-            <h2 className="text-xl font-bold text-fontBlack">Report this profile</h2>
+            <h2 className="text-xl font-bold text-fontBlack">Signaler ce profil</h2>
 
             {/* Reason for reporting */}
             <div className="mt-5">
                 <label className="text-sm text-fontBlack font-medium block mb-1">
-                    Reason for reporting <span className="text-red-500">*</span>
+                    Motif du signalement <span className="text-red-500">*</span>
                 </label>
                 <Select
-                    placeholder="Select a reason"
+                    placeholder="Sélectionnez un motif"
                     selectedKeys={reason ? [reason] : []}
                     onSelectionChange={(keys) => {
                         const key = Array.from(keys as Set<string>)[0]
@@ -79,7 +79,7 @@ export default function ReportProfileModal() {
                         value: 'text-placeHolderText data-[placeholder=true]:text-[#9CA3AF]',
                         label: 'hidden',
                     }}
-                    aria-label="Select a reason"
+                    aria-label="Sélectionnez un motif"
                 >
                     {REPORT_REASONS.map((opt) => (
                         <SelectItem key={opt.key}>{opt.label}</SelectItem>
@@ -90,10 +90,10 @@ export default function ReportProfileModal() {
             {/* Additional Details */}
             <div className="mt-5">
                 <label className="text-sm text-fontBlack font-medium block mb-1">
-                    Additional Details <span className="text-red-500">*</span>
+                    Détails supplémentaires <span className="text-red-500">*</span>
                 </label>
                 <Textarea
-                    placeholder="Please provide specific details about why you're reporting this profile. Include any relevant information that will help us investigate."
+                    placeholder="Veuillez préciser pourquoi vous signalez ce profil. Indiquez toute information utile pour notre enquête."
                     value={details}
                     onValueChange={setDetails}
                     minRows={4}
@@ -103,7 +103,7 @@ export default function ReportProfileModal() {
                     }}
                 />
                 <p className="mt-2 text-xs text-[#9CA3AF]">
-                    Minimum {MIN_DETAILS_LENGTH} characters ({charCount}/{MIN_DETAILS_LENGTH})
+                    Minimum {MIN_DETAILS_LENGTH} caractères ({charCount}/{MIN_DETAILS_LENGTH})
                 </p>
             </div>
 
@@ -111,7 +111,7 @@ export default function ReportProfileModal() {
             <div className="mt-5 rounded-xl border border-[#E5C231] bg-[#FEF9E7] px-4 py-3">
                 <p className="text-sm font-bold text-fontBlack">Important</p>
                 <p className="mt-1 text-sm text-fontBlack">
-                    False reports may result in action being taken against your account. Submit genuine concerns only.
+                    Les faux signalements peuvent entraîner des mesures à l&apos;encontre de votre compte. Ne signalez que des problèmes réels.
                 </p>
             </div>
 
@@ -129,7 +129,7 @@ export default function ReportProfileModal() {
                     isLoading={isSubmitting}
                     className="btn_radius btn_bg_blue min-w-35 font-medium"
                 >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                    {isSubmitting ? 'Envoi en cours…' : 'Soumettre'}
                 </Button>
             </div>
         </div>

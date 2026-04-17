@@ -132,7 +132,7 @@ const ForgotPasswordSetNew = () => {
                                 type="button"
                                 className="focus:outline-none text-lg text-placeHolderText"
                                 onClick={() => setIsPasswordVisible((prev) => !prev)}
-                                aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                                aria-label={isPasswordVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                             >
                                 {isPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
                             </button>
@@ -159,7 +159,7 @@ const ForgotPasswordSetNew = () => {
                                 type="button"
                                 className="focus:outline-none text-lg text-placeHolderText"
                                 onClick={() => setIsConfirmVisible((prev) => !prev)}
-                                aria-label={isConfirmVisible ? "Hide password" : "Show password"}
+                                aria-label={isConfirmVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                             >
                                 {isConfirmVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
                             </button>

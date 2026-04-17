@@ -15,12 +15,12 @@ function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
 
 function getDisplayName(chat: IAllChatListData): string {
     const u = getOtherUser(chat);
-    if (!u) return 'Unknown';
+    if (!u) return 'Inconnu';
     const isVendor = (u.role?.name ?? '').toLowerCase() === 'vendor';
     if (isVendor && u.business_name?.trim()) return u.business_name.trim();
     const first = (u.first_name ?? '').trim();
     const last = (u.last_name ?? '').trim();
-    return [first, last].filter(Boolean).join(' ') || 'Unknown';
+    return [first, last].filter(Boolean).join(' ') || 'Inconnu';
 }
 
 function getInitial(name: string): string {
@@ -40,7 +40,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const otherUser = selectedChat ? getOtherUser(selectedChat) : undefined;
-    const name = selectedChat ? getDisplayName(selectedChat) : 'Select a conversation';
+    const name = selectedChat ? getDisplayName(selectedChat) : 'Sélectionnez une conversation';
     const profilePic = otherUser?.profile_pic ?? null;
     const rating = otherUser?.averageRating ?? null;
     const reviewCount = otherUser?.totalReviews ?? null;
@@ -94,7 +94,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                             type="button"
                             onClick={onBack}
                             className="flex shrink-0 items-center justify-center -ml-1 p-2 rounded-lg text-darkSilver hover:bg-borderDark hover:text-fontBlack transition-colors lg:hidden"
-                            aria-label="Back to messages"
+                            aria-label="Retour aux messages"
                         >
                             <BackArrowSVG />
                         </button>
@@ -171,7 +171,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                                         className="cursor-pointer flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-fontBlack hover:bg-borderDark transition-colors"
                                     >
                                         <ProfileIconSVG />
-                                        Profile
+                                        Profil
                                     </button>
                                 )}
                                 <button
@@ -180,7 +180,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                                     className="cursor-pointer flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-[#F04438] hover:bg-borderDark transition-colors"
                                 >
                                     <FlagIconSVG />
-                                    Report
+                                    Signaler
                                 </button>
                             </div>
                         )}

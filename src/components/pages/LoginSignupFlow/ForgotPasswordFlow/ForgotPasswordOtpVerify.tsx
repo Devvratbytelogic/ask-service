@@ -134,7 +134,7 @@ const ForgotPasswordOtpVerify = () => {
                         length={OTP_LENGTH}
                         onComplete={handleVerify}
                         classNames={{ wrapper: "flex gap-2 md:gap-4 max-w-[280px]" }}
-                        ariaLabelPrefix="Digit"
+                        ariaLabelPrefix="Chiffre"
                     />
 
                     <p className="text-fontBlack text-sm">

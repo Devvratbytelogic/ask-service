@@ -15,7 +15,7 @@ export default function VendorLinks({ profile }: VendorLinksProps) {
     return (
         <>
             <div className="space-y-6">
-                <h2 className="text-xl font-bold text-fontBlack">Links</h2>
+                <h2 className="text-xl font-bold text-fontBlack">Liens</h2>
                 <a
                     href={displayLink}
                     target="_blank"

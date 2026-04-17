@@ -29,11 +29,11 @@ export default function ReportSubmittedModal() {
             </div>
 
             {/* Title */}
-            <h2 className="mt-5 text-xl font-bold text-fontBlack">Report Submitted</h2>
+            <h2 className="mt-5 text-xl font-bold text-fontBlack">Signalement envoyé</h2>
 
             {/* Message */}
             <p className="mt-3 max-w-sm text-sm font-normal text-[#6B7280]">
-                Thank you for your report. Our team will review it carefully and take appropriate action within 24-48 hours.
+                Merci pour votre signalement. Notre équipe l&apos;examinera attentivement et prendra les mesures appropriées sous 24 à 48 heures.
             </p>
 
             {/* Reference */}
@@ -45,7 +45,7 @@ export default function ReportSubmittedModal() {
             {/* Email confirmation box */}
             <div className="mt-5 w-full rounded-xl bg-[#EFF6FF] px-4 py-3">
                 <p className="text-sm text-fontBlack">
-                    We&apos;ve sent a confirmation email to{' '}
+                    Nous avons envoyé un e-mail de confirmation à{' '}
                     <span className="font-medium text-primaryColor">{email}</span>
                 </p>
             </div>
@@ -55,7 +55,7 @@ export default function ReportSubmittedModal() {
                 onPress={handleClose}
                 className="btn_radius btn_bg_white mt-4 min-w-30">
 
-                Close
+                Fermer
             </Button>
         </div>
     )

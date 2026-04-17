@@ -83,7 +83,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
                                 )
                             }
                         >
-                            Leave a review
+                            Laisser un avis
                         </Button>
                     </div>
                 )}
@@ -165,7 +165,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
                         </p>
                         {!hideLeaveReviewButton && (<Button className="btn_radius btn_bg_white mt-3">
                             <ThumbUpIconSVG />
-                            <span>Helpful ({review.helpfulCount})</span>
+                            <span>Utile ({review.helpfulCount})</span>
                         </Button>)}
                     </article>
                 ))}
@@ -174,7 +174,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
             {reviews.length > 0 && (
                 <div className="flex justify-center pt-2">
                     <Button className="btn_radius btn_bg_white min-w-32">
-                        View More
+                        Voir plus
                     </Button>
                 </div>
             )}
