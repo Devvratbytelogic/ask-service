@@ -505,7 +505,7 @@ export default function CreditsWallet() {
                                     Télécharger
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Download format">
+                            <DropdownMenu aria-label="Format de téléchargement">
                                 <DropdownItem key="csv" onPress={() => handleDownload('csv')}>
                                     Télécharger en CSV
                                 </DropdownItem>

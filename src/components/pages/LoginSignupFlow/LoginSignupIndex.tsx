@@ -67,7 +67,7 @@ const LoginSignupIndex = () => {
                     type="button"
                     onClick={() => dispatch(closeModal())}
                     className="h-12 w-50 shrink-0 inline-flex items-center justify-start cursor-pointer hover:opacity-80 transition-opacity"
-                    aria-label="Close and go to Ask Service"
+                    aria-label="Fermer et aller à Ask Service"
                 >
                     <ImageComponent url={logoUrl} img_title={`${marketplaceName} logo`} object_contain />
                 </button>

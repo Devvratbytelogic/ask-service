@@ -144,7 +144,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
                         <div className='w-full h-auto max-h-75'>
                             <ImageComponent
                                 url={mediaUrl}
-                                img_title="Shared image"
+                                img_title="Image partagée"
                                 object_cover={true}
                                 object_contain={false}
                             />

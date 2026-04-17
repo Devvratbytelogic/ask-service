@@ -157,7 +157,7 @@ const VendorSignupDetails = () => {
                         isDisabled={isGoogleLoading}
                     >
                         <span className="size-4.5">
-                            <ImageComponent url="/images/signup/google_icon.png" img_title="Google login icon" />
+                            <ImageComponent url="/images/signup/google_icon.png" img_title="Icône de connexion Google" />
                         </span>
                         Se connecter avec Google
                     </Button> */}

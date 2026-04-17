@@ -108,10 +108,10 @@ const Header = () => {
                                     <ChevronDownIconSVG />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="User menu">
-                                <DropdownItem key="profile">Profile</DropdownItem>
-                                <DropdownItem key="settings">Settings</DropdownItem>
-                                <DropdownItem key="logout" color="danger">Log out</DropdownItem>
+                            <DropdownMenu aria-label="Menu utilisateur">
+                                <DropdownItem key="profile">Profil</DropdownItem>
+                                <DropdownItem key="settings">Paramètres</DropdownItem>
+                                <DropdownItem key="logout" color="danger">Se déconnecter</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </nav>
@@ -128,11 +128,11 @@ const Header = () => {
                                     <span className="text-primaryColor font-semibold text-sm">D.R</span>
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="User menu">
+                            <DropdownMenu aria-label="Menu utilisateur">
                                 <DropdownItem key="my-requests" href={getMyRequestRoutePath()}>Mes demandes</DropdownItem>
                                 <DropdownItem key="messages" href={getVendorMessageRoutePath()}>Messages</DropdownItem>
-                                <DropdownItem key="profile">Profile</DropdownItem>
-                                <DropdownItem key="logout" color="danger">Log out</DropdownItem>
+                                <DropdownItem key="profile">Profil</DropdownItem>
+                                <DropdownItem key="logout" color="danger">Se déconnecter</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

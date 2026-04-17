@@ -278,7 +278,7 @@ export default function VendorProfileInfo() {
                             <ImageComponent
                                 key={`${profilePicRenderKey}-${avatarSrc}`}
                                 url={avatarSrc}
-                                img_title="Profile"
+                                img_title="Profil"
                                 object_cover={true}
                             />
                         </div>

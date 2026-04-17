@@ -90,7 +90,7 @@ export default function VerifyEmailOtpModal() {
         <div className="flex flex-col items-center w-full max-w-md mx-auto py-2">
             {/* Email icon - open envelope in blue */}
             <div className="flex justify-center mb-4" aria-hidden>
-                <ImageComponent url="/images/signup/email.svg" img_title="Email icon" />
+                <ImageComponent url="/images/signup/email.svg" img_title="Icône e-mail" />
             </div>
 
             <h2 className="text-xl font-bold text-fontBlack text-center">
