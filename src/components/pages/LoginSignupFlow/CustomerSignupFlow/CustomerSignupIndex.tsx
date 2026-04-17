@@ -71,7 +71,7 @@ const CustomerSignupIndex = () => {
                         className="modal_back_icon"
                         onClick={() => dispatch(openModal({ componentName: 'LoginSignupIndex', data: { componentName: 'SelectUserType' }, modalSize: 'full' }))}
                         role="button"
-                        aria-label="Go back"
+                            aria-label="Retour"
                     />
                     S'inscrire <span className="text-darkSilver ml-1"> maintenant</span>
                 </h1>
@@ -88,14 +88,14 @@ const CustomerSignupIndex = () => {
                         isLoading={isGoogleLoading}
                         isDisabled={isGoogleLoading}
                     >
-                        <span className="size-4.5"><ImageComponent url="/images/signup/google_icon.png" img_title="google login icon" /></span>Se connecter avec Google
+                        <span className="size-4.5"><ImageComponent url="/images/signup/google_icon.png" img_title="Icône de connexion Google" /></span>Se connecter avec Google
                     </Button>
                 </section>
 
                 {/* Divider */}
                 <div className="flex items-center gap-3 w-11/12">
                     <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
-                    <span className="text-darkSilver text-sm font-medium">or</span>
+                    <span className="text-darkSilver text-sm font-medium">ou</span>
                     <span className="flex-1 h-px bg-borderDark" aria-hidden="true" />
                 </div>
 

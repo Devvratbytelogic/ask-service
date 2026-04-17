@@ -16,7 +16,7 @@ const FAQ_TAB_TYPES = [
 function FaqAccordion({ items }: { items: IFaqItem[] }) {
   if (items.length === 0) {
     return (
-      <p className="text-sm text-darkSilver py-4">No FAQs in this category yet.</p>
+      <p className="text-sm text-darkSilver py-4">Il n&apos;y a pas encore de FAQ dans cette catégorie.</p>
     )
   }
   return (
@@ -80,7 +80,7 @@ export default function ContactFaq() {
   if (isError) {
     return (
       <div className="w-full md:w-2/4 md:mx-auto py-6 text-center text-darkSilver text-sm">
-        Unable to load FAQs. Please try again later.
+        Impossible de charger les FAQ. Veuillez réessayer plus tard.
       </div>
     )
   }

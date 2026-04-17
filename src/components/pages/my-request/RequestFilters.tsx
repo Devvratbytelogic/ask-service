@@ -58,7 +58,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
-                        aria-label="Service category"
+                        aria-label="Catégorie de services"
                         items={serviceFilterItems}
                         selectionMode="single"
                         selectedKeys={[serviceFilter]}
@@ -82,7 +82,7 @@ export default function RequestFilters({ search, onSearchChange, statusFilter, o
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
-                        aria-label="Status filter"
+                        aria-label="Filtre par statut"
                         items={statusFilterItems}
                         selectionMode="single"
                         selectedKeys={[statusFilter]}

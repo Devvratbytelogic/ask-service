@@ -182,7 +182,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                                 trigger: 'account_input_design rounded-xl',
                                 value: 'text-fontBlack',
                             }}
-                            aria-label="Quote valid for"
+                            aria-label="Durée de validité du devis"
                         >
                             {QUOTE_VALID_OPTIONS.map((opt) => (
                                 <SelectItem key={opt.key}>{opt.label}</SelectItem>

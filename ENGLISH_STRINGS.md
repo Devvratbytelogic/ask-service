@@ -541,3 +541,56 @@ All user-facing English strings translated to French across the project.
 | Copy transaction ID (aria-label) | Copier l'identifiant de transaction |
 | Download receipt (aria-label) | Télécharger le reçu |
 | Items per page (aria-label) | Éléments par page |
+
+---
+
+## AppLoader.tsx
+
+| English | French |
+|---------|--------|
+| Loading... (default message) | Chargement… |
+
+---
+
+## ContactFaq.tsx
+
+| English | French |
+|---------|--------|
+| No FAQs in this category yet. | Il n'y a pas encore de FAQ dans cette catégorie. |
+| Unable to load FAQs. Please try again later. | Impossible de charger les FAQ. Veuillez réessayer plus tard. |
+
+---
+
+## RequestFilters.tsx
+
+| English | French |
+|---------|--------|
+| Service category (aria-label) | Catégorie de services |
+| Status filter (aria-label) | Filtre par statut |
+
+---
+
+## SubmitQuoteForm.tsx
+
+| English | French |
+|---------|--------|
+| Quote valid for (aria-label) | Durée de validité du devis |
+
+---
+
+## CustomerSignInIndex.tsx
+
+| English | French |
+|---------|--------|
+| Or (divider) | Ou |
+| google login icon (img_title) | Icône de connexion Google |
+
+---
+
+## CustomerSignupIndex.tsx
+
+| English | French |
+|---------|--------|
+| Go back (aria-label) | Retour |
+| or (divider) | ou |
+| google login icon (img_title) | Icône de connexion Google |

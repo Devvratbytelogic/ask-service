@@ -9,7 +9,7 @@ interface AppLoaderProps {
   fullScreen?: boolean
 }
 
-export default function AppLoader({ message = "Loading...", fullScreen = true }: AppLoaderProps) {
+export default function AppLoader({ message = "Chargement…", fullScreen = true }: AppLoaderProps) {
   return (
     <div
       className={
