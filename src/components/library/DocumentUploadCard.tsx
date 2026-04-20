@@ -100,7 +100,7 @@ export default function DocumentUploadCard({
                 maxSizeBytes={maxSizeBytes}
                 onFileRejected={onFileRejected}
                 dragLabel="Glissez-déposez votre fichier ici"
-                browseLabel="Parcourir les fichiers"
+                browseLabel="sélectionner un fichier"
                 ariaLabel={`Télécharger ${title}`}
             />
         </div>

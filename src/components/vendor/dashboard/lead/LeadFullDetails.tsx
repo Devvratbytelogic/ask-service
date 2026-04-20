@@ -194,9 +194,16 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                             <h3 className="font-bold text-fontBlack mb-4">Détails du service</h3>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {displayData.dynamicAnswers.map((a: DynamicAnswersEntity) => {
+                                    const formatValue = (val: string) => {
+                                        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+                                            const [y, m, d] = val.split('-')
+                                            return `${d}-${m}-${y}`
+                                        }
+                                        return val
+                                    }
                                     const displayValue = a.value?.includes(',')
-                                        ? a.value.split(',').map((s) => s.trim()).join(', ')
-                                        : (a.value ?? '—')
+                                        ? a.value.split(',').map((s) => formatValue(s.trim())).join(', ')
+                                        : formatValue(a.value ?? '—')
                                     return (
                                         <div key={a._id || a.question_id} className="rounded-xl border border-borderDark px-4 py-3">
                                             <p className="text-xs text-darkSilver mb-1">{a.label}</p>
