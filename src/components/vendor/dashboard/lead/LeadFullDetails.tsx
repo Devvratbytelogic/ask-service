@@ -41,11 +41,11 @@ function translateClientType(type: string): string {
     return type
 }
 
-function formatLocation(lead: ISingleLeadAPIResponseData | undefined): string {
-    if (!lead) return ''
-    const parts = [lead.address_1, lead.address_2, lead.city, lead.state, lead.country, lead.pincode].filter(Boolean)
-    return parts.join(', ')
-}
+// function formatLocation(lead: ISingleLeadAPIResponseData | undefined): string {
+//     if (!lead) return ''
+//     const parts = [lead.address_1, lead.address_2, lead.city, lead.state, lead.country, lead.pincode].filter(Boolean)
+//     return parts.join(', ')
+// }
 
 export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
     const { data: leadData, isLoading: leadLoading } = useGetSingleLeadQuery({ id })
@@ -87,7 +87,8 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             // phoneMasked: formatFrenchPhone(contact?.phone || lead.user?.phone || 'N/A'),
             phoneMasked: contact?.phone || lead.user?.phone || 'N/A',
             emailMasked: contact?.email || lead.user?.email || 'N/A',
-            location: formatLocation(lead),
+            // location: formatLocation(lead),
+            location: lead.city,
             serviceType: lead.service_category?.title || lead.child_category || 'N/A',
             frequency: rawLead.frequency || 'N/A',
             clientType: lead.contact_details?.client_type ? translateClientType(lead.contact_details.client_type) : 'N/A',

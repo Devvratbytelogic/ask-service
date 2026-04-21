@@ -387,7 +387,7 @@ export default function VendorDashboard() {
                                     <div className="flex flex-wrap gap-4 text-sm text-darkSilver">
                                         <span className="flex items-center gap-1.5">
                                             <LocationSVG />
-                                            {lead.country}
+                                            {lead.city}
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <TimeIconSVG />
