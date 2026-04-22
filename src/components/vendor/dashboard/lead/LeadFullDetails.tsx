@@ -88,7 +88,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
             phoneMasked: contact?.phone || lead.user?.phone || 'N/A',
             emailMasked: contact?.email || lead.user?.email || 'N/A',
             // location: formatLocation(lead),
-            location: lead.city,
+            location: `${lead.city}, ${lead.country}`,
             serviceType: lead.service_category?.title || lead.child_category || 'N/A',
             frequency: rawLead.frequency || 'N/A',
             clientType: lead.contact_details?.client_type ? translateClientType(lead.contact_details.client_type) : 'N/A',
