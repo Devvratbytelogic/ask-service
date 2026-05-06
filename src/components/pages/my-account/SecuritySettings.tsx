@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { addToast, Button, Input, Modal, ModalBody, ModalContent } from '@heroui/react'
+import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
 import { DeleteIconSVG, LockPrimaryColorSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { securitySettingsValidationSchema } from '@/utils/validation'
@@ -30,8 +30,10 @@ interface SecuritySettingsProps {
 }
 
 export default function SecuritySettings({ variant = 'default' }: SecuritySettingsProps) {
-    const router = useRouter()
     const [isChangingPassword, setIsChangingPassword] = useState(false)
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [changeVendorPassword, { isLoading: isChangingVendor }] = useChangeVendorPasswordMutation()
     const [changeUserPassword, { isLoading: isChangingUser }] = useChangeUserPasswordMutation()
     const [deleteVendorAccount, { isLoading: isDeletingVendor }] = useDeleteVendorAccountMutation()
@@ -71,6 +73,9 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 }
                 addToast({ title: 'Mot de passe mis à jour avec succès', color: 'success', timeout: 2000 })
                 resetForm()
+                setShowCurrentPassword(false)
+                setShowNewPassword(false)
+                setShowConfirmPassword(false)
                 setIsChangingPassword(false)
             } catch {
                 // Error is handled by RTK Query / toast
@@ -100,7 +105,18 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                         {!isChangingPassword ? (
                             <Button className='btn_radius btn_bg_white' onPress={() => setIsChangingPassword(true)} >Changer le mot de passe</Button>
                         ) : (
-                            <Button className="btn_radius btn_bg_white shrink-0" onPress={() => setIsChangingPassword(false)}>Annuler</Button>
+                            <Button
+                                className="btn_radius btn_bg_white shrink-0"
+                                onPress={() => {
+                                    resetForm()
+                                    setShowCurrentPassword(false)
+                                    setShowNewPassword(false)
+                                    setShowConfirmPassword(false)
+                                    setIsChangingPassword(false)
+                                }}
+                            >
+                                Annuler
+                            </Button>
                         )}
                     </div>
 
@@ -112,12 +128,24 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 </label>
                                 <Input
                                     name="currentPassword"
-                                    type={values.currentPassword ? 'text' : 'password'}
+                                    type={showCurrentPassword ? 'text' : 'password'}
                                     value={values.currentPassword}
                                     onChange={handleChange}
-                                    onBlur={handleBlur}isInvalid={!!(touched.currentPassword && errors.currentPassword)}
-                                    errorMessage={touched.currentPassword && errors.currentPassword}placeholder="Entrez votre mot de passe actuel"
+                                    onBlur={handleBlur}
+                                    isInvalid={!!(touched.currentPassword && errors.currentPassword)}
+                                    errorMessage={touched.currentPassword && errors.currentPassword}
+                                    placeholder="Entrez votre mot de passe actuel"
                                     classNames={inputClasses}
+                                    endContent={
+                                        <button
+                                            type="button"
+                                            className="text-lg text-placeHolderText focus:outline-none"
+                                            onClick={() => setShowCurrentPassword((prev) => !prev)}
+                                            aria-label={showCurrentPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                                        >
+                                            {showCurrentPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                                        </button>
+                                    }
                                 />
                             </div>
                             <div>
@@ -126,7 +154,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 </label>
                                 <Input
                                     name="newPassword"
-                                    type={values.newPassword ? 'text' : 'password'}
+                                    type={showNewPassword ? 'text' : 'password'}
                                     value={values.newPassword}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -134,6 +162,16 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     errorMessage={touched.newPassword && errors.newPassword}
                                     placeholder="Entrez votre nouveau mot de passe"
                                     classNames={inputClasses}
+                                    endContent={
+                                        <button
+                                            type="button"
+                                            className="text-lg text-placeHolderText focus:outline-none"
+                                            onClick={() => setShowNewPassword((prev) => !prev)}
+                                            aria-label={showNewPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                                        >
+                                            {showNewPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                                        </button>
+                                    }
                                 />
                                 <p className="mt-1.5 text-xs text-darkSilver">
                                     Doit contenir au moins 8 caractères avec des majuscules, minuscules et chiffres
@@ -145,7 +183,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 </label>
                                 <Input
                                     name="confirmNewPassword"
-                                    type={values.confirmNewPassword ? 'text' : 'password'}
+                                    type={showConfirmPassword ? 'text' : 'password'}
                                     value={values.confirmNewPassword}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -157,6 +195,16 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     }
                                     placeholder="Confirmez le nouveau mot de passe"
                                     classNames={inputClasses}
+                                    endContent={
+                                        <button
+                                            type="button"
+                                            className="text-lg text-placeHolderText focus:outline-none"
+                                            onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                            aria-label={showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                                        >
+                                            {showConfirmPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                                        </button>
+                                    }
                                 />
                             </div>
                             <Button

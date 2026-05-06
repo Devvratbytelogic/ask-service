@@ -394,13 +394,15 @@ export default function CreditsWallet() {
             {/* Buy Credits Section */}
             <div>
                 <h2 className="font-bold text-lg text-fontBlack mb-4">Acheter des Points</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex flex-wrap justify-center gap-4 items-stretch">
                     {packagesLoading ? (
-                        <div className="col-span-full flex justify-center py-12">
+                        <div className="w-full flex justify-center py-12">
                             <Spinner size="lg" color="primary" />
                         </div>
                     ) : (
-                        creditPackages && creditPackages?.length > 0 && creditPackages?.map((pkg) => {
+                        creditPackages &&
+                        creditPackages?.length > 0 &&
+                        creditPackages?.map((pkg) => {
                             const isSelected = selectedPackageId === pkg.id
                             return (
                                 <div
@@ -414,7 +416,7 @@ export default function CreditsWallet() {
                                             setSelectedPackageId(pkg.id)
                                         }
                                     }}
-                                    className={`relative rounded-2xl border bg-white p-5 cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-primaryColor focus-visible:ring-offset-2 ${isSelected ? 'ring-2 ring-primaryColor border-primaryColor' : ''} ${!isSelected && pkg.popular ? 'border-primaryColor' : ''} ${!isSelected && !pkg.popular ? 'border-borderDark' : ''} flex flex-col justify-between items-center gap-8`}
+                                    className={`relative min-w-0 w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc((100%-3rem)/4)] lg:shrink-0 rounded-2xl border bg-white p-5 cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-primaryColor focus-visible:ring-offset-2 ${isSelected ? 'ring-2 ring-primaryColor border-primaryColor' : ''} ${!isSelected && pkg.popular ? 'border-primaryColor' : ''} ${!isSelected && !pkg.popular ? 'border-borderDark' : ''} flex flex-col justify-between items-center gap-8`}
                                 >
                                     <div className='space-y-1 text-center'>
                                         {pkg.popular && (
