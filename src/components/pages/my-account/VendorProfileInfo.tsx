@@ -44,7 +44,6 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export default function VendorProfileInfo() {
     const dispatch = useDispatch()
-    const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
     const [profilePicRenderKey, setProfilePicRenderKey] = useState(0)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
@@ -84,7 +83,7 @@ export default function VendorProfileInfo() {
         websiteLink: profileData?.website_link ?? defaultInitialValues.websiteLink,
     }
 
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue } = useFormik({
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, dirty } = useFormik({
         initialValues,
         enableReinitialize: true,
         validationSchema: vendorProfileInfoValidationSchema,
@@ -119,7 +118,6 @@ export default function VendorProfileInfo() {
                 addToast({ title: 'Profil mis à jour avec succès', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
-                setIsEditing(false)
             } catch {
                 // Error is handled by RTK Query / toast
             }
@@ -129,7 +127,6 @@ export default function VendorProfileInfo() {
     const handleCancel = () => {
         resetForm()
         setProfilePicFile(null)
-        setIsEditing(false)
     }
 
     const [latLong, setLatLong] = useState<string | null>(null)
@@ -233,19 +230,14 @@ export default function VendorProfileInfo() {
         ? new Date(profileData.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
         : ''
 
+    const hasPendingChanges = dirty || profilePicFile !== null
+
     return (
         <>
             {/* Section header with actions */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-bold text-fontBlack">Information de l'entreprise</h2>
-                {!isEditing ? (
-                    <Button
-                        className="btn_radius btn_bg_blue px-6"
-                        onPress={() => setIsEditing(true)}
-                    >
-                        Modifier le profil
-                    </Button>
-                ) : (
+                {hasPendingChanges && (
                     <div className="flex shrink-0 gap-2">
                         <Button className="btn_radius btn_bg_white px-6" onPress={handleCancel}>
                             Annuler
@@ -292,15 +284,14 @@ export default function VendorProfileInfo() {
                             {avatarInitials}
                         </div>
                     )}
-                    {isEditing && (
-                        <button
-                            type="button"
-                            onClick={() => profilePicInputRef.current?.click()}
-                            className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
-                        >
-                            <CameraIconSVG />
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={() => profilePicInputRef.current?.click()}
+                        className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
+                        aria-label="Changer la photo de profil"
+                    >
+                        <CameraIconSVG />
+                    </button>
                 </div>
                 <div>
                     <h3 className="font-bold text-fontBlack">
@@ -333,7 +324,6 @@ export default function VendorProfileInfo() {
                         isInvalid={!!(touched.businessName && errors.businessName)}
                         errorMessage={touched.businessName && errors.businessName}
                         classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                        isDisabled={!isEditing}
                         startContent={<BusinessNameIconSVG />}
                     />
                 </div>
@@ -353,7 +343,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.ownerName && errors.ownerName)}
                             errorMessage={touched.ownerName && errors.ownerName}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<ProfileIconSVG />}
                         />
                     </div>
@@ -369,7 +358,7 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.serviceCategory && errors.serviceCategory)}
                             errorMessage={touched.serviceCategory && errors.serviceCategory}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
+                            isDisabled={false}
                             startContent={<BriefcaseIconSVG />}
                         />
                     </div> */}
@@ -390,15 +379,7 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.email && errors.email)}
                             errorMessage={touched.email && errors.email}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<EnvelopeIconSVG />}
-                            endContent={
-                                !profileData?.is_email_verified && isEditing ? (
-                                    <Button size="sm" className="btn_radius btn_outline_blue">
-                                        Vérifier
-                                    </Button>
-                                ) : undefined
-                            }
                             readOnly
                         />
                     </div>
@@ -418,7 +399,6 @@ export default function VendorProfileInfo() {
                                     inputProps={{
                                         name: 'phone',
                                         'aria-label': 'Numéro de téléphone',
-                                        disabled: !isEditing,
                                     }}
                                     containerClass="!w-full"
                                     inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
@@ -428,7 +408,7 @@ export default function VendorProfileInfo() {
                                 // disabled
                                 />
                             </div>
-                            {!isEditing && profileData?.is_phone_verified === false && profileData?.phone !== null && (
+                            {!hasPendingChanges && profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
                                     Vérifier
                                 </Button>
@@ -453,7 +433,6 @@ export default function VendorProfileInfo() {
                         isInvalid={!!(touched.businessAddress && errors.businessAddress)}
                         errorMessage={touched.businessAddress && errors.businessAddress}
                         classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                        isDisabled={!isEditing}
                         startContent={<LocationSVG />}
                     />
                 </div>
@@ -472,7 +451,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.postcode && errors.postcode)}
                             errorMessage={touched.postcode && errors.postcode}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                         />
                     </div>
                     <div>
@@ -487,7 +465,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.city && errors.city)}
                             errorMessage={touched.city && errors.city}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                         />
                     </div>
                 </div>
@@ -496,7 +473,7 @@ export default function VendorProfileInfo() {
                     type="button"
                     className="btn_radius btn_bg_white text-primaryColor!"
                     startContent={<MyLocationIconSVG />}
-                    isDisabled={!isEditing || isGeoLoading}
+                    isDisabled={isGeoLoading}
                     isLoading={isGeoLoading}
                     onPress={handleGetUserGeolocation}
                 >
@@ -517,7 +494,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.vatNumber && errors.vatNumber)}
                             errorMessage={touched.vatNumber && errors.vatNumber}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<DocumentIconSVG />}
                         />
                     </div>
@@ -537,7 +513,6 @@ export default function VendorProfileInfo() {
                                 touched.companyRegistrationNumber && errors.companyRegistrationNumber
                             }
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<DocumentIconSVG />}
                         />
                     </div>
@@ -557,7 +532,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.yearsOfActivity && errors.yearsOfActivity)}
                             errorMessage={touched.yearsOfActivity && errors.yearsOfActivity}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<TimeIconSVG />}
                         />
                     </div>
@@ -574,7 +548,6 @@ export default function VendorProfileInfo() {
                             }}
                             classNames={{ trigger: 'account_input_design flex-1 min-h-10' }}
                             aria-label="La taille de l'entreprise"
-                            isDisabled={!isEditing}
                             startContent={<UsersIconSVG />}
                         >
                             {COMPANY_SIZE_OPTIONS.map((opt) => (
@@ -598,7 +571,6 @@ export default function VendorProfileInfo() {
                             isInvalid={!!(touched.websiteLink && errors.websiteLink)}
                             errorMessage={touched.websiteLink && errors.websiteLink}
                             classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={!isEditing}
                             startContent={<span className="text-darkSilver"><GlobeIconSVG /></span>}
                         />
                     </div>
@@ -618,7 +590,6 @@ export default function VendorProfileInfo() {
                         errorMessage={touched.aboutCompany && errors.aboutCompany}
                         classNames={{ inputWrapper: 'account_input_design rounded-xl min-h-[100px]' }}
                         minRows={4}
-                        isDisabled={!isEditing}
                     />
                 </div>
             </form>

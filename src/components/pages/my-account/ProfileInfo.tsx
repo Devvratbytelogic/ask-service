@@ -29,7 +29,6 @@ const defaultInitialValues = {
 
 export default function ProfileInfo() {
     const dispatch = useDispatch()
-    const [isEditing, setIsEditing] = useState(false)
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
     const [profilePicRenderKey, setProfilePicRenderKey] = useState(0)
     const profilePicInputRef = useRef<HTMLInputElement>(null)
@@ -70,7 +69,7 @@ export default function ProfileInfo() {
         typeof profileData?.profile_pic === 'string' && profileData.profile_pic ? profileData.profile_pic : null
     const avatarSrc = profilePicPreviewUrl ?? existingProfilePicUrl
 
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue } = useFormik({
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, dirty } = useFormik({
         initialValues,
         enableReinitialize: true,
         validationSchema: profileInfoValidationSchema,
@@ -92,7 +91,6 @@ export default function ProfileInfo() {
                 addToast({ title: 'Profil mis à jour avec succès', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
-                setIsEditing(false)
             } catch {
                 // addToast({ title: 'Failed to update profile', color: 'danger', timeout: 2000 })
             }
@@ -186,18 +184,18 @@ export default function ProfileInfo() {
         setFieldValue('city', city)
     }, [isGeoSuccess, geoData, setFieldValue])
 
+    const hasPendingChanges = dirty || profilePicFile !== null
+
     return (
         <>
             {/* Section header with actions */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-bold text-fontBlack">Informations du profil</h2>
-                {!isEditing ? (
-                    <Button className="btn_radius btn_bg_blue px-6" onPress={() => setIsEditing(true)}>
-                        Modifier le profil
-                    </Button>
-                ) : (
+                {hasPendingChanges && (
                     <div className="flex shrink-0 gap-2">
-                        <Button className="btn_radius btn_bg_white px-6" onPress={() => { resetForm(); setProfilePicFile(null); setIsEditing(false) }}>Annuler</Button>
+                        <Button className="btn_radius btn_bg_white px-6" onPress={() => { resetForm(); setProfilePicFile(null) }}>
+                            Annuler
+                        </Button>
                         <Button
                             className="btn_radius btn_bg_blue"
                             isLoading={isUpdating}
@@ -235,16 +233,14 @@ export default function ProfileInfo() {
                             <CameraIconSVG />
                         </div>
                     )}
-                    {isEditing && (
-                        <button
-                            type="button"
-                            onClick={() => profilePicInputRef.current?.click()}
-                            className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
-                            aria-label="Changer la photo de profil"
-                        >
-                            <CameraIconSVG />
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={() => profilePicInputRef.current?.click()}
+                        className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
+                        aria-label="Changer la photo de profil"
+                    >
+                        <CameraIconSVG />
+                    </button>
                 </div>
                 <div>
                     <h3 className="font-bold text-fontBlack">
@@ -271,7 +267,6 @@ export default function ProfileInfo() {
                             value={values.firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isReadOnly={!isEditing}
                             isInvalid={!!(touched.firstName && errors.firstName)}
                             errorMessage={touched.firstName && errors.firstName}
                             classNames={{
@@ -288,7 +283,6 @@ export default function ProfileInfo() {
                             value={values.lastName}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isReadOnly={!isEditing}
                             isInvalid={!!(touched.lastName && errors.lastName)}
                             errorMessage={touched.lastName && errors.lastName}
                             classNames={{
@@ -310,7 +304,6 @@ export default function ProfileInfo() {
                                     value={values.email}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    isReadOnly={!isEditing}
                                     isInvalid={!!(touched.email && errors.email)}
                                     errorMessage={touched.email && errors.email}
                                     startContent={<EnvelopeIconSVG />}
@@ -320,7 +313,7 @@ export default function ProfileInfo() {
                                     readOnly
                                 />
                             </div>
-                            {profileData?.is_email_verified === false && (profileData?.email ?? values.email) && (
+                            {!hasPendingChanges && profileData?.is_email_verified === false && (profileData?.email ?? values.email) && (
                                 <Button
                                     size="sm"
                                     className="btn_radius btn_outline_blue shrink-0"
@@ -352,7 +345,6 @@ export default function ProfileInfo() {
                                     inputProps={{
                                         name: 'phone',
                                         'aria-label': 'Numéro de téléphone',
-                                        readOnly: !isEditing,
                                     }}
                                     containerClass="!w-full"
                                     inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
@@ -362,7 +354,7 @@ export default function ProfileInfo() {
                                 // disabled
                                 />
                             </div>
-                            {!isEditing && profileData?.is_phone_verified === false && profileData?.phone !== null && (
+                            {!hasPendingChanges && profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
                                     Vérifier
                                 </Button>
@@ -383,7 +375,6 @@ export default function ProfileInfo() {
                         value={values.streetAddress}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        isReadOnly={!isEditing}
                         isInvalid={!!(touched.streetAddress && errors.streetAddress)}
                         errorMessage={touched.streetAddress && errors.streetAddress}
                         startContent={<LocationSVG />}
@@ -403,7 +394,6 @@ export default function ProfileInfo() {
                             value={values.postcode}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isReadOnly={!isEditing}
                             isInvalid={!!(touched.postcode && errors.postcode)}
                             errorMessage={touched.postcode && errors.postcode}
                             classNames={{
@@ -420,7 +410,6 @@ export default function ProfileInfo() {
                             value={values.city}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isReadOnly={!isEditing}
                             isInvalid={!!(touched.city && errors.city)}
                             errorMessage={touched.city && errors.city}
                             classNames={{
@@ -434,7 +423,7 @@ export default function ProfileInfo() {
                     type="button"
                     className="btn_radius btn_bg_white text-primaryColor!"
                     startContent={<MyLocationIconSVG />}
-                    isDisabled={!isEditing || isGeoLoading}
+                    isDisabled={isGeoLoading}
                     isLoading={isGeoLoading}
                     onPress={handleGetUserGeolocation}
                 >
