@@ -10,7 +10,7 @@ import { loginWithGoogle } from "@/firebase/GoogleLogin"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import Link from "next/link"
-import { getTermsRoutePath, getPrivacyRoutePath } from "@/routes/routes"
+import { getTermsRoutePath, getPrivacyRoutePath, getProfilePathForRole } from "@/routes/routes"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
@@ -61,31 +61,32 @@ const VendorSignupDetails = () => {
     const [vendorRegister, { isLoading: isRegistering }] = useVendorRegisterMutation()
     const fcmToken = getFcmTokenFromCookie()
 
-    const handleGoogleLogin = async () => {
-        setIsGoogleLoading(true)
-        try {
-            const res = await loginWithGoogle("Vendor")
-            const responseData = res?.data
-            if (responseData && typeof responseData === "object") {
-                const authData = responseData as AuthResponseData
-                if (authData.token ?? authData.access_token) {
-                    setAuthAndRefetchProfile(authData, dispatch)
-                    router.refresh()
-                    addToast({ title: "Compte créé avec succès", color: "success", timeout: 2000 })
-                    dispatch(closeModal())
-                    return
-                }
-            }
-            addToast({ title: "Inscription terminée", color: "success", timeout: 2000 })
-            dispatch(closeModal())
-        } catch (err: unknown) {
-            const e = err as Error & { responseData?: { message?: string }; message?: string }
-            const message = e.responseData?.message ?? e.message ?? "Échec de l'inscription Google"
-            addToast({ title: message, color: "danger", timeout: 3000 })
-        } finally {
-            setIsGoogleLoading(false)
-        }
-    }
+    // const handleGoogleLogin = async () => {
+    //     setIsGoogleLoading(true)
+    //     try {
+    //         const res = await loginWithGoogle("Vendor")
+    //         const responseData = res?.data
+    //         if (responseData && typeof responseData === "object") {
+    //             const authData = responseData as AuthResponseData
+    //             if (authData.token ?? authData.access_token) {
+    //                 setAuthAndRefetchProfile(authData, dispatch)
+    //                 router.refresh()
+    //                 addToast({ title: "Compte créé avec succès", color: "success", timeout: 2000 })
+    //                 dispatch(closeModal())
+    //                 router.push(getProfilePathForRole(authData.role ?? "Vendor"))
+    //                 return
+    //             }
+    //         }
+    //         addToast({ title: "Inscription terminée", color: "success", timeout: 2000 })
+    //         dispatch(closeModal())
+    //     } catch (err: unknown) {
+    //         const e = err as Error & { responseData?: { message?: string }; message?: string }
+    //         const message = e.responseData?.message ?? e.message ?? "Échec de l'inscription Google"
+    //         addToast({ title: message, color: "danger", timeout: 3000 })
+    //     } finally {
+    //         setIsGoogleLoading(false)
+    //     }
+    // }
 
     const formik = useFormik<VendorSignupFormValues>({
         initialValues: {

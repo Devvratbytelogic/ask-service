@@ -60,6 +60,21 @@ export function getDashboardPathForRole(
     if (rLower === 'vendor') return getVendorDashboardRoutePath();
     return getMyRequestRoutePath();
 }
+
+/** Profile / account settings path for the given role (User → my-account, Vendor → vendor/account). */
+export function getProfilePathForRole(
+    role: string | { name?: string; id?: string; _id?: string } | undefined | null,
+): string {
+    const r =
+        role == null
+            ? ''
+            : typeof role === 'string'
+              ? role
+              : String(role.name ?? role.id ?? role._id ?? '');
+    const rLower = r.toLowerCase();
+    if (rLower === 'vendor') return getVendorAccountRoutePath();
+    return getMyAccountRoutePath();
+}
 export function getContactUsRoutePath() {
     return `/contact-us`;
 }
