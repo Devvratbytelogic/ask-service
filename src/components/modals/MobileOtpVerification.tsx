@@ -131,17 +131,43 @@ const MobileOtpVerification = () => {
                     requestFlowData &&
                     typeof requestFlowData === "object"
                 ) {
+                    const flowPayload = requestFlowData as {
+                        skipAutoSubmitAfterVerification?: boolean
+                        submissionSuccessReference?: string
+                        initialFormValues?: Record<string, unknown>
+                    }
+                    const skipAutoSubmitAfterVerification = !!flowPayload.skipAutoSubmitAfterVerification
                     dispatch(closeModal())
-                    dispatch(
-                        openModal({
-                            componentName: "RequestServiceFlowIndex",
-                            data: {
-                                ...(requestFlowData as Record<string, unknown>),
-                                autoSubmitAfterPhoneVerification: true,
-                            },
-                            modalSize: "lg",
-                        })
-                    )
+                    if (skipAutoSubmitAfterVerification) {
+                        const formValues =
+                            flowPayload.initialFormValues &&
+                            typeof flowPayload.initialFormValues === "object"
+                                ? flowPayload.initialFormValues
+                                : {}
+                        dispatch(
+                            openModal({
+                                componentName: "SubmissionSuccess",
+                                data: {
+                                    ...formValues,
+                                    reference:
+                                        flowPayload.submissionSuccessReference ??
+                                        (data as { codeRef?: string }).codeRef,
+                                },
+                                modalSize: "lg",
+                            })
+                        )
+                    } else {
+                        dispatch(
+                            openModal({
+                                componentName: "RequestServiceFlowIndex",
+                                data: {
+                                    ...(requestFlowData as Record<string, unknown>),
+                                    autoSubmitAfterPhoneVerification: true,
+                                },
+                                modalSize: "lg",
+                            })
+                        )
+                    }
                 } else if (stayOnPage) {
                     dispatch(closeModal())
                 } else if (data?.callBackModal || data?.parentCallBackModal) {

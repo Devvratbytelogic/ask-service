@@ -48,15 +48,37 @@ export default function VerifyEmailOtpModal() {
             }
             addToast({ title: "Connexion réussie", color: "success", timeout: 2000 })
             if (returnToRequestFlow && requestFlowData && typeof requestFlowData === "object") {
+                const flowPayload = requestFlowData as {
+                    skipAutoSubmitAfterVerification?: boolean
+                    submissionSuccessReference?: string
+                    initialFormValues?: Record<string, unknown>
+                }
+                const skipAutoSubmitAfterVerification = !!flowPayload.skipAutoSubmitAfterVerification
                 dispatch(closeModal())
-                dispatch(openModal({
-                    componentName: "RequestServiceFlowIndex",
-                    data: {
-                        ...(requestFlowData as Record<string, unknown>),
-                        autoSubmitAfterEmailVerification: true,
-                    },
-                    modalSize: "lg",
-                }))
+                if (skipAutoSubmitAfterVerification) {
+                    const formValues =
+                        flowPayload.initialFormValues &&
+                        typeof flowPayload.initialFormValues === "object"
+                            ? flowPayload.initialFormValues
+                            : {}
+                    dispatch(openModal({
+                        componentName: "SubmissionSuccess",
+                        data: {
+                            ...formValues,
+                            reference: flowPayload.submissionSuccessReference,
+                        },
+                        modalSize: "lg",
+                    }))
+                } else {
+                    dispatch(openModal({
+                        componentName: "RequestServiceFlowIndex",
+                        data: {
+                            ...(requestFlowData as Record<string, unknown>),
+                            autoSubmitAfterEmailVerification: true,
+                        },
+                        modalSize: "lg",
+                    }))
+                }
             } else {
                 dispatch(closeModal())
                 router.push(getMyAccountRoutePath({ section: 'profile' }))

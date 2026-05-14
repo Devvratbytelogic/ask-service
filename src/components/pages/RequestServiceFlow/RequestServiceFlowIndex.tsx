@@ -102,6 +102,8 @@ const RequestServiceFlowIndex = () => {
         request?: { _id: string; [key: string]: unknown }
         autoSubmitAfterEmailVerification?: boolean
         autoSubmitAfterPhoneVerification?: boolean
+        /** When true, request was already created (e.g. HTTP 201); do not auto-submit again after OTP. */
+        skipAutoSubmitAfterVerification?: boolean
         [key: string]: unknown
     } | undefined
     const data = modalData
@@ -280,13 +282,21 @@ const RequestServiceFlowIndex = () => {
                 }
 
                 const res = await createServiceRequest(payload).unwrap()
+                const skipAutoSubmitAfterVerification = res?.http_status_code === 201
                 const ref = res?.data?.request?.reference_no
                 setSubmissionRef(ref ?? null)
+                const verificationFlowExtras = skipAutoSubmitAfterVerification
+                    ? {
+                          skipAutoSubmitAfterVerification: true as const,
+                          submissionSuccessReference: ref,
+                      }
+                    : {}
                 if (res?.data?.flow === flowTypes.PHONE_VERIFICATION_REQUIRED) {
                     const phoneVerifyRequestFlowData = {
                         ...data,
                         initialFormValues: values,
                         initialStep: reviewStepIndex,
+                        ...verificationFlowExtras,
                     }
                     dispatch(openModal({
                         componentName: 'MobileOtpVerification',
@@ -307,6 +317,7 @@ const RequestServiceFlowIndex = () => {
                         ...data,
                         initialFormValues: values,
                         initialStep: reviewStepIndex,
+                        ...verificationFlowExtras,
                     }
                     dispatch(openModal({
                         componentName: 'VerifyEmailOtpModal',
