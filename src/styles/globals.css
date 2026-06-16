@@ -10,20 +10,12 @@
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
-  font-family: var(--font-sans), sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-heading), sans-serif;
+  @apply bg-background text-foreground font-sans antialiased;
 }
 
 @theme {
   --font-sans: var(--font-sans);
-  --font-heading: var(--font-heading);
+  --font-heading: var(--font-sans);
   --color-navBgColor: #2C4A6814;
   --color-fontBlack: #231E2D;
   --color-customWhite: #FAFAFA;
@@ -38,9 +30,11 @@ h4 {
   --color-danger: #C10007;
   --color-blue-dark: #1340E0;
   --color-blue-light: #EEF2FF;
+  --color-amber: #F59E0B;
   --color-amber-500: #F59E0B;
   --color-amber-dark: #D97706;
   --color-amber-light: #FFFBEB;
+  --color-amber-dim: rgba(245, 158, 11, 0.12);
   --color-slate-900: #0F172A;
   --color-slate-700: #334155;
   --color-slate-500: #64748B;

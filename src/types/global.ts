@@ -26,6 +26,7 @@ export interface IGlobalSettingsAPIResponseData {
   quote_limit: number;
   quote_expired: number;
   logo: string;
+  vendor_logo: string;
   icon_image: string;
   instagram_logo: string;
   facebook_logo: string;

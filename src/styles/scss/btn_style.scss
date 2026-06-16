@@ -34,5 +34,9 @@
 }
 
 .outline_btn {
-    @apply bg-transparent border-[1.5px] px-5 border-[#CBD5E1] hover:border-primaryColor hover:text-primaryColor hover:bg-primaryColor/5 transition-all;
+    @apply bg-transparent border-[1.5px] px-5 border-slate-300 hover:border-primaryColor hover:text-primaryColor hover:bg-primaryColor/5 transition-all;
+}
+
+.outline_btn_vendor {
+    @apply border-[1.5px] border-white/15 bg-transparent px-5 text-sm font-medium text-white/70 transition-all hover:border-amber hover:bg-amber-dim hover:text-amber;
 }

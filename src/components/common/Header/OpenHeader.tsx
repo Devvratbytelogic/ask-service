@@ -2,18 +2,22 @@
 
 import ImageComponent from "@/components/library/ImageComponent"
 import { openModal } from "@/redux/slices/allModalSlice"
-import { useGetGlobalSettingsQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import { Button } from "@heroui/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { getHomeRoutePath } from "@/routes/routes"
+import { getHomeRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
+import { usePathname } from "next/navigation"
 
-const OpenHeader = ({ logoUrl }: { logoUrl: string }) => {
+const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl: string }) => {
     const dispatch = useDispatch()
     const [scrolled, setScrolled] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
+    const pathname = usePathname()
+    const isServiceProviderPage = pathname === getServiceProviderRoutePath()
+
+    const logo = isServiceProviderPage ? vendorLogoUrl : logoUrl;
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -44,19 +48,23 @@ const OpenHeader = ({ logoUrl }: { logoUrl: string }) => {
 
     return (
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 px-[5%] h-[68px] flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-slate-200/60 transition-shadow duration-300 ${scrolled ? 'shadow-[0_4px_24px_rgba(0,0,0,0.08)]' : 'shadow-none'}`}
+            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center justify-between px-[5%] backdrop-blur-md transition-shadow duration-300 ${
+                isServiceProviderPage
+                    ? "border-b border-white/7 bg-slate-900/92"
+                    : `border-b border-slate-200/60 bg-white/90 ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`
+            }`}
         >
             {/* Logo */}
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0">
-                {logoUrl ? (
+                {logo ? (
                     <span className=" w-36 inline-flex items-center">
-                        <ImageComponent url={logoUrl} img_title={`logo image`} object_contain />
+                        <ImageComponent url={logo} img_title={`logo image`} object_contain />
                     </span>
                 ) : (
                     <>
-                        <span className="w-2 h-2 rounded-full bg-primaryColor shrink-0" />
-                        <span className="font-extrabold text-[20px] tracking-tight text-fontBlack leading-none">
-                            Ask<span className="text-primaryColor">-Service</span>
+                        <span className={`w-2 h-2 rounded-full ${isServiceProviderPage ? 'bg-amber' : 'bg-primaryColor'} shrink-0`} />
+                        <span className={`font-extrabold text-[20px] tracking-tight ${isServiceProviderPage ? 'text-white' : 'text-fontBlack'} leading-none`}>
+                            Ask<span className={`${isServiceProviderPage ? 'text-amber' : 'text-primaryColor'}`}>-Service</span>
                         </span>
                     </>
                 )}
@@ -65,7 +73,7 @@ const OpenHeader = ({ logoUrl }: { logoUrl: string }) => {
             {/* Desktop CTAs */}
             <div className="hidden sm:flex gap-2 items-center">
                 <Button
-                    className="outline_btn"
+                    className={isServiceProviderPage ? "outline_btn_vendor" : "outline_btn"}
                     onPress={openSignInModal}
                 >
                     Connexion / Inscription
@@ -73,7 +81,7 @@ const OpenHeader = ({ logoUrl }: { logoUrl: string }) => {
 
                 <Button
                     startContent={<ArrowRightIconSVG />}
-                    className="text-sm font-semibold bg-primaryColor text-white rounded-[10px] px-5 h-[38px] min-w-0 hover:bg-primaryColor/90 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all"
+                    className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-[38px] min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
                     onPress={openVendorSignupModal}
                 >
                     Devenir Prestataire

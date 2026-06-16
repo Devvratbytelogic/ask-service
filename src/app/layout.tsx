@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Bricolage_Grotesque } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { cookies } from "next/headers";
 import "../styles/globals.css";
 import Footer from "@/components/common/Footer/Footer";
@@ -9,17 +9,10 @@ import { API_BASE_URL } from "@/utils/config";
 import { IGlobalSettingsAPIResponse } from "@/types/global";
 import OpenHeader from "@/components/common/Header/OpenHeader";
 
-const dmSans = DM_Sans({
-  weight: ["300", "400", "500"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-sans",
 });
 
 async function getGlobalSettings(): Promise<IGlobalSettingsAPIResponse | null> {
@@ -63,6 +56,7 @@ export default async function RootLayout({
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
   const logoUrl = globalSettings?.data?.logo;
+  const vendorLogoUrl = globalSettings?.data?.vendor_logo;
   const footerLogoUrl = globalSettings?.data?.footer_logo;
   const platformDescription = globalSettings?.data?.platformDescription;
   const marketplaceName = globalSettings?.data?.marketplace_name;
@@ -71,12 +65,12 @@ export default async function RootLayout({
     // <html lang="fr" translate="no" className="notranslate">
     <html lang="fr">
       <body
-        className={`${dmSans.variable} ${bricolageGrotesque.variable} antialiased`}
+        className={`${bricolageGrotesque.variable} font-sans antialiased`}
       >
         <AppProviders>
           <div className="flex min-h-screen flex-col">
             {/* <Header initialIsAuthenticated={initialIsAuthenticated} /> */}
-            <OpenHeader logoUrl={logoUrl || ""} />
+            <OpenHeader logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} />
             {/* <div className="min-h-0 flex-1"> */}
             {children}
             {/* </div> */}
