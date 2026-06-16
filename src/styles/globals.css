@@ -11,14 +11,20 @@
 
 body {
   @apply bg-background text-foreground antialiased;
-  font-family: var(--font-sans), serif;
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading), sans-serif;
 }
 
 @theme{
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
   --color-navBgColor : #2C4A6814;
   --color-fontBlack : #231E2D;
   --color-customWhite: #FAFAFA;
-  --color-primaryColor: #407CE9;
+  --color-primaryColor: #1B4FFF;
   --color-borderColor: #D9DFE8;
   --color-lightBlack: #8B8F98;
   --color-borderDark: #EDEDED;

@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Bricolage_Grotesque } from "next/font/google";
 import { cookies } from "next/headers";
 import "../styles/globals.css";
-import Header from "@/components/common/Header/Header";
 import Footer from "@/components/common/Footer/Footer";
 import CookieBanner from "@/components/common/CookieBanner/CookieBanner";
 import AppProviders from "@/providers/AppProvider";
 import { API_BASE_URL } from "@/utils/config";
 import { IGlobalSettingsAPIResponse } from "@/types/global";
+import OpenHeader from "@/components/common/Header/OpenHeader";
 
-const inter = Inter({
-  weight: ["300", "400", "500", "600", "700", '800', '900'],
+const dmSans = DM_Sans({
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  weight: ["300", "400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  variable: "--font-heading",
 });
 
 async function getGlobalSettings(): Promise<IGlobalSettingsAPIResponse | null> {
@@ -54,20 +61,26 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const authToken = cookieStore.get("auth_token")?.value;
   const initialIsAuthenticated = !!authToken;
+  const globalSettings = await getGlobalSettings();
+  const logoUrl = globalSettings?.data?.logo;
+  const footerLogoUrl = globalSettings?.data?.footer_logo;
+  const platformDescription = globalSettings?.data?.platformDescription;
+  const marketplaceName = globalSettings?.data?.marketplace_name;
 
   return (
-    <html lang="fr" translate="no" className="notranslate">
-    {/* <html lang="en"> */}
+    // <html lang="fr" translate="no" className="notranslate">
+    <html lang="fr">
       <body
-        className={` ${inter.variable} antialiased`}
+        className={`${dmSans.variable} ${bricolageGrotesque.variable} antialiased`}
       >
         <AppProviders>
           <div className="flex min-h-screen flex-col">
-            <Header initialIsAuthenticated={initialIsAuthenticated} />
+            {/* <Header initialIsAuthenticated={initialIsAuthenticated} /> */}
+            <OpenHeader logoUrl={logoUrl || ""} />
             {/* <div className="min-h-0 flex-1"> */}
             {children}
             {/* </div> */}
-            <Footer />
+            <Footer footerLogoUrl={footerLogoUrl || ""} platformDescription={platformDescription || ""} marketplaceName={marketplaceName || ""} />
             <CookieBanner />
           </div>
         </AppProviders >
