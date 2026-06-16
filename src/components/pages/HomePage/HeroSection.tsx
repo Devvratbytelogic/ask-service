@@ -71,8 +71,7 @@ export default function HeroSection() {
                 </p>
 
                 <div className="grid animate-hero-fade-up grid-cols-1 gap-3 sm:grid-cols-2 [animation-delay:0.3s]">
-                    <button
-                        type="button"
+                    <div
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-white p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-250 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
                         onClick={openCustomerRequestModal}
                     >
@@ -88,10 +87,9 @@ export default function HeroSection() {
                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-primaryColor px-4 py-2 text-[13px] font-semibold text-white transition-colors group-hover:bg-blue-dark">
                             Trouver un pro →
                         </span>
-                    </button>
+                    </div>
 
-                    <button
-                        type="button"
+                    <div
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-white p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-250 hover:-translate-y-0.5 hover:border-amber-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
                         onClick={openVendorSignupModal}
                     >
@@ -107,7 +105,7 @@ export default function HeroSection() {
                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-[13px] font-semibold text-white transition-colors group-hover:bg-amber-dark">
                             Trouver des clients →
                         </span>
-                    </button>
+                    </div>
                 </div>
 
                 <div className="mt-6 flex animate-hero-fade-up flex-wrap items-center justify-center gap-5 [animation-delay:0.4s]">
