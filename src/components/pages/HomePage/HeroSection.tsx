@@ -1,6 +1,8 @@
 "use client"
 
 import { openModal } from "@/redux/slices/allModalSlice"
+import { getServiceProviderRoutePath } from "@/routes/routes"
+import Link from "next/link"
 import { useDispatch } from "react-redux"
 
 const CheckIcon = () => (
@@ -23,17 +25,6 @@ export default function HeroSection() {
             componentName: "RequestServiceFlowIndex",
             data: {},
             modalSize: "lg",
-        }))
-    }
-
-    const openVendorSignupModal = () => {
-        dispatch(openModal({
-            componentName: "LoginSignupIndex",
-            data: {
-                componentName: "SelectUserType",
-                preselectedUserType: "service",
-            },
-            modalSize: "full",
         }))
     }
 
@@ -89,9 +80,9 @@ export default function HeroSection() {
                         </span>
                     </div>
 
-                    <div
+                    <Link
+                        href={getServiceProviderRoutePath()}
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-white p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-250 hover:-translate-y-0.5 hover:border-amber-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
-                        onClick={openVendorSignupModal}
                     >
                         <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-amber-light text-[22px]">
                             💼
@@ -105,7 +96,7 @@ export default function HeroSection() {
                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-[13px] font-semibold text-white transition-colors group-hover:bg-amber-dark">
                             Trouver des clients →
                         </span>
-                    </div>
+                    </Link>
                 </div>
 
                 <div className="mt-6 flex animate-hero-fade-up flex-wrap items-center justify-center gap-5 [animation-delay:0.4s]">

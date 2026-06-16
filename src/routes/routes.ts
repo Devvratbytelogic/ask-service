@@ -78,6 +78,9 @@ export function getProfilePathForRole(
 export function getContactUsRoutePath() {
     return `/contact-us`;
 }
+export function getServiceProviderRoutePath() {
+    return `/service-provider`;
+}
 export function getHelpCenterRoutePath() {
     return `/help-center`;
 }
