@@ -100,6 +100,16 @@ export function getCookiesRoutePath() {
     return `/cookies`;
 }
 
+export function getRegistrationPageRoutePath() {
+    return `/auth/registration`;
+}
+
+
+
+
+
+
+
 // External / social links (for footer etc.)
 export function getFacebookUrl() {
     return `https://facebook.com`;

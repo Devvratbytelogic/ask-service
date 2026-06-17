@@ -79,26 +79,26 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
                     Connexion / Inscription
                 </Button>
 
-                <Button
+                {!isServiceProviderPage && <Button
                     startContent={<ArrowRightIconSVG />}
                     className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-[38px] min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
                     onPress={openVendorSignupModal}
                 >
                     Devenir Prestataire
-                </Button>
+                </Button>}
             </div>
 
             {/* Mobile hamburger */}
             <button
                 type="button"
-                className="sm:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                className={`sm:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full transition-colors ${isServiceProviderPage ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
                 onClick={() => setMenuOpen(prev => !prev)}
                 aria-label="Menu"
                 aria-expanded={menuOpen}
             >
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
             </button>
 
             {/* Mobile dropdown */}
@@ -109,21 +109,23 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
                         onClick={() => setMenuOpen(false)}
                         aria-hidden="true"
                     />
-                    <div className="sm:hidden absolute top-full right-4 mt-2 w-64 bg-white rounded-2xl shadow-lg border border-borderDark z-50 py-2 px-2">
+                    <div className={`sm:hidden absolute top-full right-4 mt-2 w-64 rounded-2xl shadow-lg z-50 py-2 px-2 border ${isServiceProviderPage ? 'bg-slate-800 border-white/10' : 'bg-white border-borderDark'}`}>
                         <button
                             type="button"
                             onClick={openSignInModal}
-                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-fontBlack text-sm font-medium hover:bg-borderDark/50 transition-colors"
+                            className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isServiceProviderPage ? 'text-white hover:bg-white/10' : 'text-fontBlack hover:bg-borderDark/50'}`}
                         >
                             Connexion / Inscription
                         </button>
-                        <button
-                            type="button"
-                            onClick={openVendorSignupModal}
-                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-medium hover:bg-primaryColor/10 transition-colors"
-                        >
-                            Devenir Prestataire →
-                        </button>
+                        {!isServiceProviderPage && (
+                            <button
+                                type="button"
+                                onClick={openVendorSignupModal}
+                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-medium hover:bg-primaryColor/10 transition-colors"
+                            >
+                                Devenir Prestataire →
+                            </button>
+                        )}
                     </div>
                 </>
             )}

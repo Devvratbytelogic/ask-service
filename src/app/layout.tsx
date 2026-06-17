@@ -8,6 +8,7 @@ import AppProviders from "@/providers/AppProvider";
 import { API_BASE_URL } from "@/utils/config";
 import { IGlobalSettingsAPIResponse } from "@/types/global";
 import OpenHeader from "@/components/common/Header/OpenHeader";
+import ConditionalChrome from "@/components/common/ConditionalChrome";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -69,12 +70,13 @@ export default async function RootLayout({
       >
         <AppProviders>
           <div className="flex min-h-screen flex-col">
-            {/* <Header initialIsAuthenticated={initialIsAuthenticated} /> */}
-            <OpenHeader logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} />
-            {/* <div className="min-h-0 flex-1"> */}
+            <ConditionalChrome>
+              <OpenHeader logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} />
+            </ConditionalChrome>
             {children}
-            {/* </div> */}
-            <Footer footerLogoUrl={footerLogoUrl || ""} platformDescription={platformDescription || ""} marketplaceName={marketplaceName || ""} />
+            <ConditionalChrome>
+              <Footer footerLogoUrl={footerLogoUrl || ""} platformDescription={platformDescription || ""} marketplaceName={marketplaceName || ""} />
+            </ConditionalChrome>
             <CookieBanner />
           </div>
         </AppProviders >
