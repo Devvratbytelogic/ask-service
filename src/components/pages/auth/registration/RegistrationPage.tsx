@@ -10,7 +10,7 @@ import {
   FiUpload, FiFile, FiX,
 } from 'react-icons/fi'
 import { yupRequiredEmail } from '@/utils/validation'
-import { getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
+import { getLoginPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -342,7 +342,11 @@ function DocUploadZone({ label, required, hint, file, error, accentColor, onChan
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function RegistrationPage() {
+interface RegistrationPageProps {
+  logoUrl?: string | null
+}
+
+export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}) {
   // ── UI-only state ─────────────────────────────────────────────────────────
   const [step, setStep] = useState<Step>(1)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -581,7 +585,7 @@ export default function RegistrationPage() {
       className="flex min-h-screen max-[900px]:flex-col"
       style={{ display: 'grid', gridTemplateColumns: '420px 1fr' }}
     >
-      <LeftPanel role={values.role || null} />
+      <LeftPanel role={values.role || null} logoUrl={logoUrl} />
 
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-[5%] py-12">
         <div className="w-full" style={{ maxWidth: 480 }}>
@@ -589,7 +593,7 @@ export default function RegistrationPage() {
           {/* Already have account */}
           <div className="mb-7 text-center text-[13px] text-slate-500">
             Déjà un compte ?{' '}
-            <Link href="/login" className="font-semibold text-primaryColor no-underline hover:underline">
+            <Link href={getLoginPageRoutePath()} className="font-semibold text-primaryColor no-underline hover:underline">
               Se connecter
             </Link>
           </div>

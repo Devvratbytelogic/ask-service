@@ -104,6 +104,9 @@ export function getRegistrationPageRoutePath() {
     return `/auth/registration`;
 }
 
+export function getLoginPageRoutePath() {
+    return `/auth/login`;
+}
 
 
 

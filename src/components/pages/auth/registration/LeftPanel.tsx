@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 
 type Role = 'customer' | 'vendor' | null
 
@@ -33,9 +34,10 @@ const defaultBenefits: BenefitItem[] = [
 
 interface LeftPanelProps {
   role: Role
+  logoUrl?: string | null
 }
 
-export default function LeftPanel({ role }: LeftPanelProps) {
+export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const isVendor = role === 'vendor'
   const hasRole = role !== null
 
@@ -133,30 +135,7 @@ export default function LeftPanel({ role }: LeftPanelProps) {
       {/* Inner content */}
       <div className="relative z-10 flex h-full flex-col">
         {/* Logo */}
-        <Link
-          href="/"
-          className="mb-14 flex items-center gap-1.5 no-underline"
-          style={{
-            fontFamily: 'inherit',
-            fontSize: 20,
-            fontWeight: 800,
-            letterSpacing: '-0.5px',
-            color: 'white',
-            textDecoration: 'none',
-          }}
-        >
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: accentColor,
-              flexShrink: 0,
-              transition: 'background 0.3s',
-            }}
-          />
-          Ask<span style={{ color: accentColor, transition: 'color 0.3s' }}>-Service</span>
-        </Link>
+        <AuthPanelLogo logoUrl={logoUrl} accentColor={accentColor} />
 
         {/* Main content — vertically centered */}
         <div className="flex flex-1 flex-col justify-center">
