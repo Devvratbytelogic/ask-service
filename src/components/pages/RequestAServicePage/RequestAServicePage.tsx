@@ -1,0 +1,61 @@
+import RequestAServiceForm from './RequestAServiceForm'
+
+const TRUST_PILLS = [
+  '100% gratuit',
+  'Pros vérifiés',
+  'Réponse en moins de 24h',
+  'Données protégées',
+] as const
+
+export default function RequestAServicePage() {
+  return (
+    <section
+      className="flex min-h-screen flex-col items-center px-[4%] py-8 sm:px-[5%] sm:py-12"
+      style={{ background: 'linear-gradient(160deg, #F0F4FF 0%, #F8FAFC 60%, #FFF8ED 100%)' }}
+    >
+      {/* ─── Page header ─── */}
+      <div className="mb-12 max-w-[580px] animate-hero-fade-down text-center">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border-[1.5px] border-blue-light bg-white px-3.5 py-1.5 text-[12px] font-semibold text-primaryColor shadow-[0_2px_8px_rgba(27,79,255,0.1)]">
+          <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-trust-green" />
+          Gratuit &amp; sans engagement
+        </div>
+
+        <h1 className="mb-3 text-[clamp(30px,4vw,44px)] font-extrabold leading-[1.1] tracking-[-1.2px] text-slate-900">
+          Trouvez le bon professionnel{' '}
+          <span className="text-primaryColor">près de chez vous</span>
+        </h1>
+
+        <p className="text-[16px] leading-[1.65] text-slate-500">
+          Décrivez votre besoin en quelques secondes et recevez jusqu&apos;à 5 devis de pros
+          vérifiés sous 24h.
+        </p>
+
+        <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+          {TRUST_PILLS.map((pill) => (
+            <div
+              key={pill}
+              className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-medium text-slate-600 shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
+            >
+              <svg
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+                className="text-trust-green"
+                aria-hidden
+              >
+                <polyline points="20,6 9,17 4,12" />
+              </svg>
+              {pill}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── Multi-step form card ─── */}
+      <RequestAServiceForm />
+    </section>
+  )
+}
