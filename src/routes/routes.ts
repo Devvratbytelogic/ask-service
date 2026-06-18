@@ -81,6 +81,9 @@ export function getContactUsRoutePath() {
 export function getServiceProviderRoutePath() {
     return `/service-provider`;
 }
+export function getRequestAServiceRoutePath() {
+    return `/request-a-service`;
+}
 export function getHelpCenterRoutePath() {
     return `/help-center`;
 }
@@ -106,6 +109,10 @@ export function getRegistrationPageRoutePath() {
 
 export function getLoginPageRoutePath() {
     return `/auth/login`;
+}
+
+export function getForgotPasswordRoutePath() {
+    return `/auth/forgot-password`;
 }
 
 

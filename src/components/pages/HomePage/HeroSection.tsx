@@ -1,9 +1,6 @@
-"use client"
 
-import { openModal } from "@/redux/slices/allModalSlice"
-import { getServiceProviderRoutePath } from "@/routes/routes"
+import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import Link from "next/link"
-import { useDispatch } from "react-redux"
 
 const CheckIcon = () => (
     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -18,16 +15,6 @@ const TRUST_ITEMS = [
 ] as const
 
 export default function HeroSection() {
-    const dispatch = useDispatch()
-
-    const openCustomerRequestModal = () => {
-        dispatch(openModal({
-            componentName: "RequestServiceFlowIndex",
-            data: {},
-            modalSize: "lg",
-        }))
-    }
-
     return (
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#FAFBFF] via-[#F0F4FF] to-[#FFF8ED] px-[4%] py-8 text-center sm:px-[5%] sm:py-12">
             <div
@@ -62,9 +49,9 @@ export default function HeroSection() {
                 </p>
 
                 <div className="grid animate-hero-fade-up grid-cols-1 gap-3 sm:grid-cols-2 [animation-delay:0.3s]">
-                    <div
+                    <Link
+                        href={getRequestAServiceRoutePath()}
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-white p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-250 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
-                        onClick={openCustomerRequestModal}
                     >
                         <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-blue-light text-[22px]">
                             🔍
@@ -78,7 +65,7 @@ export default function HeroSection() {
                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-primaryColor px-4 py-2 text-[13px] font-semibold text-white transition-colors group-hover:bg-blue-dark">
                             Trouver un pro →
                         </span>
-                    </div>
+                    </Link>
 
                     <Link
                         href={getServiceProviderRoutePath()}

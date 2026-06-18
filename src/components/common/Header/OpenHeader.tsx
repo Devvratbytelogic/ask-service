@@ -1,17 +1,14 @@
 'use client'
 
 import ImageComponent from "@/components/library/ImageComponent"
-import { openModal } from "@/redux/slices/allModalSlice"
 import { Button } from "@heroui/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { getHomeRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
+import { getHomeRoutePath, getLoginPageRoutePath, getRegistrationPageRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
 import { usePathname } from "next/navigation"
 
 const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl: string }) => {
-    const dispatch = useDispatch()
     const [scrolled, setScrolled] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const pathname = usePathname()
@@ -25,26 +22,7 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    const openSignInModal = () => {
-        setMenuOpen(false)
-        dispatch(openModal({
-            componentName: 'LoginSignupIndex',
-            data: { componentName: 'CustomerSignInIndex' },
-            modalSize: 'full',
-        }))
-    }
 
-    const openVendorSignupModal = () => {
-        setMenuOpen(false)
-        dispatch(openModal({
-            componentName: 'LoginSignupIndex',
-            data: {
-                componentName: 'SelectUserType',
-                preselectedUserType: 'service',
-            },
-            modalSize: 'full',
-        }))
-    }
 
     return (
         <nav
@@ -74,7 +52,8 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
             <div className="hidden sm:flex gap-2 items-center">
                 <Button
                     className={isServiceProviderPage ? "outline_btn_vendor" : "outline_btn"}
-                    onPress={openSignInModal}
+                    as={Link}
+                    href={getLoginPageRoutePath()}
                 >
                     Connexion / Inscription
                 </Button>
@@ -82,7 +61,8 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
                 {!isServiceProviderPage && <Button
                     startContent={<ArrowRightIconSVG />}
                     className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-[38px] min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
-                    onPress={openVendorSignupModal}
+                    as={Link}
+                    href={getRegistrationPageRoutePath()}
                 >
                     Devenir Prestataire
                 </Button>}
@@ -110,21 +90,23 @@ const OpenHeader = ({ logoUrl, vendorLogoUrl }: { logoUrl: string, vendorLogoUrl
                         aria-hidden="true"
                     />
                     <div className={`sm:hidden absolute top-full right-4 mt-2 w-64 rounded-2xl shadow-lg z-50 py-2 px-2 border ${isServiceProviderPage ? 'bg-slate-800 border-white/10' : 'bg-white border-borderDark'}`}>
-                        <button
+                        <Button
                             type="button"
-                            onClick={openSignInModal}
+                            as={Link}
+                            href={getLoginPageRoutePath()}
                             className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isServiceProviderPage ? 'text-white hover:bg-white/10' : 'text-fontBlack hover:bg-borderDark/50'}`}
                         >
                             Connexion / Inscription
-                        </button>
+                        </Button>
                         {!isServiceProviderPage && (
-                            <button
+                            <Button
                                 type="button"
-                                onClick={openVendorSignupModal}
+                                as={Link}
+                                href={getRegistrationPageRoutePath()}
                                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-primaryColor text-sm font-medium hover:bg-primaryColor/10 transition-colors"
                             >
                                 Devenir Prestataire →
-                            </button>
+                            </Button>
                         )}
                     </div>
                 </>

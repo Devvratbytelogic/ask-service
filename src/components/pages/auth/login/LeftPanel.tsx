@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getRegistrationPageRoutePath } from '@/routes/routes'
+import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 
 type Role = 'customer' | 'vendor'
@@ -178,9 +178,9 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
           <br />
           <span className="mt-1.5 block">
             © 2026 Ask-Service ·{' '}
-            <Link href="/terms" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>CGU</Link>
+            <Link href={getTermsRoutePath()} style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>CGU</Link>
             {' · '}
-            <Link href="/privacy" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>Confidentialité</Link>
+            <Link href={getPrivacyRoutePath()} style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>Confidentialité</Link>
           </span>
         </p>
       </div>

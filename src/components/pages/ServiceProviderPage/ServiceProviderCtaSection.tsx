@@ -1,6 +1,8 @@
 "use client"
 
 import { openModal } from "@/redux/slices/allModalSlice"
+import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
+import Link from "next/link"
 import { useDispatch } from "react-redux"
 
 const ArrowIcon = () => (
@@ -43,14 +45,22 @@ export default function ServiceProviderCtaSection() {
                     Inscription gratuite en 2 minutes. Votre compte est validé sous 24h et vous accédez immédiatement aux leads de votre secteur.
                 </p>
 
-                <button
-                    type="button"
-                    onClick={openVendorSignupModal}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-slate-900 shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)]"
+                <Link
+                    href={getRegistrationPageRoutePath()}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-slate-900 shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
                 >
                     Créer mon compte gratuitement
                     <ArrowIcon />
-                </button>
+                </Link>
+                <p className="mt-4 text-[13px] text-white/35">
+                    Déjà un compte ?{' '}
+                    <Link
+                        href={getLoginPageRoutePath()}
+                        className="font-semibold text-white/55 no-underline transition-colors hover:text-white/80"
+                    >
+                        Se connecter →
+                    </Link>
+                </p>
             </div>
         </section>
     )

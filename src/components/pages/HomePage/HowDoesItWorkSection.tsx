@@ -1,6 +1,8 @@
 "use client"
 
 import { openModal } from "@/redux/slices/allModalSlice"
+import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
+import Link from "next/link"
 import { useDispatch } from "react-redux"
 
 type Step = {
@@ -139,7 +141,7 @@ export default function HowDoesItWorkSection() {
                         ))}
                     </div>
 
-                    <div className="mt-8">
+                    <div className="mt-8 flex flex-col gap-2">
                         <button
                             type="button"
                             onClick={openCustomerRequestModal}
@@ -147,6 +149,15 @@ export default function HowDoesItWorkSection() {
                         >
                             Poster ma demande →
                         </button>
+                        <p className="text-[12px] text-slate-400">
+                            Déjà un compte ?{' '}
+                            <Link
+                                href={getLoginPageRoutePath()}
+                                className="font-semibold text-primaryColor no-underline hover:underline"
+                            >
+                                Se connecter →
+                            </Link>
+                        </p>
                     </div>
                 </div>
 
@@ -161,14 +172,22 @@ export default function HowDoesItWorkSection() {
                         ))}
                     </div>
 
-                    <div className="mt-8">
-                        <button
-                            type="button"
-                            onClick={openVendorSignupModal}
-                            className="inline-flex cursor-pointer items-center rounded-2xl bg-amber-500 px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(245,158,11,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)]"
+                    <div className="mt-8 flex flex-col gap-2">
+                        <Link
+                            href={getRegistrationPageRoutePath()}
+                            className="inline-flex cursor-pointer items-center rounded-2xl bg-amber-500 px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(245,158,11,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)] no-underline"
                         >
                             Voir les demandes →
-                        </button>
+                        </Link>
+                        <p className="text-[12px] text-white/40">
+                            Déjà un compte ?{' '}
+                            <Link
+                                href={getLoginPageRoutePath()}
+                                className="font-semibold text-white/60 no-underline transition-colors hover:text-white/90"
+                            >
+                                Se connecter →
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </div>

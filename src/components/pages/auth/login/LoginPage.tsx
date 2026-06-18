@@ -6,7 +6,12 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle } from 'react-icons/fi'
 import { yupRequiredEmail } from '@/utils/validation'
-import { getRegistrationPageRoutePath } from '@/routes/routes'
+import {
+  getForgotPasswordRoutePath,
+  getMyRequestRoutePath,
+  getRegistrationPageRoutePath,
+  getVendorDashboardRoutePath,
+} from '@/routes/routes'
 import LeftPanel from './LeftPanel'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -178,7 +183,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
                     : 'Redirection vers votre espace client…'}
                 </p>
                 <Link
-                  href={isVendor ? '/vendor/dashboard' : '/my-request'}
+                  href={isVendor ? getVendorDashboardRoutePath() : getMyRequestRoutePath()}
                   className="flex w-full items-center justify-center gap-2 rounded-[10px] py-3.5 text-[14px] font-semibold no-underline transition-all hover:-translate-y-px"
                   style={{
                     background: accentColor,
@@ -327,7 +332,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
                   </div>
 
                   <Link
-                    href="/forgot-password"
+                    href={getForgotPasswordRoutePath()}
                     className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
                     style={{ color: accentColor }}
                   >

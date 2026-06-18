@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
+import { getTermsRoutePath, getPrivacyRoutePath } from '@/routes/routes'
 
 type Role = 'customer' | 'vendor' | null
 
@@ -252,14 +253,14 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', lineHeight: 1.6 }}>
           En créant un compte, vous acceptez nos{' '}
           <Link
-            href="#"
+            href={getTermsRoutePath()}
             style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
           >
             Conditions d&apos;utilisation
           </Link>{' '}
           et notre{' '}
           <Link
-            href="#"
+            href={getPrivacyRoutePath()}
             style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
           >
             Politique de confidentialité
