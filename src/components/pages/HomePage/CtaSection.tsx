@@ -1,30 +1,9 @@
 "use client"
 
-import { openModal } from "@/redux/slices/allModalSlice"
-import { useDispatch } from "react-redux"
+import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
+import Link from "next/link"
 
 export default function CtaSection() {
-    const dispatch = useDispatch()
-
-    const openCustomerRequestModal = () => {
-        dispatch(openModal({
-            componentName: "RequestServiceFlowIndex",
-            data: {},
-            modalSize: "lg",
-        }))
-    }
-
-    const openVendorSignupModal = () => {
-        dispatch(openModal({
-            componentName: "LoginSignupIndex",
-            data: {
-                componentName: "SelectUserType",
-                preselectedUserType: "service",
-            },
-            modalSize: "full",
-        }))
-    }
-
     return (
         <section className="relative overflow-hidden bg-linear-to-br from-blue-light to-[#FFF8ED] px-[5%] py-[100px] text-center">
             <div
@@ -46,20 +25,18 @@ export default function CtaSection() {
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-3.5">
-                    <button
-                        type="button"
-                        onClick={openCustomerRequestModal}
+                    <Link
+                        href={getRequestAServiceRoutePath()}
                         className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-primaryColor px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(27,79,255,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-dark hover:shadow-[0_8px_24px_rgba(27,79,255,0.35)]"
                     >
                         🔍 Je cherche un professionnel
-                    </button>
-                    <button
-                        type="button"
-                        onClick={openVendorSignupModal}
+                    </Link>
+                    <Link
+                        href={getServiceProviderRoutePath()}
                         className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(245,158,11,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)]"
                     >
                         💼 Je suis un professionnel
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>
