@@ -47,6 +47,7 @@ export function getMyAccountRoutePath(params?: { section?: string }) {
 }
 
 /** Dashboard path for the given role (User → my-request, Vendor → vendor/dashboard). */
+// Deprecated
 export function getDashboardPathForRole(
     role: string | { name?: string; id?: string; _id?: string } | undefined | null
 ): string {
@@ -113,6 +114,13 @@ export function getLoginPageRoutePath() {
 
 export function getForgotPasswordRoutePath() {
     return `/auth/forgot-password`;
+}
+
+const CLIENT_DASHBOARD_PATH = '/client-dashboard';
+const VENDOR_DASHBOARD_PATH = '/vendor/dashboard';
+export function getDashboardPageRoutePathForRole(role: string) {
+    if (role === 'vendor') return VENDOR_DASHBOARD_PATH;
+    return CLIENT_DASHBOARD_PATH;
 }
 
 

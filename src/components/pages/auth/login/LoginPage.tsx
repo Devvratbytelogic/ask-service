@@ -7,12 +7,19 @@ import * as Yup from 'yup'
 import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle } from 'react-icons/fi'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
+  getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
   getMyRequestRoutePath,
   getRegistrationPageRoutePath,
   getVendorDashboardRoutePath,
 } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
+import { useLoginMutation } from '@/redux/rtkQueries/authApi'
+import { useRouter } from 'next/navigation'
+import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
+import { AuthResponseData } from '@/utils/authCookies'
+import { useDispatch } from 'react-redux'
+
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type Role = 'customer' | 'vendor'
@@ -48,19 +55,20 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
+  const router = useRouter()
+  const dispatch = useDispatch()
   const [role, setRole] = useState<Role>('customer')
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
   const [shake, setShake] = useState(false)
   const [serverError, setServerError] = useState('')
+  const [login, { isLoading }] = useLoginMutation()
 
   const isVendor = role === 'vendor'
-  const accentColor      = isVendor ? 'var(--color-amber)'      : 'var(--color-primaryColor)'
-  const accentTextColor  = isVendor ? 'var(--color-slate-900)'  : 'white'
-  const accentShadow     = isVendor ? 'rgba(245,158,11,0.3)'    : 'rgba(27,79,255,0.28)'
-  const accentDim        = isVendor ? 'var(--color-amber-dim)'  : 'var(--color-primary-dim)'
-  const accentBorder     = isVendor ? 'rgba(245,158,11,0.25)'   : 'rgba(27,79,255,0.25)'
+  const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+  const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
+  const accentShadow = isVendor ? 'rgba(245,158,11,0.3)' : 'rgba(27,79,255,0.28)'
+  const accentDim = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
+  const accentBorder = isVendor ? 'rgba(245,158,11,0.25)' : 'rgba(27,79,255,0.25)'
 
   function triggerShake() {
     setShake(true)
@@ -72,14 +80,27 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     validationSchema: loginSchema,
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: async (_values) => {
+    onSubmit: async (values) => {
       setServerError('')
-      setIsLoading(true)
-      // Simulate API call — replace with real auth
-      await new Promise((r) => setTimeout(r, 1200))
-      setIsLoading(false)
-      setIsSuccess(true)
-      // In production: router.push(isVendor ? '/vendor/dashboard' : '/my-request')
+      try {
+        const response = await login({ identifier: values.email, password: values.password }).unwrap()
+        console.log('response', response)
+        const responseData = response?.data as Record<string, unknown> | undefined
+        // const flow = responseData?.flow as string | undefined
+        if (response.http_status_code === 200) {
+          setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+          router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+          router.refresh()
+        }
+      } catch (error: unknown) {
+        console.log('error', error)
+        if (error instanceof Error) {
+          setServerError(error.message)
+        } else {
+          setServerError('Une erreur inattendue s\'est produite')
+        }
+      }
+
     },
   })
 
@@ -133,7 +154,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
           <div className="mb-6 flex gap-1.5 rounded-[12px] bg-slate-100 p-1">
             {([
               { id: 'customer' as Role, emoji: '🔍', label: 'Client' },
-              { id: 'vendor'   as Role, emoji: '💼', label: 'Prestataire' },
+              { id: 'vendor' as Role, emoji: '💼', label: 'Prestataire' },
             ] as const).map((tab) => (
               <button
                 key={tab.id}
@@ -158,236 +179,195 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
             className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white ${shake ? 'inscription-shake' : ''}`}
             style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '32px' }}
           >
-            {isSuccess ? (
-              /* ─── Success state ─── */
-              <div className="animate-inscription-fade-up py-2 text-center">
-                <div
-                  className="mx-auto mb-4 flex animate-inscription-pop-in items-center justify-center rounded-full"
-                  style={{
-                    width: 64, height: 64,
-                    background: isVendor ? 'var(--color-amber-light)' : 'var(--color-green-light)',
-                    fontSize: 28,
-                  }}
-                >
-                  {isVendor ? '💼' : '✓'}
-                </div>
-                <h4
-                  className="mb-2 text-slate-900"
-                  style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.4px' }}
-                >
-                  Connexion réussie !
-                </h4>
-                <p className="mb-6 text-[14px] text-slate-500">
-                  {isVendor
-                    ? 'Redirection vers votre espace prestataire…'
-                    : 'Redirection vers votre espace client…'}
-                </p>
-                <Link
-                  href={isVendor ? getVendorDashboardRoutePath() : getMyRequestRoutePath()}
-                  className="flex w-full items-center justify-center gap-2 rounded-[10px] py-3.5 text-[14px] font-semibold no-underline transition-all hover:-translate-y-px"
-                  style={{
-                    background: accentColor,
-                    color: accentTextColor,
-                    boxShadow: `0 5px 16px ${accentShadow}`,
-                  }}
-                >
-                  Accéder à mon espace
-                  <FiArrowRight size={15} />
-                </Link>
+            {/* ─── Error banner ─── */}
+            {serverError && (
+              <div
+                className="mb-5 flex animate-inscription-fade-up items-center gap-2.5 rounded-[10px] border px-4 py-3 text-[13px] font-medium text-red-600"
+                style={{ background: 'var(--color-red-light)', borderColor: 'rgba(239,68,68,0.2)' }}
+              >
+                <FiAlertCircle size={15} className="shrink-0" />
+                {serverError}
               </div>
-            ) : (
-              <>
-                {/* ─── Error banner ─── */}
-                {serverError && (
-                  <div
-                    className="mb-5 flex animate-inscription-fade-up items-center gap-2.5 rounded-[10px] border px-4 py-3 text-[13px] font-medium text-red-600"
-                    style={{ background: 'var(--color-red-light)', borderColor: 'rgba(239,68,68,0.2)' }}
-                  >
-                    <FiAlertCircle size={15} className="shrink-0" />
-                    {serverError}
-                  </div>
-                )}
+            )}
 
-                {/* ─── Email ─── */}
-                <div className="mb-4">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
-                    Adresse email
-                  </label>
-                  <div className="relative">
-                    <input
-                      name="email"
-                      type="email"
-                      placeholder={isVendor ? 'email@entreprise.com' : 'votre@email.com'}
-                      autoComplete="email"
-                      value={values.email}
-                      onChange={(e) => { handleChange(e); setServerError('') }}
-                      onBlur={handleBlur}
-                      className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-                        touched.email && errors.email
-                          ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                          : `border-slate-200 bg-slate-50 hover:border-slate-400 focus:bg-white focus:shadow-[0_0_0_3px_${accentDim}]`,
-                      ].join(' ')}
-                      style={{
-                        fontFamily: 'inherit',
-                        ...(!(touched.email && errors.email) ? { ['--tw-border-opacity' as string]: '1' } : {}),
-                      }}
-                      onFocus={(e) => {
-                        if (!(touched.email && errors.email)) {
-                          e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-                        }
-                      }}
-                      onBlurCapture={(e) => {
-                        if (!(touched.email && errors.email)) {
-                          e.currentTarget.style.borderColor = ''
-                        }
-                      }}
-                    />
-                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                      </svg>
-                    </span>
-                  </div>
-                  {touched.email && errors.email && (
-                    <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
-                  )}
-                </div>
+            {/* ─── Email ─── */}
+            <div className="mb-4">
+              <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                Adresse email
+              </label>
+              <div className="relative">
+                <input
+                  name="email"
+                  type="email"
+                  placeholder={isVendor ? 'email@entreprise.com' : 'votre@email.com'}
+                  autoComplete="email"
+                  value={values.email}
+                  onChange={(e) => { handleChange(e); setServerError('') }}
+                  onBlur={handleBlur}
+                  className={[
+                    'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                    touched.email && errors.email
+                      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
+                      : `border-slate-200 bg-slate-50 hover:border-slate-400 focus:bg-white focus:shadow-[0_0_0_3px_${accentDim}]`,
+                  ].join(' ')}
+                  style={{
+                    fontFamily: 'inherit',
+                    ...(!(touched.email && errors.email) ? { ['--tw-border-opacity' as string]: '1' } : {}),
+                  }}
+                  onFocus={(e) => {
+                    if (!(touched.email && errors.email)) {
+                      e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+                    }
+                  }}
+                  onBlurCapture={(e) => {
+                    if (!(touched.email && errors.email)) {
+                      e.currentTarget.style.borderColor = ''
+                    }
+                  }}
+                />
+                <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </span>
+              </div>
+              {touched.email && errors.email && (
+                <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
+              )}
+            </div>
 
-                {/* ─── Password ─── */}
-                <div className="mb-4">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
-                    Mot de passe
-                  </label>
-                  <div className="relative">
-                    <input
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      autoComplete="current-password"
-                      value={values.password}
-                      onChange={(e) => { handleChange(e); setServerError('') }}
-                      onBlur={handleBlur}
-                      className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-                        touched.password && errors.password
-                          ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                          : 'border-slate-200 bg-slate-50 hover:border-slate-400',
-                      ].join(' ')}
-                      style={{ fontFamily: 'inherit' }}
-                      onFocus={(e) => {
-                        if (!(touched.password && errors.password)) {
-                          e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-                          e.currentTarget.style.background = 'white'
-                          e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
-                        }
-                      }}
-                      onBlurCapture={(e) => {
-                        e.currentTarget.style.borderColor = ''
-                        e.currentTarget.style.background = ''
-                        e.currentTarget.style.boxShadow = ''
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((p) => !p)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
-                      aria-label="Afficher/masquer le mot de passe"
-                    >
-                      {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
-                    </button>
-                  </div>
-                  {touched.password && errors.password && (
-                    <p className="mt-1 text-[11px] text-red-500">{errors.password}</p>
-                  )}
-                </div>
-
-                {/* ─── Remember me + Forgot password ─── */}
-                <div className="mb-6 flex items-center justify-between">
-                  <div
-                    role="checkbox"
-                    aria-checked={values.rememberMe}
-                    tabIndex={0}
-                    className="flex cursor-pointer select-none items-center gap-2 outline-none"
-                    onClick={() => setFieldValue('rememberMe', !values.rememberMe)}
-                    onKeyDown={(e) => {
-                      if (e.key === ' ' || e.key === 'Enter') {
-                        e.preventDefault()
-                        setFieldValue('rememberMe', !values.rememberMe)
-                      }
-                    }}
-                  >
-                    <div
-                      aria-hidden
-                      className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
-                      style={{
-                        borderColor: values.rememberMe ? accentColor : 'var(--color-slate-300)',
-                        background: values.rememberMe ? accentColor : 'transparent',
-                      }}
-                    >
-                      {values.rememberMe && <FiCheck size={10} color={isVendor ? 'var(--color-slate-900)' : 'white'} strokeWidth={3} />}
-                    </div>
-                    <span className="text-[13px] text-slate-600">Se souvenir de moi</span>
-                  </div>
-
-                  <Link
-                    href={getForgotPasswordRoutePath()}
-                    className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
-                    style={{ color: accentColor }}
-                  >
-                    Mot de passe oublié ?
-                  </Link>
-                </div>
-
-                {/* ─── Submit button ─── */}
+            {/* ─── Password ─── */}
+            <div className="mb-4">
+              <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  value={values.password}
+                  onChange={(e) => { handleChange(e); setServerError('') }}
+                  onBlur={handleBlur}
+                  className={[
+                    'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                    touched.password && errors.password
+                      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
+                      : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                  ].join(' ')}
+                  style={{ fontFamily: 'inherit' }}
+                  onFocus={(e) => {
+                    if (!(touched.password && errors.password)) {
+                      e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+                      e.currentTarget.style.background = 'white'
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
+                    }
+                  }}
+                  onBlurCapture={(e) => {
+                    e.currentTarget.style.borderColor = ''
+                    e.currentTarget.style.background = ''
+                    e.currentTarget.style.boxShadow = ''
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                  aria-label="Afficher/masquer le mot de passe"
+                >
+                  {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                </button>
+              </div>
+              {touched.password && errors.password && (
+                <p className="mt-1 text-[11px] text-red-500">{errors.password}</p>
+              )}
+            </div>
+
+            {/* ─── Remember me + Forgot password ─── */}
+            <div className="mb-6 flex items-center justify-between">
+              <div
+                role="checkbox"
+                aria-checked={values.rememberMe}
+                tabIndex={0}
+                className="flex cursor-pointer select-none items-center gap-2 outline-none"
+                onClick={() => setFieldValue('rememberMe', !values.rememberMe)}
+                onKeyDown={(e) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault()
+                    setFieldValue('rememberMe', !values.rememberMe)
+                  }
+                }}
+              >
+                <div
+                  aria-hidden
+                  className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
                   style={{
-                    background: accentColor,
-                    color: accentTextColor,
-                    boxShadow: `0 5px 16px ${accentShadow}`,
-                    fontFamily: 'inherit',
+                    borderColor: values.rememberMe ? accentColor : 'var(--color-slate-300)',
+                    background: values.rememberMe ? accentColor : 'transparent',
                   }}
                 >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-                        style={{ opacity: 0.6 }}
-                      />
-                      Connexion…
-                    </>
-                  ) : (
-                    <>
-                      Se connecter
-                      <FiArrowRight size={15} />
-                    </>
-                  )}
-                </button>
-
-                {/* ─── Divider ─── */}
-                <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
-                  <div className="h-px flex-1 bg-slate-200" />
-                  ou continuer avec
-                  <div className="h-px flex-1 bg-slate-200" />
+                  {values.rememberMe && <FiCheck size={10} color={isVendor ? 'var(--color-slate-900)' : 'white'} strokeWidth={3} />}
                 </div>
+                <span className="text-[13px] text-slate-600">Se souvenir de moi</span>
+              </div>
 
-                {/* ─── Google button ─── */}
-                <button
-                  type="button"
-                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)]"
-                  style={{ fontFamily: 'inherit' }}
-                  onClick={() => {/* Google OAuth */}}
-                >
-                  <GoogleIcon />
-                  Continuer avec Google
-                </button>
-              </>
-            )}
+              <Link
+                href={getForgotPasswordRoutePath()}
+                className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
+                style={{ color: accentColor }}
+              >
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
+            {/* ─── Submit button ─── */}
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                background: accentColor,
+                color: accentTextColor,
+                boxShadow: `0 5px 16px ${accentShadow}`,
+                fontFamily: 'inherit',
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <span
+                    className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                    style={{ opacity: 0.6 }}
+                  />
+                  Connexion…
+                </>
+              ) : (
+                <>
+                  Se connecter
+                  <FiArrowRight size={15} />
+                </>
+              )}
+            </button>
+
+            {/* ─── Divider ─── */}
+            <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
+              <div className="h-px flex-1 bg-slate-200" />
+              ou continuer avec
+              <div className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            {/* ─── Google button ─── */}
+            <button
+              type="button"
+              className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)]"
+              style={{ fontFamily: 'inherit' }}
+              onClick={() => {/* Google OAuth */ }}
+            >
+              <GoogleIcon />
+              Continuer avec Google
+            </button>
           </div>
 
           {/* Bottom link */}
