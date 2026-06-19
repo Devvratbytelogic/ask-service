@@ -1,7 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { getVendorWalletRoutePath } from '@/routes/routes'
+import { getVendorWalletRoutePath, getHomeRoutePath } from '@/routes/routes'
+import { clearAllCookiesAndReload } from '@/utils/authCookies'
+import { SignOutIconSVG } from '@/components/library/AllSVG'
 import NotificationsPopover from './NotificationsPopover'
 
 interface VendorActionsProps {
@@ -15,6 +18,8 @@ export default function VendorActions({
     isAuthenticated = false,
     credits = 0,
 }: VendorActionsProps) {
+    const [menuOpen, setMenuOpen] = useState(false)
+
     return (
         <div className="flex items-center gap-2">
             {/* Notification bell */}
@@ -26,20 +31,38 @@ export default function VendorActions({
                 className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all"
             >
                 <span aria-hidden="true">🪙</span>
-                <strong className="text-[14px] font-extrabold text-amber leading-none">
-                    {credits}
-                </strong>
+                <strong className="text-[14px] font-extrabold text-amber leading-none">{credits}</strong>
                 <span className="text-[11px] text-amber/70 leading-none">crédits</span>
             </Link>
 
-            {/* Avatar / initials */}
-            <button
-                type="button"
-                aria-label="Account"
-                className="w-8 h-8 rounded-full bg-primaryColor text-white text-[12px] font-bold flex items-center justify-center shrink-0 hover:shadow-[0_0_0_3px_rgba(27,79,255,0.25)] transition-all"
-            >
-                {userInitials}
-            </button>
+            {/* Avatar with logout dropdown */}
+            <div className="relative">
+                <button
+                    type="button"
+                    aria-label="Account menu"
+                    aria-expanded={menuOpen}
+                    onClick={() => setMenuOpen(prev => !prev)}
+                    className="w-8 h-8 rounded-full bg-primaryColor text-white text-[12px] font-bold flex items-center justify-center shrink-0 hover:shadow-[0_0_0_3px_rgba(27,79,255,0.25)] transition-all"
+                >
+                    {userInitials}
+                </button>
+
+                {menuOpen && (
+                    <>
+                        <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+                        <div className="absolute top-full right-0 mt-2 w-44 bg-white rounded-2xl shadow-lg border border-borderDark z-50 py-1.5 px-1.5">
+                            <button
+                                type="button"
+                                onClick={() => clearAllCookiesAndReload(getHomeRoutePath())}
+                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-red-500 text-sm font-medium hover:bg-red-50 transition-colors"
+                            >
+                                <span className="size-4 shrink-0 flex"><SignOutIconSVG /></span>
+                                Déconnexion
+                            </button>
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     )
 }

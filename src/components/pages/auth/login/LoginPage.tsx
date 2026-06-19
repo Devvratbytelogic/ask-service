@@ -176,7 +176,9 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
           </div>
 
           {/* Form card */}
-          <div
+          <form
+            noValidate
+            onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
             className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white ${shake ? 'inscription-shake' : ''}`}
             style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '32px' }}
           >
@@ -325,8 +327,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
 
             {/* ─── Submit button ─── */}
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
               disabled={isLoading}
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
               style={{
@@ -369,7 +370,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
               <GoogleIcon />
               Continuer avec Google
             </button>
-          </div>
+          </form>
 
           {/* Bottom link */}
           <p className="mt-6 text-center text-[13px] text-slate-500">

@@ -139,7 +139,7 @@ export function getDashboardPageRoutePathForRole(
                 : String(role.name ?? '')
     const rLower = r.toLowerCase()
     if (rLower === 'vendor') return getVendorDashboardPageRoutePath()
-    if (rLower === 'customer') return getClientDashboardPageRoutePath()
+    if (rLower === 'user') return getClientDashboardPageRoutePath()
     return getHomeRoutePath()
 }
 
