@@ -9,6 +9,7 @@ import type { IPopupNotificationsAPIResponseDataEntity } from "@/types/popupNoti
 interface NotificationsPopoverProps {
     isVendor: boolean;
     isAuthenticated: boolean;
+    dark?: boolean;
 }
 
 function timeAgo(dateStr: string): string {
@@ -22,7 +23,7 @@ function timeAgo(dateStr: string): string {
     return `il y a ${days} j`;
 }
 
-export default function NotificationsPopover({ isVendor, isAuthenticated }: NotificationsPopoverProps) {
+export default function NotificationsPopover({ isVendor, isAuthenticated, dark = false }: NotificationsPopoverProps) {
     const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
 
     const { data: vendorNotifs, isLoading: vendorLoading, } = clientSideGetApis.useGetVendorNotificationsQuery(undefined, {
@@ -61,14 +62,22 @@ export default function NotificationsPopover({ isVendor, isAuthenticated }: Noti
                 <PopoverTrigger>
                     <button
                         type="button"
-                        className="cursor-pointer relative p-1.5 rounded-full hover:bg-borderDark transition-colors text-fontBlack"
+                        className={`cursor-pointer relative flex items-center justify-center transition-all ${
+                            dark
+                                ? 'w-[34px] h-[34px] rounded-[9px] bg-white/7 text-white/50 hover:bg-white/12 hover:text-white'
+                                : 'p-1.5 rounded-full hover:bg-borderDark text-fontBlack'
+                        }`}
                         aria-label="Notifications"
                     >
                         <BellIconSVG />
                         {unreadCount > 0 && (
-                            <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center px-1">
-                                {unreadCount > 99 ? "99+" : unreadCount}
-                            </span>
+                            dark ? (
+                                <span className="absolute top-[7px] right-[7px] w-[7px] h-[7px] rounded-full bg-red-500 border-2 border-[#0D1117]" />
+                            ) : (
+                                <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 rounded-full bg-primaryColor text-white text-xs font-medium flex items-center justify-center px-1">
+                                    {unreadCount > 99 ? "99+" : unreadCount}
+                                </span>
+                            )
                         )}
                     </button>
                 </PopoverTrigger>

@@ -116,11 +116,18 @@ export function getForgotPasswordRoutePath() {
     return `/auth/forgot-password`;
 }
 
-const CLIENT_DASHBOARD_PATH = '/client-dashboard';
+export function getClientDashboardRoutePath() {
+    return '/client-dashboard';
+}
 const VENDOR_DASHBOARD_PATH = '/vendor/dashboard';
+
 export function getDashboardPageRoutePathForRole(role: string) {
     if (role === 'vendor') return VENDOR_DASHBOARD_PATH;
-    return CLIENT_DASHBOARD_PATH;
+    return getClientDashboardRoutePath;
+}
+
+export function getMyQuotesRoutePath() {
+    return '/my-quotes';
 }
 
 

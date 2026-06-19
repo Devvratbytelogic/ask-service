@@ -7,8 +7,8 @@ import CookieBanner from "@/components/common/CookieBanner/CookieBanner";
 import AppProviders from "@/providers/AppProvider";
 import { API_BASE_URL } from "@/utils/config";
 import { IGlobalSettingsAPIResponse } from "@/types/global";
-import OpenHeader from "@/components/common/Header/OpenHeader";
 import ConditionalChrome from "@/components/common/ConditionalChrome";
+import Header from "@/components/common/Header/Header";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -54,6 +54,8 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const authToken = cookieStore.get("auth_token")?.value;
+  const userRole = cookieStore.get("user_role")?.value;
+  const isVendor = userRole?.toLowerCase() === "vendor";
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
   const logoUrl = globalSettings?.data?.logo;
@@ -71,7 +73,7 @@ export default async function RootLayout({
         <AppProviders>
           <div className="flex min-h-screen flex-col">
             <ConditionalChrome>
-              <OpenHeader logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} />
+              <Header logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} isVendor={isVendor} isAuthenticated={initialIsAuthenticated} />
             </ConditionalChrome>
             {children}
             <ConditionalChrome>
