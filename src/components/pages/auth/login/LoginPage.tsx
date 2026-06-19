@@ -84,16 +84,17 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
       setServerError('')
       try {
         const response = await login({ identifier: values.email, password: values.password }).unwrap()
-        console.log('response', response)
         const responseData = response?.data as Record<string, unknown> | undefined
+        console.log('response', (responseData as AuthResponseData).role as string)
         // const flow = responseData?.flow as string | undefined
+        console.log('responseData', responseData)
         if (response.http_status_code === 200) {
           setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
           router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
           router.refresh()
         }
       } catch (error: unknown) {
-        console.log('error', error)
+        console.error('error', error)
         if (error instanceof Error) {
           setServerError(error.message)
         } else {

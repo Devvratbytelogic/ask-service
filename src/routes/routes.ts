@@ -17,6 +17,12 @@ export function getVendorAllQuotesRoutePath() {
 export function getCreditsRoutePath() {
     return `/vendor/credits`;
 }
+export function getVendorLeadsRoutePath() {
+    return `/vendor/leads`;
+}
+export function getVendorWalletRoutePath() {
+    return `/vendor/wallet`;
+}
 
 // General app routes
 export function getHomeRoutePath() {
@@ -55,8 +61,8 @@ export function getDashboardPathForRole(
         role == null
             ? ''
             : typeof role === 'string'
-              ? role
-              : String(role.name ?? role.id ?? role._id ?? '');
+                ? role
+                : String(role.name ?? role.id ?? role._id ?? '');
     const rLower = r.toLowerCase();
     if (rLower === 'vendor') return getVendorDashboardRoutePath();
     return getMyRequestRoutePath();
@@ -70,8 +76,8 @@ export function getProfilePathForRole(
         role == null
             ? ''
             : typeof role === 'string'
-              ? role
-              : String(role.name ?? role.id ?? role._id ?? '');
+                ? role
+                : String(role.name ?? role.id ?? role._id ?? '');
     const rLower = r.toLowerCase();
     if (rLower === 'vendor') return getVendorAccountRoutePath();
     return getMyAccountRoutePath();
@@ -116,14 +122,25 @@ export function getForgotPasswordRoutePath() {
     return `/auth/forgot-password`;
 }
 
-export function getClientDashboardRoutePath() {
-    return '/client-dashboard';
+export function getClientDashboardPageRoutePath() {
+    return '/client/dashboard';
 }
-const VENDOR_DASHBOARD_PATH = '/vendor/dashboard';
-
-export function getDashboardPageRoutePathForRole(role: string) {
-    if (role === 'vendor') return VENDOR_DASHBOARD_PATH;
-    return getClientDashboardRoutePath;
+export function getVendorDashboardPageRoutePath() {
+    return '/vendor/dashboard';
+}
+export function getDashboardPageRoutePathForRole(
+    role: string | { name?: string; } | undefined | null,
+) {
+    const r =
+        role == null
+            ? ''
+            : typeof role === 'string'
+                ? role
+                : String(role.name ?? '')
+    const rLower = r.toLowerCase()
+    if (rLower === 'vendor') return getVendorDashboardPageRoutePath()
+    if (rLower === 'customer') return getClientDashboardPageRoutePath()
+    return getHomeRoutePath()
 }
 
 export function getMyQuotesRoutePath() {

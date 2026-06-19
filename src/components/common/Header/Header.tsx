@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation"
 import CustomerMenu from "./CustomerMenu"
 import VendorMenu from "./VendorMenu"
 import CustomerActions from "./CustomerActions"
+import VendorActions from "./VendorActions"
 
 export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticated }: { logoUrl: string, vendorLogoUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
     const [scrolled, setScrolled] = useState(false)
@@ -25,7 +26,6 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    console.log('isVendor', isVendor)
 
     return (
         <nav
@@ -50,12 +50,11 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
                 )}
             </Link>
 
-            {isVendor ? (<VendorMenu />) : (<CustomerMenu />)}
+            {isAuthenticated && (isVendor ? <VendorMenu /> : <CustomerMenu />)}
             
             {/* Desktop right section */}
-            {isAuthenticated && !isVendor ? (
-                <CustomerActions isAuthenticated={isAuthenticated} />
-            ) : (
+            {isAuthenticated && (isVendor ? <VendorActions isAuthenticated={isAuthenticated} /> : <CustomerActions isAuthenticated={isAuthenticated} />)}
+            {!isAuthenticated && (
                 <div className="hidden sm:flex gap-2 items-center">
                     <Button
                         className={isServiceProviderPage ? "outline_btn_vendor" : "outline_btn"}
