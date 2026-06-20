@@ -708,3 +708,97 @@ export function MenuIconSVG() {
         </svg>
     )
 }
+
+// ─── currentColor icon set (variable size) ────────────────────────────────────
+
+export function HomeOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        </svg>
+    )
+}
+export function UserOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+        </svg>
+    )
+}
+export function MailOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+    )
+}
+export function PhoneOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+    )
+}
+export function ArrowSendIconSVG({ size = 13 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22,2 15,22 11,13 2,9" />
+        </svg>
+    )
+}
+export function LightningBoltIconSVG({ size = 13 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" />
+        </svg>
+    )
+}
+export function ClockCircleIconSVG({ size = 13 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12,6 12,12 16,14" />
+        </svg>
+    )
+}
+export function CheckmarkIconSVG({ size = 10 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <polyline points="20,6 9,17 4,12" />
+        </svg>
+    )
+}
+export function MagnifierIconSVG({ size = 15 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+        </svg>
+    )
+}
+export function LocationPinIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+        </svg>
+    )
+}
+export function DollarOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+    )
+}
+export function CalendarOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+    )
+}

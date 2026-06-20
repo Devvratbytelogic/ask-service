@@ -1,17 +1,15 @@
-import VendorDashboard from '@/components/vendor/dashboard/VendorDashboard'
-import VendorUnderReviewBanner from '@/components/vendor/dashboard/VendorUnderReviewBanner'
+import type { Metadata } from 'next'
+import VendorDashboardOverview from '@/components/vendor/dashboard/VendorDashboardOverview'
 
-export default async function VendorDashboardPage() {
+export const metadata: Metadata = {
+    title: 'Ask-Service — Tableau de bord',
+    description: 'Gérez vos opportunités et suivez vos devis.',
+}
+
+export default function VendorDashboardPage() {
     return (
-        <>
-            <VendorUnderReviewBanner />
-            <div className="body_x_axis_padding min-h-screen">
-                <div className="mt-8">
-                    <section className="relative min-w-0">
-                        <VendorDashboard />
-                    </section>
-                </div>
-            </div>
-        </>
+        <div className="min-h-screen bg-[#0D1117]">
+            <VendorDashboardOverview />
+        </div>
     )
 }
