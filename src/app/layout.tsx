@@ -65,8 +65,7 @@ export default async function RootLayout({
   const marketplaceName = globalSettings?.data?.marketplace_name;
 
   return (
-    // <html lang="fr" translate="no" className="notranslate">
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <body
         className={`${bricolageGrotesque.variable} font-sans antialiased`}
       >

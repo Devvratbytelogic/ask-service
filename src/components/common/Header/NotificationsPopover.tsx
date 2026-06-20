@@ -57,7 +57,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
             <Popover
                 placement="bottom-end"
                 showArrow={false}
-                classNames={{ content: "p-0 w-[360px] md:w-[450px] overflow-hidden shadow-lg border border-borderDark" }}
+                classNames={{ content: "p-0 w-[360px] md:w-[450px] overflow-hidden shadow-lg border border-borderDark dark:border-white/10 bg-white dark:bg-slate-800" }}
             >
                 <PopoverTrigger>
                     <button
@@ -65,7 +65,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                         className={`cursor-pointer relative flex items-center justify-center transition-all ${
                             dark
                                 ? 'w-[34px] h-[34px] rounded-[9px] bg-white/7 text-white/50 hover:bg-white/12 hover:text-white'
-                                : 'p-1.5 rounded-full hover:bg-borderDark text-fontBlack'
+                                : 'p-1.5 rounded-full hover:bg-borderDark dark:hover:bg-white/10 text-fontBlack dark:text-slate-200'
                         }`}
                         aria-label="Notifications"
                     >
@@ -85,7 +85,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                     <div className="flex flex-col w-full">
                         {/* Header */}
                         <div className="px-5 pt-4 pb-3 flex items-center justify-between">
-                            <h3 className="font-bold text-base text-fontBlack">Notifications</h3>
+                            <h3 className="font-bold text-base text-fontBlack dark:text-slate-100">Notifications</h3>
                             {unreadCount > 0 && (
                                 <span className="text-xs font-medium text-primaryColor bg-primaryColor/10 px-2 py-0.5 rounded-full">
                                     {unreadCount} non lue{unreadCount > 1 ? "s" : ""}
@@ -94,13 +94,13 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                         </div>
     
                         {/* Tabs */}
-                        <div className="px-4 pb-2 flex gap-1 border-b border-borderDark">
+                        <div className="px-4 pb-2 flex gap-1 border-b border-borderDark dark:border-white/10">
                             <button
                                 type="button"
                                 onClick={() => setActiveTab("all")}
                                 className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeTab === "all"
                                         ? "bg-primaryColor text-white"
-                                        : "text-darkSilver hover:bg-borderDark"
+                                        : "text-darkSilver dark:text-slate-400 hover:bg-borderDark dark:hover:bg-white/10"
                                     }`}
                             >
                                 Toutes
@@ -110,7 +110,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                                 onClick={() => setActiveTab("unread")}
                                 className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${activeTab === "unread"
                                         ? "bg-primaryColor text-white"
-                                        : "text-darkSilver hover:bg-borderDark"
+                                        : "text-darkSilver dark:text-slate-400 hover:bg-borderDark dark:hover:bg-white/10"
                                     }`}
                             >
                                 Non lues
@@ -130,7 +130,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                                     <span className="w-6 h-6 rounded-full border-2 border-primaryColor border-t-transparent animate-spin" />
                                 </div>
                             ) : displayed.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center py-10 text-darkSilver gap-2">
+                                <div className="flex flex-col items-center justify-center py-10 text-darkSilver dark:text-slate-500 gap-2">
                                     <BellIconSVG />
                                     <p className="text-sm">
                                         {activeTab === "unread" ? "Aucune notification non lue" : "Aucune notification"}
@@ -143,7 +143,7 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                                             <div
                                                 role={!notif.is_read ? "button" : undefined}
                                                 onClick={() => handleMarkAsRead(notif)}
-                                                className={`flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-borderDark/40 ${!notif.is_read ? "bg-primaryColor/5 cursor-pointer" : "cursor-default"}`}
+                                                className={`flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-borderDark/40 dark:hover:bg-white/5 ${!notif.is_read ? "bg-primaryColor/5 dark:bg-primaryColor/10 cursor-pointer" : "cursor-default"}`}
                                             >
                                                 {/* Unread dot */}
                                                 <div className="mt-1.5 shrink-0 w-2 h-2 rounded-full">
@@ -152,19 +152,19 @@ export default function NotificationsPopover({ isVendor, isAuthenticated, dark =
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm leading-snug ${!notif.is_read ? "font-semibold text-fontBlack" : "font-medium text-fontBlack"}`}>
+                                                    <p className={`text-sm leading-snug ${!notif.is_read ? "font-semibold text-fontBlack dark:text-slate-100" : "font-medium text-fontBlack dark:text-slate-200"}`}>
                                                         {notif.title}
                                                     </p>
-                                                    <p className="text-sm text-darkSilver mt-0.5 line-clamp-2 leading-snug">
+                                                    <p className="text-sm text-darkSilver dark:text-slate-400 mt-0.5 line-clamp-2 leading-snug">
                                                         {notif.body}
                                                     </p>
-                                                    <p className="text-xs text-darkSilver/70 mt-1">
+                                                    <p className="text-xs text-darkSilver/70 dark:text-slate-500 mt-1">
                                                         {timeAgo(notif.createdAt)}
                                                     </p>
                                                 </div>
                                             </div>
                                             {idx < displayed.length - 1 && (
-                                                <div className="mx-4 border-t border-borderDark/60" />
+                                                <div className="mx-4 border-t border-borderDark/60 dark:border-white/8" />
                                             )}
                                         </li>
                                     ))}

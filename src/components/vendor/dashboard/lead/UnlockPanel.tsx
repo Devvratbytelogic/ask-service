@@ -16,7 +16,7 @@ import type { LeadDetail } from './types'
 
 function VerifiedListItem({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-[7px] text-[12px] text-white/50">
+        <div className="flex items-center gap-[7px] text-[12px] text-appTextSec">
             <div className="w-[17px] h-[17px] rounded-full bg-trust-green/15 flex items-center justify-center shrink-0">
                 <span className="text-trust-green flex">
                     <CheckmarkIconSVG size={9} />
@@ -52,37 +52,37 @@ function UnlockModal({ lead, walletBalance, onClose, onConfirm }: ModalProps) {
                 if (e.target === e.currentTarget) onClose()
             }}
         >
-            <div className="bg-[#161D2B] border border-white/10 rounded-[20px] p-7 max-w-[400px] w-[92%] shadow-[0_24px_60px_rgba(0,0,0,0.5)] animate-slide-up">
+            <div className="bg-appCard border border-appBorder rounded-[20px] p-7 max-w-[400px] w-[92%] shadow-[0_24px_60px_rgba(0,0,0,0.5)] animate-slide-up">
                 <div className="w-14 h-14 rounded-2xl bg-primaryColor/15 border border-primaryColor/20 flex items-center justify-center text-[26px] mb-4">
                     🔓
                 </div>
-                <h3 className="text-[20px] font-extrabold text-white mb-2 tracking-[-0.3px]">
+                <h3 className="text-[20px] font-extrabold text-appText mb-2 tracking-[-0.3px]">
                     Débloquer ce prospect ?
                 </h3>
-                <p className="text-[13px] text-white/45 leading-[1.65] mb-4">
+                <p className="text-[13px] text-appTextSec leading-[1.65] mb-4">
                     Vous accéderez immédiatement aux coordonnées complètes du client.{' '}
                     {lead.credits} crédits seront déduits de votre wallet.
                 </p>
 
-                <div className="bg-white/4 border border-white/7 rounded-[12px] p-3.5 mb-4 flex flex-col gap-2">
+                <div className="bg-black/3 dark:bg-white/4 border border-appBorder rounded-[12px] p-3.5 mb-4 flex flex-col gap-2">
                     <div className="flex justify-between items-center text-[13px]">
-                        <span className="text-white/40">Service</span>
-                        <span className="font-semibold text-white/85">{lead.serviceLabel}</span>
+                        <span className="text-appTextSec">Service</span>
+                        <span className="font-semibold text-appText">{lead.serviceLabel}</span>
                     </div>
                     <div className="flex justify-between items-center text-[13px]">
-                        <span className="text-white/40">Localisation</span>
-                        <span className="font-semibold text-white/85">{lead.location}</span>
+                        <span className="text-appTextSec">Localisation</span>
+                        <span className="font-semibold text-appText">{lead.location}</span>
                     </div>
                     <div className="flex justify-between items-center text-[13px]">
-                        <span className="text-white/40">Date</span>
-                        <span className="font-semibold text-white/85">{lead.dateInfo}</span>
+                        <span className="text-appTextSec">Date</span>
+                        <span className="font-semibold text-appText">{lead.dateInfo}</span>
                     </div>
                     <div className="flex justify-between items-center text-[13px]">
-                        <span className="text-white/40">Votre solde</span>
-                        <span className="font-semibold text-white/85">{walletBalance} crédits</span>
+                        <span className="text-appTextSec">Votre solde</span>
+                        <span className="font-semibold text-appText">{walletBalance} crédits</span>
                     </div>
-                    <div className="flex justify-between items-center text-[13px] pt-2.5 mt-0.5 border-t border-white/8">
-                        <span className="text-white/40">Coût du déblocage</span>
+                    <div className="flex justify-between items-center text-[13px] pt-2.5 mt-0.5 border-t border-appBorderSub">
+                        <span className="text-appTextSec">Coût du déblocage</span>
                         <span className="font-extrabold text-amber text-[16px]">
                             🪙 {lead.credits} crédits
                         </span>
@@ -93,7 +93,7 @@ function UnlockModal({ lead, walletBalance, onClose, onConfirm }: ModalProps) {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="flex-1 py-3 rounded-[10px] bg-white/7 text-white/60 text-[13px] font-semibold transition-all duration-200 hover:bg-white/12 hover:text-white"
+                        className="flex-1 py-3 rounded-[10px] bg-black/5 dark:bg-white/7 text-appTextSec text-[13px] font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/12 hover:text-appText"
                     >
                         Annuler
                     </button>
@@ -138,13 +138,13 @@ export default function UnlockPanel({
 
     return (
         <>
-            <aside className="bg-[#0D1117] border-l border-white/6 p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] overflow-y-auto space-y-3">
+            <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] overflow-y-auto space-y-3">
                 {/* ── Unlock Card ── */}
-                <div className="bg-linear-to-br from-[#1a1f2e] to-[#161c2a] border border-white/8 rounded-2xl overflow-hidden">
+                <div className="bg-appCard border border-appBorder rounded-2xl overflow-hidden">
                     {/* Header */}
-                    <div className="px-[18px] py-3.5 bg-linear-to-r from-primaryColor/15 to-amber/8 border-b border-white/7 flex items-center justify-between">
-                        <div className="flex items-center gap-[7px] text-[13px] font-bold text-white">
-                            <span className="text-white/60 flex">
+                    <div className="px-[18px] py-3.5 bg-linear-to-r from-primaryColor/15 to-amber/8 border-b border-appBorderSub flex items-center justify-between">
+                        <div className="flex items-center gap-[7px] text-[13px] font-bold text-appText">
+                            <span className="text-appTextSec flex">
                                 <LockPrimaryColorSVG className="w-[14px] h-[14px]" />
                             </span>
                             Déblocage sécurisé
@@ -160,11 +160,11 @@ export default function UnlockPanel({
                                 </div>
                             ) : (
                                 <>
-                                    <div className="text-[40px] font-extrabold text-white tracking-[-1.5px] leading-none flex items-center justify-center gap-1.5">
+                                    <div className="text-[40px] font-extrabold text-appText tracking-[-1.5px] leading-none flex items-center justify-center gap-1.5">
                                         <span className="text-[28px]">🪙</span>
                                         {lead.credits}
                                     </div>
-                                    <div className="text-[12px] text-white/30 mt-1">
+                                    <div className="text-[12px] text-appTextMuted mt-1">
                                         crédits à déduire de votre wallet
                                     </div>
                                 </>
@@ -172,17 +172,17 @@ export default function UnlockPanel({
                         </div>
 
                         {/* Wallet Row */}
-                        <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-white/4 border border-white/7 rounded-[10px]">
+                        <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px]">
                             <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="shrink-0 text-[14px]">🪙</span>
                                 <div className="flex flex-col min-w-0">
-                                    <span className="text-[11px] text-white/40">Votre solde</span>
+                                    <span className="text-[11px] text-appTextSec">Votre solde</span>
                                     <span className="text-[13px] font-bold text-amber whitespace-nowrap">{walletBalance} crédits</span>
                                 </div>
                             </div>
                             <Link
                                 href={getVendorWalletRoutePath()}
-                                className="text-[12px] font-semibold text-primaryColor bg-blue-light px-2.5 py-1.5 rounded-[8px] transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
+                                className="text-[12px] font-semibold text-primaryColor bg-blue-light dark:bg-primaryColor/15 px-2.5 py-1.5 rounded-[8px] transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
                             >
                                 + Recharger
                             </Link>
@@ -229,7 +229,7 @@ export default function UnlockPanel({
 
                         {/* Limit Note */}
                         {!isUnlocked && (
-                            <div className="flex items-center justify-center gap-1 text-[11px] text-white/25">
+                            <div className="flex items-center justify-center gap-1 text-[11px] text-appTextMuted">
                                 <ClockCircleIconSVG size={11} />
                                 Prospect limité dans le temps
                             </div>
@@ -238,23 +238,23 @@ export default function UnlockPanel({
                 </div>
 
                 {/* ── Mini Summary ── */}
-                <div className="bg-white/3 border border-white/7 rounded-[12px] p-3.5">
-                    <div className="text-[13px] font-bold text-white mb-2.5 flex items-center gap-1.5">
+                <div className="bg-black/3 dark:bg-white/3 border border-appBorder rounded-[12px] p-3.5">
+                    <div className="text-[13px] font-bold text-appText mb-2.5 flex items-center gap-1.5">
                         {lead.serviceLabel}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[12px] text-white/40 mb-[5px]">
-                        <span className="text-white/20 flex shrink-0">
+                    <div className="flex items-center gap-1.5 text-[12px] text-appTextSec mb-[5px]">
+                        <span className="text-appTextMuted flex shrink-0">
                             <LocationPinIconSVG size={11} />
                         </span>
                         {lead.location}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[12px] text-white/40 mb-[5px]">
-                        <span className="text-white/20 flex shrink-0">
+                    <div className="flex items-center gap-1.5 text-[12px] text-appTextSec mb-[5px]">
+                        <span className="text-appTextMuted flex shrink-0">
                             <CalendarOutlineIconSVG size={11} />
                         </span>
                         {lead.dateInfo} · {lead.staffInfo}
                     </div>
-                    <div className="flex items-center gap-[5px] text-[12px] font-bold text-amber pt-2.5 mt-2.5 border-t border-white/6">
+                    <div className="flex items-center gap-[5px] text-[12px] font-bold text-amber pt-2.5 mt-2.5 border-t border-appBorderSub">
                         <span>🪙</span>
                         {lead.credits} crédits pour accéder
                     </div>

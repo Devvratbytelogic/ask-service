@@ -27,7 +27,7 @@ export default function OpportunitySectionHeader({
     return (
         <div className="flex items-center justify-between flex-wrap gap-3 mb-[18px] animate-hero-fade-up">
             <div className="flex items-center gap-2.5 flex-wrap">
-                <p className="text-[18px] font-extrabold text-white tracking-[-0.3px]">
+                <p className="text-[18px] font-extrabold text-appText tracking-[-0.3px]">
                     Mes opportunités actives
                 </p>
                 <div className="flex gap-1.5 flex-wrap">
@@ -50,7 +50,7 @@ export default function OpportunitySectionHeader({
                 <select
                     value={cityFilter}
                     onChange={(e) => onCityChange(e.target.value)}
-                    className="py-[7px] pl-2.5 pr-7 bg-white/5 border border-white/10 rounded-[8px] text-[12px] text-white/60 outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
+                    className="py-[7px] pl-2.5 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[12px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
                     style={{
                         backgroundImage: CHEVRON_DOWN_SVG,
                         backgroundRepeat: 'no-repeat',
@@ -58,7 +58,7 @@ export default function OpportunitySectionHeader({
                     }}
                 >
                     {CITY_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} style={{ background: '#1E293B' }}>
+                        <option key={opt} value={opt} className="bg-appSurface">
                             {opt}
                         </option>
                     ))}
@@ -67,7 +67,7 @@ export default function OpportunitySectionHeader({
                 <select
                     value={serviceFilter}
                     onChange={(e) => onServiceChange(e.target.value)}
-                    className="py-[7px] pl-2.5 pr-7 bg-white/5 border border-white/10 rounded-[8px] text-[12px] text-white/60 outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
+                    className="py-[7px] pl-2.5 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[12px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
                     style={{
                         backgroundImage: CHEVRON_DOWN_SVG,
                         backgroundRepeat: 'no-repeat',
@@ -75,13 +75,13 @@ export default function OpportunitySectionHeader({
                     }}
                 >
                     {SERVICE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} style={{ background: '#1E293B' }}>
+                        <option key={opt} value={opt} className="bg-appSurface">
                             {opt}
                         </option>
                     ))}
                 </select>
 
-                <span className="text-[11px] text-white/25 whitespace-nowrap">
+                <span className="text-[11px] text-appTextMuted whitespace-nowrap">
                     1–{displayedOpportunities} sur {totalOpportunities} opportunités
                 </span>
             </div>

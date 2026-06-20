@@ -24,7 +24,7 @@ function LeadBadge({ type }: { type: LeadBadgeType }) {
 
 function LeadNote({ type, text }: { type: LeadNoteType; text: string }) {
     const cls: Record<LeadNoteType, string> = {
-        default: 'bg-white/4 text-white/40',
+        default: 'bg-black/4 dark:bg-white/4 text-appTextSec',
         warn: 'bg-amber/10 text-amber/80',
         danger: 'bg-red-500/10 text-red-400/80',
     }
@@ -43,31 +43,31 @@ interface Props {
 
 export default function LeadSidebar({ leads, selectedId, onSelect }: Props) {
     return (
-        <aside className="bg-[#111827] border-r border-white/6 overflow-y-auto sticky top-[58px] h-[calc(100vh-58px)]">
+        <aside className="bg-appSurface border-r border-appBorder overflow-y-auto sticky top-[58px] h-[calc(100vh-58px)]">
             <div className="p-4 pb-2.5">
-                <div className="text-[12px] font-bold uppercase tracking-[1px] text-white/30 mb-2.5">
+                <div className="text-[12px] font-bold uppercase tracking-[1px] text-appTextMuted mb-2.5">
                     Prospects disponibles
                 </div>
                 <div className="relative mb-2">
                     <select
-                        className="w-full py-[9px] pr-[34px] pl-3 bg-white/5 border border-white/10 rounded-[8px] text-[13px] text-white/70 outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
+                        className="w-full py-[9px] pr-[34px] pl-3 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
                         style={{
                             backgroundImage: CHEVRON_DOWN_SVG,
                             backgroundRepeat: 'no-repeat',
                             backgroundPosition: 'right 10px center',
                         }}
                     >
-                        <option value="">🔍 Tous les services</option>
-                        <option value="securite">🔒 Sécurité</option>
-                        <option value="nettoyage">🧹 Nettoyage</option>
-                        <option value="jardinage">🌿 Jardinage</option>
-                        <option value="demenagement">📦 Déménagement</option>
-                        <option value="plomberie">🔧 Plomberie</option>
+                        <option value="" className="bg-appSurface">🔍 Tous les services</option>
+                        <option value="securite" className="bg-appSurface">🔒 Sécurité</option>
+                        <option value="nettoyage" className="bg-appSurface">🧹 Nettoyage</option>
+                        <option value="jardinage" className="bg-appSurface">🌿 Jardinage</option>
+                        <option value="demenagement" className="bg-appSurface">📦 Déménagement</option>
+                        <option value="plomberie" className="bg-appSurface">🔧 Plomberie</option>
                     </select>
                 </div>
             </div>
 
-            <div className="text-[11px] font-semibold text-white/25 px-[14px] mb-1.5">
+            <div className="text-[11px] font-semibold text-appTextMuted px-[14px] mb-1.5">
                 {leads.length} prospects disponibles
             </div>
 
@@ -76,14 +76,14 @@ export default function LeadSidebar({ leads, selectedId, onSelect }: Props) {
                     key={lead.id}
                     type="button"
                     onClick={() => onSelect(lead.id)}
-                    className={`w-full text-left px-[14px] py-3 border-b border-white/4 cursor-pointer transition-all duration-200 hover:bg-white/4 ${
+                    className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-white/4 ${
                         selectedId === lead.id
                             ? 'bg-amber/8 border-l-[3px] border-l-amber'
                             : 'border-l-[3px] border-l-transparent'
                     }`}
                 >
                     <div className="flex items-center justify-between mb-[5px] gap-2">
-                        <div className="text-[13px] font-bold text-white flex items-center gap-[5px] min-w-0">
+                        <div className="text-[13px] font-bold text-appText flex items-center gap-[5px] min-w-0">
                             <LeadBadge type={lead.badge} />
                             <span className="truncate">{lead.title}</span>
                         </div>
@@ -92,14 +92,14 @@ export default function LeadSidebar({ leads, selectedId, onSelect }: Props) {
                         </span>
                     </div>
                     <div className="flex flex-col gap-[2px]">
-                        <div className="flex items-center gap-1 text-[11px] text-white/40">
-                            <span className="text-white/25 flex shrink-0">
+                        <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                            <span className="text-appTextMuted flex shrink-0">
                                 <LocationPinIconSVG size={11} />
                             </span>
                             {lead.location}
                         </div>
-                        <div className="flex items-center gap-1 text-[11px] text-white/40">
-                            <span className="text-white/25 flex shrink-0">
+                        <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                            <span className="text-appTextMuted flex shrink-0">
                                 <CalendarOutlineIconSVG size={11} />
                             </span>
                             {lead.dateInfo}

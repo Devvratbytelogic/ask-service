@@ -46,25 +46,25 @@ export default function LeadDetailView({ leadId }: Props) {
             </div>
 
             {/* Center — main content */}
-            <main className="bg-[#0F1722] overflow-y-auto p-5">
+            <main className="bg-appBg overflow-y-auto p-5">
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-[7px] text-[12px] text-white/30 mb-[18px]">
+                <div className="flex items-center gap-[7px] text-[12px] text-appTextMuted mb-[18px]">
                     <Link
                         href={getVendorDashboardRoutePath()}
-                        className="text-white/30 hover:text-white/60 transition-colors flex items-center"
+                        className="text-appTextMuted hover:text-appTextSec transition-colors flex items-center"
                     >
                         <ArrowLeftIconSVG size={13} />
                     </Link>
                     <Link
                         href={getVendorLeadsRoutePath()}
-                        className="text-white/30 hover:text-white/60 transition-colors"
+                        className="text-appTextMuted hover:text-appTextSec transition-colors"
                     >
                         Prospects
                     </Link>
-                    <span className="text-white/20 flex">
+                    <span className="text-appTextMuted flex">
                         <ChevronRightIconSVG size={12} />
                     </span>
-                    <span className="text-white/70 font-semibold">{lead.serviceLabel}</span>
+                    <span className="text-appTextSec font-semibold">{lead.serviceLabel}</span>
                 </div>
 
                 <LeadCard lead={lead} isUnlocked={isUnlocked} onUnlock={() => setModalOpen(true)} />

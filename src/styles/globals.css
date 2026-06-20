@@ -5,6 +5,48 @@
 @import '../styles/scss/form_style.scss';
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
+/* ── Dark mode variant (class-based via next-themes) ── */
+@variant dark (&:is(.dark *));
+
+/* ── Semantic theme tokens ── */
+:root {
+  --app-bg: #ffffff;
+  --app-surface: #f8fafc;
+  --app-card: #ffffff;
+  --app-elevated: #f1f5f9;
+  --app-text: #231E2D;
+  --app-text-sec: #64748b;
+  --app-text-muted: #94a3b8;
+  --app-border: #D9DFE8;
+  --app-border-sub: #EDEDED;
+  --app-nav-bg: rgba(255, 255, 255, 0.90);
+  --app-nav-border: rgba(203, 213, 225, 0.60);
+  --app-select-bg: #ffffff;
+  --app-overlay-3: rgba(0, 0, 0, 0.03);
+  --app-overlay-5: rgba(0, 0, 0, 0.05);
+  --app-overlay-8: rgba(0, 0, 0, 0.08);
+  --app-ring: rgba(0, 0, 0, 0.07);
+}
+
+.dark {
+  --app-bg: #0d1117;
+  --app-surface: #111827;
+  --app-card: #161d2b;
+  --app-elevated: #1a2235;
+  --app-text: #f1f5f9;
+  --app-text-sec: #94a3b8;
+  --app-text-muted: #64748b;
+  --app-border: rgba(255, 255, 255, 0.10);
+  --app-border-sub: rgba(255, 255, 255, 0.06);
+  --app-nav-bg: rgba(15, 23, 42, 0.92);
+  --app-nav-border: rgba(255, 255, 255, 0.07);
+  --app-select-bg: #1e293b;
+  --app-overlay-3: rgba(255, 255, 255, 0.03);
+  --app-overlay-5: rgba(255, 255, 255, 0.05);
+  --app-overlay-8: rgba(255, 255, 255, 0.08);
+  --app-ring: rgba(255, 255, 255, 0.07);
+}
+
 * {
   @apply box-border;
 }
@@ -16,6 +58,16 @@ body {
 @theme {
   --font-sans: var(--font-sans);
   --font-heading: var(--font-sans);
+  /* ── Semantic theme utilities ── */
+  --color-appBg: var(--app-bg);
+  --color-appSurface: var(--app-surface);
+  --color-appCard: var(--app-card);
+  --color-appElevated: var(--app-elevated);
+  --color-appText: var(--app-text);
+  --color-appTextSec: var(--app-text-sec);
+  --color-appTextMuted: var(--app-text-muted);
+  --color-appBorder: var(--app-border);
+  --color-appBorderSub: var(--app-border-sub);
   --color-navBgColor: #2C4A6814;
   --color-fontBlack: #231E2D;
   --color-customWhite: #FAFAFA;
@@ -165,4 +217,21 @@ body {
 
 .react-tel-input .country-list {
   z-index: 9999 !important;
+}
+
+.dark .react-tel-input .form-control {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .react-tel-input .flag-dropdown {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .react-tel-input .country-list {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
 }

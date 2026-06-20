@@ -67,36 +67,36 @@ const STATUS_CONFIG: Record<
     },
     closed: {
         label: 'Fermée',
-        classes: 'bg-white/[0.05] text-white/35 border border-white/[0.08]',
+        classes: 'bg-black/[0.05] dark:bg-white/[0.05] text-appTextSec border border-appBorderSub',
         icon: null,
     },
 }
 
 const MetaItem = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center gap-[5px] text-xs text-white/40">{children}</div>
+    <div className="flex items-center gap-[5px] text-xs text-appTextSec">{children}</div>
 )
 
 const LocationIcon = () => (
-    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-white/25 shrink-0">
+    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0">
         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
     </svg>
 )
 
 const CalendarIcon = () => (
-    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-white/25 shrink-0">
+    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0">
         <rect x="3" y="4" width="18" height="18" rx="2" />
         <line x1="3" y1="10" x2="21" y2="10" />
     </svg>
 )
 
 const FileIcon = () => (
-    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-white/25 shrink-0">
+    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0">
         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v13a2 2 0 0 1-2 2z" />
     </svg>
 )
 
 const ClockIcon = () => (
-    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-white/25 shrink-0">
+    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12,6 12,12 16,14" />
     </svg>
@@ -116,21 +116,21 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
     const viewBtnClasses = isAccepted
         ? 'text-[#6EE7B7] bg-trust-green/10 border-trust-green/20'
         : isClosed
-          ? 'text-white/35 bg-white/3 border-white/7'
+          ? 'text-appTextSec bg-black/3 dark:bg-white/3 border-appBorderSub'
           : demand.quotesCount === 0
-            ? 'text-white/40 bg-white/4 border-white/8'
+            ? 'text-appTextSec bg-black/4 dark:bg-white/4 border-appBorder'
             : 'text-[#93C5FD] bg-primaryColor/[0.12] border-primaryColor/20 hover:bg-primaryColor/20 hover:text-white'
 
     const viewBtnLabel = isClosed ? 'Historique' : isAccepted ? 'Voir le détail' : 'Voir les devis'
 
     return (
         <div
-            className={`bg-[#161D2B] rounded-2xl overflow-hidden transition-all duration-250 cursor-pointer ${
+            className={`bg-appCard rounded-2xl overflow-hidden transition-all duration-250 cursor-pointer ${
                 isClosed ? 'opacity-60' : ''
             } ${
                 isExpanded
                     ? 'border border-primaryColor/25'
-                    : 'border border-white/7 hover:border-white/13 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(0,0,0,0.25)]'
+                    : 'border border-appBorder hover:border-appBorder hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.25)]'
             }`}
             onClick={onToggle}
         >
@@ -149,7 +149,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                         <span
                             className={`text-base font-extrabold tracking-[-0.2px] ${
-                                isClosed ? 'text-white/50' : 'text-white'
+                                isClosed ? 'text-appTextSec' : 'text-appText'
                             }`}
                         >
                             {demand.title}
@@ -195,13 +195,13 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             isAccepted
                                 ? 'text-[#6EE7B7]'
                                 : demand.quotesCount === 0
-                                  ? 'text-white/30'
-                                  : 'text-white'
+                                  ? 'text-appTextMuted'
+                                  : 'text-appText'
                         }`}
                     >
                         {demand.quotesCount}
                     </p>
-                    <p className="text-[10px] text-white/30 mt-[2px]">devis reçus</p>
+                    <p className="text-[10px] text-appTextMuted mt-[2px]">devis reçus</p>
                     {demand.newQuotesCount && demand.newQuotesCount > 0 ? (
                         <p className="flex items-center gap-[3px] text-[10px] font-bold text-[#6EE7B7] mt-[3px]">
                             <svg width="8" height="8" fill="currentColor" viewBox="0 0 8 8">
@@ -217,7 +217,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             1 accepté
                         </p>
                     ) : demand.quotesCount === 0 ? (
-                        <p className="text-[10px] text-white/20 mt-[3px]">Bientôt…</p>
+                        <p className="text-[10px] text-appTextMuted mt-[3px]">Bientôt…</p>
                     ) : null}
                 </div>
 
@@ -238,7 +238,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     </button>
                     <button
                         type="button"
-                        className="w-8 h-8 rounded-[8px] bg-white/5 border border-white/8 text-white/40 flex items-center justify-center text-[14px] transition-all duration-200 hover:bg-white/10 hover:text-white"
+                        className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText"
                         aria-label="Options"
                     >
                         ···
@@ -248,7 +248,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
 
             {/* Expanded quotes panel */}
             {isExpanded && (
-                <div className="border-t border-white/6 bg-[#111827] px-5 py-4 animate-hero-fade-up">
+                <div className="border-t border-appBorderSub bg-appSurface px-5 py-4 animate-hero-fade-up">
                     {/* Accepted banner */}
                     {demand.acceptedBanner && (
                         <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-[10px] mb-3">
@@ -262,7 +262,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                     Devis de {demand.acceptedBanner.vendorName} accepté ·{' '}
                                     {demand.acceptedBanner.amount}
                                 </p>
-                                <p className="text-[11px] text-white/35">{demand.acceptedBanner.confirmedText}</p>
+                                <p className="text-[11px] text-appTextSec">{demand.acceptedBanner.confirmedText}</p>
                             </div>
                         </div>
                     )}
@@ -270,12 +270,12 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     {/* Panel header */}
                     {demand.quotes.length > 0 && (
                         <div className="flex items-center justify-between mb-3.5">
-                            <p className="text-[13px] font-bold text-white">
+                            <p className="text-[13px] font-bold text-appText">
                                 {demand.quotes.length} devis reçus
                                 {!demand.acceptedBanner && ' · choisissez le meilleur professionnel'}
                             </p>
                             {!demand.acceptedBanner && (
-                                <p className="text-xs text-white/30">
+                                <p className="text-xs text-appTextMuted">
                                     Comparez et acceptez le devis qui vous convient
                                 </p>
                             )}
@@ -295,7 +295,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             ))}
                         </div>
                     ) : demand.emptyQuotesMessage ? (
-                        <div className="text-center py-6 text-white/25 text-[13px]">
+                        <div className="text-center py-6 text-appTextMuted text-[13px]">
                             <div className="text-2xl mb-2">⏳</div>
                             {demand.emptyQuotesMessage}
                         </div>

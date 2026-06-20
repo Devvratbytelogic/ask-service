@@ -7,6 +7,7 @@ import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import NextTopLoader from "nextjs-toploader";
 import { Provider } from "react-redux";
 import { useEffect } from "react";
+import { ThemeProvider } from "next-themes";
 import { getFcmToken, registerForegroundMessageHandler } from "@/firebase/getFcmTokenn";
 
 interface ProvidersProps {
@@ -26,7 +27,7 @@ export default function AppProviders({ children }: ProvidersProps) {
     run();
   }, []);
   return (
-    <>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <Provider store={appStore}>
         <HeroUIProvider>
           <ToastProvider placement="top-right" />
@@ -36,6 +37,6 @@ export default function AppProviders({ children }: ProvidersProps) {
           <CommonModal />
         </HeroUIProvider>
       </Provider>
-    </>
+    </ThemeProvider>
   );
 }

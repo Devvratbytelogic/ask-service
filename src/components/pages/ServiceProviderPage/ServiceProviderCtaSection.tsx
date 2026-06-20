@@ -26,10 +26,10 @@ export default function ServiceProviderCtaSection() {
     }
 
     return (
-        <section className="relative overflow-hidden bg-linear-to-br from-[#1B0F00] from-0% via-slate-900 via-50% to-[#1B1040] to-100% px-[5%] py-[100px] text-center">
+        <section className="relative overflow-hidden bg-linear-to-br from-amber-50 via-slate-50 to-white dark:from-[#1B0F00] dark:via-slate-900 dark:to-[#1B1040] px-[5%] py-[100px] text-center">
             <div
                 aria-hidden
-                className="pointer-events-none absolute top-1/2 left-1/2 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(245,158,11,0.12)_0%,transparent_65%)]"
+                className="pointer-events-none absolute top-1/2 left-1/2 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(245,158,11,0.08)_0%,transparent_65%)] dark:bg-[radial-gradient(ellipse,rgba(245,158,11,0.12)_0%,transparent_65%)]"
             />
 
             <div className="relative z-1">
@@ -37,11 +37,11 @@ export default function ServiceProviderCtaSection() {
                     ✦ Rejoignez-nous
                 </div>
 
-                <h2 className="mb-3.5 text-[clamp(30px,4vw,50px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-white">
+                <h2 className="mb-3.5 text-[clamp(30px,4vw,50px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-slate-900 dark:text-white">
                     Prêt à trouver vos <span className="text-amber-500">prochains clients</span> ?
                 </h2>
 
-                <p className="mx-auto mb-9 max-w-[460px] text-base leading-[1.65] text-white/50">
+                <p className="mx-auto mb-9 max-w-[460px] text-base leading-[1.65] text-slate-500 dark:text-white/50">
                     Inscription gratuite en 2 minutes. Votre compte est validé sous 24h et vous accédez immédiatement aux leads de votre secteur.
                 </p>
 
@@ -52,11 +52,11 @@ export default function ServiceProviderCtaSection() {
                     Créer mon compte gratuitement
                     <ArrowIcon />
                 </Link>
-                <p className="mt-4 text-[13px] text-white/35">
+                <p className="mt-4 text-[13px] text-slate-400 dark:text-white/35">
                     Déjà un compte ?{' '}
                     <Link
                         href={getLoginPageRoutePath()}
-                        className="font-semibold text-white/55 no-underline transition-colors hover:text-white/80"
+                        className="font-semibold text-slate-500 dark:text-white/55 no-underline transition-colors hover:text-slate-800 dark:hover:text-white/80"
                     >
                         Se connecter →
                     </Link>

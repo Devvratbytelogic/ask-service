@@ -5,22 +5,22 @@ import Link from "next/link"
 
 export default function CtaSection() {
     return (
-        <section className="relative overflow-hidden bg-linear-to-br from-blue-light to-[#FFF8ED] px-[5%] py-[100px] text-center">
+        <section className="relative overflow-hidden bg-linear-to-br from-blue-light to-[#FFF8ED] dark:from-slate-900 dark:to-[#1a1200] px-[5%] py-[100px] text-center">
             <div
                 aria-hidden
                 className="pointer-events-none absolute top-1/2 left-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(27,79,255,0.08)_0%,transparent_70%)]"
             />
 
             <div className="relative z-1">
-                <div className="mx-auto mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-blue-light px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
+                <div className="mx-auto mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
                     ✦ Rejoignez-nous
                 </div>
 
-                <h2 className="mb-4 text-[clamp(32px,4vw,52px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-slate-900">
+                <h2 className="mb-4 text-[clamp(32px,4vw,52px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-slate-900 dark:text-slate-100">
                     Prêt à commencer ?
                 </h2>
 
-                <p className="mx-auto mb-10 max-w-[500px] text-[17px] leading-[1.65] text-slate-500">
+                <p className="mx-auto mb-10 max-w-[500px] text-[17px] leading-[1.65] text-slate-500 dark:text-slate-400">
                     Que vous cherchiez un professionnel ou des clients, Ask-Service est fait pour vous. Inscription gratuite en 2 minutes.
                 </p>
 

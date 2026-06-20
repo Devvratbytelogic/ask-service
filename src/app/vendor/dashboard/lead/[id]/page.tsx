@@ -13,7 +13,7 @@ interface Props {
 export default async function LeadDetailPage({ params }: Props) {
     const { id } = await params
     return (
-        <div className="min-h-screen bg-[#0D1117]">
+        <div className="min-h-screen bg-appBg">
             <LeadDetailView leadId={id} />
         </div>
     )

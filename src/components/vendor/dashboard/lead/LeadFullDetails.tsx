@@ -289,7 +289,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                 </div>
 
                 {/* Sidebar */}
-                <LeadSidebar userId={lead?.user?._id} leadId={id} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} canQuote={headerData?.canQuote} quoteId={lead?.quote_id} />
+                {/* <LeadSidebar userId={lead?.user?._id} leadId={id} onSendQuoteClick={() => setShowSubmitQuoteForm(true)} unlocked={headerData?.unlocked} canQuote={headerData?.canQuote} quoteId={lead?.quote_id} /> */}
             </div>
         </>
     )

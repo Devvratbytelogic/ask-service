@@ -58,22 +58,22 @@ function AlertTag({ type, text }: { type: AlertType; text: string }) {
 
 function ClientBlock({ client }: { client: ClientInfo }) {
     return (
-        <div className="px-3 py-2.5 bg-white/3 border border-white/6 rounded-[10px] mb-3.5 space-y-[5px]">
-            <div className="flex items-center gap-2 text-[13px] text-white/75">
+        <div className="px-3 py-2.5 bg-black/3 dark:bg-white/3 border border-appBorder rounded-[10px] mb-3.5 space-y-[5px]">
+            <div className="flex items-center gap-2 text-[13px] text-appText">
                 <div
                     className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
                     style={{ background: client.avatarColor }}
                 >
                     {client.initial}
                 </div>
-                <span className="font-bold text-white">{client.name}</span>
+                <span className="font-bold text-appText">{client.name}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[12px] text-white/45">
-                <span className="text-white/30 shrink-0 flex"><PhoneOutlineIconSVG /></span>
+            <div className="flex items-center gap-1.5 text-[12px] text-appTextSec">
+                <span className="text-appTextMuted shrink-0 flex"><PhoneOutlineIconSVG /></span>
                 {client.phone}
             </div>
-            <div className="flex items-center gap-1.5 text-[12px] text-white/45">
-                <span className="text-white/30 shrink-0 flex"><MailOutlineIconSVG /></span>
+            <div className="flex items-center gap-1.5 text-[12px] text-appTextSec">
+                <span className="text-appTextMuted shrink-0 flex"><MailOutlineIconSVG /></span>
                 {client.email}
             </div>
         </div>
@@ -108,11 +108,11 @@ function PrimaryButton({ label, variant }: { label: string; variant: ButtonVaria
 
 export function EmptySlotLeads() {
     return (
-        <div className="p-[18px] bg-[#161D2B] flex items-center justify-center min-h-[200px]">
+        <div className="p-[18px] bg-appCard flex items-center justify-center min-h-[200px]">
             <div className="text-center">
                 <div className="text-[28px] mb-2.5">🔍</div>
-                <p className="text-[13px] font-semibold text-white/30 mb-1.5">26 nouveaux prospects</p>
-                <p className="text-[12px] text-white/20 mb-3.5">disponibles dans votre zone</p>
+                <p className="text-[13px] font-semibold text-appTextSec mb-1.5">26 nouveaux prospects</p>
+                <p className="text-[12px] text-appTextMuted mb-3.5">disponibles dans votre zone</p>
                 <Link
                     href={getVendorLeadsRoutePath()}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-primaryColor/15 border border-primaryColor/25 rounded-[8px] text-[12px] font-bold text-[#93C5FD] transition-all duration-200 hover:bg-primaryColor/20"
@@ -127,11 +127,11 @@ export function EmptySlotLeads() {
 
 export function EmptySlotTip() {
     return (
-        <div className="p-[18px] bg-[#161D2B] flex items-center justify-center min-h-[200px]">
+        <div className="p-[18px] bg-appCard flex items-center justify-center min-h-[200px]">
             <div className="text-center">
                 <div className="text-[28px] mb-2.5">💡</div>
-                <p className="text-[13px] font-semibold text-white/30 mb-1.5">Astuce</p>
-                <p className="text-[12px] text-white/20 leading-relaxed max-w-[160px] mx-auto">
+                <p className="text-[13px] font-semibold text-appTextSec mb-1.5">Astuce</p>
+                <p className="text-[12px] text-appTextMuted leading-relaxed max-w-[160px] mx-auto">
                     Complétez votre profil pour apparaître en tête de liste
                 </p>
             </div>
@@ -143,9 +143,9 @@ export function EmptySlotTip() {
 
 export default function OpportunityCard({ card }: { card: OppCardData }) {
     return (
-        <div className="p-[18px] bg-[#161D2B] hover:bg-[#1a2235] transition-colors duration-200">
+        <div className="p-[18px] bg-appCard hover:bg-appElevated transition-colors duration-200">
             <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2 text-[15px] font-extrabold text-white">
+                <div className="flex items-center gap-2 text-[15px] font-extrabold text-appText">
                     <div
                         className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center text-[14px] shrink-0"
                         style={{ background: card.iconBg }}
@@ -156,7 +156,7 @@ export default function OpportunityCard({ card }: { card: OppCardData }) {
                 </div>
                 <button
                     type="button"
-                    className="w-7 h-7 rounded-[7px] bg-white/5 text-white/40 flex items-center justify-center tracking-widest transition-all duration-200 hover:bg-white/10 hover:text-white leading-none text-[16px]"
+                    className="w-7 h-7 rounded-[7px] bg-black/5 dark:bg-white/5 text-appTextSec flex items-center justify-center tracking-widest transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText leading-none text-[16px]"
                     aria-label="Plus d'options"
                 >
                     ···
@@ -165,8 +165,8 @@ export default function OpportunityCard({ card }: { card: OppCardData }) {
 
             <div className="flex flex-col gap-[5px] mb-3">
                 {card.metaRows.map((row, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-[12px] text-white/45">
-                        <span className="text-white/25 shrink-0 flex">
+                    <div key={i} className="flex items-center gap-1.5 text-[12px] text-appTextSec">
+                        <span className="text-appTextMuted shrink-0 flex">
                             <MetaRowIcon type={row.iconType} />
                         </span>
                         {row.text}
@@ -181,7 +181,7 @@ export default function OpportunityCard({ card }: { card: OppCardData }) {
                 <PrimaryButton label={card.primaryBtn.label} variant={card.primaryBtn.variant} />
                 <button
                     type="button"
-                    className="px-3 py-[9px] rounded-[9px] bg-white/5 border border-white/8 text-white/50 text-[12px] font-medium cursor-pointer transition-all duration-200 hover:bg-white/9 hover:text-white whitespace-nowrap"
+                    className="px-3 py-[9px] rounded-[9px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-[12px] font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/9 hover:text-appText whitespace-nowrap"
                 >
                     {card.secondaryBtn}
                 </button>

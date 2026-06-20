@@ -25,10 +25,10 @@ export default function VendorDashboardOverview() {
         <div className="max-w-[1400px] mx-auto px-7 py-7">
             {/* Page header */}
             <div className="mb-7 animate-hero-fade-up">
-                <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-white mb-1">
+                <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
                     Tableau de bord <span className="text-amber">prestataire</span>
                 </h1>
-                <p className="text-[14px] text-white/35 flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-white/20">
+                <p className="text-[14px] text-appTextSec flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-appBorder">
                     Bon retour · Gérez vos opportunités et suivez vos devis
                 </p>
             </div>
@@ -57,9 +57,9 @@ export default function VendorDashboardOverview() {
                         <OpportunityGroup key={group.id} group={group} />
                     ))
                 ) : (
-                    <div className="bg-[#111827] border border-white/7 rounded-2xl p-8 text-center mb-4">
+                    <div className="bg-appSurface border border-appBorder rounded-2xl p-8 text-center mb-4">
                         <div className="text-[32px] mb-3">🔍</div>
-                        <p className="text-[14px] text-white/30">Aucune opportunité pour ce filtre.</p>
+                        <p className="text-[14px] text-appTextSec">Aucune opportunité pour ce filtre.</p>
                     </div>
                 )}
             </div>

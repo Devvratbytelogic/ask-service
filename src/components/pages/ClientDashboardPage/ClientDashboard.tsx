@@ -169,7 +169,7 @@ const STATS = [
         icon: '📋',
         iconBg: 'rgba(27,79,255,0.15)',
         value: '5',
-        valueColor: 'text-white',
+        valueColor: 'text-appText',
         label: 'Demandes actives',
         linkText: 'En cours de traitement',
         linkColor: 'text-[#93C5FD]',
@@ -194,12 +194,12 @@ const STATS = [
     },
     {
         icon: '🗂️',
-        iconBg: 'rgba(255,255,255,0.06)',
+        iconBg: 'rgba(0,0,0,0.06)',
         value: '3',
-        valueColor: 'text-white',
+        valueColor: 'text-appText',
         label: 'Demandes fermées',
         linkText: "Voir l'historique",
-        linkColor: 'text-white/30',
+        linkColor: 'text-appTextMuted',
     },
 ]
 
@@ -238,7 +238,7 @@ function StatCard({
     linkColor,
 }: (typeof STATS)[0]) {
     return (
-        <div className="bg-[#161D2B] border border-white/7 rounded-2xl px-5 py-[18px] cursor-pointer transition-all duration-250 hover:border-white/13 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+        <div className="bg-appCard border border-appBorder rounded-2xl px-5 py-[18px] cursor-pointer transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
             <div
                 className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[17px] mb-3"
                 style={{ background: iconBg }}
@@ -248,7 +248,7 @@ function StatCard({
             <p className={`text-[30px] font-extrabold tracking-[-1px] leading-none mb-1 ${valueColor}`}>
                 {value}
             </p>
-            <p className="text-xs text-white/40 mb-2.5">{label}</p>
+            <p className="text-xs text-appTextSec mb-2.5">{label}</p>
             <span className={`text-[11px] font-semibold flex items-center gap-[3px] ${linkColor}`}>
                 {linkText}
                 <ArrowIcon />
@@ -306,15 +306,17 @@ export default function ClientDashboard() {
         { key: 'closed', label: 'Fermées' },
     ]
 
+    const selectBgImage = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='rgba(100,116,139,0.7)' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")"
+
     return (
-        <div className="max-w-[1200px] mx-auto px-7 py-7">
+        <div className="body_x_axis_padding">
             {/* Page header */}
             <div className="flex items-start justify-between mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
                 <div>
-                    <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-white mb-1">
+                    <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
                         Mes <span className="text-primaryColor">demandes</span>
                     </h1>
-                    <p className="text-sm text-white/35 flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-white/20">
+                    <p className="text-sm text-appTextSec flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-appBorder">
                         Suivez vos demandes et gérez les devis reçus
                     </p>
                 </div>
@@ -329,10 +331,10 @@ export default function ClientDashboard() {
 
             {/* Section header + tabs */}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-4 animate-hero-fade-up">
-                <p className="text-[17px] font-extrabold text-white tracking-[-0.3px]">
+                <p className="text-[17px] font-extrabold text-appText tracking-[-0.3px]">
                     Toutes mes demandes
                 </p>
-                <div className="flex gap-0.5 bg-white/4 border border-white/7 rounded-[10px] p-[3px]">
+                <div className="flex gap-0.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px] p-[3px]">
                     {TABS.map(({ key, label }) => (
                         <button
                             key={key}
@@ -341,7 +343,7 @@ export default function ClientDashboard() {
                             className={`flex items-center gap-1.5 px-4 py-[7px] rounded-[8px] text-[13px] font-semibold cursor-pointer transition-all duration-200 ${
                                 activeTab === key
                                     ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
-                                    : 'text-white/40 hover:text-white/70 border border-transparent'
+                                    : 'text-appTextSec hover:text-appText border border-transparent'
                             }`}
                         >
                             {label}
@@ -349,7 +351,7 @@ export default function ClientDashboard() {
                                 className={`text-[10px] font-extrabold px-1.5 py-px rounded-full ${
                                     activeTab === key
                                         ? 'bg-primaryColor/20 text-[#93C5FD]'
-                                        : 'bg-white/8 text-white/50'
+                                        : 'bg-black/8 dark:bg-white/8 text-appTextSec'
                                 }`}
                             >
                                 {tabCounts[key]}
@@ -364,7 +366,7 @@ export default function ClientDashboard() {
                 {/* Search */}
                 <div className="relative flex-1 min-w-[200px]">
                     <svg
-                        className="absolute left-[11px] top-1/2 -translate-y-1/2 text-white/25 pointer-events-none"
+                        className="absolute left-[11px] top-1/2 -translate-y-1/2 text-appTextMuted pointer-events-none"
                         width="14"
                         height="14"
                         fill="none"
@@ -380,7 +382,7 @@ export default function ClientDashboard() {
                         placeholder="Rechercher une demande…"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-[9px] bg-white/4 border border-white/9 rounded-[8px] text-[13px] text-white/70 placeholder-white/25 outline-none transition-all duration-200 focus:border-primaryColor/40 focus:bg-primaryColor/5"
+                        className="w-full pl-9 pr-3.5 py-[9px] bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appText placeholder-appTextMuted outline-none transition-all duration-200 focus:border-primaryColor/40 focus:bg-primaryColor/5"
                     />
                 </div>
 
@@ -388,16 +390,15 @@ export default function ClientDashboard() {
                 <select
                     value={serviceFilter}
                     onChange={(e) => setServiceFilter(e.target.value)}
-                    className="py-[9px] pl-3 pr-7 bg-white/4 border border-white/9 rounded-[8px] text-[13px] text-white/60 outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
+                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
                     style={{
-                        backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+                        backgroundImage: selectBgImage,
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 8px center',
                     }}
                 >
                     {SERVICE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} style={{ background: '#1E293B' }}>
+                        <option key={opt} value={opt} className="bg-appSurface">
                             {opt}
                         </option>
                     ))}
@@ -407,16 +408,15 @@ export default function ClientDashboard() {
                 <select
                     value={cityFilter}
                     onChange={(e) => setCityFilter(e.target.value)}
-                    className="py-[9px] pl-3 pr-7 bg-white/4 border border-white/9 rounded-[8px] text-[13px] text-white/60 outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
+                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
                     style={{
-                        backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+                        backgroundImage: selectBgImage,
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 8px center',
                     }}
                 >
                     {CITY_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} style={{ background: '#1E293B' }}>
+                        <option key={opt} value={opt} className="bg-appSurface">
                             {opt}
                         </option>
                     ))}
@@ -424,16 +424,15 @@ export default function ClientDashboard() {
 
                 {/* Sort */}
                 <select
-                    className="py-[9px] pl-3 pr-7 bg-white/4 border border-white/9 rounded-[8px] text-[13px] text-white/60 outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
+                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
                     style={{
-                        backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+                        backgroundImage: selectBgImage,
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 8px center',
                     }}
                 >
                     {SORT_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} style={{ background: '#1E293B' }}>
+                        <option key={opt} value={opt} className="bg-appSurface">
                             {opt}
                         </option>
                     ))}
@@ -452,7 +451,7 @@ export default function ClientDashboard() {
                         />
                     ))
                 ) : (
-                    <div className="text-center py-16 text-white/25">
+                    <div className="text-center py-16 text-appTextMuted">
                         <div className="text-4xl mb-3">🔍</div>
                         <p className="text-sm">Aucune demande ne correspond à votre recherche.</p>
                     </div>
@@ -461,10 +460,10 @@ export default function ClientDashboard() {
 
             {/* New demand CTA */}
             <div className="mt-3 bg-linear-to-br from-primaryColor/8 to-primaryColor/4 border border-dashed border-primaryColor/20 rounded-2xl px-7 py-7 text-center animate-hero-fade-up">
-                <h4 className="text-[15px] font-bold text-white mb-1.5">
+                <h4 className="text-[15px] font-bold text-appText mb-1.5">
                     Besoin d&apos;un autre professionnel ?
                 </h4>
-                <p className="text-[13px] text-white/30 mb-[18px]">
+                <p className="text-[13px] text-appTextSec mb-[18px]">
                     Postez une nouvelle demande gratuitement et recevez des devis en moins de 24h.
                 </p>
                 <Link

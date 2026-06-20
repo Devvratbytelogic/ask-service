@@ -38,5 +38,5 @@
 }
 
 .outline_btn_vendor {
-    @apply border-[1.5px] border-white/15 bg-transparent px-5 text-sm font-medium text-white/70 transition-all hover:border-amber hover:bg-amber-dim hover:text-amber;
+    @apply border-[1.5px] border-slate-300 dark:border-white/15 bg-transparent px-5 text-sm font-medium text-slate-600 dark:text-white/70 transition-all hover:border-amber hover:bg-amber-dim hover:text-amber;
 }

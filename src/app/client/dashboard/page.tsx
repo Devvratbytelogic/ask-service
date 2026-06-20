@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ClientDashboardPage() {
     return (
-        <div className="min-h-screen bg-[#0D1117]">
+        <div className="min-h-screen bg-appBg">
             <ClientDashboard />
         </div>
     )

@@ -42,24 +42,24 @@ export default function OpportunityGroup({ group }: { group: OppGroupData }) {
     const emptyCount = group.showEmptySlots ? Math.max(0, totalSlots - group.cards.length) : 0
 
     return (
-        <div className="bg-[#111827] border border-white/7 rounded-2xl overflow-hidden mb-4">
-            <div className="px-[18px] py-3 bg-white/2 border-b border-white/6 flex items-center gap-2.5 flex-wrap">
+        <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
+            <div className="px-[18px] py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
                 <OppGroupStatusBadge status={group.status} label={group.statusLabel} />
-                <span className="text-[16px] font-extrabold text-white">{group.serviceName}</span>
+                <span className="text-[16px] font-extrabold text-appText">{group.serviceName}</span>
                 {group.locationTag && (
-                    <span className="flex items-center gap-1 text-[12px] text-white/35 bg-white/4 border border-white/7 px-2 py-[3px] rounded-[6px]">
+                    <span className="flex items-center gap-1 text-[12px] text-appTextSec bg-black/3 dark:bg-white/4 border border-appBorder px-2 py-[3px] rounded-[6px]">
                         <LocationPinIconSVG />
                         {group.locationTag}
                     </span>
                 )}
                 {group.extraTag && (
-                    <span className="text-[12px] text-white/25 bg-white/3 border border-white/6 px-2 py-[3px] rounded-[6px]">
+                    <span className="text-[12px] text-appTextMuted bg-black/2 dark:bg-white/3 border border-appBorderSub px-2 py-[3px] rounded-[6px]">
                         {group.extraTag}
                     </span>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-white/5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-appBorderSub">
                 {group.cards.map((card) => (
                     <Link href={generateLeadDetailRoutePath(card.id)} key={card.id}>
                         <OpportunityCard card={card} />

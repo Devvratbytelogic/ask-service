@@ -27,7 +27,7 @@ export default function CustomerMenu() {
                         href={href}
                         className={`text-[13px] font-medium px-3 py-1.5 rounded-lg transition-all duration-200 ${isActive
                             ? 'text-primaryColor bg-primaryColor/10'
-                            : 'text-fontBlack/50 hover:text-fontBlack hover:bg-gray-100'
+                            : 'text-fontBlack/50 dark:text-slate-400 hover:text-fontBlack dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-white/8'
                             }`}
                     >
                         {label}

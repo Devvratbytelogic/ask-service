@@ -4,11 +4,11 @@ import { getVendorLeadsRoutePath } from '@/routes/routes'
 
 export default function FindLeadsCTA() {
     return (
-        <div className="bg-[#111827] border border-dashed border-white/10 rounded-2xl px-10 py-10 text-center mt-2 animate-hero-fade-up">
-            <h4 className="text-[16px] font-bold text-white mb-2">
+        <div className="bg-appSurface border border-dashed border-appBorder rounded-2xl px-10 py-10 text-center mt-2 animate-hero-fade-up">
+            <h4 className="text-[16px] font-bold text-appText mb-2">
                 Trouvez de nouveaux clients maintenant
             </h4>
-            <p className="text-[13px] text-white/35 mb-5">
+            <p className="text-[13px] text-appTextSec mb-5">
                 26 prospects disponibles dans votre zone — débloquez ceux qui vous intéressent.
             </p>
             <Link

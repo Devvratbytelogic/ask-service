@@ -11,6 +11,7 @@ import CustomerMenu from "./CustomerMenu"
 import VendorMenu from "./VendorMenu"
 import CustomerActions from "./CustomerActions"
 import VendorActions from "./VendorActions"
+import ThemeToggle from "@/components/common/ThemeToggle"
 
 export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticated }: { logoUrl: string, vendorLogoUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
     const [scrolled, setScrolled] = useState(false)
@@ -29,10 +30,7 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
 
     return (
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center justify-between px-[5%] backdrop-blur-md transition-shadow duration-300 ${isServiceProviderPage
-                ? "border-b border-white/7 bg-slate-900/92"
-                : `border-b border-slate-200/60 bg-white/90 ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`
-                }`}
+            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center justify-between px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-slate-200/60 dark:border-white/7 bg-white/90 dark:bg-slate-900/92 ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             {/* Logo */}
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0">
@@ -43,7 +41,7 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
                 ) : (
                     <>
                         <span className={`w-2 h-2 rounded-full ${isServiceProviderPage ? 'bg-amber' : 'bg-primaryColor'} shrink-0`} />
-                        <span className={`font-extrabold text-[20px] tracking-tight ${isServiceProviderPage ? 'text-white' : 'text-fontBlack'} leading-none`}>
+                        <span className="font-extrabold text-[20px] tracking-tight text-fontBlack dark:text-slate-100 leading-none">
                             Ask<span className={`${isServiceProviderPage ? 'text-amber' : 'text-primaryColor'}`}>-Service</span>
                         </span>
                     </>
@@ -56,6 +54,7 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
             {isAuthenticated && (isVendor ? <VendorActions isAuthenticated={isAuthenticated} /> : <CustomerActions isAuthenticated={isAuthenticated} />)}
             {!isAuthenticated && (
                 <div className="hidden sm:flex gap-2 items-center">
+                    <ThemeToggle />
                     <Button
                         className={isServiceProviderPage ? "outline_btn_vendor" : "outline_btn"}
                         as={Link}
@@ -78,14 +77,14 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
             {/* Mobile hamburger */}
             <button
                 type="button"
-                className={`sm:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full transition-colors ${isServiceProviderPage ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
+                className="sm:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-white/10"
                 onClick={() => setMenuOpen(prev => !prev)}
                 aria-label="Menu"
                 aria-expanded={menuOpen}
             >
-                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block h-0.5 w-5 rounded transition-all duration-300 ${isServiceProviderPage ? 'bg-white' : 'bg-fontBlack'} ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
             </button>
 
             {/* Mobile dropdown */}
@@ -96,12 +95,16 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
                         onClick={() => setMenuOpen(false)}
                         aria-hidden="true"
                     />
-                    <div className={`sm:hidden absolute top-full right-4 mt-2 w-64 rounded-2xl shadow-lg z-50 py-2 px-2 border ${isServiceProviderPage ? 'bg-slate-800 border-white/10' : 'bg-white border-borderDark'}`}>
+                    <div className="sm:hidden absolute top-full right-4 mt-2 w-64 rounded-2xl shadow-lg z-50 py-2 px-2 border bg-white dark:bg-slate-800 border-borderDark dark:border-white/10">
+                        <div className="flex items-center justify-between px-3 py-2">
+                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Thème</span>
+                            <ThemeToggle />
+                        </div>
                         <Button
                             type="button"
                             as={Link}
                             href={getLoginPageRoutePath()}
-                            className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isServiceProviderPage ? 'text-white hover:bg-white/10' : 'text-fontBlack hover:bg-borderDark/50'}`}
+                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-fontBlack dark:text-slate-200 hover:bg-borderDark/50 dark:hover:bg-white/10"
                         >
                             Connexion / Inscription
                         </Button>
