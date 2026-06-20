@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import {
     CalendarOutlineIconSVG,
@@ -132,27 +132,13 @@ export default function UnlockPanel({
     onCloseModal,
     onConfirmUnlock,
 }: Props) {
-    const [secondsLeft, setSecondsLeft] = useState(272)
-
-    useEffect(() => {
-        if (isUnlocked) return
-        const id = setInterval(() => {
-            setSecondsLeft((s) => (s > 0 ? s - 1 : 0))
-        }, 1000)
-        return () => clearInterval(id)
-    }, [isUnlocked])
-
-    const mm = Math.floor(secondsLeft / 60).toString().padStart(2, '0')
-    const ss = (secondsLeft % 60).toString().padStart(2, '0')
-    const timerText = `${mm}:${ss}`
-
     const handleConfirm = useCallback(() => {
         onConfirmUnlock()
     }, [onConfirmUnlock])
 
     return (
         <>
-            <aside className="bg-[#0D1117] border-l border-white/6 p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] overflow-y-auto flex flex-col gap-3">
+            <aside className="bg-[#0D1117] border-l border-white/6 p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] overflow-y-auto space-y-3">
                 {/* ── Unlock Card ── */}
                 <div className="bg-linear-to-br from-[#1a1f2e] to-[#161c2a] border border-white/8 rounded-2xl overflow-hidden">
                     {/* Header */}
@@ -162,10 +148,6 @@ export default function UnlockPanel({
                                 <LockPrimaryColorSVG className="w-[14px] h-[14px]" />
                             </span>
                             Déblocage sécurisé
-                        </div>
-                        <div className="text-[10px] font-semibold text-trust-green bg-trust-green/12 border border-trust-green/20 px-2 py-[2px] rounded-full flex items-center gap-1">
-                            <CheckmarkIconSVG size={9} />
-                            SSL
                         </div>
                     </div>
 
@@ -190,15 +172,17 @@ export default function UnlockPanel({
                         </div>
 
                         {/* Wallet Row */}
-                        <div className="flex items-center justify-between px-3 py-2.5 bg-white/4 border border-white/7 rounded-[10px]">
-                            <div className="flex items-center gap-2 text-[13px] text-white/60">
-                                <span>🪙</span>
-                                <span>Votre solde :</span>
-                                <span className="font-bold text-amber">{walletBalance} crédits</span>
+                        <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-white/4 border border-white/7 rounded-[10px]">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="shrink-0 text-[14px]">🪙</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[11px] text-white/40">Votre solde</span>
+                                    <span className="text-[13px] font-bold text-amber whitespace-nowrap">{walletBalance} crédits</span>
+                                </div>
                             </div>
                             <Link
                                 href={getVendorWalletRoutePath()}
-                                className="text-[12px] font-semibold text-primaryColor bg-blue-light px-2 py-[3px] rounded-[6px] transition-all duration-200 hover:bg-primaryColor hover:text-white"
+                                className="text-[12px] font-semibold text-primaryColor bg-blue-light px-2.5 py-1.5 rounded-[8px] transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
                             >
                                 + Recharger
                             </Link>
@@ -221,17 +205,6 @@ export default function UnlockPanel({
                                     {lead.competitorsCount} professionnels ont déjà consulté cette
                                     demande — ne perdez pas ce client !
                                 </p>
-                            </div>
-                        )}
-
-                        {/* Countdown Timer */}
-                        {!isUnlocked && (
-                            <div className="flex items-center justify-center gap-1.5 text-[12px] text-white/35">
-                                <ClockCircleIconSVG size={12} />
-                                <span className="font-extrabold text-[#FCA5A5] text-[16px] tabular-nums">
-                                    {timerText}
-                                </span>
-                                avant expiration
                             </div>
                         )}
 

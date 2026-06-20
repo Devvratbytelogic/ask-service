@@ -6,8 +6,6 @@ import { BsFacebook, BsLinkedin } from 'react-icons/bs'
 import { FaXTwitter } from 'react-icons/fa6'
 import { useGetGlobalSettingsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import {
-    getMessageRoutePath,
-    getVendorMessageRoutePath,
     getCreateRequestRoutePath,
     getHelpCenterRoutePath,
     getCreditsRoutePath,
@@ -18,9 +16,11 @@ import {
     getFacebookUrl,
     getTwitterUrl,
     getLinkedinUrl,
+    getHomeRoutePath,
+    getServiceProviderRoutePath,
 } from '@/routes/routes'
 
-const MESSAGE_PATHS = [getMessageRoutePath(), getVendorMessageRoutePath()]
+const MESSAGE_PATHS = [getHomeRoutePath(), getCreateRequestRoutePath(), getServiceProviderRoutePath()]
 
 const linkClass = "text-sm font-medium text-[#ffffff73] no-underline transition-colors duration-200 hover:text-white"
 
@@ -30,16 +30,15 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
     const { data: globalSettings, isLoading } = useGetGlobalSettingsQuery()
     const settings = globalSettings?.data
 
-    if (MESSAGE_PATHS.some((path) => pathname === path)) {
+    if (!MESSAGE_PATHS.some((path) => pathname === path)) {
         return null
     }
-
     const facebookUrl = settings?.facebook_link || getFacebookUrl()
     const twitterUrl = settings?.x_link || getTwitterUrl()
     const linkedinUrl = settings?.linkedin_link || getLinkedinUrl()
 
     return (
-        <footer className="bg-[#0F172A] px-[5%] pt-[60px] pb-9 text-[#ffffff73]">
+        <footer className="bg-slate-900 px-[5%] pt-[60px] pb-9 text-[#ffffff73]">
             <div className="grid grid-cols-1 gap-8 pb-12 mb-8 border-b border-white/[0.07] sm:grid-cols-2 sm:gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr]">
                 <div>
                     {/* Brand */}
