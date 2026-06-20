@@ -6,6 +6,8 @@ import {
 } from '@/components/library/AllSVG'
 import type { OppGroupData, OppStatus } from './types'
 import OpportunityCard, { EmptySlotLeads, EmptySlotTip } from './OpportunityCard'
+import { generateLeadDetailRoutePath } from '@/routes/routes';
+import Link from 'next/link';
 
 // ─── OppGroupStatusBadge ──────────────────────────────────────────────────────
 
@@ -59,7 +61,9 @@ export default function OpportunityGroup({ group }: { group: OppGroupData }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-white/5">
                 {group.cards.map((card) => (
-                    <OpportunityCard key={card.id} card={card} />
+                    <Link href={generateLeadDetailRoutePath(card.id)} key={card.id}>
+                        <OpportunityCard card={card} />
+                    </Link>
                 ))}
                 {emptyCount >= 1 && <EmptySlotLeads />}
                 {emptyCount >= 2 && <EmptySlotTip />}

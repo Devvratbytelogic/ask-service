@@ -1,16 +1,20 @@
-import LeadFullDetails from '@/components/vendor/dashboard/lead/LeadFullDetails'
+import type { Metadata } from 'next'
+import LeadDetailView from '@/components/vendor/dashboard/lead/LeadDetailView'
 
-interface LeadDetailPageProps {
+export const metadata: Metadata = {
+    title: 'Ask-Service — Détail prospect',
+    description: 'Consultez et débloquez ce prospect.',
+}
+
+interface Props {
     params: Promise<{ id: string }>
 }
 
-export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
+export default async function LeadDetailPage({ params }: Props) {
     const { id } = await params
-   
-   
     return (
-        <div className="body_x_axis_padding ">
-            <LeadFullDetails id={id} />
+        <div className="min-h-screen bg-[#0D1117]">
+            <LeadDetailView leadId={id} />
         </div>
     )
 }
