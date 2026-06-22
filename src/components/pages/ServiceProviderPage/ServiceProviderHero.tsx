@@ -33,7 +33,7 @@ export default function ServiceProviderHero() {
     }
 
     return (
-        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#FFFBEB] via-[#FFF8ED] to-[#FAFBFF] dark:from-slate-900 dark:via-[#1B2040] dark:to-[#1A1000] px-[5%] pt-[120px] pb-20 text-center -mt-16">
+        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-amber-light via-[#FFF8ED] to-[#FAFBFF] dark:from-slate-900 dark:via-[#1B2040] dark:to-[#1A1000] px-[5%] pt-[120px] pb-20 text-center -mt-16">
             <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[48px_48px]"
@@ -72,7 +72,7 @@ export default function ServiceProviderHero() {
 
                 <div className="flex animate-hero-fade-up flex-wrap justify-center gap-3 [animation-delay:0.3s]">
                     <Link
-                        href={getRegistrationPageRoutePath()}
+                        href={`${getRegistrationPageRoutePath()}?role=vendor`}
                         className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-slate-900 shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
                     >
                         Commencer gratuitement

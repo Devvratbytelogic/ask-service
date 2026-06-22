@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {
@@ -347,6 +348,8 @@ interface RegistrationPageProps {
 }
 
 export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}) {
+  const searchParams = useSearchParams()
+
   // ── UI-only state ─────────────────────────────────────────────────────────
   const [step, setStep] = useState<Step>(1)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -390,6 +393,14 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
   const pwdStrength = getPasswordStrength(values.password)
+
+  // ── Auto-select role from URL query param ─────────────────────────────────
+  useEffect(() => {
+    const roleParam = searchParams.get('role')
+    if (roleParam === 'vendor' || roleParam === 'customer') {
+      setFieldValue('role', roleParam)
+    }
+  }, [])
 
   // ── Resend countdown ──────────────────────────────────────────────────────
   useEffect(() => {
