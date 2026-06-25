@@ -1,126 +1,28 @@
 'use client'
 
-import { useState, useRef, useEffect, KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import {
-  FiMail, FiPhone, FiHome, FiEye, FiEyeOff,
-  FiArrowRight, FiArrowLeft, FiCheck,
-  FiUpload, FiFile, FiX,
-} from 'react-icons/fi'
+import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi'
 import ReactSelect from 'react-select'
 import { buildSelectStyles } from './selectStyles'
-import { yupRequiredEmail } from '@/utils/validation'
+import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getMyRequestRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
 import { useGetAllServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { type Step, getPasswordStrength, ProgressSteps, Field, StyledInput, DocUploadZone, } from './RegistrationComponents'
 
-// ─── Service category options (react-select grouped) ─────────────────────────
-type CategoryOption = { value: string; label: string }
-
-const SERVICE_CATEGORY_OPTIONS: { label: string; options: CategoryOption[] }[] = [
-  {
-    label: 'Entretien',
-    options: [
-      { value: 'nettoyage', label: '🧹 Nettoyage' },
-      { value: 'jardinage', label: '🌿 Jardinage' },
-      { value: 'peinture', label: '🎨 Peinture' },
-    ],
-  },
-  {
-    label: 'Sécurité & Logistique',
-    options: [
-      { value: 'securite', label: '🔒 Sécurité / Gardiennage' },
-      { value: 'demenagement', label: '📦 Déménagement' },
-    ],
-  },
-  {
-    label: 'Travaux',
-    options: [
-      { value: 'plomberie', label: '🔧 Plomberie' },
-      { value: 'electricite', label: '⚡ Électricité' },
-      { value: 'menuiserie', label: '🪵 Menuiserie' },
-      { value: 'climatisation', label: '❄️ Climatisation' },
-      { value: 'maconnerie', label: '🧱 Maçonnerie' },
-    ],
-  },
-  {
-    label: 'Digital & Autres',
-    options: [
-      { value: 'informatique', label: '💻 Informatique' },
-      { value: 'autre', label: '✳️ Autre service' },
-    ],
-  },
-]
-
-const FLAT_CATEGORY_OPTIONS: CategoryOption[] = SERVICE_CATEGORY_OPTIONS.flatMap((g) => g.options)
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-type Step = 1 | 2 | 3 | 4 | 5
-
-export interface RegistrationFormValues {
-  role: 'customer' | 'vendor' | ''
-  prenom: string
-  nom: string
-  email: string
-  telephone: string
-  nomEntreprise: string
-  siret: string
-  serviceCategory: string[]
-  zones: string[]
-  password: string
-  passwordConfirm: string
-  termsAccepted: boolean
-}
-
-// ─── Validation schema ────────────────────────────────────────────────────────
-const registrationSchema = Yup.object<RegistrationFormValues>({
-  role: Yup.string()
-    .oneOf(['customer', 'vendor'], 'Veuillez choisir votre profil')
-    .required('Veuillez choisir votre profil'),
-  prenom: Yup.string().trim().required('Ce champ est obligatoire'),
-  nom: Yup.string().trim().required('Ce champ est obligatoire'),
-  email: yupRequiredEmail('Ce champ est obligatoire'),
-  telephone: Yup.string().trim().required('Ce champ est obligatoire'),
-  nomEntreprise: Yup.string().when('role', {
-    is: 'vendor',
-    then: (s) => s.trim().required('Ce champ est obligatoire'),
-    otherwise: (s) => s.notRequired(),
-  }),
-  siret: Yup.string().notRequired(),
-  serviceCategory: Yup.array().when('role', {
-    is: 'vendor',
-    then: (s) => s.min(1, 'Veuillez choisir au moins une catégorie'),
-    otherwise: (s) => s.notRequired(),
-  }),
-  zones: Yup.array().when('role', {
-    is: 'vendor',
-    then: (s) => s.min(1, "Ajoutez au moins une zone d'intervention"),
-    otherwise: (s) => s.notRequired(),
-  }),
-  password: Yup.string()
-    .required('Ce champ est obligatoire')
-    .min(8, 'Minimum 8 caractères'),
-  passwordConfirm: Yup.string()
-    .required('Ce champ est obligatoire')
-    .oneOf([Yup.ref('password')], 'Les mots de passe ne correspondent pas'),
-  termsAccepted: Yup.boolean()
-    .oneOf([true], "Vous devez accepter les conditions d'utilisation")
-    .required(),
-})
-
-const initialValues: RegistrationFormValues = {
-  role: '',
+const registrationInitialValues = {
+  role: '' as 'customer' | 'vendor' | '',
   prenom: '',
   nom: '',
   email: '',
   telephone: '',
   nomEntreprise: '',
   siret: '',
-  serviceCategory: [],
-  zones: [],
+  serviceCategory: [] as string[],
+  zones: [] as string[],
   password: '',
   passwordConfirm: '',
   termsAccepted: false,
@@ -129,259 +31,6 @@ const initialValues: RegistrationFormValues = {
 // ─── Constants ───────────────────────────────────────────────────────────────
 const OTP_LENGTH = 4
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function getPasswordStrength(val: string) {
-  if (!val) {
-    return { width: '0%', color: '', text: 'Entrez un mot de passe', textColor: 'var(--color-slate-400)' }
-  }
-  let score = 0
-  if (val.length >= 8) score++
-  if (/[A-Z]/.test(val)) score++
-  if (/[0-9]/.test(val)) score++
-  if (/[^A-Za-z0-9]/.test(val)) score++
-  const configs = [
-    { width: '25%', color: 'var(--color-red-500)', text: 'Trop faible', textColor: 'var(--color-red-500)' },
-    { width: '50%', color: 'var(--color-amber)', text: 'Moyen — ajoutez des chiffres', textColor: 'var(--color-amber-dark)' },
-    { width: '75%', color: 'var(--color-blue-medium)', text: 'Bien — ajoutez des symboles', textColor: 'var(--color-blue-medium)' },
-    { width: '100%', color: 'var(--color-trust-green)', text: 'Excellent !', textColor: 'var(--color-trust-green)' },
-  ]
-  return configs[score - 1] || configs[0]
-}
-
-function formatFileSize(bytes: number) {
-  if (bytes < 1024) return `${bytes} o`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function ProgressSteps({ currentStep, isVendor }: { currentStep: Step; isVendor: boolean }) {
-  const steps = isVendor
-    ? [
-      { id: 1, label: 'Profil' },
-      { id: 2, label: 'Infos' },
-      { id: 3, label: 'Sécurité' },
-      { id: 4, label: 'Code' },
-      { id: 5, label: 'Docs' },
-    ]
-    : [
-      { id: 1, label: 'Profil' },
-      { id: 2, label: 'Infos' },
-      { id: 3, label: 'Sécurité' },
-      { id: 4, label: 'Code' },
-    ]
-
-  return (
-    <div className="mb-8">
-      <div className="flex items-center">
-        {steps.map((s, idx) => {
-          const state: 'done' | 'active' | 'pending' =
-            s.id < currentStep ? 'done' : s.id === currentStep ? 'active' : 'pending'
-
-          return (
-            <div key={s.id} className="relative flex flex-1 flex-col items-center gap-1.5">
-              {idx < steps.length - 1 && (
-                <div
-                  className={`absolute top-3.5 z-0 h-0.5 transition-colors duration-300 ${state === 'done' ? 'bg-trust-green' : 'bg-slate-200'
-                    }`}
-                  style={{ left: '50%', right: '-50%' }}
-                />
-              )}
-              <div
-                className={`relative z-10 flex items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${state === 'pending'
-                    ? 'bg-slate-200 text-slate-400'
-                    : state === 'active'
-                      ? 'bg-primaryColor text-white shadow-[0_0_0_4px_var(--color-primary-dim)]'
-                      : 'bg-trust-green text-white'
-                  }`}
-                style={{ width: 28, height: 28 }}
-              >
-                {state === 'done' ? '✓' : s.id}
-              </div>
-              <span
-                className={`text-center text-[11px] font-medium transition-colors ${state === 'pending'
-                    ? 'text-slate-400'
-                    : state === 'active'
-                      ? 'font-semibold text-primaryColor'
-                      : 'text-trust-green'
-                  }`}
-              >
-                {s.label}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-/** Field wrapper — shows label and optional inline error */
-function Field({
-  label,
-  required = false,
-  requiredColor = 'var(--color-primaryColor)',
-  optional = false,
-  errorMessage,
-  children,
-}: {
-  label: string
-  required?: boolean
-  requiredColor?: string
-  optional?: boolean
-  errorMessage?: string | false | null
-  children: React.ReactNode
-}) {
-  return (
-    <div className="mb-4">
-      <label className="mb-1.5 flex items-center justify-between text-[13px] font-semibold text-slate-700">
-        <span>
-          {label}{' '}
-          {required && <span style={{ color: requiredColor }}>*</span>}
-        </span>
-        {optional && (
-          <span className="text-[12px] font-normal text-slate-400">optionnel</span>
-        )}
-      </label>
-      {children}
-      {errorMessage && (
-        <p className="mt-1 text-[11px] text-red-500">{errorMessage}</p>
-      )}
-    </div>
-  )
-}
-
-/** Reusable styled input */
-function StyledInput({
-  icon,
-  error = false,
-  rightSlot,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & {
-  icon?: React.ReactNode
-  error?: boolean
-  rightSlot?: React.ReactNode
-}) {
-  return (
-    <div className="relative">
-      <input
-        {...props}
-        className={[
-          'w-full rounded-[10px] px-4 py-3 text-[14px] text-slate-900 outline-none transition-all',
-          'border-[1.5px]',
-          error
-            ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-            : 'border-slate-200 bg-slate-50 focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
-          (icon || rightSlot) ? 'pr-11' : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        style={{ fontFamily: 'inherit' }}
-      />
-      {(icon || rightSlot) && (
-        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-          {rightSlot ?? icon}
-        </span>
-      )}
-    </div>
-  )
-}
-
-// ─── Document upload zone ─────────────────────────────────────────────────────
-interface DocUploadZoneProps {
-  label: string
-  required?: boolean
-  hint?: string
-  file: File | null
-  error?: string
-  accentColor: string
-  onChange: (file: File | null) => void
-}
-
-function DocUploadZone({ label, required, hint, file, error, accentColor, onChange }: DocUploadZoneProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault()
-    setIsDragging(false)
-    const dropped = e.dataTransfer.files[0]
-    if (dropped) onChange(dropped)
-  }
-
-  return (
-    <div className="mb-4">
-      <p className="mb-1.5 text-[13px] font-semibold text-slate-700">
-        {label}
-        {required && <span className="ml-0.5" style={{ color: accentColor }}>*</span>}
-        {!required && <span className="ml-2 text-[12px] font-normal text-slate-400">optionnel</span>}
-      </p>
-
-      {file ? (
-        <div className="flex items-center gap-3 rounded-[10px] border-[1.5px] border-slate-200 bg-slate-50 px-4 py-3">
-          <div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
-            style={{ background: accentColor }}
-          >
-            <FiFile size={15} />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold text-slate-800">{file.name}</p>
-            <p className="text-[11px] text-slate-400">{formatFileSize(file.size)}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => onChange(null)}
-            className="shrink-0 cursor-pointer rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-200 hover:text-red-500"
-            aria-label="Supprimer le fichier"
-          >
-            <FiX size={14} />
-          </button>
-        </div>
-      ) : (
-        <div
-          className={[
-            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[10px] border-[1.5px] border-dashed py-6 text-center transition-all',
-            error
-              ? 'border-red-400 bg-red-50'
-              : isDragging
-                ? 'scale-[1.01] border-primaryColor bg-blue-light'
-                : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-white',
-          ].join(' ')}
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-        >
-          <div
-            className="flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-            style={{ background: isDragging ? accentColor : 'var(--color-slate-100)' }}
-          >
-            <FiUpload size={16} color={isDragging ? 'white' : 'var(--color-slate-500)'} />
-          </div>
-          <div>
-            <p className="text-[13px] font-semibold text-slate-700">
-              Glissez un fichier ici ou{' '}
-              <span style={{ color: accentColor }}>parcourez</span>
-            </p>
-            {hint && <p className="mt-0.5 text-[11px] text-slate-400">{hint}</p>}
-          </div>
-        </div>
-      )}
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
-        className="hidden"
-        onChange={(e) => { if (e.target.files?.[0]) onChange(e.target.files[0]) }}
-      />
-      {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
-    </div>
-  )
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 interface RegistrationPageProps {
   logoUrl?: string | null
@@ -389,9 +38,11 @@ interface RegistrationPageProps {
 
 export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}) {
   const searchParams = useSearchParams()
-  const { data: servicesResponse, isLoading, isError } = useGetAllServicesQuery()
-  const services = servicesResponse?.data ?? []
-  console.log('services', services)
+  const { data: servicesResponse, isLoading: isServicesLoading, isError: isServicesError } = useGetAllServicesQuery()
+  const serviceOptions: { value: string; label: string }[] = (servicesResponse?.data ?? []).map((s) => ({
+    value: s._id,
+    label: s.title,
+  }))
 
   // ── UI-only state ─────────────────────────────────────────────────────────
   const [step, setStep] = useState<Step>(1)
@@ -418,8 +69,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   const [docErrors, setDocErrors] = useState<{ identite?: string }>({})
 
   // ── Formik ────────────────────────────────────────────────────────────────
-  const formik = useFormik<RegistrationFormValues>({
-    initialValues,
+  const formik = useFormik({
+    initialValues: registrationInitialValues,
     validationSchema: registrationSchema,
     validateOnChange: true,
     validateOnBlur: true,
@@ -816,7 +467,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                     className={`animate-inscription-fade-up ${shakeStep === 2 ? 'inscription-shake' : ''}`}
                     key={`step2-${shakeKey}`}
                   >
-                    <div className="mb-4 grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       <Field label="Prénom" required errorMessage={touched.prenom && errors.prenom}>
                         <StyledInput
                           name="prenom" type="text" placeholder="Jean"
@@ -882,8 +533,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                             isMulti
                             instanceId="serviceCategory"
                             name="serviceCategory"
-                            options={SERVICE_CATEGORY_OPTIONS}
-                            value={FLAT_CATEGORY_OPTIONS.filter((opt) =>
+                            options={serviceOptions}
+                            value={serviceOptions.filter((opt) =>
                               values.serviceCategory.includes(opt.value)
                             )}
                             onChange={(selected) => {
@@ -894,7 +545,9 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                             }}
                             onBlur={() => setFieldTouched('serviceCategory', true)}
                             placeholder="— Choisir des catégories —"
-                            noOptionsMessage={() => 'Aucune option'}
+                            isLoading={isServicesLoading}
+                            loadingMessage={() => 'Chargement…'}
+                            noOptionsMessage={() => isServicesError ? 'Erreur de chargement' : 'Aucune option'}
                             menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                             menuPosition="fixed"
                             styles={buildSelectStyles(!!(touched.serviceCategory && typeof errors.serviceCategory === 'string' && errors.serviceCategory))}

@@ -78,6 +78,42 @@ export const contactFormValidationSchema = Yup.object({
     message: Yup.string().required('Le champ message est obligatoire'),
 })
 
+
+export const registrationSchema = Yup.object({
+    role: Yup.string()
+        .oneOf(['customer', 'vendor'], 'Veuillez choisir votre profil')
+        .required('Veuillez choisir votre profil'),
+    prenom: Yup.string().trim().required('Ce champ est obligatoire'),
+    nom: Yup.string().trim().required('Ce champ est obligatoire'),
+    email: yupRequiredEmail('Ce champ est obligatoire'),
+    telephone: Yup.string().trim().required('Ce champ est obligatoire'),
+    nomEntreprise: Yup.string().when('role', {
+        is: 'vendor',
+        then: (s) => s.trim().required('Ce champ est obligatoire'),
+        otherwise: (s) => s.notRequired(),
+    }),
+    siret: Yup.string().notRequired(),
+    serviceCategory: Yup.array().when('role', {
+        is: 'vendor',
+        then: (s) => s.min(1, 'Veuillez choisir au moins une catégorie'),
+        otherwise: (s) => s.notRequired(),
+    }),
+    zones: Yup.array().when('role', {
+        is: 'vendor',
+        then: (s) => s.min(1, "Ajoutez au moins une zone d'intervention"),
+        otherwise: (s) => s.notRequired(),
+    }),
+    password: Yup.string()
+        .required('Ce champ est obligatoire')
+        .min(8, 'Minimum 8 caractères'),
+    passwordConfirm: Yup.string()
+        .required('Ce champ est obligatoire')
+        .oneOf([Yup.ref('password')], 'Les mots de passe ne correspondent pas'),
+    termsAccepted: Yup.boolean()
+        .oneOf([true], "Vous devez accepter les conditions d'utilisation")
+        .required(),
+})
+
 export const vendorProfileInfoValidationSchema = Yup.object({
     businessName: Yup.string().required('Ce champ est obligatoire'),
     ownerName: Yup.string().required('Ce champ est obligatoire'),
