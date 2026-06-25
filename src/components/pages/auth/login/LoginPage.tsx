@@ -5,13 +5,12 @@ import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle } from 'react-icons/fi'
+import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
   getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
-  getMyRequestRoutePath,
   getRegistrationPageRoutePath,
-  getVendorDashboardRoutePath,
 } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
 import { useLoginMutation } from '@/redux/rtkQueries/authApi'
@@ -19,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData } from '@/utils/authCookies'
 import { useDispatch } from 'react-redux'
+import { loginWithGoogle } from '@/firebase/GoogleLogin'
 
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -61,6 +61,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
   const [showPassword, setShowPassword] = useState(false)
   const [shake, setShake] = useState(false)
   const [serverError, setServerError] = useState('')
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [login, { isLoading }] = useLoginMutation()
 
   const isVendor = role === 'vendor'
@@ -84,24 +85,18 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
       setServerError('')
       try {
         const response = await login({ identifier: values.email, password: values.password }).unwrap()
-        const responseData = response?.data as Record<string, unknown> | undefined
-        console.log('response', (responseData as AuthResponseData).role as string)
-        // const flow = responseData?.flow as string | undefined
-        console.log('responseData', responseData)
-        if (response.http_status_code === 200) {
-          setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
-          router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+        const responseData = response?.data as AuthResponseData | undefined
+        if (responseData) {
+          setAuthAndRefetchProfile(responseData, dispatch)
           router.refresh()
+          router.push(getDashboardPageRoutePathForRole(responseData.role as string))
         }
       } catch (error: unknown) {
-        console.error('error', error)
-        if (error instanceof Error) {
-          setServerError(error.message)
-        } else {
-          setServerError('Une erreur inattendue s\'est produite')
-        }
+        const message = (error as Error & { responseData?: { message?: string } })?.responseData?.message
+          ?? (error as Error)?.message
+          ?? "Une erreur inattendue s'est produite"
+        setServerError(message)
       }
-
     },
   })
 
@@ -123,6 +118,31 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     setRole(r)
     setServerError('')
     formik.setErrors({})
+  }
+
+  async function handleGoogleLogin() {
+    setIsGoogleLoading(true)
+    setServerError('')
+    try {
+      const roleType = isVendor ? 'Vendor' : 'User'
+      const res = await loginWithGoogle(roleType)
+      const responseData = res?.data as AuthResponseData | undefined
+      if (responseData?.token ?? responseData?.access_token) {
+        setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+        router.refresh()
+        router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+        addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
+        return
+      }
+      addToast({ title: 'Connexion terminée', color: 'success', timeout: 2000 })
+    } catch (err: unknown) {
+      const message = (err as Error & { responseData?: { message?: string } })?.responseData?.message
+        ?? (err as Error)?.message
+        ?? 'Échec de la connexion Google'
+      addToast({ title: message, color: 'danger', timeout: 3000 })
+    } finally {
+      setIsGoogleLoading(false)
+    }
   }
 
   const subtitleText = isVendor
@@ -363,12 +383,17 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
             {/* ─── Google button ─── */}
             <button
               type="button"
-              className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)]"
+              disabled={isGoogleLoading || isLoading}
+              className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
               style={{ fontFamily: 'inherit' }}
-              onClick={() => {/* Google OAuth */ }}
+              onClick={handleGoogleLogin}
             >
-              <GoogleIcon />
-              Continuer avec Google
+              {isGoogleLoading ? (
+                <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
+              ) : (
+                <GoogleIcon />
+              )}
+              {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
             </button>
           </form>
 

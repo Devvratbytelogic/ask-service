@@ -164,6 +164,9 @@ export function StyledInput({
 }
 
 // ─── DocUploadZone ────────────────────────────────────────────────────────────
+
+
+
 interface DocUploadZoneProps {
   label: string
   required?: boolean
@@ -248,7 +251,7 @@ export function DocUploadZone({ label, required, hint, file, error, accentColor,
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
+        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.svg"
         className="hidden"
         onChange={(e) => { if (e.target.files?.[0]) onChange(e.target.files[0]) }}
       />

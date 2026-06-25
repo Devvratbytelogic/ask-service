@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, KeyboardEvent } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi'
 import ReactSelect from 'react-select'
@@ -10,8 +11,21 @@ import { buildSelectStyles } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getMyRequestRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
-import { useGetAllServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { type Step, getPasswordStrength, ProgressSteps, Field, StyledInput, DocUploadZone, } from './RegistrationComponents'
+import { addToast } from '@heroui/react'
+import { useGetAllServicesQuery, useGetAllServicesDocumentsRequiredQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import {
+  useSignupMutation,
+  useVendorRegisterMutation,
+  useVerifyEmailMutation,
+  useVendorVerifyOtpMutation,
+  useResendEmailVerificationMutation,
+  useVendorResendOtpMutation,
+} from '@/redux/rtkQueries/authApi'
+import { useUploadVendorDocumentsMutation } from '@/redux/rtkQueries/allPostApi'
+import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
+import type { AuthResponseData } from '@/utils/authCookies'
+import { getFcmTokenFromCookie } from '@/firebase/getFcmTokenn'
+import { type Step, getPasswordStrength, ProgressSteps, Field, StyledInput, DocUploadZone } from './RegistrationComponents'
 
 const registrationInitialValues = {
   role: '' as 'customer' | 'vendor' | '',
@@ -30,6 +44,10 @@ const registrationInitialValues = {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const OTP_LENGTH = 4
+const ALLOWED_DOC_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.doc', '.docx', '.pdf', '.svg']
+const MAX_DOC_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
+const ALLOWED_FORMATS_HINT = `${ALLOWED_DOC_EXTENSIONS.map((e) => e.slice(1).toUpperCase()).join(', ')} (Max ${MAX_DOC_SIZE_BYTES / (1024 * 1024)}MB)`
+
 
 // ─── Main component ───────────────────────────────────────────────────────────
 interface RegistrationPageProps {
@@ -38,11 +56,23 @@ interface RegistrationPageProps {
 
 export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}) {
   const searchParams = useSearchParams()
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const fcmToken = getFcmTokenFromCookie()
+
   const { data: servicesResponse, isLoading: isServicesLoading, isError: isServicesError } = useGetAllServicesQuery()
   const serviceOptions: { value: string; label: string }[] = (servicesResponse?.data ?? []).map((s) => ({
     value: s._id,
     label: s.title,
   }))
+
+  const [signup, { isLoading: isSigningUp }] = useSignupMutation()
+  const [vendorRegister, { isLoading: isVendorRegistering }] = useVendorRegisterMutation()
+  const [verifyEmail, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation()
+  const [vendorVerifyOtp, { isLoading: isVerifyingVendorOtp }] = useVendorVerifyOtpMutation()
+  const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
+  const [vendorResendOtp, { isLoading: isResendingVendorOtp }] = useVendorResendOtpMutation()
+  const [uploadVendorDocuments, { isLoading: isUploadingDocs }] = useUploadVendorDocumentsMutation()
 
   // ── UI-only state ─────────────────────────────────────────────────────────
   const [step, setStep] = useState<Step>(1)
@@ -61,12 +91,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
   // ── Document upload state ─────────────────────────────────────────────────
-  const [documents, setDocuments] = useState<{
-    identite: File | null
-    kbis: File | null
-    assurance: File | null
-  }>({ identite: null, kbis: null, assurance: null })
-  const [docErrors, setDocErrors] = useState<{ identite?: string }>({})
+  const [documents, setDocuments] = useState<Record<string, File | null>>({})
+  const [docErrors, setDocErrors] = useState<Record<string, string | undefined>>({})
 
   // ── Formik ────────────────────────────────────────────────────────────────
   const formik = useFormik({
@@ -87,6 +113,13 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
   const pwdStrength = getPasswordStrength(values.password)
+
+  // ── Vendor documents — only fetched when vendor reaches step 5 (auth is set by then) ──
+  const { data: docsResponse, isLoading: isDocsLoading, isError: isDocsError } = useGetAllServicesDocumentsRequiredQuery(
+    undefined,
+    { skip: !isVendor || step < 5 }
+  )
+  const docFields = Array.isArray(docsResponse?.data?.documents) ? docsResponse.data.documents : []
 
   // ── Auto-select role from URL query param ─────────────────────────────────
   useEffect(() => {
@@ -143,7 +176,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
     navTo(n)
   }
 
-  // ── Step 3 → start OTP flow ───────────────────────────────────────────────
+  // ── Step 3 → register + start OTP flow ───────────────────────────────────
   async function handleStep3Submit() {
     await setFieldTouched('password', true, false)
     await setFieldTouched('passwordConfirm', true, false)
@@ -155,10 +188,37 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
       return
     }
 
-    setOtpDigits(Array(OTP_LENGTH).fill(''))
-    setOtpError('')
-    setResendCountdown(60)
-    navTo(4)
+    try {
+      if (isVendor) {
+        await vendorRegister({
+          first_name: values.prenom.trim(),
+          last_name: values.nom.trim(),
+          email: values.email.trim(),
+          phone: values.telephone,
+          password: values.password,
+          business_name: values.nomEntreprise,
+          ...(values.siret && { siret: values.siret }),
+          service: values.serviceCategory,
+          areas: values.zones,
+          ...(fcmToken && { fcm_token: fcmToken }),
+        }).unwrap()
+      } else {
+        await signup({
+          first_name: values.prenom.trim(),
+          last_name: values.nom.trim(),
+          email: values.email.trim(),
+          phone: values.telephone,
+          password: values.password,
+          ...(fcmToken && { fcm_token: fcmToken }),
+        }).unwrap()
+      }
+      setOtpDigits(Array(OTP_LENGTH).fill(''))
+      setOtpError('')
+      setResendCountdown(60)
+      navTo(4)
+    } catch {
+      // Error toast handled by rtkQuerieSetup
+    }
   }
 
   // ── OTP management ────────────────────────────────────────────────────────
@@ -195,7 +255,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
     otpRefs.current[Math.min(text.length, OTP_LENGTH - 1)]?.focus()
   }
 
-  function handleOtpVerify() {
+  async function handleOtpVerify() {
     const code = otpDigits.join('')
     if (code.length < OTP_LENGTH) {
       setOtpError(`Veuillez saisir le code complet à ${OTP_LENGTH} chiffres.`)
@@ -203,33 +263,103 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
       return
     }
     setOtpError('')
-    if (isVendor) {
-      navTo(5)
-    } else {
-      formik.handleSubmit()
+    try {
+      if (isVendor) {
+        const response = await vendorVerifyOtp({
+          type: 'SIGNUP',
+          email: values.email,
+          otp_email: code,
+          ...(fcmToken && { fcm_token: fcmToken }),
+        }).unwrap()
+        const responseData = (response as { data?: { token?: string; userData?: { role?: string } } })?.data
+        if (responseData?.token) {
+          setAuthAndRefetchProfile({
+            token: responseData.token,
+            user: responseData.userData,
+            role: responseData.userData?.role ?? '',
+          }, dispatch)
+          router.refresh()
+        }
+        navTo(5)
+      } else {
+        const res = await verifyEmail({
+          email: values.email,
+          otp: code,
+          ...(fcmToken && { fcm_token: fcmToken }),
+        }).unwrap()
+        const responseData = (res as { data?: unknown })?.data
+        if (responseData && typeof responseData === 'object') {
+          setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+          router.refresh()
+        }
+        setIsSuccess(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    } catch {
+      // Error toast handled by rtkQuerieSetup
+      setOtpError('Code incorrect ou expiré. Veuillez réessayer.')
     }
   }
 
-  function handleResendOtp() {
-    setOtpDigits(Array(OTP_LENGTH).fill(''))
-    setOtpError('')
-    setResendCountdown(60)
-    setTimeout(() => otpRefs.current[0]?.focus(), 50)
+  async function handleResendOtp() {
+    try {
+      if (isVendor) {
+        await vendorResendOtp({ identifier: values.email, identifierType: 'EMAIL', type: 'SIGNUP' }).unwrap()
+      } else {
+        await resendEmailVerification({ email: values.email }).unwrap()
+      }
+      setOtpDigits(Array(OTP_LENGTH).fill(''))
+      setOtpError('')
+      setResendCountdown(60)
+      setTimeout(() => otpRefs.current[0]?.focus(), 50)
+    } catch {
+      // Error toast handled by rtkQuerieSetup
+    }
   }
 
   // ── Document upload management ────────────────────────────────────────────
-  function handleDocChange(key: 'identite' | 'kbis' | 'assurance', file: File | null) {
+  function handleDocChange(key: string, file: File | null) {
+    if (file) {
+      const ext = '.' + (file.name.split('.').pop() ?? '').toLowerCase()
+      if (!ALLOWED_DOC_EXTENSIONS.includes(ext)) {
+        addToast({
+          title: `Type de fichier invalide. Autorisés : ${ALLOWED_DOC_EXTENSIONS.join(', ')}`,
+          color: 'danger',
+          timeout: 3000,
+        })
+        return
+      }
+      if (file.size > MAX_DOC_SIZE_BYTES) {
+        addToast({ title: 'Le fichier doit faire 5 Mo ou moins.', color: 'danger', timeout: 3000 })
+        return
+      }
+    }
     setDocuments((prev) => ({ ...prev, [key]: file }))
-    if (key === 'identite' && file) setDocErrors((prev) => ({ ...prev, identite: undefined }))
+    if (file) setDocErrors((prev) => ({ ...prev, [key]: undefined }))
   }
 
-  function handleDocumentsSubmit() {
-    if (!documents.identite) {
-      setDocErrors({ identite: 'Ce document est obligatoire' })
+  async function handleDocumentsSubmit() {
+    const requiredErrors: Record<string, string> = {}
+    docFields.filter((f) => f.is_required).forEach((f) => {
+      if (!documents[f._id]) requiredErrors[f._id] = 'Ce document est obligatoire'
+    })
+    if (Object.keys(requiredErrors).length > 0) {
+      setDocErrors(requiredErrors)
       triggerShake(5)
       return
     }
-    formik.handleSubmit()
+    try {
+      const formData = new FormData()
+      docFields.forEach((f) => {
+        const file = documents[f._id]
+        if (file) formData.append(f._id, file)
+      })
+      await uploadVendorDocuments(formData).unwrap()
+    } catch {
+      // Upload failed – docs can be submitted later from vendor dashboard
+    }
+    setIsSuccess(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // ── Form-level Enter-key submit router ───────────────────────────────────
@@ -775,7 +905,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       <button
                         type="button"
                         onClick={() => goStep(2)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                        disabled={isSigningUp || isVendorRegistering}
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -783,7 +914,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       </button>
                       <button
                         type="submit"
-                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px"
+                        disabled={isSigningUp || isVendorRegistering}
+                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px disabled:opacity-70"
                         style={{
                           background: accentColor,
                           color: accentTextColor,
@@ -791,8 +923,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                           fontFamily: 'inherit',
                         }}
                       >
-                        Continuer
-                        <FiArrowRight size={15} />
+                        {isSigningUp || isVendorRegistering ? 'Envoi en cours…' : 'Continuer'}
+                        {!(isSigningUp || isVendorRegistering) && <FiArrowRight size={15} />}
                       </button>
                     </div>
                   </div>
@@ -857,10 +989,11 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                         <button
                           type="button"
                           onClick={handleResendOtp}
-                          className="cursor-pointer font-semibold text-primaryColor hover:underline"
+                          disabled={isResendingEmail || isResendingVendorOtp}
+                          className="cursor-pointer font-semibold text-primaryColor hover:underline disabled:opacity-50"
                           style={{ fontFamily: 'inherit', background: 'none', border: 'none', padding: 0 }}
                         >
-                          Renvoyer le code
+                          {isResendingEmail || isResendingVendorOtp ? 'Envoi…' : 'Renvoyer le code'}
                         </button>
                       )}
                     </p>
@@ -869,7 +1002,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       <button
                         type="button"
                         onClick={() => navTo(3)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                        disabled={isVerifyingEmail || isVerifyingVendorOtp}
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -877,7 +1011,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       </button>
                       <button
                         type="submit"
-                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px"
+                        disabled={isVerifyingEmail || isVerifyingVendorOtp}
+                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px disabled:opacity-70"
                         style={{
                           background: accentColor,
                           color: accentTextColor,
@@ -885,8 +1020,12 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                           fontFamily: 'inherit',
                         }}
                       >
-                        {isVendor ? 'Continuer' : 'Créer mon compte'}
-                        {isVendor ? <FiArrowRight size={15} /> : <FiCheck size={15} strokeWidth={2.5} />}
+                        {isVerifyingEmail || isVerifyingVendorOtp
+                          ? 'Vérification…'
+                          : isVendor ? 'Continuer' : 'Créer mon compte'}
+                        {!(isVerifyingEmail || isVerifyingVendorOtp) && (
+                          isVendor ? <FiArrowRight size={15} /> : <FiCheck size={15} strokeWidth={2.5} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -898,29 +1037,24 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                     className={`animate-inscription-fade-up ${shakeStep === 5 ? 'inscription-shake' : ''}`}
                     key={`step5-${shakeKey}`}
                   >
-                    <DocUploadZone
-                      label="Pièce d'identité"
-                      required
-                      hint="Carte nationale, passeport ou titre de séjour — PDF, JPG ou PNG"
-                      file={documents.identite}
-                      error={docErrors.identite}
-                      accentColor={accentColor}
-                      onChange={(f) => handleDocChange('identite', f)}
-                    />
-                    <DocUploadZone
-                      label="Extrait KBIS"
-                      hint="Moins de 3 mois — PDF, JPG ou PNG"
-                      file={documents.kbis}
-                      accentColor={accentColor}
-                      onChange={(f) => handleDocChange('kbis', f)}
-                    />
-                    <DocUploadZone
-                      label="Attestation d'assurance professionnelle"
-                      hint="RC Pro ou décennale — PDF, JPG ou PNG"
-                      file={documents.assurance}
-                      accentColor={accentColor}
-                      onChange={(f) => handleDocChange('assurance', f)}
-                    />
+                    {isDocsLoading && (
+                      <p className="mb-4 text-center text-[13px] text-slate-400">Chargement des documents requis…</p>
+                    )}
+                    {isDocsError && (
+                      <p className="mb-4 text-center text-[13px] text-red-500">Impossible de charger les documents. Veuillez réessayer.</p>
+                    )}
+                    {docFields.map((doc) => (
+                      <DocUploadZone
+                        key={doc._id}
+                        label={doc.name}
+                        required={doc.is_required}
+                        hint={[doc.description, ALLOWED_FORMATS_HINT].filter(Boolean).join(' — ')}
+                        file={documents[doc._id] ?? null}
+                        error={docErrors[doc._id]}
+                        accentColor={accentColor}
+                        onChange={(f) => handleDocChange(doc._id, f)}
+                      />
+                    ))}
 
                     <div className="mb-5 rounded-[10px] bg-amber-light px-4 py-3 text-[12px] leading-relaxed text-amber-900">
                       💡 Vos documents sont chiffrés et uniquement utilisés pour la vérification de votre profil.
@@ -931,7 +1065,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       <button
                         type="button"
                         onClick={() => navTo(4)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                        disabled={isUploadingDocs}
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -939,7 +1074,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       </button>
                       <button
                         type="submit"
-                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px"
+                        disabled={isDocsLoading || isUploadingDocs}
+                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px disabled:opacity-70"
                         style={{
                           background: accentColor,
                           color: accentTextColor,
@@ -947,8 +1083,8 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                           fontFamily: 'inherit',
                         }}
                       >
-                        Créer mon compte
-                        <FiCheck size={15} strokeWidth={2.5} />
+                        {isUploadingDocs ? 'Envoi en cours…' : 'Créer mon compte'}
+                        {!isUploadingDocs && <FiCheck size={15} strokeWidth={2.5} />}
                       </button>
                     </div>
                   </div>

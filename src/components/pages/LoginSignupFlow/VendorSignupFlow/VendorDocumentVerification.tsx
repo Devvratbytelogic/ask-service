@@ -16,7 +16,7 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
 const VendorDocumentVerification = () => {
     const dispatch = useDispatch()
     const { data: documentsResponse, isLoading, isError } = useGetAllServicesDocumentsRequiredQuery()
-    const documents = documentsResponse?.data ?? []
+    const documents = Array.isArray(documentsResponse?.data?.documents) ? documentsResponse.data.documents : []
     const [uploadVendorDocuments, { isLoading: isUploading }] = useUploadVendorDocumentsMutation()
 
     const [files, setFiles] = useState<Record<string, File | null>>({})
