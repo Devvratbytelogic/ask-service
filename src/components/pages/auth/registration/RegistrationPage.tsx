@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi'
 import ReactSelect from 'react-select'
-import { buildSelectStyles } from './selectStyles'
+import { buildSelectStyles, type CategoryOption } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getMyRequestRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
@@ -61,9 +61,10 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   const fcmToken = getFcmTokenFromCookie()
 
   const { data: servicesResponse, isLoading: isServicesLoading, isError: isServicesError } = useGetAllServicesQuery()
-  const serviceOptions: { value: string; label: string }[] = (servicesResponse?.data ?? []).map((s) => ({
+  const serviceOptions: CategoryOption[] = (servicesResponse?.data ?? []).map((s) => ({
     value: s._id,
     label: s.title,
+    image: s.image ?? null,
   }))
 
   const [signup, { isLoading: isSigningUp }] = useSignupMutation()
@@ -681,6 +682,24 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                             menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                             menuPosition="fixed"
                             styles={buildSelectStyles(!!(touched.serviceCategory && typeof errors.serviceCategory === 'string' && errors.serviceCategory))}
+                            formatOptionLabel={({ label, image }, { context }) =>
+                              context === 'value' ? (
+                                <span style={{ fontSize: 12, fontFamily: 'inherit' }}>{label}</span>
+                              ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                  {image ? (
+                                    <img
+                                      src={image}
+                                      alt={label}
+                                      style={{ width: 26, height: 26, objectFit: 'contain', borderRadius: 6, flexShrink: 0, background: 'var(--color-slate-100)' }}
+                                    />
+                                  ) : (
+                                    <div style={{ width: 26, height: 26, borderRadius: 6, background: 'var(--color-slate-100)', flexShrink: 0 }} />
+                                  )}
+                                  <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
+                                </div>
+                              )
+                            }
                           />
                         </Field>
 

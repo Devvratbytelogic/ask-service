@@ -1,109 +1,23 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import {
-  FiChevronDown, FiMapPin, FiSearch,
-  FiArrowLeft, FiArrowRight, FiCheck, FiInfo,
-} from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo } from 'react-icons/fi'
+import ReactSelect from 'react-select'
+import type { StylesConfig } from 'react-select'
 import { getMyRequestRoutePath } from '@/routes/routes'
+import {
+  useGetAllServicesQuery,
+  useGetServicesQuetionsQuery,
+} from '@/redux/rtkQueries/clientSideGetApis'
+import { buildServiceSelectStyles, type ServiceOption } from './selectStyles'
+import type { ListEntity } from '@/types/serviceQuestions'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type FormStep = 1 | 2 | 3
+type DynOption = { value: string; label: string }
+type ClientType = 'B2C' | 'B2B' | ''
 
-export interface RequestAServiceFormValues {
-  service: string
-  clientType: 'B2C' | 'B2B' | ''
-  locationCode: string
-  locationText: string
-  date: string
-  slot: string
-  notes: string
-}
-
-interface City {
-  cp: string
-  v: string
-}
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const SERVICE_GROUPS = [
-  {
-    group: 'Entretien',
-    options: [
-      { value: 'nettoyage', label: '🧹 Nettoyage' },
-      { value: 'jardinage', label: '🌿 Jardinage' },
-      { value: 'peinture', label: '🎨 Peinture' },
-    ],
-  },
-  {
-    group: 'Sécurité & Logistique',
-    options: [
-      { value: 'securite', label: '🔒 Sécurité / Gardiennage' },
-      { value: 'demenagement', label: '📦 Déménagement' },
-    ],
-  },
-  {
-    group: 'Travaux',
-    options: [
-      { value: 'plomberie', label: '🔧 Plomberie' },
-      { value: 'electricite', label: '⚡ Électricité' },
-      { value: 'menuiserie', label: '🪵 Menuiserie' },
-      { value: 'climatisation', label: '❄️ Climatisation / Chauffage' },
-      { value: 'maconnerie', label: '🧱 Maçonnerie' },
-    ],
-  },
-  {
-    group: 'Digital & Autres',
-    options: [
-      { value: 'informatique', label: '💻 Informatique' },
-      { value: 'autre', label: '✳️ Autre service' },
-    ],
-  },
-]
-
-const SERVICE_LABEL_MAP: Record<string, string> = Object.fromEntries(
-  SERVICE_GROUPS.flatMap((g) => g.options.map((o) => [o.value, o.label]))
-)
-
-const SLOT_OPTIONS = [
-  { value: 'matin', label: 'Matin (8h – 12h)' },
-  { value: 'apres-midi', label: 'Après-midi (13h – 17h)' },
-  { value: 'soir', label: 'Soir (17h – 20h)' },
-  { value: 'journee', label: 'Toute la journée' },
-  { value: 'flexible', label: 'Je suis flexible' },
-] as const
-
-const SLOT_LABEL_MAP: Record<string, string> = Object.fromEntries(
-  SLOT_OPTIONS.map((o) => [o.value, o.label])
-)
-
-const CITIES: City[] = [
-  { cp: '75001', v: 'Paris 1er' }, { cp: '75004', v: 'Paris 4e' }, { cp: '75008', v: 'Paris 8e' },
-  { cp: '75015', v: 'Paris 15e' }, { cp: '75016', v: 'Paris 16e' }, { cp: '75017', v: 'Paris 17e' },
-  { cp: '92100', v: 'Boulogne-Billancourt' }, { cp: '92300', v: 'Levallois-Perret' },
-  { cp: '93100', v: 'Montreuil' }, { cp: '94000', v: 'Créteil' }, { cp: '78000', v: 'Versailles' },
-  { cp: '91000', v: 'Évry' }, { cp: '77000', v: 'Melun' }, { cp: '69001', v: 'Lyon 1er' },
-  { cp: '69006', v: 'Lyon 6e' }, { cp: '69008', v: 'Lyon 8e' }, { cp: '13001', v: 'Marseille 1er' },
-  { cp: '13008', v: 'Marseille 8e' }, { cp: '31000', v: 'Toulouse' }, { cp: '33000', v: 'Bordeaux' },
-  { cp: '44000', v: 'Nantes' }, { cp: '67000', v: 'Strasbourg' }, { cp: '59000', v: 'Lille' },
-  { cp: '06000', v: 'Nice' }, { cp: '06400', v: 'Cannes' }, { cp: '35000', v: 'Rennes' },
-  { cp: '76000', v: 'Rouen' }, { cp: '25000', v: 'Besançon' }, { cp: '21000', v: 'Dijon' },
-  { cp: '57000', v: 'Metz' }, { cp: '54000', v: 'Nancy' }, { cp: '38000', v: 'Grenoble' },
-  { cp: '34000', v: 'Montpellier' }, { cp: '30000', v: 'Nîmes' }, { cp: '83000', v: 'Toulon' },
-  { cp: '64000', v: 'Pau' }, { cp: '17000', v: 'La Rochelle' }, { cp: '86000', v: 'Poitiers' },
-  { cp: '87000', v: 'Limoges' }, { cp: '49000', v: 'Angers' }, { cp: '72000', v: 'Le Mans' },
-  { cp: '63000', v: 'Clermont-Ferrand' }, { cp: '42000', v: 'Saint-Étienne' },
-]
-
-const STEP_META = {
-  1: { title: 'Votre besoin', desc: 'Sélectionnez le service et votre profil.', progress: 33 },
-  2: { title: 'Où et quand ?', desc: 'Localisation, date et créneau souhaités.', progress: 66 },
-  3: { title: 'Récapitulatif', desc: 'Vérifiez et confirmez votre demande.', progress: 100 },
-} as const
-
+// ─── Constants ────────────────────────────────────────────────────────────────
 const SUCCESS_STEPS = [
   'Les professionnels reçoivent votre demande et préparent leurs devis',
   "Vous recevez jusqu'à 5 devis dans votre espace client sous 24h",
@@ -122,52 +36,151 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-// ─── Validation schema ────────────────────────────────────────────────────────
-const requestAServiceSchema = Yup.object({
-  service: Yup.string().required('Veuillez choisir un service'),
-  clientType: Yup.string()
-    .oneOf(['B2C', 'B2B'], 'Veuillez choisir votre profil')
-    .required('Veuillez choisir votre profil'),
-  locationCode: Yup.string().required('Veuillez choisir une ville'),
-  locationText: Yup.string().required(),
-  date: Yup.string()
-    .required('Veuillez choisir une date')
-    .test('future-date', "La date doit être aujourd'hui ou dans le futur", (v) => {
-      if (!v) return false
-      return v >= getTodayMin()
-    }),
-  slot: Yup.string().required('Veuillez choisir un créneau'),
-  notes: Yup.string(),
-})
+const KNOWN_TYPES = [
+  'dropdown', 'radio', 'checkbox',
+  'date', 'time', 'date & time', 'datetime',
+  'textarea', 'number', 'text', 'file',
+] as const
 
-// ─── Initial values ───────────────────────────────────────────────────────────
-const initialValues: RequestAServiceFormValues = {
-  service: '',
-  clientType: '',
-  locationCode: '',
-  locationText: '',
-  date: '',
-  slot: '',
-  notes: '',
+function formatAnswerForDisplay(question: ListEntity, value: string | string[]): string {
+  if (!value || (Array.isArray(value) && value.length === 0)) return '—'
+  if (question.type === 'date') return formatDate(value as string)
+  if (question.type === 'time') return value as string
+  if (question.type === 'date & time' || question.type === 'datetime') {
+    const d = new Date(value as string)
+    return isNaN(d.getTime())
+      ? (value as string)
+      : d.toLocaleString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+  }
+  if (Array.isArray(value)) return value.join(', ')
+  return value as string
+}
+
+// ─── Styles for dynamic dropdowns ─────────────────────────────────────────────
+function buildDynSelectStyles<IsMulti extends boolean>(
+  hasError: boolean,
+): StylesConfig<DynOption, IsMulti> {
+  return {
+    control: (base, state) => ({
+      ...base,
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderStyle: 'solid',
+      borderColor: hasError
+        ? 'var(--color-red-500)'
+        : state.isFocused
+          ? 'var(--color-primaryColor)'
+          : 'var(--color-slate-200)',
+      backgroundColor: hasError
+        ? 'var(--color-red-light)'
+        : state.isFocused
+          ? 'white'
+          : 'var(--color-slate-50)',
+      boxShadow: hasError
+        ? state.isFocused
+          ? '0 0 0 3px rgba(239,68,68,0.1)'
+          : 'none'
+        : state.isFocused
+          ? '0 0 0 3px var(--color-primary-dim)'
+          : 'none',
+      minHeight: 46,
+      fontFamily: 'inherit',
+      fontSize: 14,
+      transition: 'all 0.15s ease',
+      cursor: 'pointer',
+      '&:hover': {
+        borderColor: hasError
+          ? 'var(--color-red-500)'
+          : state.isFocused
+            ? 'var(--color-primaryColor)'
+            : 'var(--color-slate-400)',
+      },
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: 'var(--color-slate-400)',
+      fontSize: 14,
+      fontFamily: 'inherit',
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: 'var(--color-slate-900)',
+      fontSize: 14,
+      fontFamily: 'inherit',
+    }),
+    input: (base) => ({
+      ...base,
+      fontFamily: 'inherit',
+      fontSize: 14,
+      margin: 0,
+      padding: 0,
+    }),
+    valueContainer: (base) => ({ ...base, padding: '4px 14px', gap: 4 }),
+    dropdownIndicator: (base) => ({ ...base, color: 'var(--color-slate-400)', padding: '0 12px' }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      backgroundColor: 'var(--color-slate-200)',
+    }),
+    menu: (base) => ({
+      ...base,
+      borderRadius: 12,
+      border: '1.5px solid var(--color-slate-200)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      zIndex: 20,
+      overflow: 'hidden',
+    }),
+    menuList: (base) => ({ ...base, padding: 6 }),
+    option: (base, state) => ({
+      ...base,
+      borderRadius: 8,
+      fontSize: 14,
+      fontFamily: 'inherit',
+      padding: '8px 10px',
+      backgroundColor: state.isSelected
+        ? 'var(--color-blue-light)'
+        : state.isFocused
+          ? 'var(--color-slate-50)'
+          : 'transparent',
+      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--color-slate-900)',
+      fontWeight: state.isSelected ? 600 : 400,
+      cursor: 'pointer',
+    }),
+    multiValue: (base) => ({
+      ...base,
+      backgroundColor: 'var(--color-blue-light)',
+      borderRadius: 99,
+      overflow: 'hidden',
+      margin: '2px',
+    }),
+    multiValueLabel: (base) => ({
+      ...base,
+      color: 'var(--color-primaryColor)',
+      fontSize: 12,
+      fontWeight: 600,
+      padding: '2px 4px 2px 8px',
+      fontFamily: 'inherit',
+    }),
+    multiValueRemove: (base) => ({
+      ...base,
+      color: 'var(--color-primaryColor)',
+      borderRadius: '0 99px 99px 0',
+      paddingRight: 6,
+      '&:hover': {
+        backgroundColor: 'rgba(27,79,255,0.15)',
+        color: 'var(--color-primaryColor)',
+      },
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+  } as StylesConfig<DynOption, IsMulti>
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-
-function StepDots({ current }: { current: FormStep }) {
-  return (
-    <div className="mb-0.5 flex items-center gap-1.5">
-      {([1, 2, 3] as const).map((s) => (
-        <div
-          key={s}
-          className={`h-1.5 rounded-full transition-all duration-300 ${
-            s < current ? 'w-2 bg-trust-green' : s === current ? 'w-5 bg-primaryColor' : 'w-2 bg-slate-200'
-          }`}
-        />
-      ))}
-    </div>
-  )
-}
-
 function FieldLabel({
   children,
   required = false,
@@ -181,47 +194,10 @@ function FieldLabel({
     <label className="mb-2 block text-[13px] font-semibold tracking-[0.1px] text-slate-700">
       {children}
       {required && <span className="ml-0.5 text-primaryColor">*</span>}
-      {optional && <span className="ml-1.5 text-[12px] font-normal text-slate-400">(optionnel)</span>}
+      {optional && (
+        <span className="ml-1.5 text-[12px] font-normal text-slate-400">(optionnel)</span>
+      )}
     </label>
-  )
-}
-
-function SelectField({
-  name,
-  value,
-  onChange,
-  onBlur,
-  error = false,
-  children,
-}: {
-  name: string
-  value: string
-  onChange: React.ChangeEventHandler<HTMLSelectElement>
-  onBlur?: React.FocusEventHandler<HTMLSelectElement>
-  error?: boolean
-  children: React.ReactNode
-}) {
-  return (
-    <div className="relative">
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        className={[
-          'w-full cursor-pointer appearance-none rounded-[12px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-          error
-            ? 'border-red-500 bg-red-light'
-            : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
-        ].join(' ')}
-        style={{ fontFamily: 'inherit' }}
-      >
-        {children}
-      </select>
-      <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-        <FiChevronDown size={14} strokeWidth={2.5} />
-      </span>
-    </div>
   )
 }
 
@@ -240,130 +216,487 @@ function SummaryRow({
         {icon}
         {label}
       </span>
-      <span className="text-right text-[13px] font-semibold text-slate-900">{value}</span>
+      <span className="max-w-[55%] wrap-break-word text-right text-[13px] font-semibold text-slate-900">
+        {value}
+      </span>
+    </div>
+  )
+}
+
+function inputCls(hasError: boolean) {
+  return [
+    'w-full rounded-[12px] border-[1.5px] py-3 px-4 text-[14px] text-slate-900 outline-none transition-all',
+    hasError
+      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
+      : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+  ].join(' ')
+}
+
+function DynamicQuestionField({
+  question,
+  value,
+  error,
+  onChange,
+  onBlur,
+}: {
+  question: ListEntity
+  value: string | string[]
+  error?: string
+  onChange: (val: string | string[]) => void
+  onBlur: () => void
+}) {
+  const options: DynOption[] = (question.options ?? [])
+    .filter(Boolean)
+    .map((o) => ({ value: o!.value, label: o!.label }))
+
+  const hasError = !!error
+  const minDate = getTodayMin()
+  const strVal = value as string
+  const arrVal = Array.isArray(value) ? value : []
+
+  function toggleOption(optValue: string, multi: boolean) {
+    if (!multi) {
+      onChange(optValue)
+      onBlur()
+    } else {
+      const updated = arrVal.includes(optValue)
+        ? arrVal.filter((v) => v !== optValue)
+        : [...arrVal, optValue]
+      onChange(updated)
+      onBlur()
+    }
+  }
+
+  const pillCls = (selected: boolean) =>
+    [
+      'flex cursor-pointer items-center gap-2 rounded-[10px] border-2 px-3.5 py-2 text-[13px] font-medium transition-all',
+      selected
+        ? 'border-primaryColor bg-blue-light font-semibold text-primaryColor'
+        : hasError
+          ? 'border-red-200 bg-slate-50 text-slate-700 hover:border-red-300'
+          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400 hover:bg-white',
+    ].join(' ')
+
+  return (
+    <div className="mb-5">
+      <FieldLabel required={question.is_required} optional={!question.is_required}>
+        {question.label}
+      </FieldLabel>
+
+      {/* ── Dropdown single ── */}
+      {question.type === 'dropdown' && !question.is_multiple && (
+        <ReactSelect<DynOption, false>
+          instanceId={question._id}
+          options={options}
+          value={options.find((o) => o.value === strVal) ?? null}
+          onChange={(opt) => onChange(opt?.value ?? '')}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? '— Choisir —'}
+          menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+          menuPosition="fixed"
+          styles={buildDynSelectStyles<false>(hasError)}
+        />
+      )}
+
+      {/* ── Dropdown multi ── */}
+      {question.type === 'dropdown' && question.is_multiple && (
+        <ReactSelect<DynOption, true>
+          isMulti
+          instanceId={question._id}
+          options={options}
+          value={options.filter((o) => arrVal.includes(o.value))}
+          onChange={(selected) => onChange(selected ? selected.map((o) => o.value) : [])}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? '— Choisir —'}
+          menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+          menuPosition="fixed"
+          styles={buildDynSelectStyles<true>(hasError)}
+        />
+      )}
+
+      {/* ── Radio ── */}
+      {question.type === 'radio' && (
+        <div className="flex flex-wrap gap-2">
+          {options.map((opt) => {
+            const selected = strVal === opt.value
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => toggleOption(opt.value, false)}
+                className={pillCls(selected)}
+                style={{ fontFamily: 'inherit' }}
+              >
+                <span
+                  className={`flex size-[15px] shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                    selected ? 'border-primaryColor' : 'border-slate-300'
+                  }`}
+                >
+                  {selected && (
+                    <span className="size-[7px] rounded-full bg-primaryColor" />
+                  )}
+                </span>
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── Checkbox ── */}
+      {question.type === 'checkbox' && (
+        <div className="flex flex-wrap gap-2">
+          {options.map((opt) => {
+            const checked = arrVal.includes(opt.value)
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => toggleOption(opt.value, true)}
+                className={pillCls(checked)}
+                style={{ fontFamily: 'inherit' }}
+              >
+                <span
+                  className={`flex size-[15px] shrink-0 items-center justify-center rounded-[4px] border-2 transition-colors ${
+                    checked ? 'border-primaryColor bg-primaryColor' : 'border-slate-300'
+                  }`}
+                >
+                  {checked && (
+                    <FiCheck size={9} strokeWidth={3} className="text-white" />
+                  )}
+                </span>
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── Date ── */}
+      {question.type === 'date' && (
+        <input
+          type="date"
+          value={strVal}
+          min={minDate}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
+        />
+      )}
+
+      {/* ── Time ── */}
+      {question.type === 'time' && (
+        <input
+          type="time"
+          value={strVal}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
+        />
+      )}
+
+      {/* ── Date & Time ── */}
+      {(question.type === 'date & time' || question.type === 'datetime') && (
+        <input
+          type="datetime-local"
+          value={strVal}
+          min={`${minDate}T00:00`}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
+        />
+      )}
+
+      {/* ── Textarea ── */}
+      {question.type === 'textarea' && (
+        <textarea
+          value={strVal}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? ''}
+          rows={3}
+          className={`${inputCls(hasError)} resize-y leading-[1.6]`}
+          style={{ fontFamily: 'inherit', minHeight: 96 }}
+        />
+      )}
+
+      {/* ── Number ── */}
+      {question.type === 'number' && (
+        <input
+          type="number"
+          value={strVal}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? ''}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit' }}
+        />
+      )}
+
+      {/* ── Text ── */}
+      {question.type === 'text' && (
+        <input
+          type="text"
+          value={strVal}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? ''}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit' }}
+        />
+      )}
+
+      {/* ── File ── */}
+      {question.type === 'file' && (
+        <label
+          className={[
+            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-[1.5px] border-dashed py-7 transition-all',
+            hasError
+              ? 'border-red-400 bg-red-light'
+              : strVal
+                ? 'border-primaryColor bg-blue-light'
+                : 'border-slate-300 bg-slate-50 hover:border-primaryColor hover:bg-blue-light',
+          ].join(' ')}
+        >
+          <svg
+            width="24"
+            height="24"
+            fill="none"
+            stroke={strVal ? 'var(--color-primaryColor)' : 'var(--color-slate-400)'}
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span
+            className={`text-[13px] font-semibold ${strVal ? 'text-primaryColor' : 'text-slate-700'}`}
+            style={{ fontFamily: 'inherit' }}
+          >
+            {strVal || 'Choisir un fichier'}
+          </span>
+          {!strVal && (
+            <span className="text-[11px] text-slate-400">ou glissez-déposez ici</span>
+          )}
+          <input
+            type="file"
+            className="sr-only"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) {
+                onChange(file.name)
+                onBlur()
+              }
+            }}
+          />
+        </label>
+      )}
+
+      {/* ── Unknown type fallback ── */}
+      {!(KNOWN_TYPES as readonly string[]).includes(question.type) && (
+        <input
+          type="text"
+          value={strVal}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder={question.placeholder ?? ''}
+          className={inputCls(hasError)}
+          style={{ fontFamily: 'inherit' }}
+        />
+      )}
+
+      {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
     </div>
   )
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function RequestAServiceForm() {
-  const [step, setStep] = useState<FormStep>(1)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [shakeStep, setShakeStep] = useState<FormStep | null>(null)
-  const [shakeKey, setShakeKey] = useState(0)
-
-  // Location UI state (separate from Formik — drives the search dropdown only)
-  const [locQuery, setLocQuery] = useState('')
-  const [locResults, setLocResults] = useState<City[]>([])
-  const [locOpen, setLocOpen] = useState(false)
-  const locWrapRef = useRef<HTMLDivElement>(null)
-
-  const minDate = getTodayMin()
-
-  useEffect(() => {
-    function onOutsideClick(e: MouseEvent) {
-      if (locWrapRef.current && !locWrapRef.current.contains(e.target as Node)) {
-        setLocOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', onOutsideClick)
-    return () => document.removeEventListener('mousedown', onOutsideClick)
-  }, [])
-
-  // ── Formik ────────────────────────────────────────────────────────────────
-  const formik = useFormik<RequestAServiceFormValues>({
-    initialValues,
-    validationSchema: requestAServiceSchema,
-    validateOnChange: true,
-    validateOnBlur: true,
-    onSubmit: () => {
-      setIsSuccess(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    },
-  })
-
+  // ── Services API
   const {
-    values,
-    touched,
-    errors,
-    handleChange,
-    handleBlur,
-    setFieldValue,
-    setFieldTouched,
-    validateForm,
-  } = formik
+    data: servicesResponse,
+    isLoading: isServicesLoading,
+    isError: isServicesError,
+  } = useGetAllServicesQuery()
+  const serviceOptions: ServiceOption[] = (servicesResponse?.data ?? []).map((s) => ({
+    value: s._id,
+    label: s.title,
+    image: s.image ?? null,
+  }))
 
-  // ── Location handlers ─────────────────────────────────────────────────────
-  function handleLocInput(val: string) {
-    setLocQuery(val)
-    const q = val.toLowerCase().trim()
-    if (q.length < 2) { setLocOpen(false); return }
-    const filtered = CITIES.filter(
-      (c) => c.v.toLowerCase().includes(q) || c.cp.includes(q)
-    ).slice(0, 7)
-    setLocResults(filtered)
-    setLocOpen(filtered.length > 0)
-  }
+  // ── UI state
+  const [uiStep, setUiStep] = useState(1)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [shakeKey, setShakeKey] = useState(0)
+  const [shakeStep, setShakeStep] = useState<number | null>(null)
 
-  function pickCity(city: City) {
-    void setFieldValue('locationCode', city.cp)
-    void setFieldValue('locationText', `${city.v} (${city.cp})`)
-    setLocQuery('')
-    setLocOpen(false)
-  }
+  // ── Step 1 state (service + clientType)
+  const [service, setService] = useState('')
+  const [serviceTouched, setServiceTouched] = useState(false)
+  const [clientType, setClientType] = useState<ClientType>('')
+  const [clientTypeTouched, setClientTypeTouched] = useState(false)
 
-  function clearCity() {
-    void setFieldValue('locationCode', '')
-    void setFieldValue('locationText', '')
-    setLocQuery('')
-  }
+  // ── Dynamic answers
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
-  // ── Navigation ────────────────────────────────────────────────────────────
-  function triggerShake(s: FormStep) {
-    setShakeStep(s)
+  // ── Questions API (fires once a service is selected)
+  const { data: questionsResponse, isLoading: isQuestionsLoading } =
+    useGetServicesQuetionsQuery({ id: service }, { skip: !service })
+
+  const questionsList = useMemo(
+    () => questionsResponse?.data?.list ?? [],
+    [questionsResponse],
+  )
+
+  // Reset dynamic answers whenever the selected service changes
+  useEffect(() => {
+    setAnswers({})
+    setTouchedFields(new Set())
+  }, [service])
+
+  // Group questions by API `step`, sorted by `order` within each step
+  const apiSteps = useMemo(
+    () =>
+      Array.from(new Set(questionsList.map((q) => q.step))).sort((a, b) => a - b),
+    [questionsList],
+  )
+
+  const questionsByApiStep = useMemo(() => {
+    const map: Record<number, ListEntity[]> = {}
+    apiSteps.forEach((s) => {
+      map[s] = questionsList
+        .filter((q) => q.step === s)
+        .sort((a, b) => a.order - b.order)
+    })
+    return map
+  }, [questionsList, apiSteps])
+
+  // ── Step mapping:
+  //   uiStep 1         → service + clientType
+  //   uiStep 2 … N+1   → API question groups (apiSteps[0] … apiSteps[N-1])
+  //   uiStep N+2       → summary
+  const totalUiSteps = 1 + apiSteps.length + 1
+  const summaryUiStep = totalUiSteps
+  const progress = Math.round((uiStep / totalUiSteps) * 100)
+
+  const currentApiStepIdx = uiStep - 2
+  const currentApiStep =
+    currentApiStepIdx >= 0 && currentApiStepIdx < apiSteps.length
+      ? apiSteps[currentApiStepIdx]
+      : null
+  const currentQuestions =
+    currentApiStep != null ? (questionsByApiStep[currentApiStep] ?? []) : []
+
+  // ── Navigation helpers
+  function triggerShake() {
+    setShakeStep(uiStep)
     setShakeKey((k) => k + 1)
     setTimeout(() => setShakeStep(null), 450)
   }
 
-  function navTo(n: FormStep) {
-    setStep(n)
+  function navTo(n: number) {
+    setUiStep(n)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  async function goStep2() {
-    await setFieldTouched('service', true, false)
-    await setFieldTouched('clientType', true, false)
-    const errs = await validateForm()
-    if (errs.service || errs.clientType) {
-      triggerShake(1)
-      return
+  function goNext() {
+    if (uiStep === 1) {
+      setServiceTouched(true)
+      setClientTypeTouched(true)
+      if (!service || !clientType) {
+        triggerShake()
+        return
+      }
+      navTo(2)
+    } else if (currentApiStep != null) {
+      const hasErr = currentQuestions.some((q) => {
+        if (!q.is_required) return false
+        const val = answers[q._id]
+        return !val || (Array.isArray(val) ? val.length === 0 : val === '')
+      })
+      setTouchedFields((prev) => {
+        const next = new Set(prev)
+        currentQuestions.forEach((q) => next.add(q._id))
+        return next
+      })
+      if (hasErr) {
+        triggerShake()
+        return
+      }
+      navTo(uiStep + 1)
     }
-    navTo(2)
   }
 
-  async function goStep3() {
-    await setFieldTouched('locationCode', true, false)
-    await setFieldTouched('date', true, false)
-    await setFieldTouched('slot', true, false)
-    const errs = await validateForm()
-    if (errs.locationCode || errs.date || errs.slot) {
-      triggerShake(2)
-      return
-    }
-    navTo(3)
+  function goPrev() {
+    navTo(uiStep - 1)
   }
 
-  // ── Derived ───────────────────────────────────────────────────────────────
-  const meta = STEP_META[step]
-  const sumService = values.service ? (SERVICE_LABEL_MAP[values.service] ?? values.service) : '—'
+  function handleAnswer(id: string, val: string | string[]) {
+    setAnswers((prev) => ({ ...prev, [id]: val }))
+  }
+
+  function touchField(id: string) {
+    setTouchedFields((prev) => new Set([...prev, id]))
+  }
+
+  function getFieldError(q: ListEntity): string | undefined {
+    if (!touchedFields.has(q._id) || !q.is_required) return undefined
+    const val = answers[q._id]
+    if (!val || (Array.isArray(val) ? val.length === 0 : val === '')) {
+      return 'Ce champ est obligatoire'
+    }
+    return undefined
+  }
+
+  // ── Step header content
+  function getStepTitle(): string {
+    if (uiStep === 1) return 'Votre besoin'
+    if (uiStep === summaryUiStep) return 'Récapitulatif'
+    return 'Vos informations'
+  }
+  function getStepDesc(): string {
+    if (uiStep === 1) return 'Sélectionnez le service et votre profil.'
+    if (uiStep === summaryUiStep) return 'Vérifiez et confirmez votre demande.'
+    return `Étape ${uiStep - 1} sur ${apiSteps.length}`
+  }
+
+  // ── Derived for summary
+  const sumService = service
+    ? (serviceOptions.find((o) => o.value === service)?.label ?? service)
+    : '—'
   const sumType =
-    values.clientType === 'B2C'
+    clientType === 'B2C'
       ? '🏠 Particulier'
-      : values.clientType === 'B2B'
+      : clientType === 'B2B'
         ? '🏢 Entreprise'
         : '—'
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  const isShaking = shakeStep === uiStep
+
+  // ── Icons reused in summary
+  const IconInfo = (
+    <svg
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  )
+
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
       className="w-full max-w-[620px] overflow-hidden rounded-[24px] border border-slate-200 bg-white"
@@ -375,7 +708,7 @@ export default function RequestAServiceForm() {
           <div
             className="h-full rounded-r-[2px] transition-[width] duration-500 ease-in-out"
             style={{
-              width: `${meta.progress}%`,
+              width: `${progress}%`,
               background: 'linear-gradient(90deg, var(--color-primaryColor), #6B8FFF)',
             }}
           />
@@ -386,14 +719,27 @@ export default function RequestAServiceForm() {
       {!isSuccess && (
         <div className="flex items-center gap-3.5 px-8 pt-7">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-blue-light text-[15px] font-extrabold text-primaryColor">
-            {step}
+            {uiStep}
           </div>
           <div>
-            <StepDots current={step} />
+            <div className="mb-0.5 flex items-center gap-1.5">
+              {Array.from({ length: totalUiSteps }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i + 1 < uiStep
+                      ? 'w-2 bg-trust-green'
+                      : i + 1 === uiStep
+                        ? 'w-5 bg-primaryColor'
+                        : 'w-2 bg-slate-200'
+                  }`}
+                />
+              ))}
+            </div>
             <h3 className="text-[18px] font-extrabold tracking-[-0.3px] text-slate-900">
-              {meta.title}
+              {getStepTitle()}
             </h3>
-            <p className="mt-0.5 text-[13px] text-slate-500">{meta.desc}</p>
+            <p className="mt-0.5 text-[13px] text-slate-500">{getStepDesc()}</p>
           </div>
         </div>
       )}
@@ -401,63 +747,102 @@ export default function RequestAServiceForm() {
       {/* Form body */}
       <div className="px-8 pb-8 pt-6">
 
-        {/* ─── STEP 1 : Service & client type ─── */}
-        {!isSuccess && step === 1 && (
+        {/* ─── STEP 1: Service + client type ─── */}
+        {!isSuccess && uiStep === 1 && (
           <div
             key={`step1-${shakeKey}`}
-            className={`animate-inscription-fade-up ${shakeStep === 1 ? 'inscription-shake' : ''}`}
+            className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
           >
-            {/* Service select */}
             <div className="mb-5">
               <FieldLabel required>Catégorie de service</FieldLabel>
-              <SelectField
-                name="service"
-                value={values.service}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={!!(touched.service && errors.service)}
-              >
-                <option value="">— Choisir un service —</option>
-                {SERVICE_GROUPS.map((g) => (
-                  <optgroup key={g.group} label={g.group}>
-                    {g.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </SelectField>
-              {touched.service && errors.service && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.service}</p>
+              <ReactSelect<ServiceOption, false>
+                instanceId="service"
+                options={serviceOptions}
+                value={serviceOptions.find((o) => o.value === service) ?? null}
+                onChange={(opt) => setService(opt?.value ?? '')}
+                onBlur={() => setServiceTouched(true)}
+                placeholder="— Choisir un service —"
+                isLoading={isServicesLoading}
+                loadingMessage={() => 'Chargement…'}
+                noOptionsMessage={() =>
+                  isServicesError ? 'Erreur de chargement' : 'Aucune option'
+                }
+                menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                menuPosition="fixed"
+                styles={buildServiceSelectStyles(!!(serviceTouched && !service))}
+                formatOptionLabel={({ label, image }) => (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={label}
+                        style={{
+                          width: 28,
+                          height: 28,
+                          objectFit: 'contain',
+                          borderRadius: 6,
+                          flexShrink: 0,
+                          background: 'var(--color-slate-100)',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 6,
+                          background: 'var(--color-slate-100)',
+                          flexShrink: 0,
+                        }}
+                      />
+                    )}
+                    <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
+                  </div>
+                )}
+              />
+              {serviceTouched && !service && (
+                <p className="mt-1 text-[11px] text-red-500">Veuillez choisir un service</p>
               )}
             </div>
 
-            {/* Client type */}
             <div className="mb-5">
               <FieldLabel required>Vous êtes</FieldLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {(
                   [
-                    { value: 'B2C' as const, emoji: '🏠', label: 'Particulier', desc: 'Pour votre domicile' },
-                    { value: 'B2B' as const, emoji: '🏢', label: 'Entreprise', desc: 'Usage professionnel' },
+                    {
+                      value: 'B2C' as const,
+                      emoji: '🏠',
+                      label: 'Particulier',
+                      desc: 'Pour votre domicile',
+                    },
+                    {
+                      value: 'B2B' as const,
+                      emoji: '🏢',
+                      label: 'Entreprise',
+                      desc: 'Usage professionnel',
+                    },
                   ] as const
                 ).map(({ value, emoji, label, desc }) => {
-                  const isSelected = values.clientType === value
+                  const isSelected = clientType === value
                   return (
                     <button
                       key={value}
                       type="button"
-                      onClick={() => void setFieldValue('clientType', value)}
+                      onClick={() => setClientType(value)}
                       className="cursor-pointer rounded-[12px] border-2 px-4 py-3.5 text-center transition-all duration-200 hover:-translate-y-px"
                       style={{
                         borderColor: isSelected
                           ? 'var(--color-primaryColor)'
-                          : touched.clientType && errors.clientType
+                          : clientTypeTouched && !clientType
                             ? 'var(--color-red-500)'
                             : 'var(--color-slate-200)',
-                        background: isSelected ? 'var(--color-blue-light)' : 'var(--color-slate-50)',
-                        boxShadow: isSelected ? '0 0 0 3px var(--color-primary-dim)' : undefined,
+                        background: isSelected
+                          ? 'var(--color-blue-light)'
+                          : 'var(--color-slate-50)',
+                        boxShadow: isSelected
+                          ? '0 0 0 3px var(--color-primary-dim)'
+                          : undefined,
                         fontFamily: 'inherit',
                       }}
                     >
@@ -468,15 +853,15 @@ export default function RequestAServiceForm() {
                   )
                 })}
               </div>
-              {touched.clientType && errors.clientType && (
-                <p className="mt-1.5 text-[11px] text-red-500">{errors.clientType}</p>
+              {clientTypeTouched && !clientType && (
+                <p className="mt-1.5 text-[11px] text-red-500">Veuillez choisir votre profil</p>
               )}
             </div>
 
             <div className="mt-6">
               <button
                 type="button"
-                onClick={() => void goStep2()}
+                onClick={goNext}
                 className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
@@ -487,145 +872,57 @@ export default function RequestAServiceForm() {
           </div>
         )}
 
-        {/* ─── STEP 2 : Location, date, slot, notes ─── */}
-        {!isSuccess && step === 2 && (
+        {/* ─── DYNAMIC QUESTION STEPS ─── */}
+        {!isSuccess && uiStep >= 2 && uiStep < summaryUiStep && (
           <div
-            key={`step2-${shakeKey}`}
-            className={`animate-inscription-fade-up ${shakeStep === 2 ? 'inscription-shake' : ''}`}
+            key={`step${uiStep}-${shakeKey}`}
+            className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
           >
-            {/* Location */}
-            <div className="mb-5" ref={locWrapRef}>
-              <FieldLabel required>Ville ou code postal</FieldLabel>
-
-              {values.locationText ? (
-                <div
-                  className="flex items-center gap-2.5 rounded-[12px] border-[1.5px] px-4 py-3"
-                  style={{ background: 'var(--color-blue-light)', borderColor: 'rgba(27,79,255,0.2)' }}
+            {isQuestionsLoading ? (
+              <div className="flex items-center justify-center gap-3 py-12 text-[14px] text-slate-500">
+                <svg
+                  className="h-5 w-5 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden
                 >
-                  <FiMapPin size={15} className="shrink-0 text-primaryColor" />
-                  <span className="flex-1 text-[14px] font-semibold text-primaryColor">
-                    {values.locationText}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={clearCity}
-                    className="cursor-pointer text-[22px] leading-none text-primaryColor opacity-70 transition-opacity hover:opacity-100"
-                    aria-label="Modifier la localisation"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Ex : Paris, Lyon, 75008…"
-                    value={locQuery}
-                    onChange={(e) => handleLocInput(e.target.value)}
-                    onBlur={() => void setFieldTouched('locationCode', true)}
-                    autoComplete="off"
-                    className={[
-                      'w-full rounded-[12px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-                      touched.locationCode && errors.locationCode
-                        ? 'border-red-500 bg-red-light'
-                        : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
-                    ].join(' ')}
-                    style={{ fontFamily: 'inherit' }}
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
                   />
-                  <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                    <FiSearch size={15} />
-                  </span>
-
-                  {locOpen && locResults.length > 0 && (
-                    <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 max-h-[220px] overflow-y-auto rounded-[12px] border-[1.5px] border-slate-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
-                      {locResults.map((city) => (
-                        <button
-                          key={city.cp}
-                          type="button"
-                          onClick={() => pickCity(city)}
-                          className="flex w-full cursor-pointer items-center gap-2.5 border-b border-slate-50 px-4 py-2.5 text-left text-[13px] text-slate-700 transition-colors last:border-b-0 hover:bg-blue-light hover:text-primaryColor"
-                          style={{ fontFamily: 'inherit' }}
-                        >
-                          <FiMapPin size={13} className="shrink-0" />
-                          <span className="min-w-[48px] font-bold text-primaryColor">{city.cp}</span>
-                          {city.v}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {touched.locationCode && errors.locationCode && !values.locationText && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.locationCode}</p>
-              )}
-            </div>
-
-            {/* Date + Slot row */}
-            <div className="mb-5 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-              <div>
-                <FieldLabel required>Date souhaitée</FieldLabel>
-                <input
-                  type="date"
-                  name="date"
-                  value={values.date}
-                  min={minDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={[
-                    'w-full cursor-pointer rounded-[12px] border-[1.5px] py-3 pl-4 pr-4 text-[14px] text-slate-900 outline-none transition-all',
-                    touched.date && errors.date
-                      ? 'border-red-500 bg-red-light'
-                      : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
-                  ].join(' ')}
-                  style={{ fontFamily: 'inherit' }}
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Chargement des questions…
+              </div>
+            ) : currentQuestions.length === 0 ? (
+              <p className="py-6 text-center text-[14px] text-slate-500">
+                Aucune question pour cette étape.
+              </p>
+            ) : (
+              currentQuestions.map((q) => (
+                <DynamicQuestionField
+                  key={q._id}
+                  question={q}
+                  value={answers[q._id] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
+                  error={getFieldError(q)}
+                  onChange={(val) => handleAnswer(q._id, val)}
+                  onBlur={() => touchField(q._id)}
                 />
-                {touched.date && errors.date && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.date}</p>
-                )}
-              </div>
+              ))
+            )}
 
-              <div>
-                <FieldLabel required>Créneau horaire</FieldLabel>
-                <SelectField
-                  name="slot"
-                  value={values.slot}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={!!(touched.slot && errors.slot)}
-                >
-                  <option value="">Choisir un créneau</option>
-                  {SLOT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </SelectField>
-                {touched.slot && errors.slot && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.slot}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Notes */}
-            <div className="mb-5">
-              <FieldLabel optional>Détails supplémentaires</FieldLabel>
-              <textarea
-                name="notes"
-                value={values.notes}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Décrivez votre besoin plus précisément : surface, contraintes particulières, matériaux souhaités…"
-                rows={3}
-                className="w-full resize-y rounded-[12px] border-[1.5px] border-slate-200 bg-slate-50 px-4 py-3 text-[14px] leading-[1.6] text-slate-900 outline-none transition-all hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]"
-                style={{ fontFamily: 'inherit', minHeight: 96 }}
-              />
-            </div>
-
-            <div className="flex gap-2.5">
+            <div className="mt-6 flex gap-2.5">
               <button
                 type="button"
-                onClick={() => navTo(1)}
+                onClick={goPrev}
                 className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-slate-200 bg-white px-5 py-3.5 text-[14px] font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
                 style={{ fontFamily: 'inherit' }}
               >
@@ -634,27 +931,36 @@ export default function RequestAServiceForm() {
               </button>
               <button
                 type="button"
-                onClick={() => void goStep3()}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                onClick={goNext}
+                disabled={isQuestionsLoading}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
-                Vérifier ma demande
+                {uiStep === summaryUiStep - 1 ? 'Vérifier ma demande' : 'Continuer'}
                 <FiArrowRight size={16} strokeWidth={2.5} />
               </button>
             </div>
           </div>
         )}
 
-        {/* ─── STEP 3 : Summary & confirm ─── */}
-        {!isSuccess && step === 3 && (
+        {/* ─── SUMMARY ─── */}
+        {!isSuccess && uiStep === summaryUiStep && (
           <div
-            key={`step3-${shakeKey}`}
-            className={`animate-inscription-fade-up ${shakeStep === 3 ? 'inscription-shake' : ''}`}
+            key={`summary-${shakeKey}`}
+            className="animate-inscription-fade-up"
           >
             <div className="mb-5 overflow-hidden rounded-[12px] border border-slate-100 bg-slate-50">
               <SummaryRow
                 icon={
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
                     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                   </svg>
                 }
@@ -663,7 +969,15 @@ export default function RequestAServiceForm() {
               />
               <SummaryRow
                 icon={
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
@@ -671,56 +985,26 @@ export default function RequestAServiceForm() {
                 label="Profil"
                 value={sumType}
               />
-              <SummaryRow
-                icon={
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                  </svg>
-                }
-                label="Localisation"
-                value={values.locationText || '—'}
-              />
-              <SummaryRow
-                icon={
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
-                    <rect x="3" y="4" width="18" height="18" rx="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                }
-                label="Date"
-                value={formatDate(values.date)}
-              />
-              <SummaryRow
-                icon={
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12,6 12,12 16,14" />
-                  </svg>
-                }
-                label="Créneau"
-                value={SLOT_LABEL_MAP[values.slot] ?? '—'}
-              />
-              {values.notes.trim() && (
-                <div className="flex items-start justify-between gap-3 px-4 py-3">
-                  <span className="flex shrink-0 items-center gap-2 text-[13px] text-slate-500">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14,2 14,8 20,8" />
-                    </svg>
-                    Notes
-                  </span>
-                  <span className="max-w-[240px] text-right text-[12px] text-slate-500">
-                    {values.notes.length > 80 ? `${values.notes.slice(0, 80)}…` : values.notes}
-                  </span>
-                </div>
-              )}
+              {questionsList.map((q) => {
+                const val = answers[q._id]
+                if (!val || (Array.isArray(val) && val.length === 0)) return null
+                return (
+                  <SummaryRow
+                    key={q._id}
+                    icon={IconInfo}
+                    label={q.label}
+                    value={formatAnswerForDisplay(q, val)}
+                  />
+                )
+              })}
             </div>
 
             <div
               className="mb-5 flex gap-3 rounded-[12px] border-[1.5px] p-4 text-primaryColor"
-              style={{ background: 'var(--color-blue-light)', borderColor: 'rgba(27,79,255,0.15)' }}
+              style={{
+                background: 'var(--color-blue-light)',
+                borderColor: 'rgba(27,79,255,0.15)',
+              }}
             >
               <FiInfo size={16} className="mt-0.5 shrink-0" aria-hidden />
               <p className="text-[13px] leading-[1.6]">
@@ -732,7 +1016,7 @@ export default function RequestAServiceForm() {
             <div className="flex gap-2.5">
               <button
                 type="button"
-                onClick={() => navTo(2)}
+                onClick={goPrev}
                 className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-slate-200 bg-white px-5 py-3.5 text-[14px] font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
                 style={{ fontFamily: 'inherit' }}
               >
@@ -741,7 +1025,10 @@ export default function RequestAServiceForm() {
               </button>
               <button
                 type="button"
-                onClick={() => formik.handleSubmit()}
+                onClick={() => {
+                  setIsSuccess(true)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
                 className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
@@ -766,7 +1053,10 @@ export default function RequestAServiceForm() {
               Demande envoyée !
             </h3>
 
-            <p className="mx-auto mb-7 text-[14px] leading-[1.65] text-slate-500" style={{ maxWidth: 360 }}>
+            <p
+              className="mx-auto mb-7 text-[14px] leading-[1.65] text-slate-500"
+              style={{ maxWidth: 360 }}
+            >
               Votre demande a bien été transmise. Les professionnels vérifiés vont vous envoyer
               leurs devis sous 24h.
             </p>

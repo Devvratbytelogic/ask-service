@@ -1,12 +1,12 @@
 import type { StylesConfig } from 'react-select'
 
-export type CategoryOption = { value: string; label: string; image: string | null }
+export type ServiceOption = { value: string; label: string; image: string | null }
 
-export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOption, true> {
+export function buildServiceSelectStyles(hasError: boolean): StylesConfig<ServiceOption, false> {
   return {
     control: (base, state) => ({
       ...base,
-      borderRadius: 10,
+      borderRadius: 12,
       borderWidth: 1.5,
       borderStyle: 'solid',
       borderColor: hasError
@@ -24,7 +24,7 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
         : state.isFocused
           ? '0 0 0 3px var(--color-primary-dim)'
           : 'none',
-      minHeight: 44,
+      minHeight: 46,
       fontFamily: 'inherit',
       fontSize: 14,
       transition: 'all 0.15s ease',
@@ -34,12 +34,19 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
           ? 'var(--color-red-500)'
           : state.isFocused
             ? 'var(--color-primaryColor)'
-            : 'var(--color-slate-300)',
+            : 'var(--color-slate-400)',
+        backgroundColor: state.isFocused ? 'white' : 'white',
       },
     }),
     placeholder: (base) => ({
       ...base,
       color: 'var(--color-slate-400)',
+      fontSize: 14,
+      fontFamily: 'inherit',
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: 'var(--color-slate-900)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
@@ -54,7 +61,6 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     valueContainer: (base) => ({
       ...base,
       padding: '4px 14px',
-      gap: 4,
     }),
     dropdownIndicator: (base) => ({
       ...base,
@@ -67,7 +73,7 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     }),
     menu: (base) => ({
       ...base,
-      borderRadius: 10,
+      borderRadius: 12,
       border: '1.5px solid var(--color-slate-200)',
       boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
       zIndex: 20,
@@ -84,47 +90,14 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       fontFamily: 'inherit',
       padding: '8px 10px',
       backgroundColor: state.isSelected
-        ? 'var(--color-amber-light)'
+        ? 'var(--color-blue-light)'
         : state.isFocused
           ? 'var(--color-slate-50)'
           : 'transparent',
-      color: state.isSelected ? 'var(--color-amber-dark)' : 'var(--color-slate-900)',
+      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--color-slate-900)',
+      fontWeight: state.isSelected ? 600 : 400,
       cursor: 'pointer',
     }),
-    groupHeading: (base) => ({
-      ...base,
-      fontSize: 11,
-      fontWeight: 700,
-      color: 'var(--color-slate-400)',
-      textTransform: 'uppercase',
-      letterSpacing: '0.06em',
-      padding: '6px 10px 3px',
-      fontFamily: 'inherit',
-    }),
-    multiValue: (base) => ({
-      ...base,
-      backgroundColor: 'var(--color-amber-light)',
-      borderRadius: 99,
-      overflow: 'hidden',
-      margin: '2px',
-    }),
-    multiValueLabel: (base) => ({
-      ...base,
-      color: 'var(--color-amber-dark)',
-      fontSize: 12,
-      fontWeight: 600,
-      padding: '2px 4px 2px 8px',
-      fontFamily: 'inherit',
-    }),
-    multiValueRemove: (base) => ({
-      ...base,
-      color: 'var(--color-amber-dark)',
-      borderRadius: '0 99px 99px 0',
-      paddingRight: 6,
-      '&:hover': {
-        backgroundColor: 'rgba(245,158,11,0.2)',
-        color: 'var(--color-amber-dark)',
-      },
-    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
   }
 }
