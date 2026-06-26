@@ -195,17 +195,17 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 method: 'GET',
             }),
         }),
-        getCreatedServices: builder.query<IAllRequestsAPIResponse, { search?: string | null; service?: string | null; status?: string; fromDate?: string | null; toDate?: string | null; page?: number; limit?: number } | void>({
+        getCreatedServices: builder.query<IAllRequestsAPIResponse, { search?: string | null; service?: string | null; status?: string; city?: string | null; sort?: string | null; page?: number; limit?: number } | void>({
             query: (arg) => {
                 const params: Record<string, string | number> = {
                     page: arg?.page ?? 1,
                     limit: arg?.limit ?? 10,
                 };
-                if (arg?.status != null && String(arg.status).trim() !== '') params.status = String(arg.status).trim();
-                if (arg?.search != null && String(arg.search).trim() !== '') params.search = String(arg.search).trim();
-                if (arg?.service != null && String(arg.service).trim() !== '') params.service = String(arg.service).trim();
-                if (arg?.fromDate != null && String(arg.fromDate).trim() !== '') params.fromDate = String(arg.fromDate).trim();
-                if (arg?.toDate != null && String(arg.toDate).trim() !== '') params.toDate = String(arg.toDate).trim();
+                if (arg?.status != null && String(arg.status)?.trim() !== '') params.status = String(arg.status)?.trim();
+                if (arg?.search != null && String(arg.search)?.trim() !== '') params.search = String(arg.search)?.trim();
+                if (arg?.service != null && String(arg.service)?.trim() !== '') params.service = String(arg.service)?.trim();
+                if (arg?.city != null && String(arg.city)?.trim() !== '') params.city = String(arg.city)?.trim();
+                if (arg?.sort != null && String(arg.sort)?.trim() !== '') params.sort = String(arg.sort)?.trim();
                 return {
                     url: `/user/get-created-services`,
                     method: 'GET',

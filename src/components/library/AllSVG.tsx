@@ -833,3 +833,40 @@ export function UsersGroupIconSVG({ size = 14 }: { size?: number }) {
         </svg>
     )
 }
+export function LocationIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0" aria-hidden="true">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+        </svg>
+    )
+}
+export function CalendarIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+    )
+}
+export function FileIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v13a2 2 0 0 1-2 2z" />
+        </svg>
+    )
+}
+export function ClockCircleOutlineIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-appTextMuted shrink-0" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12,6 12,12 16,14" />
+        </svg>
+    )
+}
+export function ChevronIconSVG({ size = 12 }: { size?: number }) {
+    return (
+        <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+        </svg>
+    )
+}

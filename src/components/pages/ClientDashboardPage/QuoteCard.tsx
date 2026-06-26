@@ -1,93 +1,95 @@
 'use client'
 
-export type QuoteData = {
-    id: string
-    vendorInitial: string
-    vendorAvatarColor: string
-    vendorName: string
-    rating: number
-    ratingCount: string
-    amount: string
-    unit: string
-    description: string
-    isBest?: boolean
-    isAccepted?: boolean
-}
+import moment from 'moment'
+import { QuotesEntity } from '@/types/allRequests'
 
-type QuoteCardProps = QuoteData & {
+interface QuoteCardProps {
+    quoteData: QuotesEntity | null
     onAccept?: (e: React.MouseEvent) => void
     onIgnore?: (e: React.MouseEvent) => void
 }
 
-export default function QuoteCard({
-    vendorInitial,
-    vendorAvatarColor,
-    vendorName,
-    rating,
-    ratingCount,
-    amount,
-    unit,
-    description,
-    isBest,
-    isAccepted,
-    onAccept,
-    onIgnore,
-}: QuoteCardProps) {
-    const fullStars = Math.min(5, Math.floor(rating))
+const AVATAR_COLORS = ['#16A34A', '#2563EB', '#7C3AED', '#DC2626', '#0369A1', '#D97706', '#0891B2']
+
+function getAvatarColor(seed: string): string {
+    let hash = 0
+    for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash)
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
+export default function QuoteCard({ onAccept, onIgnore, quoteData }: QuoteCardProps) {
+    if (!quoteData) return null
+
+    const isAccepted = quoteData?.status === 'accepted'
+    const vendorName = quoteData?.provider_name ||
+        `${quoteData?.vendor?.first_name ?? ''} ${quoteData?.vendor?.last_name ?? ''}`.trim()
+    const vendorInitial = vendorName.charAt(0).toUpperCase()
+    const avatarColor = getAvatarColor(quoteData?.vendor_id || vendorName)
+    const rating = quoteData?.rating as number | null
+    const fullStars = rating ? Math.min(5, Math.floor(rating)) : 0
     const emptyStars = 5 - fullStars
 
     return (
         <div
-            className={`rounded-xl p-3.5 border transition-all duration-200 ${
-                isBest || isAccepted
-                    ? 'bg-[#0D2018] border-trust-green/30'
-                    : 'bg-[#161D2B] border-white/7 hover:border-white/12'
-            }`}
+            className={`rounded-xl p-3.5 border transition-all duration-200 ${isAccepted
+                ? 'bg-trust-green/8 border-trust-green/30'
+                : 'bg-appCard border-appBorder hover:border-appBorder hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] dark:hover:shadow-[0_4px_14px_rgba(0,0,0,0.25)]'
+                }`}
         >
             {/* Vendor info + badge */}
             <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2">
                     <span
                         className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{ backgroundColor: vendorAvatarColor }}
+                        style={{ backgroundColor: avatarColor }}
                     >
                         {vendorInitial}
                     </span>
                     <div>
-                        <p className="text-[13px] font-bold text-white leading-none mb-0.5">{vendorName}</p>
+                        <p className="text-[13px] font-bold text-appText leading-none mb-0.5">{vendorName}</p>
                         <p className="text-[11px] flex items-center gap-0.5">
+                            {/* {rating !== null && ( */}
                             <span className="text-amber">
-                                {'★'.repeat(fullStars)}
-                                {'☆'.repeat(emptyStars)}
+                                {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
                             </span>
-                            <span className="text-white/30 ml-1">{ratingCount}</span>
+                            {/* )} */}
+                            <span className="text-appTextMuted ml-1">
+                                {quoteData?.reviews_count > 0
+                                    ? `${quoteData?.reviews_count} avis`
+                                    : ''}
+
+                            </span>
                         </p>
                     </div>
                 </div>
-                {isBest && !isAccepted && (
-                    <span className="text-[9px] font-extrabold uppercase tracking-[0.5px] bg-trust-green/15 text-[#6EE7B7] border border-trust-green/20 px-[7px] py-[2px] rounded-[4px]">
-                        Meilleur
-                    </span>
-                )}
-                {isAccepted && (
-                    <span className="text-[9px] font-extrabold uppercase tracking-[0.5px] bg-primaryColor/15 text-[#93C5FD] border border-primaryColor/20 px-[7px] py-[2px] rounded-[4px]">
+
+                {isAccepted ? (
+                    <span className="text-[9px] font-extrabold uppercase tracking-[0.5px] bg-primaryColor/15 text-primaryColor border border-primaryColor/20 px-[7px] py-[2px] rounded-[4px]">
                         Accepté
                     </span>
-                )}
+                ) : null}
             </div>
 
-            {/* Amount */}
-            <p className="text-2xl font-extrabold tracking-tight text-white mb-1.5 leading-none">
-                {amount}{' '}
-                <span className="text-sm font-medium text-white/40">{unit}</span>
+            {/* Price */}
+            <p className="text-2xl font-extrabold tracking-tight text-appText mb-1 leading-none">
+                {quoteData?.price_display}
             </p>
 
+            {/* Availability */}
+            {quoteData?.available_start_date && (
+                <p className="text-[11px] text-appTextMuted mb-1.5">
+                    Disponible le {moment(quoteData.available_start_date).format('D MMM YYYY')}
+                </p>
+            )}
+
             {/* Description */}
-            <p className="text-xs text-white/40 leading-relaxed mb-3 line-clamp-2">{description}</p>
+            <p className="text-xs text-appTextSec leading-relaxed mb-3 line-clamp-2">
+                {quoteData?.service_description}
+            </p>
 
             {/* Action buttons */}
             {isAccepted ? (
-                <div className="flex items-center gap-1 text-xs text-[#6EE7B7] px-2.5 py-2 bg-trust-green/8 rounded-lg">
+                <div className="flex items-center gap-1 text-xs text-trust-green px-2.5 py-2 bg-trust-green/10 border border-trust-green/20 rounded-lg">
                     <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                         <polyline points="20,6 9,17 4,12" />
                     </svg>
@@ -108,7 +110,7 @@ export default function QuoteCard({
                     <button
                         type="button"
                         onClick={onIgnore}
-                        className="px-2.5 py-2 rounded-lg bg-white/4 border border-white/8 text-white/40 text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-white/8 hover:text-white/70"
+                        className="px-2.5 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/8 hover:text-appText"
                     >
                         Ignorer
                     </button>

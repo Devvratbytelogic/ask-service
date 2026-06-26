@@ -3,205 +3,178 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { getCreateRequestRoutePath } from '@/routes/routes'
-import DemandCard, { DemandData } from './DemandCard'
+import DemandCard from './DemandCard'
+import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
+import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
-const DEMANDS: DemandData[] = [
-    {
-        id: '1',
-        icon: '🧹',
-        iconBg: 'rgba(16,185,129,0.12)',
-        title: 'Nettoyage de bureaux',
-        status: 'open',
-        location: 'Paris 8e · 75008',
-        date: '29 Avril · Matin',
-        type: 'B2B · ~120 m²',
-        timeAgo: 'Il y a 2 jours',
-        quotesCount: 4,
-        newQuotesCount: 3,
-        quotes: [
-            {
-                id: 'q1',
-                vendorInitial: 'N',
-                vendorAvatarColor: '#16A34A',
-                vendorName: 'Nicolas M.',
-                rating: 5,
-                ratingCount: '4.9 · 56 missions',
-                amount: '180€',
-                unit: '/ intervention',
-                description:
-                    'Nettoyage complet bureaux 120m², produits inclus, intervention en 3h. Disponible dès le 29 avril matin.',
-                isBest: true,
-            },
-            {
-                id: 'q2',
-                vendorInitial: 'P',
-                vendorAvatarColor: '#2563EB',
-                vendorName: 'ProClean Paris',
-                rating: 4,
-                ratingCount: '4.2 · 23 missions',
-                amount: '220€',
-                unit: '/ intervention',
-                description:
-                    'Société spécialisée bureaux et tertiaire. Équipe de 2 personnes, matériel professionnel fourni.',
-            },
-            {
-                id: 'q3',
-                vendorInitial: 'K',
-                vendorAvatarColor: '#7C3AED',
-                vendorName: 'Karim B.',
-                rating: 5,
-                ratingCount: '4.8 · 41 missions',
-                amount: '195€',
-                unit: '/ intervention',
-                description:
-                    "Nettoyage professionnel bureaux, remise d'une facture, disponibilité flexible selon vos horaires.",
-            },
-        ],
-    },
-    {
-        id: '2',
-        icon: '🌿',
-        iconBg: 'rgba(16,185,129,0.12)',
-        title: 'Entretien jardin',
-        status: 'accepted',
-        location: 'Versailles · 78000',
-        date: '2 Mai · Matin',
-        type: 'B2C · 800 m²',
-        timeAgo: 'Il y a 4 jours',
-        quotesCount: 3,
-        acceptedBanner: {
-            vendorName: 'Thomas G.',
-            amount: '150€',
-            confirmedText: 'Mission confirmée pour le 2 Mai · Contact transmis',
-        },
-        quotes: [
-            {
-                id: 'q4',
-                vendorInitial: 'T',
-                vendorAvatarColor: '#16A34A',
-                vendorName: 'Thomas G.',
-                rating: 5,
-                ratingCount: '4.9 · 34 missions',
-                amount: '150€',
-                unit: '/ journée',
-                description: 'Tonte, taille haies, désherbage 800m². Matériel pro inclus.',
-                isAccepted: true,
-            },
-        ],
-    },
-    {
-        id: '3',
-        icon: '🔒',
-        iconBg: 'rgba(27,79,255,0.12)',
-        title: 'Gardiennage résidence',
-        status: 'pending',
-        location: 'Paris 15e · 75015',
-        date: '5 Mai · Toute la journée',
-        type: 'B2B · 2 agents',
-        timeAgo: 'Il y a 6 heures',
-        quotesCount: 0,
-        emptyQuotesMessage:
-            'Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.',
-        quotes: [],
-    },
-    {
-        id: '4',
-        icon: '📦',
-        iconBg: 'rgba(249,115,22,0.12)',
-        title: 'Déménagement appartement',
-        status: 'open',
-        location: 'Paris 14e → Lyon 6e',
-        date: '10 Mai · Journée',
-        type: 'T3 · 65 m²',
-        timeAgo: 'Il y a 1 jour',
-        quotesCount: 2,
-        quotes: [
-            {
-                id: 'q5',
-                vendorInitial: 'A',
-                vendorAvatarColor: '#DC2626',
-                vendorName: 'Alpha Déménagement',
-                rating: 4,
-                ratingCount: '4.3 · 78 missions',
-                amount: '650€',
-                unit: '/ déménagement',
-                description:
-                    'Camion 20m³, équipe 3 personnes, Paris-Lyon. Chargement et déchargement inclus.',
-            },
-            {
-                id: 'q6',
-                vendorInitial: 'S',
-                vendorAvatarColor: '#0369A1',
-                vendorName: 'StarMove Pro',
-                rating: 5,
-                ratingCount: '4.8 · 45 missions',
-                amount: '580€',
-                unit: '/ déménagement',
-                description:
-                    'Service complet avec emballage, camion 25m³, assurance incluse. Délai garanti.',
-                isBest: true,
-            },
-        ],
-    },
-    {
-        id: '5',
-        icon: '🔧',
-        iconBg: 'rgba(255,255,255,0.05)',
-        title: 'Fuite plomberie',
-        status: 'closed',
-        location: 'Paris 11e · 75011',
-        date: '15 Avril · Passé',
-        timeAgo: 'Il y a 13 jours',
-        quotesCount: 5,
-        acceptedBanner: {
-            vendorName: 'Marc D.',
-            amount: '280€',
-            confirmedText: 'Demande fermée le 16 Avril · Mission accomplie',
-        },
-        quotes: [],
-    },
-]
+// const DEMANDS: DemandData[] = [
+//     {
+//         id: '1',
+//         icon: '🧹',
+//         iconBg: 'rgba(16,185,129,0.12)',
+//         title: 'Nettoyage de bureaux',
+//         status: 'open',
+//         location: 'Paris 8e · 75008',
+//         date: '29 Avril · Matin',
+//         type: 'B2B · ~120 m²',
+//         timeAgo: 'Il y a 2 jours',
+//         quotesCount: 4,
+//         newQuotesCount: 3,
+//         quotes: [
+//             {
+//                 id: 'q1',
+//                 vendorInitial: 'N',
+//                 vendorAvatarColor: '#16A34A',
+//                 vendorName: 'Nicolas M.',
+//                 rating: 5,
+//                 ratingCount: '4.9 · 56 missions',
+//                 amount: '180€',
+//                 unit: '/ intervention',
+//                 description:
+//                     'Nettoyage complet bureaux 120m², produits inclus, intervention en 3h. Disponible dès le 29 avril matin.',
+//                 isBest: true,
+//             },
+//             {
+//                 id: 'q2',
+//                 vendorInitial: 'P',
+//                 vendorAvatarColor: '#2563EB',
+//                 vendorName: 'ProClean Paris',
+//                 rating: 4,
+//                 ratingCount: '4.2 · 23 missions',
+//                 amount: '220€',
+//                 unit: '/ intervention',
+//                 description:
+//                     'Société spécialisée bureaux et tertiaire. Équipe de 2 personnes, matériel professionnel fourni.',
+//             },
+//             {
+//                 id: 'q3',
+//                 vendorInitial: 'K',
+//                 vendorAvatarColor: '#7C3AED',
+//                 vendorName: 'Karim B.',
+//                 rating: 5,
+//                 ratingCount: '4.8 · 41 missions',
+//                 amount: '195€',
+//                 unit: '/ intervention',
+//                 description:
+//                     "Nettoyage professionnel bureaux, remise d'une facture, disponibilité flexible selon vos horaires.",
+//             },
+//         ],
+//     },
+//     {
+//         id: '2',
+//         icon: '🌿',
+//         iconBg: 'rgba(16,185,129,0.12)',
+//         title: 'Entretien jardin',
+//         status: 'accepted',
+//         location: 'Versailles · 78000',
+//         date: '2 Mai · Matin',
+//         type: 'B2C · 800 m²',
+//         timeAgo: 'Il y a 4 jours',
+//         quotesCount: 3,
+//         acceptedBanner: {
+//             vendorName: 'Thomas G.',
+//             amount: '150€',
+//             confirmedText: 'Mission confirmée pour le 2 Mai · Contact transmis',
+//         },
+//         quotes: [
+//             {
+//                 id: 'q4',
+//                 vendorInitial: 'T',
+//                 vendorAvatarColor: '#16A34A',
+//                 vendorName: 'Thomas G.',
+//                 rating: 5,
+//                 ratingCount: '4.9 · 34 missions',
+//                 amount: '150€',
+//                 unit: '/ journée',
+//                 description: 'Tonte, taille haies, désherbage 800m². Matériel pro inclus.',
+//                 isAccepted: true,
+//             },
+//         ],
+//     },
+//     {
+//         id: '3',
+//         icon: '🔒',
+//         iconBg: 'rgba(27,79,255,0.12)',
+//         title: 'Gardiennage résidence',
+//         status: 'pending',
+//         location: 'Paris 15e · 75015',
+//         date: '5 Mai · Toute la journée',
+//         type: 'B2B · 2 agents',
+//         timeAgo: 'Il y a 6 heures',
+//         quotesCount: 0,
+//         emptyQuotesMessage:
+//             'Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.',
+//         quotes: [],
+//     },
+//     {
+//         id: '4',
+//         icon: '📦',
+//         iconBg: 'rgba(249,115,22,0.12)',
+//         title: 'Déménagement appartement',
+//         status: 'open',
+//         location: 'Paris 14e → Lyon 6e',
+//         date: '10 Mai · Journée',
+//         type: 'T3 · 65 m²',
+//         timeAgo: 'Il y a 1 jour',
+//         quotesCount: 2,
+//         quotes: [
+//             {
+//                 id: 'q5',
+//                 vendorInitial: 'A',
+//                 vendorAvatarColor: '#DC2626',
+//                 vendorName: 'Alpha Déménagement',
+//                 rating: 4,
+//                 ratingCount: '4.3 · 78 missions',
+//                 amount: '650€',
+//                 unit: '/ déménagement',
+//                 description:
+//                     'Camion 20m³, équipe 3 personnes, Paris-Lyon. Chargement et déchargement inclus.',
+//             },
+//             {
+//                 id: 'q6',
+//                 vendorInitial: 'S',
+//                 vendorAvatarColor: '#0369A1',
+//                 vendorName: 'StarMove Pro',
+//                 rating: 5,
+//                 ratingCount: '4.8 · 45 missions',
+//                 amount: '580€',
+//                 unit: '/ déménagement',
+//                 description:
+//                     'Service complet avec emballage, camion 25m³, assurance incluse. Délai garanti.',
+//                 isBest: true,
+//             },
+//         ],
+//     },
+//     {
+//         id: '5',
+//         icon: '🔧',
+//         iconBg: 'rgba(255,255,255,0.05)',
+//         title: 'Fuite plomberie',
+//         status: 'closed',
+//         location: 'Paris 11e · 75011',
+//         date: '15 Avril · Passé',
+//         timeAgo: 'Il y a 13 jours',
+//         quotesCount: 5,
+//         acceptedBanner: {
+//             vendorName: 'Marc D.',
+//             amount: '280€',
+//             confirmedText: 'Demande fermée le 16 Avril · Mission accomplie',
+//         },
+//         quotes: [],
+//     },
+// ]
 
-const STATS = [
-    {
-        icon: '📋',
-        iconBg: 'rgba(27,79,255,0.15)',
-        value: '5',
-        valueColor: 'text-appText',
-        label: 'Demandes actives',
-        linkText: 'En cours de traitement',
-        linkColor: 'text-[#93C5FD]',
-    },
-    {
-        icon: '📩',
-        iconBg: 'rgba(245,158,11,0.15)',
-        value: '12',
-        valueColor: 'text-amber',
-        label: 'Devis reçus',
-        linkText: "3 nouveaux aujourd'hui",
-        linkColor: 'text-amber',
-    },
-    {
-        icon: '✅',
-        iconBg: 'rgba(16,185,129,0.15)',
-        value: '2',
-        valueColor: 'text-[#6EE7B7]',
-        label: 'Devis acceptés',
-        linkText: 'Missions en cours',
-        linkColor: 'text-[#6EE7B7]',
-    },
-    {
-        icon: '🗂️',
-        iconBg: 'rgba(0,0,0,0.06)',
-        value: '3',
-        valueColor: 'text-appText',
-        label: 'Demandes fermées',
-        linkText: "Voir l'historique",
-        linkColor: 'text-appTextMuted',
-    },
-]
+type StatConfig = {
+    icon: string
+    iconBg: string
+    value: number
+    valueColor: string
+    label: string
+    linkText: string
+    linkColor: string
+}
 
 type TabKey = 'all' | 'open' | 'devis' | 'closed'
 
@@ -216,7 +189,12 @@ const SERVICE_OPTIONS = [
 
 const CITY_OPTIONS = ['Toutes les villes', 'Paris', 'Lyon', 'Marseille']
 
-const SORT_OPTIONS = ['Trier par date', 'Plus récent', 'Plus ancien', 'Plus de devis']
+const SORT_OPTIONS = [
+    { value: '', label: 'Trier par date' },
+    { value: 'most_recent', label: 'Plus récent' },
+    { value: 'oldest', label: 'Plus ancien' },
+    { value: 'most_quotes', label: 'Plus de devis' },
+]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -236,7 +214,7 @@ function StatCard({
     label,
     linkText,
     linkColor,
-}: (typeof STATS)[0]) {
+}: StatConfig) {
     return (
         <div className="bg-appCard border border-appBorder rounded-2xl px-5 py-[18px] cursor-pointer transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
             <div
@@ -260,44 +238,85 @@ function StatCard({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ClientDashboard() {
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    const { data: globalSettings } = useGetGlobalSettingsQuery()
+    const quoteExpired = globalSettings?.data?.quote_expired ?? 7
+
     const [expandedId, setExpandedId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<TabKey>('all')
     const [searchQuery, setSearchQuery] = useState('')
-    const [serviceFilter, setServiceFilter] = useState('Tous les services')
-    const [cityFilter, setCityFilter] = useState('Toutes les villes')
+    const [serviceFilter, setServiceFilter] = useState<string>('all')
+    const [cityFilter, setCityFilter] = useState<string>('all')
+    const [page, setPage] = useState(1)
+    const [sortFilter, setSortFilter] = useState<string>('')
 
-    const tabCounts = useMemo(
-        () => ({
-            all: DEMANDS.length,
-            open: DEMANDS.filter((d) => d.status === 'open' || d.status === 'pending').length,
-            devis: DEMANDS.reduce((sum, d) => sum + d.quotesCount, 0),
-            closed: DEMANDS.filter((d) => d.status === 'closed').length,
-        }),
-        [],
-    )
+    const { data, isLoading, isError } = useGetCreatedServicesQuery({
+        ...(searchQuery && { search: searchQuery }),
+        ...(activeTab !== 'all' && { status: activeTab === 'open' ? 'ACTIVE' : activeTab === 'devis' ? 'QUOTED' : 'CLOSED' }),
+        ...(serviceFilter !== 'all' && { service: serviceFilter }),
+        ...(cityFilter !== 'all' && { city: cityFilter }),
+        ...(sortFilter !== '' && { sort: sortFilter }),
+        page,
+        limit: 5,
+    })
+    const apiData = data?.data
+    const requests = apiData?.data ?? []
+    const summary = apiData?.summary
+    const totalPages = apiData?.pagination?.totalPages ?? 0
+    const totalCount = apiData?.pagination?.total ?? 0
 
-    const filteredDemands = useMemo(() => {
-        return DEMANDS.filter((demand) => {
-            if (activeTab === 'open' && demand.status !== 'open' && demand.status !== 'pending')
-                return false
-            if (activeTab === 'devis' && demand.quotesCount === 0) return false
-            if (activeTab === 'closed' && demand.status !== 'closed') return false
-            if (searchQuery && !demand.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                return false
-            if (serviceFilter !== 'Tous les services') {
-                const serviceLabel = serviceFilter.replace(/^[^\s]+\s/, '').toLowerCase()
-                if (!demand.title.toLowerCase().includes(serviceLabel)) return false
-            }
-            if (cityFilter !== 'Toutes les villes') {
-                if (!demand.location.toLowerCase().includes(cityFilter.toLowerCase())) return false
-            }
-            return true
-        })
-    }, [activeTab, searchQuery, serviceFilter, cityFilter])
+    const TAB_COUNTS: Record<TabKey, number> = {
+        all: totalCount,
+        open: summary?.active_requests_count ?? 0,
+        devis: summary?.quotes_received_count ?? 0,
+        closed: summary?.applications_closed_count ?? 0,
+    }
+
+    const STATS: StatConfig[] = [
+        {
+            icon: '📋',
+            iconBg: 'rgba(27,79,255,0.15)',
+            value: summary?.active_requests_count ?? 0,
+            valueColor: 'text-primaryColor',
+            label: 'Demandes actives',
+            linkText: 'En cours de traitement',
+            linkColor: 'text-primaryColor',
+        },
+        {
+            icon: '📩',
+            iconBg: 'rgba(245,158,11,0.15)',
+            value: summary?.quotes_received_count ?? 0,
+            valueColor: 'text-amber',
+            label: 'Devis reçus',
+            linkText: 'Devis en attente',
+            linkColor: 'text-amber',
+        },
+        {
+            icon: '✅',
+            iconBg: 'rgba(16,185,129,0.15)',
+            value: summary?.quotes_accepted_count ?? 0,
+            valueColor: 'text-trust-green',
+            label: 'Devis acceptés',
+            linkText: 'Missions en cours',
+            linkColor: 'text-trust-green',
+        },
+        {
+            icon: '🗂️',
+            iconBg: 'rgba(0,0,0,0.06)',
+            value: summary?.applications_closed_count ?? 0,
+            valueColor: 'text-appText',
+            label: 'Demandes fermées',
+            linkText: "Voir l'historique",
+            linkColor: 'text-appTextMuted',
+        },
+    ]
+
 
     const handleToggle = (id: string) => {
         setExpandedId((prev) => (prev === id ? null : id))
     }
+
+    const resetPage = () => setPage(1)
 
     const TABS: { key: TabKey; label: string }[] = [
         { key: 'all', label: 'Toutes' },
@@ -339,23 +358,23 @@ export default function ClientDashboard() {
                         <button
                             key={key}
                             type="button"
-                            onClick={() => setActiveTab(key)}
-                            className={`flex items-center gap-1.5 px-4 py-[7px] rounded-[8px] text-[13px] font-semibold cursor-pointer transition-all duration-200 ${
-                                activeTab === key
-                                    ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
-                                    : 'text-appTextSec hover:text-appText border border-transparent'
-                            }`}
+                            onClick={() => { setActiveTab(key); resetPage() }}
+                            className={`flex items-center gap-1.5 px-4 py-[7px] rounded-[8px] text-[13px] font-semibold cursor-pointer transition-all duration-200 ${activeTab === key
+                                ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
+                                : 'text-appTextSec hover:text-appText border border-transparent'
+                                }`}
                         >
                             {label}
-                            <span
-                                className={`text-[10px] font-extrabold px-1.5 py-px rounded-full ${
-                                    activeTab === key
-                                        ? 'bg-primaryColor/20 text-[#93C5FD]'
+                            {TAB_COUNTS[key] > 0 && (
+                                <span
+                                    className={`text-[10px] font-extrabold px-1.5 py-px rounded-full ${activeTab === key
+                                        ? 'bg-primaryColor/20 text-primaryColor dark:text-[#93C5FD]'
                                         : 'bg-black/8 dark:bg-white/8 text-appTextSec'
-                                }`}
-                            >
-                                {tabCounts[key]}
-                            </span>
+                                        }`}
+                                >
+                                    {TAB_COUNTS[key]}
+                                </span>
+                            )}
                         </button>
                     ))}
                 </div>
@@ -381,7 +400,7 @@ export default function ClientDashboard() {
                         type="text"
                         placeholder="Rechercher une demande…"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => { setSearchQuery(e.target.value); resetPage() }}
                         className="w-full pl-9 pr-3.5 py-[9px] bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appText placeholder-appTextMuted outline-none transition-all duration-200 focus:border-primaryColor/40 focus:bg-primaryColor/5"
                     />
                 </div>
@@ -389,7 +408,7 @@ export default function ClientDashboard() {
                 {/* Service filter */}
                 <select
                     value={serviceFilter}
-                    onChange={(e) => setServiceFilter(e.target.value)}
+                    onChange={(e) => { setServiceFilter(e.target.value); resetPage() }}
                     className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
                     style={{
                         backgroundImage: selectBgImage,
@@ -407,7 +426,7 @@ export default function ClientDashboard() {
                 {/* City filter */}
                 <select
                     value={cityFilter}
-                    onChange={(e) => setCityFilter(e.target.value)}
+                    onChange={(e) => { setCityFilter(e.target.value); resetPage() }}
                     className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
                     style={{
                         backgroundImage: selectBgImage,
@@ -430,33 +449,108 @@ export default function ClientDashboard() {
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 8px center',
                     }}
+                    onChange={(e) => { setSortFilter(e.target.value); resetPage() }}
+                    value={sortFilter}
                 >
                     {SORT_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} className="bg-appSurface">
-                            {opt}
+                        <option key={opt.value} value={opt.value} className="bg-appSurface">
+                            {opt.label}
                         </option>
                     ))}
                 </select>
             </div>
 
             {/* Demands list */}
-            <div className="flex flex-col gap-3">
-                {filteredDemands.length > 0 ? (
-                    filteredDemands.map((demand) => (
-                        <DemandCard
-                            key={demand.id}
-                            demand={demand}
-                            isExpanded={expandedId === demand.id}
-                            onToggle={() => handleToggle(demand.id)}
-                        />
-                    ))
-                ) : (
-                    <div className="text-center py-16 text-appTextMuted">
-                        <div className="text-4xl mb-3">🔍</div>
-                        <p className="text-sm">Aucune demande ne correspond à votre recherche.</p>
+            {isLoading ? (
+                <DemandListSkeleton count={5} />
+            ) : isError ? (
+                <div className="text-center py-16 text-appTextMuted">
+                    <div className="text-4xl mb-3">⚠️</div>
+                    <p className="text-sm">Une erreur est survenue. Veuillez réessayer.</p>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-3">
+                    {requests?.length > 0 ? (
+                        requests?.map((demand) => (
+                            <DemandCard
+                                key={demand._id}
+                                demand={demand}
+                                isExpanded={expandedId === demand._id}
+                                onToggle={() => handleToggle(demand._id)}
+                            />
+                        ))
+                    ) : (
+                        <div className="text-center py-16 text-appTextMuted">
+                            <div className="text-4xl mb-3">🔍</div>
+                            <p className="text-sm">Aucune demande ne correspond à votre recherche.</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4 mb-2">
+                    <p className="text-[13px] text-appTextMuted">
+                        Page <span className="font-semibold text-appText">{page}</span> sur{' '}
+                        <span className="font-semibold text-appText">{totalPages}</span>
+                        {' '}· <span className="font-semibold text-appText">{totalCount}</span> demandes
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                        <button
+                            type="button"
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="flex items-center gap-1 px-3 py-[7px] rounded-[8px] border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                        >
+                            <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                <path d="M15 18l-6-6 6-6" />
+                            </svg>
+                            Précédent
+                        </button>
+
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                                .reduce<(number | '...')[]>((acc, p, idx, arr) => {
+                                    if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...')
+                                    acc.push(p)
+                                    return acc
+                                }, [])
+                                .map((p, idx) =>
+                                    p === '...' ? (
+                                        <span key={`ellipsis-${idx}`} className="px-1 text-appTextMuted text-[13px]">…</span>
+                                    ) : (
+                                        <button
+                                            key={p}
+                                            type="button"
+                                            onClick={() => setPage(p as number)}
+                                            className={`w-8 h-8 rounded-[8px] text-[13px] font-semibold transition-all duration-200 ${
+                                                page === p
+                                                    ? 'bg-primaryColor text-white shadow-[0_2px_8px_rgba(27,79,255,0.3)]'
+                                                    : 'bg-appCard border border-appBorder text-appTextSec hover:border-primaryColor/40 hover:text-primaryColor'
+                                            }`}
+                                        >
+                                            {p}
+                                        </button>
+                                    )
+                                )}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="flex items-center gap-1 px-3 py-[7px] rounded-[8px] border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                        >
+                            Suivant
+                            <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </button>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* New demand CTA */}
             <div className="mt-3 bg-linear-to-br from-primaryColor/8 to-primaryColor/4 border border-dashed border-primaryColor/20 rounded-2xl px-7 py-7 text-center animate-hero-fade-up">

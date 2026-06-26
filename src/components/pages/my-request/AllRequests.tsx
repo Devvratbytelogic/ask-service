@@ -5,7 +5,7 @@ import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCat
 import { openModal } from '@/redux/slices/allModalSlice'
 import { getCreateRequestRoutePath } from '@/routes/routes'
 import type { RequestServiceFormValues } from '@/components/pages/RequestServiceFlow/RequestServiceFlowIndex'
-import type { DataEntity } from '@/types/allRequests'
+import type { IAllRequestsDataEntity } from '@/types/allRequests'
 import Link from 'next/link'
 import { FiArrowRight, FiEdit2 } from 'react-icons/fi'
 import { Button, Pagination, Spinner, Tooltip } from '@heroui/react'
@@ -24,7 +24,7 @@ function apiDateToInputValue(isoDate?: string | null): string {
 }
 
 /** Map a created-service request to RequestServiceFlowIndex initial form values (for Edit flow). */
-function requestToInitialFormValues(request: DataEntity): RequestServiceFormValues {
+function requestToInitialFormValues(request: IAllRequestsDataEntity): RequestServiceFormValues {
     const cd = request?.contact_details
     const clientType = cd?.client_type === 'Entreprise' || cd?.client_type === 'Company' ? 'Company' : 'Individual'
     const childId = request?.child_category?._id
