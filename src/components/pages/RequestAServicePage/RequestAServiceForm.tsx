@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
-import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo } from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
 import ReactSelect from 'react-select'
 import { getMyRequestRoutePath } from '@/routes/routes'
 import {
@@ -76,7 +76,7 @@ function FieldLabel({
   optional?: boolean
 }) {
   return (
-    <label className="mb-2 block text-[13px] font-semibold tracking-[0.1px] text-slate-700">
+    <label className="mb-2 block text-[13px] font-semibold tracking-[0.1px] text-appText">
       {children}
       {required && <span className="ml-0.5 text-primaryColor">*</span>}
       {optional && (
@@ -96,12 +96,12 @@ function SummaryRow({
   value: string
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0">
-      <span className="flex shrink-0 items-center gap-2 text-[13px] text-slate-500">
+    <div className="flex items-center justify-between gap-3 border-b border-appBorderSub px-4 py-3 last:border-b-0">
+      <span className="flex shrink-0 items-center gap-2 text-[13px] text-appTextSec">
         {icon}
         {label}
       </span>
-      <span className="max-w-[55%] wrap-break-word text-right text-[13px] font-semibold text-slate-900">
+      <span className="max-w-[55%] wrap-break-word text-right text-[13px] font-semibold text-appText">
         {value}
       </span>
     </div>
@@ -110,10 +110,10 @@ function SummaryRow({
 
 function inputCls(hasError: boolean) {
   return [
-    'w-full rounded-[12px] border-[1.5px] py-3 px-4 text-[14px] text-slate-900 outline-none transition-all',
+    'w-full rounded-[12px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all',
     hasError
       ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-      : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-white focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+      : 'border-appBorder bg-appSurface hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
   ].join(' ')
 }
 
@@ -156,10 +156,10 @@ function DynamicQuestionField({
     [
       'flex cursor-pointer items-center gap-2 rounded-[10px] border-2 px-3.5 py-2 text-[13px] font-medium transition-all',
       selected
-        ? 'border-primaryColor bg-blue-light font-semibold text-primaryColor'
+        ? 'border-primaryColor bg-blue-light dark:bg-[rgba(27,79,255,0.2)] font-semibold text-primaryColor'
         : hasError
-          ? 'border-red-200 bg-slate-50 text-slate-700 hover:border-red-300'
-          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400 hover:bg-white',
+          ? 'border-red-200 bg-appSurface text-appText hover:border-red-300'
+          : 'border-appBorder bg-appSurface text-appText hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard',
     ].join(' ')
 
   return (
@@ -342,15 +342,15 @@ function DynamicQuestionField({
             hasError
               ? 'border-red-400 bg-red-light'
               : strVal
-                ? 'border-primaryColor bg-blue-light'
-                : 'border-slate-300 bg-slate-50 hover:border-primaryColor hover:bg-blue-light',
+                ? 'border-primaryColor bg-blue-light dark:bg-[rgba(27,79,255,0.2)]'
+                : 'border-appBorder bg-appSurface hover:border-primaryColor hover:bg-blue-light dark:hover:bg-[rgba(27,79,255,0.2)]',
           ].join(' ')}
         >
           <svg
             width="24"
             height="24"
             fill="none"
-            stroke={strVal ? 'var(--color-primaryColor)' : 'var(--color-slate-400)'}
+            stroke={strVal ? 'var(--color-primaryColor)' : 'var(--app-text-muted)'}
             strokeWidth="1.5"
             viewBox="0 0 24 24"
             aria-hidden
@@ -360,13 +360,13 @@ function DynamicQuestionField({
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
           <span
-            className={`text-[13px] font-semibold ${strVal ? 'text-primaryColor' : 'text-slate-700'}`}
+            className={`text-[13px] font-semibold ${strVal ? 'text-primaryColor' : 'text-appText'}`}
             style={{ fontFamily: 'inherit' }}
           >
             {strVal || 'Choisir un fichier'}
           </span>
           {!strVal && (
-            <span className="text-[11px] text-slate-400">ou glissez-déposez ici</span>
+            <span className="text-[11px] text-appTextMuted">ou glissez-déposez ici</span>
           )}
           <input
             type="file"
@@ -430,6 +430,16 @@ export default function RequestAServiceForm() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
+  // ── Contact step state
+  const [contact, setContact] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    notes: '',
+  })
+  const [contactTouched, setContactTouched] = useState<Set<string>>(new Set())
+
   // ── Questions API (fires once a service is selected)
   const { data: questionsResponse, isLoading: isQuestionsLoading } =
     useGetServicesQuetionsQuery({ id: service }, { skip: !service })
@@ -463,10 +473,12 @@ export default function RequestAServiceForm() {
   }, [questionsList, apiSteps])
 
   // ── Step mapping:
-  //   uiStep 1         → service + clientType
-  //   uiStep 2 … N+1   → API question groups (apiSteps[0] … apiSteps[N-1])
-  //   uiStep N+2       → summary
-  const totalUiSteps = 1 + apiSteps.length + 1
+  //   uiStep 1           → service + clientType
+  //   uiStep 2 … N+1     → API question groups (apiSteps[0] … apiSteps[N-1])
+  //   uiStep N+2         → contact details
+  //   uiStep N+3         → summary
+  const totalUiSteps = 1 + apiSteps.length + 2
+  const contactUiStep = 1 + apiSteps.length + 1
   const summaryUiStep = totalUiSteps
   const progress = Math.round((uiStep / totalUiSteps) * 100)
 
@@ -515,6 +527,20 @@ export default function RequestAServiceForm() {
         return
       }
       navTo(uiStep + 1)
+    } else if (uiStep === contactUiStep) {
+      const requiredFields = ['firstName', 'lastName', 'phone', 'email'] as const
+      setContactTouched(new Set(requiredFields))
+      const hasErr = requiredFields.some((f) => {
+        const val = contact[f]
+        if (!val) return true
+        if (f === 'email') return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+        return false
+      })
+      if (hasErr) {
+        triggerShake()
+        return
+      }
+      navTo(uiStep + 1)
     }
   }
 
@@ -539,14 +565,32 @@ export default function RequestAServiceForm() {
     return undefined
   }
 
+  // ── Contact validation
+  function getContactError(field: keyof typeof contact): string | undefined {
+    if (!contactTouched.has(field)) return undefined
+    if (field === 'notes') return undefined
+    const val = contact[field]
+    if (!val) return 'Ce champ est obligatoire'
+    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+      return 'Adresse email invalide'
+    }
+    return undefined
+  }
+
+  function touchContact(field: keyof typeof contact) {
+    setContactTouched((prev) => new Set([...prev, field]))
+  }
+
   // ── Step header content
   function getStepTitle(): string {
     if (uiStep === 1) return 'Votre besoin'
+    if (uiStep === contactUiStep) return 'Vos coordonnées'
     if (uiStep === summaryUiStep) return 'Récapitulatif'
     return 'Vos informations'
   }
   function getStepDesc(): string {
     if (uiStep === 1) return 'Sélectionnez le service et votre profil.'
+    if (uiStep === contactUiStep) return 'Comment les prestataires peuvent-ils vous contacter ?'
     if (uiStep === summaryUiStep) return 'Vérifiez et confirmez votre demande.'
     return `Étape ${uiStep - 1} sur ${apiSteps.length}`
   }
@@ -584,12 +628,12 @@ export default function RequestAServiceForm() {
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      className="w-full max-w-[620px] overflow-hidden rounded-[24px] border border-slate-200 bg-white"
+      className="w-full max-w-[620px] overflow-hidden rounded-[24px] border border-appBorder bg-appCard"
       style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
     >
       {/* Progress bar */}
       {!isSuccess && (
-        <div className="h-1 bg-slate-100">
+        <div className="h-1 bg-appElevated">
           <div
             className="h-full rounded-r-[2px] transition-[width] duration-500 ease-in-out"
             style={{
@@ -603,7 +647,7 @@ export default function RequestAServiceForm() {
       {/* Step header */}
       {!isSuccess && (
         <div className="flex items-center gap-3.5 px-8 pt-7">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-blue-light text-[15px] font-extrabold text-primaryColor">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[15px] font-extrabold text-primaryColor">
             {uiStep}
           </div>
           <div>
@@ -616,15 +660,15 @@ export default function RequestAServiceForm() {
                       ? 'w-2 bg-trust-green'
                       : i + 1 === uiStep
                         ? 'w-5 bg-primaryColor'
-                        : 'w-2 bg-slate-200'
+                        : 'w-2 bg-slate-200 dark:bg-slate-700'
                   }`}
                 />
               ))}
             </div>
-            <h3 className="text-[18px] font-extrabold tracking-[-0.3px] text-slate-900">
+            <h3 className="text-[18px] font-extrabold tracking-[-0.3px] text-appText">
               {getStepTitle()}
             </h3>
-            <p className="mt-0.5 text-[13px] text-slate-500">{getStepDesc()}</p>
+            <p className="mt-0.5 text-[13px] text-appTextSec">{getStepDesc()}</p>
           </div>
         </div>
       )}
@@ -721,10 +765,10 @@ export default function RequestAServiceForm() {
                           ? 'var(--color-primaryColor)'
                           : clientTypeTouched && !clientType
                             ? 'var(--color-red-500)'
-                            : 'var(--color-slate-200)',
+                            : 'var(--app-border)',
                         background: isSelected
-                          ? 'var(--color-blue-light)'
-                          : 'var(--color-slate-50)',
+                          ? 'var(--color-primary-dim)'
+                          : 'var(--app-surface)',
                         boxShadow: isSelected
                           ? '0 0 0 3px var(--color-primary-dim)'
                           : undefined,
@@ -732,8 +776,8 @@ export default function RequestAServiceForm() {
                       }}
                     >
                       <div className="mb-1.5 text-[22px]">{emoji}</div>
-                      <div className="text-[13px] font-bold text-slate-900">{label}</div>
-                      <div className="mt-0.5 text-[11px] text-slate-500">{desc}</div>
+                      <div className="text-[13px] font-bold text-appText">{label}</div>
+                      <div className="mt-0.5 text-[11px] text-appTextSec">{desc}</div>
                     </button>
                   )
                 })}
@@ -758,13 +802,13 @@ export default function RequestAServiceForm() {
         )}
 
         {/* ─── DYNAMIC QUESTION STEPS ─── */}
-        {!isSuccess && uiStep >= 2 && uiStep < summaryUiStep && (
+        {!isSuccess && uiStep >= 2 && uiStep < summaryUiStep && uiStep !== contactUiStep && (
           <div
             key={`step${uiStep}-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
           >
             {isQuestionsLoading ? (
-              <div className="flex items-center justify-center gap-3 py-12 text-[14px] text-slate-500">
+              <div className="flex items-center justify-center gap-3 py-12 text-[14px] text-appTextSec">
                 <svg
                   className="h-5 w-5 animate-spin"
                   fill="none"
@@ -788,7 +832,7 @@ export default function RequestAServiceForm() {
                 Chargement des questions…
               </div>
             ) : currentQuestions.length === 0 ? (
-              <p className="py-6 text-center text-[14px] text-slate-500">
+              <p className="py-6 text-center text-[14px] text-appTextSec">
                 Aucune question pour cette étape.
               </p>
             ) : (
@@ -808,7 +852,7 @@ export default function RequestAServiceForm() {
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-slate-200 bg-white px-5 py-3.5 text-[14px] font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -821,7 +865,122 @@ export default function RequestAServiceForm() {
                 className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
-                {uiStep === summaryUiStep - 1 ? 'Vérifier ma demande' : 'Continuer'}
+                Continuer
+                <FiArrowRight size={16} strokeWidth={2.5} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ─── CONTACT STEP ─── */}
+        {!isSuccess && uiStep === contactUiStep && (
+          <div
+            key={`contact-${shakeKey}`}
+            className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
+          >
+            {/* Prénom */}
+            <div className="mb-5">
+              <FieldLabel required>Prénom</FieldLabel>
+              <input
+                type="text"
+                value={contact.firstName}
+                onChange={(e) => setContact((p) => ({ ...p, firstName: e.target.value }))}
+                onBlur={() => touchContact('firstName')}
+                placeholder="John"
+                className={inputCls(!!getContactError('firstName'))}
+                style={{ fontFamily: 'inherit' }}
+              />
+              {getContactError('firstName') && (
+                <p className="mt-1 text-[11px] text-red-500">{getContactError('firstName')}</p>
+              )}
+            </div>
+
+            {/* Nom */}
+            <div className="mb-5">
+              <FieldLabel required>Nom</FieldLabel>
+              <input
+                type="text"
+                value={contact.lastName}
+                onChange={(e) => setContact((p) => ({ ...p, lastName: e.target.value }))}
+                onBlur={() => touchContact('lastName')}
+                placeholder="Smith"
+                className={inputCls(!!getContactError('lastName'))}
+                style={{ fontFamily: 'inherit' }}
+              />
+              {getContactError('lastName') && (
+                <p className="mt-1 text-[11px] text-red-500">{getContactError('lastName')}</p>
+              )}
+            </div>
+
+            {/* Téléphone */}
+            <div className="mb-5">
+              <FieldLabel required>Numéro De Téléphone</FieldLabel>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-appTextMuted">
+                  <FiPhone size={16} />
+                </span>
+                <input
+                  type="tel"
+                  value={contact.phone}
+                  onChange={(e) => setContact((p) => ({ ...p, phone: e.target.value }))}
+                  onBlur={() => touchContact('phone')}
+                  placeholder="+33 6 12 34 56 78"
+                  className={`${inputCls(!!getContactError('phone'))} pl-9`}
+                  style={{ fontFamily: 'inherit' }}
+                />
+              </div>
+              {getContactError('phone') && (
+                <p className="mt-1 text-[11px] text-red-500">{getContactError('phone')}</p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="mb-5">
+              <FieldLabel required>Adresse Email</FieldLabel>
+              <input
+                type="email"
+                value={contact.email}
+                onChange={(e) => setContact((p) => ({ ...p, email: e.target.value }))}
+                onBlur={() => touchContact('email')}
+                placeholder="email@example.com"
+                className={inputCls(!!getContactError('email'))}
+                style={{ fontFamily: 'inherit' }}
+              />
+              {getContactError('email') && (
+                <p className="mt-1 text-[11px] text-red-500">{getContactError('email')}</p>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div className="mb-5">
+              <FieldLabel optional>Donnez Plus De Détails</FieldLabel>
+              <textarea
+                value={contact.notes}
+                onChange={(e) => setContact((p) => ({ ...p, notes: e.target.value }))}
+                placeholder="Écrivez ici..."
+                rows={3}
+                className={`${inputCls(false)} resize-y leading-[1.6]`}
+                style={{ fontFamily: 'inherit', minHeight: 96 }}
+              />
+            </div>
+
+            <div className="mt-6 flex gap-2.5">
+              <button
+                type="button"
+                onClick={goPrev}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-[22px] py-[13px] text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+                style={{ fontFamily: 'inherit' }}
+              >
+                <FiArrowLeft size={14} strokeWidth={2.5} />
+                Retour
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-[13px] text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
+              >
+                Vérifier ma demande
                 <FiArrowRight size={16} strokeWidth={2.5} />
               </button>
             </div>
@@ -834,7 +993,7 @@ export default function RequestAServiceForm() {
             key={`summary-${shakeKey}`}
             className="animate-inscription-fade-up"
           >
-            <div className="mb-5 overflow-hidden rounded-[12px] border border-slate-100 bg-slate-50">
+            <div className="mb-5 overflow-hidden rounded-[12px] border border-appBorderSub bg-appSurface">
               <SummaryRow
                 icon={
                   <svg
@@ -882,6 +1041,55 @@ export default function RequestAServiceForm() {
                   />
                 )
               })}
+
+              {/* ── Contact rows ── */}
+              {(contact.firstName || contact.lastName) && (
+                <SummaryRow
+                  icon={
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  }
+                  label="Nom complet"
+                  value={`${contact.firstName} ${contact.lastName}`.trim()}
+                />
+              )}
+              {contact.phone && (
+                <SummaryRow
+                  icon={
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.9-.9a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  }
+                  label="Téléphone"
+                  value={contact.phone}
+                />
+              )}
+              {contact.email && (
+                <SummaryRow
+                  icon={
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                  }
+                  label="Email"
+                  value={contact.email}
+                />
+              )}
+              {contact.notes.trim() && (
+                <SummaryRow
+                  icon={
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14,2 14,8 20,8" />
+                    </svg>
+                  }
+                  label="Détails"
+                  value={contact.notes.length > 80 ? `${contact.notes.slice(0, 80)}…` : contact.notes}
+                />
+              )}
             </div>
 
             <div
@@ -902,7 +1110,7 @@ export default function RequestAServiceForm() {
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-slate-200 bg-white px-5 py-3.5 text-[14px] font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -934,12 +1142,12 @@ export default function RequestAServiceForm() {
               ✓
             </div>
 
-            <h3 className="mb-2 text-[22px] font-extrabold tracking-[-0.4px] text-slate-900">
+            <h3 className="mb-2 text-[22px] font-extrabold tracking-[-0.4px] text-appText">
               Demande envoyée !
             </h3>
 
             <p
-              className="mx-auto mb-7 text-[14px] leading-[1.65] text-slate-500"
+              className="mx-auto mb-7 text-[14px] leading-[1.65] text-appTextSec"
               style={{ maxWidth: 360 }}
             >
               Votre demande a bien été transmise. Les professionnels vérifiés vont vous envoyer
@@ -950,12 +1158,12 @@ export default function RequestAServiceForm() {
               {SUCCESS_STEPS.map((text, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 rounded-[10px] border border-slate-100 bg-slate-50 px-3.5 py-2.5"
+                  className="flex items-center gap-3 rounded-[10px] border border-appBorderSub bg-appSurface px-3.5 py-2.5"
                 >
-                  <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[8px] bg-blue-light text-[12px] font-extrabold text-primaryColor">
+                  <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[8px] bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[12px] font-extrabold text-primaryColor">
                     {i + 1}
                   </div>
-                  <span className="text-[13px] text-slate-700">{text}</span>
+                  <span className="text-[13px] text-appTextSec">{text}</span>
                 </div>
               ))}
             </div>

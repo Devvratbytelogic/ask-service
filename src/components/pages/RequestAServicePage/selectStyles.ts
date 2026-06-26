@@ -17,12 +17,12 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
         ? 'var(--color-red-500)'
         : state.isFocused
           ? 'var(--color-primaryColor)'
-          : 'var(--color-slate-200)',
+          : 'var(--app-border)',
       backgroundColor: hasError
         ? 'var(--color-red-light)'
         : state.isFocused
-          ? 'white'
-          : 'var(--color-slate-50)',
+          ? 'var(--app-card)'
+          : 'var(--app-surface)',
       boxShadow: hasError
         ? state.isFocused
           ? '0 0 0 3px rgba(239,68,68,0.1)'
@@ -41,17 +41,18 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
           : state.isFocused
             ? 'var(--color-primaryColor)'
             : 'var(--color-slate-400)',
+        backgroundColor: 'var(--app-card)',
       },
     }),
     placeholder: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
     singleValue: (base) => ({
       ...base,
-      color: 'var(--color-slate-900)',
+      color: 'var(--app-text)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
@@ -59,20 +60,22 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
       ...base,
       fontFamily: 'inherit',
       fontSize: 14,
+      color: 'var(--app-text)',
       margin: 0,
       padding: 0,
     }),
     valueContainer: (base) => ({ ...base, padding: '4px 14px', gap: 4 }),
-    dropdownIndicator: (base) => ({ ...base, color: 'var(--color-slate-400)', padding: '0 12px' }),
+    dropdownIndicator: (base) => ({ ...base, color: 'var(--app-text-muted)', padding: '0 12px' }),
     indicatorSeparator: (base) => ({
       ...base,
-      backgroundColor: 'var(--color-slate-200)',
+      backgroundColor: 'var(--app-border)',
     }),
     menu: (base) => ({
       ...base,
       borderRadius: 12,
-      border: '1.5px solid var(--color-slate-200)',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      border: '1.5px solid var(--app-border)',
+      backgroundColor: 'var(--app-card)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
       zIndex: 20,
       overflow: 'hidden',
     }),
@@ -84,17 +87,17 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
       fontFamily: 'inherit',
       padding: '8px 10px',
       backgroundColor: state.isSelected
-        ? 'var(--color-blue-light)'
+        ? 'var(--color-primary-dim)'
         : state.isFocused
-          ? 'var(--color-slate-50)'
+          ? 'var(--app-elevated)'
           : 'transparent',
-      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--color-slate-900)',
+      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--app-text)',
       fontWeight: state.isSelected ? 600 : 400,
       cursor: 'pointer',
     }),
     multiValue: (base) => ({
       ...base,
-      backgroundColor: 'var(--color-blue-light)',
+      backgroundColor: 'var(--color-primary-dim)',
       borderRadius: 99,
       overflow: 'hidden',
       margin: '2px',
@@ -132,12 +135,12 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
         ? 'var(--color-red-500)'
         : state.isFocused
           ? 'var(--color-primaryColor)'
-          : 'var(--color-slate-200)',
+          : 'var(--app-border)',
       backgroundColor: hasError
         ? 'var(--color-red-light)'
         : state.isFocused
-          ? 'white'
-          : 'var(--color-slate-50)',
+          ? 'var(--app-card)'
+          : 'var(--app-surface)',
       boxShadow: hasError
         ? state.isFocused ? '0 0 0 3px rgba(239,68,68,0.1)' : 'none'
         : state.isFocused
@@ -154,18 +157,18 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
           : state.isFocused
             ? 'var(--color-primaryColor)'
             : 'var(--color-slate-400)',
-        backgroundColor: state.isFocused ? 'white' : 'white',
+        backgroundColor: 'var(--app-card)',
       },
     }),
     placeholder: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
     singleValue: (base) => ({
       ...base,
-      color: 'var(--color-slate-900)',
+      color: 'var(--app-text)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
@@ -173,7 +176,7 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
       ...base,
       fontFamily: 'inherit',
       fontSize: 14,
-      color: 'var(--color-slate-900)',
+      color: 'var(--app-text)',
       margin: 0,
       padding: 0,
     }),
@@ -183,18 +186,19 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       padding: '0 12px',
     }),
     indicatorSeparator: (base) => ({
       ...base,
-      backgroundColor: 'var(--color-slate-200)',
+      backgroundColor: 'var(--app-border)',
     }),
     menu: (base) => ({
       ...base,
       borderRadius: 12,
-      border: '1.5px solid var(--color-slate-200)',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      border: '1.5px solid var(--app-border)',
+      backgroundColor: 'var(--app-card)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
       zIndex: 20,
       overflow: 'hidden',
     }),
@@ -209,11 +213,11 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
       fontFamily: 'inherit',
       padding: '8px 10px',
       backgroundColor: state.isSelected
-        ? 'var(--color-blue-light)'
+        ? 'var(--color-primary-dim)'
         : state.isFocused
-          ? 'var(--color-slate-50)'
+          ? 'var(--app-elevated)'
           : 'transparent',
-      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--color-slate-900)',
+      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--app-text)',
       fontWeight: state.isSelected ? 600 : 400,
       cursor: 'pointer',
     }),

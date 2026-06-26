@@ -235,3 +235,11 @@ body {
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #f1f5f9 !important;
 }
+
+/* Request a Service page — hero section background */
+.page-hero-bg {
+  background: linear-gradient(160deg, #F0F4FF 0%, #F8FAFC 60%, #FFF8ED 100%);
+}
+.dark .page-hero-bg {
+  background: var(--app-bg);
+}
