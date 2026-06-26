@@ -1136,8 +1136,7 @@ export default function RequestAServiceForm() {
         {isSuccess && (
           <div className="animate-inscription-fade-up py-3 text-center">
             <div
-              className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full text-[30px]"
-              style={{ background: 'var(--color-green-light)' }}
+              className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full bg-green-light dark:bg-green-icon-bg text-[30px] text-trust-green"
             >
               ✓
             </div>
