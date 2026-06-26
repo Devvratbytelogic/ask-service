@@ -1,49 +1,59 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useFormik } from 'formik'
+import { serviceRequestContactSchema } from '@/utils/validation'
 import Link from 'next/link'
 import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
 import ReactSelect from 'react-select'
-import { getMyRequestRoutePath } from '@/routes/routes'
 import {
   useGetAllServicesQuery,
   useGetServicesQuetionsQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
+import { useCreateServiceRequestMutation } from '@/redux/rtkQueries/allPostApi'
 import {
   buildServiceSelectStyles,
-  buildDynSelectStyles,
   type ServiceOption,
   type DynOption,
 } from './selectStyles'
-import type { ListEntity } from '@/types/serviceQuestions'
+import type {
+  ListEntity,
+  ICreateServiceRequestPayload,
+  IDynamicAnswerPayload,
+} from '@/types/serviceQuestions'
+import DynamicQuestionField, { FieldLabel, inputCls } from './DynamicQuestionField'
+import OtpVerificationScreen from './OtpVerificationScreen'
+import LoginRequiredScreen from './LoginRequiredScreen'
+import RequestSentScreen from './RequestSentScreen'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type ClientType = 'B2C' | 'B2B' | ''
+type ClientType = 'Individual' | 'Company' | ''
+
+type FlowScreen =
+  | 'EMAIL_VERIFICATION_REQUIRED'
+  | 'PHONE_VERIFICATION_REQUIRED'
+  | 'LOGIN_REQUIRED_EMAIL'
+  | 'LOGIN_REQUIRED_PHONE'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const SUCCESS_STEPS = [
-  'Les professionnels reçoivent votre demande et préparent leurs devis',
-  "Vous recevez jusqu'à 5 devis dans votre espace client sous 24h",
-  'Vous choisissez le professionnel qui vous convient le mieux',
-] as const
+const FLOW_TYPES = {
+  PHONE_VERIFICATION_REQUIRED: 'PHONE_VERIFICATION_REQUIRED',
+  EMAIL_VERIFICATION_REQUIRED: 'EMAIL_VERIFICATION_REQUIRED',
+  LOGIN_REQUIRED: 'LOGIN_REQUIRED',
+  REQUEST_CREATED: 'REQUEST_CREATED',
+} as const
+
+const LOGIN_REQUIRED_MESSAGES = {
+  PHONE: 'User already exists with phone. Please login.',
+  EMAIL: 'Email already associated with another account',
+} as const
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function getTodayMin() {
-  const t = new Date()
-  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
-}
-
 function formatDate(dateStr: string) {
   if (!dateStr) return '—'
   const d = new Date(dateStr + 'T00:00:00')
   return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
-
-const KNOWN_TYPES = [
-  'dropdown', 'radio', 'checkbox',
-  'date', 'time', 'date & time', 'datetime',
-  'textarea', 'number', 'text', 'file',
-] as const
 
 function formatAnswerForDisplay(question: ListEntity, value: string | string[]): string {
   if (!value || (Array.isArray(value) && value.length === 0)) return '—'
@@ -54,38 +64,18 @@ function formatAnswerForDisplay(question: ListEntity, value: string | string[]):
     return isNaN(d.getTime())
       ? (value as string)
       : d.toLocaleString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
   }
   if (Array.isArray(value)) return value.join(', ')
   return value as string
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-function FieldLabel({
-  children,
-  required = false,
-  optional = false,
-}: {
-  children: React.ReactNode
-  required?: boolean
-  optional?: boolean
-}) {
-  return (
-    <label className="mb-2 block text-[13px] font-semibold tracking-[0.1px] text-appText">
-      {children}
-      {required && <span className="ml-0.5 text-primaryColor">*</span>}
-      {optional && (
-        <span className="ml-1.5 text-[12px] font-normal text-slate-400">(optionnel)</span>
-      )}
-    </label>
-  )
-}
-
 function SummaryRow({
   icon,
   label,
@@ -108,298 +98,6 @@ function SummaryRow({
   )
 }
 
-function inputCls(hasError: boolean) {
-  return [
-    'w-full rounded-[12px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all',
-    hasError
-      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-      : 'border-appBorder bg-appSurface hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
-  ].join(' ')
-}
-
-function DynamicQuestionField({
-  question,
-  value,
-  error,
-  onChange,
-  onBlur,
-}: {
-  question: ListEntity
-  value: string | string[]
-  error?: string
-  onChange: (val: string | string[]) => void
-  onBlur: () => void
-}) {
-  const options: DynOption[] = (question.options ?? [])
-    .filter(Boolean)
-    .map((o) => ({ value: o!.value, label: o!.label }))
-
-  const hasError = !!error
-  const minDate = getTodayMin()
-  const strVal = value as string
-  const arrVal = Array.isArray(value) ? value : []
-
-  function toggleOption(optValue: string, multi: boolean) {
-    if (!multi) {
-      onChange(optValue)
-      onBlur()
-    } else {
-      const updated = arrVal.includes(optValue)
-        ? arrVal.filter((v) => v !== optValue)
-        : [...arrVal, optValue]
-      onChange(updated)
-      onBlur()
-    }
-  }
-
-  const pillCls = (selected: boolean) =>
-    [
-      'flex cursor-pointer items-center gap-2 rounded-[10px] border-2 px-3.5 py-2 text-[13px] font-medium transition-all',
-      selected
-        ? 'border-primaryColor bg-blue-light dark:bg-[rgba(27,79,255,0.2)] font-semibold text-primaryColor'
-        : hasError
-          ? 'border-red-200 bg-appSurface text-appText hover:border-red-300'
-          : 'border-appBorder bg-appSurface text-appText hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard',
-    ].join(' ')
-
-  return (
-    <div className="mb-5">
-      <FieldLabel required={question.is_required} optional={!question.is_required}>
-        {question.label}
-      </FieldLabel>
-
-      {/* ── Dropdown single ── */}
-      {question.type === 'dropdown' && !question.is_multiple && (
-        <ReactSelect<DynOption, false>
-          instanceId={question._id}
-          options={options}
-          value={options.find((o) => o.value === strVal) ?? null}
-          onChange={(opt) => onChange(opt?.value ?? '')}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? '— Choisir —'}
-          menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-          menuPosition="fixed"
-          styles={buildDynSelectStyles<false>(hasError)}
-        />
-      )}
-
-      {/* ── Dropdown multi ── */}
-      {question.type === 'dropdown' && question.is_multiple && (
-        <ReactSelect<DynOption, true>
-          isMulti
-          instanceId={question._id}
-          options={options}
-          value={options.filter((o) => arrVal.includes(o.value))}
-          onChange={(selected) => onChange(selected ? selected.map((o) => o.value) : [])}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? '— Choisir —'}
-          menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-          menuPosition="fixed"
-          styles={buildDynSelectStyles<true>(hasError)}
-        />
-      )}
-
-      {/* ── Radio ── */}
-      {question.type === 'radio' && (
-        <div className="flex flex-wrap gap-2">
-          {options.map((opt) => {
-            const selected = strVal === opt.value
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => toggleOption(opt.value, false)}
-                className={pillCls(selected)}
-                style={{ fontFamily: 'inherit' }}
-              >
-                <span
-                  className={`flex size-[15px] shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                    selected ? 'border-primaryColor' : 'border-slate-300'
-                  }`}
-                >
-                  {selected && (
-                    <span className="size-[7px] rounded-full bg-primaryColor" />
-                  )}
-                </span>
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
-      )}
-
-      {/* ── Checkbox ── */}
-      {question.type === 'checkbox' && (
-        <div className="flex flex-wrap gap-2">
-          {options.map((opt) => {
-            const checked = arrVal.includes(opt.value)
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => toggleOption(opt.value, true)}
-                className={pillCls(checked)}
-                style={{ fontFamily: 'inherit' }}
-              >
-                <span
-                  className={`flex size-[15px] shrink-0 items-center justify-center rounded-[4px] border-2 transition-colors ${
-                    checked ? 'border-primaryColor bg-primaryColor' : 'border-slate-300'
-                  }`}
-                >
-                  {checked && (
-                    <FiCheck size={9} strokeWidth={3} className="text-white" />
-                  )}
-                </span>
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
-      )}
-
-      {/* ── Date ── */}
-      {question.type === 'date' && (
-        <input
-          type="date"
-          value={strVal}
-          min={minDate}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
-        />
-      )}
-
-      {/* ── Time ── */}
-      {question.type === 'time' && (
-        <input
-          type="time"
-          value={strVal}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
-        />
-      )}
-
-      {/* ── Date & Time ── */}
-      {(question.type === 'date & time' || question.type === 'datetime') && (
-        <input
-          type="datetime-local"
-          value={strVal}
-          min={`${minDate}T00:00`}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit', cursor: 'pointer' }}
-        />
-      )}
-
-      {/* ── Textarea ── */}
-      {question.type === 'textarea' && (
-        <textarea
-          value={strVal}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? ''}
-          rows={3}
-          className={`${inputCls(hasError)} resize-y leading-[1.6]`}
-          style={{ fontFamily: 'inherit', minHeight: 96 }}
-        />
-      )}
-
-      {/* ── Number ── */}
-      {question.type === 'number' && (
-        <input
-          type="number"
-          value={strVal}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? ''}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit' }}
-        />
-      )}
-
-      {/* ── Text ── */}
-      {question.type === 'text' && (
-        <input
-          type="text"
-          value={strVal}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? ''}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit' }}
-        />
-      )}
-
-      {/* ── File ── */}
-      {question.type === 'file' && (
-        <label
-          className={[
-            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-[1.5px] border-dashed py-7 transition-all',
-            hasError
-              ? 'border-red-400 bg-red-light'
-              : strVal
-                ? 'border-primaryColor bg-blue-light dark:bg-[rgba(27,79,255,0.2)]'
-                : 'border-appBorder bg-appSurface hover:border-primaryColor hover:bg-blue-light dark:hover:bg-[rgba(27,79,255,0.2)]',
-          ].join(' ')}
-        >
-          <svg
-            width="24"
-            height="24"
-            fill="none"
-            stroke={strVal ? 'var(--color-primaryColor)' : 'var(--app-text-muted)'}
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
-            aria-hidden
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          <span
-            className={`text-[13px] font-semibold ${strVal ? 'text-primaryColor' : 'text-appText'}`}
-            style={{ fontFamily: 'inherit' }}
-          >
-            {strVal || 'Choisir un fichier'}
-          </span>
-          {!strVal && (
-            <span className="text-[11px] text-appTextMuted">ou glissez-déposez ici</span>
-          )}
-          <input
-            type="file"
-            className="sr-only"
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) {
-                onChange(file.name)
-                onBlur()
-              }
-            }}
-          />
-        </label>
-      )}
-
-      {/* ── Unknown type fallback ── */}
-      {!(KNOWN_TYPES as readonly string[]).includes(question.type) && (
-        <input
-          type="text"
-          value={strVal}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder={question.placeholder ?? ''}
-          className={inputCls(hasError)}
-          style={{ fontFamily: 'inherit' }}
-        />
-      )}
-
-      {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
-    </div>
-  )
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function RequestAServiceForm() {
   // ── Services API
@@ -414,9 +112,15 @@ export default function RequestAServiceForm() {
     image: s.image ?? null,
   }))
 
+  // ── Mutation
+  const [createServiceRequest, { isLoading: isSubmitting }] = useCreateServiceRequestMutation()
+
   // ── UI state
   const [uiStep, setUiStep] = useState(1)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [flowScreen, setFlowScreen] = useState<FlowScreen | null>(null)
+  const [submissionRef, setSubmissionRef] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [shakeKey, setShakeKey] = useState(0)
   const [shakeStep, setShakeStep] = useState<number | null>(null)
 
@@ -430,15 +134,14 @@ export default function RequestAServiceForm() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
-  // ── Contact step state
-  const [contact, setContact] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    notes: '',
+  // ── Contact step — Formik
+  const contactFormik = useFormik({
+    initialValues: { firstName: '', lastName: '', phone: '', email: '', notes: '' },
+    validationSchema: serviceRequestContactSchema,
+    validateOnBlur: true,
+    validateOnChange: true,
+    onSubmit: () => { },
   })
-  const [contactTouched, setContactTouched] = useState<Set<string>>(new Set())
 
   // ── Questions API (fires once a service is selected)
   const { data: questionsResponse, isLoading: isQuestionsLoading } =
@@ -498,11 +201,13 @@ export default function RequestAServiceForm() {
   }
 
   function navTo(n: number) {
+    setFlowScreen(null)
+    setSubmitError(null)
     setUiStep(n)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  function goNext() {
+  async function goNext() {
     if (uiStep === 1) {
       setServiceTouched(true)
       setClientTypeTouched(true)
@@ -528,15 +233,10 @@ export default function RequestAServiceForm() {
       }
       navTo(uiStep + 1)
     } else if (uiStep === contactUiStep) {
-      const requiredFields = ['firstName', 'lastName', 'phone', 'email'] as const
-      setContactTouched(new Set(requiredFields))
-      const hasErr = requiredFields.some((f) => {
-        const val = contact[f]
-        if (!val) return true
-        if (f === 'email') return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
-        return false
-      })
-      if (hasErr) {
+      const allTouched = { firstName: true, lastName: true, phone: true, email: true, notes: true }
+      await contactFormik.setTouched(allTouched, true)
+      const errors = await contactFormik.validateForm()
+      if (Object.keys(errors).length > 0) {
         triggerShake()
         return
       }
@@ -546,6 +246,121 @@ export default function RequestAServiceForm() {
 
   function goPrev() {
     navTo(uiStep - 1)
+  }
+
+  // ── Submit (summary step) ──────────────────────────────────────────────────
+  async function handleSubmit() {
+    setSubmitError(null)
+    setFlowScreen(null)
+
+    const dynamic_answers: IDynamicAnswerPayload[] = questionsList
+      .filter((q) => {
+        const val = answers[q._id]
+        return val !== undefined && (Array.isArray(val) ? val.length > 0 : val !== '')
+      })
+      .map((q) => ({
+        question_id: q._id,
+        key: q.key,
+        label: q.label,
+        type: q.type,
+        value: Array.isArray(answers[q._id])
+          ? (answers[q._id] as string[]).join(', ')
+          : (answers[q._id] as string),
+      }))
+
+    const payload: ICreateServiceRequestPayload = {
+      service_category: service,
+      note: contactFormik.values.notes,
+      dynamic_answers,
+      contact_details: {
+        first_name: contactFormik.values.firstName,
+        last_name: contactFormik.values.lastName,
+        client_type: clientType,
+        phone: contactFormik.values.phone,
+        email: contactFormik.values.email,
+      },
+    }
+
+    try {
+      const res = await createServiceRequest(payload).unwrap()
+      // The base query converts certain 403s (EMAIL_VERIFICATION_REQUIRED) into
+      // data, so we also check flow/type on the success path.
+      const resData = res?.data
+      const flowType = (resData?.flow ?? resData?.type)
+      const ref = (resData?.request)?.reference_no
+      const resMessage = (res?.message ?? resData?.message)
+
+      // Always store the ref — the request is created on 201 regardless of flow
+      if (ref) setSubmissionRef(ref)
+
+      // Check specific flow types FIRST — before falling back to http_status_code
+      if (flowType === FLOW_TYPES.EMAIL_VERIFICATION_REQUIRED) {
+        setFlowScreen('EMAIL_VERIFICATION_REQUIRED')
+        return
+      }
+
+      if (flowType === FLOW_TYPES.PHONE_VERIFICATION_REQUIRED) {
+        setFlowScreen('PHONE_VERIFICATION_REQUIRED')
+        return
+      }
+
+      if (resMessage === LOGIN_REQUIRED_MESSAGES.PHONE) {
+        setFlowScreen('LOGIN_REQUIRED_PHONE')
+        return
+      }
+
+      if (resMessage === LOGIN_REQUIRED_MESSAGES.EMAIL) {
+        setFlowScreen('LOGIN_REQUIRED_EMAIL')
+        return
+      }
+
+      // REQUEST_CREATED or any other 2xx with no special flow → success screen
+      if (flowType === FLOW_TYPES.REQUEST_CREATED || res?.http_status_code === 201 || !flowType) {
+        setIsSuccess(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+
+      // Absolute fallback
+      setIsSuccess(true)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    } catch (err) {
+      const e = err as {
+        data?: { message?: string; httpStatus?: number; errorType?: string }
+        error?: string
+      }
+      const errorType = e?.data?.errorType
+      const errMessage = e?.data?.message ?? e?.error
+
+      if (
+        errorType === FLOW_TYPES.EMAIL_VERIFICATION_REQUIRED ||
+        errMessage?.toLowerCase().includes('email verification')
+      ) {
+        setFlowScreen('EMAIL_VERIFICATION_REQUIRED')
+        return
+      }
+
+      if (
+        errorType === FLOW_TYPES.PHONE_VERIFICATION_REQUIRED ||
+        errMessage?.toLowerCase().includes('phone verification')
+      ) {
+        setFlowScreen('PHONE_VERIFICATION_REQUIRED')
+        return
+      }
+
+      if (errMessage === LOGIN_REQUIRED_MESSAGES.PHONE) {
+        setFlowScreen('LOGIN_REQUIRED_PHONE')
+        return
+      }
+
+      if (errMessage === LOGIN_REQUIRED_MESSAGES.EMAIL) {
+        setFlowScreen('LOGIN_REQUIRED_EMAIL')
+        return
+      }
+
+      setSubmitError(errMessage ?? 'Une erreur est survenue. Veuillez réessayer.')
+    }
   }
 
   function handleAnswer(id: string, val: string | string[]) {
@@ -563,22 +378,6 @@ export default function RequestAServiceForm() {
       return 'Ce champ est obligatoire'
     }
     return undefined
-  }
-
-  // ── Contact validation
-  function getContactError(field: keyof typeof contact): string | undefined {
-    if (!contactTouched.has(field)) return undefined
-    if (field === 'notes') return undefined
-    const val = contact[field]
-    if (!val) return 'Ce champ est obligatoire'
-    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-      return 'Adresse email invalide'
-    }
-    return undefined
-  }
-
-  function touchContact(field: keyof typeof contact) {
-    setContactTouched((prev) => new Set([...prev, field]))
   }
 
   // ── Step header content
@@ -600,9 +399,9 @@ export default function RequestAServiceForm() {
     ? (serviceOptions.find((o) => o.value === service)?.label ?? service)
     : '—'
   const sumType =
-    clientType === 'B2C'
+    clientType === 'Individual'
       ? '🏠 Particulier'
-      : clientType === 'B2B'
+      : clientType === 'Company'
         ? '🏢 Entreprise'
         : '—'
 
@@ -632,7 +431,7 @@ export default function RequestAServiceForm() {
       style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
     >
       {/* Progress bar */}
-      {!isSuccess && (
+      {!isSuccess && !flowScreen && (
         <div className="h-1 bg-appElevated">
           <div
             className="h-full rounded-r-[2px] transition-[width] duration-500 ease-in-out"
@@ -645,7 +444,7 @@ export default function RequestAServiceForm() {
       )}
 
       {/* Step header */}
-      {!isSuccess && (
+      {!isSuccess && !flowScreen && (
         <div className="flex items-center gap-3.5 px-8 pt-7">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[15px] font-extrabold text-primaryColor">
             {uiStep}
@@ -655,13 +454,12 @@ export default function RequestAServiceForm() {
               {Array.from({ length: totalUiSteps }).map((_, i) => (
                 <div
                   key={i}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i + 1 < uiStep
-                      ? 'w-2 bg-trust-green'
-                      : i + 1 === uiStep
-                        ? 'w-5 bg-primaryColor'
-                        : 'w-2 bg-slate-200 dark:bg-slate-700'
-                  }`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${i + 1 < uiStep
+                    ? 'w-2 bg-trust-green'
+                    : i + 1 === uiStep
+                      ? 'w-5 bg-primaryColor'
+                      : 'w-2 bg-slate-200 dark:bg-slate-700'
+                    }`}
                 />
               ))}
             </div>
@@ -677,7 +475,7 @@ export default function RequestAServiceForm() {
       <div className="px-8 pb-8 pt-6">
 
         {/* ─── STEP 1: Service + client type ─── */}
-        {!isSuccess && uiStep === 1 && (
+        {!isSuccess && !flowScreen && uiStep === 1 && (
           <div
             key={`step1-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -740,13 +538,13 @@ export default function RequestAServiceForm() {
                 {(
                   [
                     {
-                      value: 'B2C' as const,
+                      value: 'Individual' as const,
                       emoji: '🏠',
                       label: 'Particulier',
                       desc: 'Pour votre domicile',
                     },
                     {
-                      value: 'B2B' as const,
+                      value: 'Company' as const,
                       emoji: '🏢',
                       label: 'Entreprise',
                       desc: 'Usage professionnel',
@@ -802,7 +600,7 @@ export default function RequestAServiceForm() {
         )}
 
         {/* ─── DYNAMIC QUESTION STEPS ─── */}
-        {!isSuccess && uiStep >= 2 && uiStep < summaryUiStep && uiStep !== contactUiStep && (
+        {!isSuccess && !flowScreen && uiStep >= 2 && uiStep < summaryUiStep && uiStep !== contactUiStep && (
           <div
             key={`step${uiStep}-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -873,7 +671,7 @@ export default function RequestAServiceForm() {
         )}
 
         {/* ─── CONTACT STEP ─── */}
-        {!isSuccess && uiStep === contactUiStep && (
+        {!isSuccess && !flowScreen && uiStep === contactUiStep && (
           <div
             key={`contact-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -883,15 +681,16 @@ export default function RequestAServiceForm() {
               <FieldLabel required>Prénom</FieldLabel>
               <input
                 type="text"
-                value={contact.firstName}
-                onChange={(e) => setContact((p) => ({ ...p, firstName: e.target.value }))}
-                onBlur={() => touchContact('firstName')}
+                name="firstName"
+                value={contactFormik.values.firstName}
+                onChange={contactFormik.handleChange}
+                onBlur={contactFormik.handleBlur}
                 placeholder="John"
-                className={inputCls(!!getContactError('firstName'))}
+                className={inputCls(!!(contactFormik.touched.firstName && contactFormik.errors.firstName))}
                 style={{ fontFamily: 'inherit' }}
               />
-              {getContactError('firstName') && (
-                <p className="mt-1 text-[11px] text-red-500">{getContactError('firstName')}</p>
+              {contactFormik.touched.firstName && contactFormik.errors.firstName && (
+                <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.firstName}</p>
               )}
             </div>
 
@@ -900,15 +699,16 @@ export default function RequestAServiceForm() {
               <FieldLabel required>Nom</FieldLabel>
               <input
                 type="text"
-                value={contact.lastName}
-                onChange={(e) => setContact((p) => ({ ...p, lastName: e.target.value }))}
-                onBlur={() => touchContact('lastName')}
+                name="lastName"
+                value={contactFormik.values.lastName}
+                onChange={contactFormik.handleChange}
+                onBlur={contactFormik.handleBlur}
                 placeholder="Smith"
-                className={inputCls(!!getContactError('lastName'))}
+                className={inputCls(!!(contactFormik.touched.lastName && contactFormik.errors.lastName))}
                 style={{ fontFamily: 'inherit' }}
               />
-              {getContactError('lastName') && (
-                <p className="mt-1 text-[11px] text-red-500">{getContactError('lastName')}</p>
+              {contactFormik.touched.lastName && contactFormik.errors.lastName && (
+                <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.lastName}</p>
               )}
             </div>
 
@@ -921,16 +721,17 @@ export default function RequestAServiceForm() {
                 </span>
                 <input
                   type="tel"
-                  value={contact.phone}
-                  onChange={(e) => setContact((p) => ({ ...p, phone: e.target.value }))}
-                  onBlur={() => touchContact('phone')}
+                  name="phone"
+                  value={contactFormik.values.phone}
+                  onChange={contactFormik.handleChange}
+                  onBlur={contactFormik.handleBlur}
                   placeholder="+33 6 12 34 56 78"
-                  className={`${inputCls(!!getContactError('phone'))} pl-9`}
+                  className={`${inputCls(!!(contactFormik.touched.phone && contactFormik.errors.phone))} pl-9`}
                   style={{ fontFamily: 'inherit' }}
                 />
               </div>
-              {getContactError('phone') && (
-                <p className="mt-1 text-[11px] text-red-500">{getContactError('phone')}</p>
+              {contactFormik.touched.phone && contactFormik.errors.phone && (
+                <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.phone}</p>
               )}
             </div>
 
@@ -939,15 +740,16 @@ export default function RequestAServiceForm() {
               <FieldLabel required>Adresse Email</FieldLabel>
               <input
                 type="email"
-                value={contact.email}
-                onChange={(e) => setContact((p) => ({ ...p, email: e.target.value }))}
-                onBlur={() => touchContact('email')}
+                name="email"
+                value={contactFormik.values.email}
+                onChange={contactFormik.handleChange}
+                onBlur={contactFormik.handleBlur}
                 placeholder="email@example.com"
-                className={inputCls(!!getContactError('email'))}
+                className={inputCls(!!(contactFormik.touched.email && contactFormik.errors.email))}
                 style={{ fontFamily: 'inherit' }}
               />
-              {getContactError('email') && (
-                <p className="mt-1 text-[11px] text-red-500">{getContactError('email')}</p>
+              {contactFormik.touched.email && contactFormik.errors.email && (
+                <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.email}</p>
               )}
             </div>
 
@@ -955,8 +757,10 @@ export default function RequestAServiceForm() {
             <div className="mb-5">
               <FieldLabel optional>Donnez Plus De Détails</FieldLabel>
               <textarea
-                value={contact.notes}
-                onChange={(e) => setContact((p) => ({ ...p, notes: e.target.value }))}
+                name="notes"
+                value={contactFormik.values.notes}
+                onChange={contactFormik.handleChange}
+                onBlur={contactFormik.handleBlur}
                 placeholder="Écrivez ici..."
                 rows={3}
                 className={`${inputCls(false)} resize-y leading-[1.6]`}
@@ -988,7 +792,7 @@ export default function RequestAServiceForm() {
         )}
 
         {/* ─── SUMMARY ─── */}
-        {!isSuccess && uiStep === summaryUiStep && (
+        {!isSuccess && !flowScreen && uiStep === summaryUiStep && (
           <div
             key={`summary-${shakeKey}`}
             className="animate-inscription-fade-up"
@@ -1043,7 +847,7 @@ export default function RequestAServiceForm() {
               })}
 
               {/* ── Contact rows ── */}
-              {(contact.firstName || contact.lastName) && (
+              {(contactFormik.values.firstName || contactFormik.values.lastName) && (
                 <SummaryRow
                   icon={
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
@@ -1052,10 +856,10 @@ export default function RequestAServiceForm() {
                     </svg>
                   }
                   label="Nom complet"
-                  value={`${contact.firstName} ${contact.lastName}`.trim()}
+                  value={`${contactFormik.values.firstName} ${contactFormik.values.lastName}`.trim()}
                 />
               )}
-              {contact.phone && (
+              {contactFormik.values.phone && (
                 <SummaryRow
                   icon={
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
@@ -1063,10 +867,10 @@ export default function RequestAServiceForm() {
                     </svg>
                   }
                   label="Téléphone"
-                  value={contact.phone}
+                  value={contactFormik.values.phone}
                 />
               )}
-              {contact.email && (
+              {contactFormik.values.email && (
                 <SummaryRow
                   icon={
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
@@ -1075,10 +879,10 @@ export default function RequestAServiceForm() {
                     </svg>
                   }
                   label="Email"
-                  value={contact.email}
+                  value={contactFormik.values.email}
                 />
               )}
-              {contact.notes.trim() && (
+              {contactFormik.values.notes.trim() && (
                 <SummaryRow
                   icon={
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
@@ -1087,17 +891,13 @@ export default function RequestAServiceForm() {
                     </svg>
                   }
                   label="Détails"
-                  value={contact.notes.length > 80 ? `${contact.notes.slice(0, 80)}…` : contact.notes}
+                  value={contactFormik.values.notes.length > 80 ? `${contactFormik.values.notes.slice(0, 80)}…` : contactFormik.values.notes}
                 />
               )}
             </div>
 
             <div
-              className="mb-5 flex gap-3 rounded-[12px] border-[1.5px] p-4 text-primaryColor"
-              style={{
-                background: 'var(--color-blue-light)',
-                borderColor: 'rgba(27,79,255,0.15)',
-              }}
+              className="mb-5 flex gap-3 rounded-[12px] border-[1.5px] border-primary-icon-bg dark:border-[rgba(27,79,255,0.25)] bg-blue-light dark:bg-primary-dim p-4 text-primaryColor"
             >
               <FiInfo size={16} className="mt-0.5 shrink-0" aria-hidden />
               <p className="text-[13px] leading-[1.6]">
@@ -1106,11 +906,23 @@ export default function RequestAServiceForm() {
               </p>
             </div>
 
+            {submitError && (
+              <div className="mb-4 flex items-start gap-2.5 rounded-[12px] border border-red-200 bg-red-light px-4 py-3 text-[13px] text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="mt-0.5 shrink-0" aria-hidden>
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                {submitError}
+              </div>
+            )}
+
             <div className="flex gap-2.5">
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+                disabled={isSubmitting}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -1118,64 +930,85 @@ export default function RequestAServiceForm() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setIsSuccess(true)
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
-                Envoyer ma demande
-                <FiCheck size={16} strokeWidth={2.5} />
+                {isSubmitting ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Envoi en cours…
+                  </>
+                ) : (
+                  <>
+                    Envoyer ma demande
+                    <FiCheck size={16} strokeWidth={2.5} />
+                  </>
+                )}
               </button>
             </div>
           </div>
         )}
 
-        {/* ─── SUCCESS ─── */}
-        {isSuccess && (
-          <div className="animate-inscription-fade-up py-3 text-center">
-            <div
-              className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full bg-green-light dark:bg-green-icon-bg text-[30px] text-trust-green"
-            >
-              ✓
-            </div>
+        {/* ── Screen: Request Sent ──────────────────────────────────────────────── */}
+        {isSuccess && <RequestSentScreen submissionRef={submissionRef} />}
 
-            <h3 className="mb-2 text-[22px] font-extrabold tracking-[-0.4px] text-appText">
-              Demande envoyée !
-            </h3>
+        {/* ── Screen: Email OTP Verification ───────────────────────────────────── */}
+        {!isSuccess && flowScreen === 'EMAIL_VERIFICATION_REQUIRED' && (
+          <OtpVerificationScreen
+            type="email"
+            contact={contactFormik.values.email}
+            submissionRef={submissionRef}
+            onVerified={() => {
+              setFlowScreen(null)
+              if (submissionRef) {
+                setIsSuccess(true)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              } else {
+                void handleSubmit()
+              }
+            }}
+            onBack={() => { setFlowScreen(null); navTo(summaryUiStep) }}
+          />
+        )}
 
-            <p
-              className="mx-auto mb-7 text-[14px] leading-[1.65] text-appTextSec"
-              style={{ maxWidth: 360 }}
-            >
-              Votre demande a bien été transmise. Les professionnels vérifiés vont vous envoyer
-              leurs devis sous 24h.
-            </p>
+        {/* ── Screen: Phone OTP Verification ───────────────────────────────────── */}
+        {!isSuccess && flowScreen === 'PHONE_VERIFICATION_REQUIRED' && (
+          <OtpVerificationScreen
+            type="phone"
+            contact={contactFormik.values.phone}
+            submissionRef={submissionRef}
+            onVerified={() => {
+              setFlowScreen(null)
+              if (submissionRef) {
+                setIsSuccess(true)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              } else {
+                void handleSubmit()
+              }
+            }}
+            onBack={() => { setFlowScreen(null); navTo(summaryUiStep) }}
+          />
+        )}
 
-            <div className="mb-7 flex flex-col gap-2 text-left">
-              {SUCCESS_STEPS.map((text, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 rounded-[10px] border border-appBorderSub bg-appSurface px-3.5 py-2.5"
-                >
-                  <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[8px] bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[12px] font-extrabold text-primaryColor">
-                    {i + 1}
-                  </div>
-                  <span className="text-[13px] text-appTextSec">{text}</span>
-                </div>
-              ))}
-            </div>
+        {/* ── Screen: Login Required — duplicate email ──────────────────────────── */}
+        {!isSuccess && flowScreen === 'LOGIN_REQUIRED_EMAIL' && (
+          <LoginRequiredScreen
+            loginType="email"
+            onBack={() => navTo(summaryUiStep)}
+          />
+        )}
 
-            <Link
-              href={getMyRequestRoutePath()}
-              className="flex w-full items-center justify-center gap-2 rounded-[12px] py-3.5 text-[15px] font-semibold text-white no-underline transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)]"
-              style={{ background: 'var(--color-primaryColor)' }}
-            >
-              Voir mes demandes
-              <FiArrowRight size={16} strokeWidth={2.5} />
-            </Link>
-          </div>
+        {/* ── Screen: Login Required — duplicate phone ──────────────────────────── */}
+        {!isSuccess && flowScreen === 'LOGIN_REQUIRED_PHONE' && (
+          <LoginRequiredScreen
+            loginType="phone"
+            onBack={() => navTo(summaryUiStep)}
+          />
         )}
       </div>
     </div>

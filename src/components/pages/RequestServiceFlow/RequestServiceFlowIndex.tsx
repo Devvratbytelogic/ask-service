@@ -258,12 +258,6 @@ const RequestServiceFlowIndex = () => {
                     // child_category: "",
                     // manual_child_category: "",
                     note: values.serviceNote ?? "",
-                    address_1: addressData.address_1,
-                    address_2: addressData.address_2,
-                    city: addressData.city,
-                    state: addressData.state,
-                    country: addressData.country,
-                    pincode: values.pincode ?? "",
                     dynamic_answers: buildDynamicAnswersPayload(questionsList, values.dynamicAnswers ?? {}),
                     contact_details: {
                         first_name: values.customerFirstName ?? "",

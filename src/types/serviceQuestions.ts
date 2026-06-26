@@ -45,15 +45,7 @@ export interface IDynamicAnswerPayload {
 /** Payload for POST /user/service-request */
 export interface ICreateServiceRequestPayload {
   service_category: string;
-  // child_category: string;
-  // manual_child_category: string;
   note: string;
-  address_1: string;
-  address_2: string;
-  city: string;
-  state: string;
-  country: string;
-  pincode: string;
   dynamic_answers: IDynamicAnswerPayload[];
   contact_details: {
     first_name: string;

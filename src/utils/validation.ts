@@ -114,6 +114,17 @@ export const registrationSchema = Yup.object({
         .required(),
 })
 
+export const serviceRequestContactSchema = Yup.object({
+    firstName: Yup.string().trim().required('Ce champ est obligatoire'),
+    lastName:  Yup.string().trim().required('Ce champ est obligatoire'),
+    phone: Yup.string()
+        .trim()
+        .required('Ce champ est obligatoire')
+        .matches(/^[+\d][\d\s\-().]{4,}$/, 'Numéro de téléphone invalide'),
+    email: yupRequiredEmail('Ce champ est obligatoire'),
+    notes: Yup.string(),
+})
+
 export const vendorProfileInfoValidationSchema = Yup.object({
     businessName: Yup.string().required('Ce champ est obligatoire'),
     ownerName: Yup.string().required('Ce champ est obligatoire'),

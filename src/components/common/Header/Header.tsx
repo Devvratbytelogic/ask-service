@@ -4,6 +4,7 @@ import ImageComponent from "@/components/library/ImageComponent"
 import { Button } from "@heroui/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 import { getHomeRoutePath, getLoginPageRoutePath, getRegistrationPageRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
 import { usePathname } from "next/navigation"
@@ -12,12 +13,21 @@ import VendorMenu from "./VendorMenu"
 import CustomerActions from "./CustomerActions"
 import VendorActions from "./VendorActions"
 import ThemeToggle from "@/components/common/ThemeToggle"
+import type { RootState } from "@/redux/appStore"
 
 export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticated }: { logoUrl: string, vendorLogoUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
     const [scrolled, setScrolled] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const pathname = usePathname()
     const isServiceProviderPage = pathname === getServiceProviderRoutePath()
+
+    // Merge server-side auth prop with client-side Redux state so the header
+    // updates immediately after OTP verification (or any client-side login)
+    // without waiting for a full server re-render.
+    const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
+    const clientUserRole = useSelector((state: RootState) => state.auth.userRole)
+    const isAuth = isAuthenticated || isClientAuthenticated
+    const isVendorUser = isVendor || clientUserRole?.toLowerCase() === 'vendor'
 
     const logo = isServiceProviderPage ? vendorLogoUrl : logoUrl;
 
@@ -48,11 +58,11 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
                 )}
             </Link>
 
-            {isAuthenticated && (isVendor ? <VendorMenu /> : <CustomerMenu />)}
-            
+            {isAuth && (isVendorUser ? <VendorMenu /> : <CustomerMenu />)}
+
             {/* Desktop right section */}
-            {isAuthenticated && (isVendor ? <VendorActions isAuthenticated={isAuthenticated} /> : <CustomerActions isAuthenticated={isAuthenticated} />)}
-            {!isAuthenticated && (
+            {isAuth && (isVendorUser ? <VendorActions isAuthenticated={isAuth} /> : <CustomerActions isAuthenticated={isAuth} />)}
+            {!isAuth && (
                 <div className="hidden sm:flex gap-2 items-center">
                     <ThemeToggle />
                     <Button
