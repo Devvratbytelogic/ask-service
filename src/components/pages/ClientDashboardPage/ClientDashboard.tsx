@@ -2,169 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { getCreateRequestRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
+import ReactSelect from 'react-select'
+import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
-import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { buildDashboardFilterSelectStyles, type FilterOption } from './selectStyles'
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-// const DEMANDS: DemandData[] = [
-//     {
-//         id: '1',
-//         icon: '🧹',
-//         iconBg: 'rgba(16,185,129,0.12)',
-//         title: 'Nettoyage de bureaux',
-//         status: 'open',
-//         location: 'Paris 8e · 75008',
-//         date: '29 Avril · Matin',
-//         type: 'B2B · ~120 m²',
-//         timeAgo: 'Il y a 2 jours',
-//         quotesCount: 4,
-//         newQuotesCount: 3,
-//         quotes: [
-//             {
-//                 id: 'q1',
-//                 vendorInitial: 'N',
-//                 vendorAvatarColor: '#16A34A',
-//                 vendorName: 'Nicolas M.',
-//                 rating: 5,
-//                 ratingCount: '4.9 · 56 missions',
-//                 amount: '180€',
-//                 unit: '/ intervention',
-//                 description:
-//                     'Nettoyage complet bureaux 120m², produits inclus, intervention en 3h. Disponible dès le 29 avril matin.',
-//                 isBest: true,
-//             },
-//             {
-//                 id: 'q2',
-//                 vendorInitial: 'P',
-//                 vendorAvatarColor: '#2563EB',
-//                 vendorName: 'ProClean Paris',
-//                 rating: 4,
-//                 ratingCount: '4.2 · 23 missions',
-//                 amount: '220€',
-//                 unit: '/ intervention',
-//                 description:
-//                     'Société spécialisée bureaux et tertiaire. Équipe de 2 personnes, matériel professionnel fourni.',
-//             },
-//             {
-//                 id: 'q3',
-//                 vendorInitial: 'K',
-//                 vendorAvatarColor: '#7C3AED',
-//                 vendorName: 'Karim B.',
-//                 rating: 5,
-//                 ratingCount: '4.8 · 41 missions',
-//                 amount: '195€',
-//                 unit: '/ intervention',
-//                 description:
-//                     "Nettoyage professionnel bureaux, remise d'une facture, disponibilité flexible selon vos horaires.",
-//             },
-//         ],
-//     },
-//     {
-//         id: '2',
-//         icon: '🌿',
-//         iconBg: 'rgba(16,185,129,0.12)',
-//         title: 'Entretien jardin',
-//         status: 'accepted',
-//         location: 'Versailles · 78000',
-//         date: '2 Mai · Matin',
-//         type: 'B2C · 800 m²',
-//         timeAgo: 'Il y a 4 jours',
-//         quotesCount: 3,
-//         acceptedBanner: {
-//             vendorName: 'Thomas G.',
-//             amount: '150€',
-//             confirmedText: 'Mission confirmée pour le 2 Mai · Contact transmis',
-//         },
-//         quotes: [
-//             {
-//                 id: 'q4',
-//                 vendorInitial: 'T',
-//                 vendorAvatarColor: '#16A34A',
-//                 vendorName: 'Thomas G.',
-//                 rating: 5,
-//                 ratingCount: '4.9 · 34 missions',
-//                 amount: '150€',
-//                 unit: '/ journée',
-//                 description: 'Tonte, taille haies, désherbage 800m². Matériel pro inclus.',
-//                 isAccepted: true,
-//             },
-//         ],
-//     },
-//     {
-//         id: '3',
-//         icon: '🔒',
-//         iconBg: 'rgba(27,79,255,0.12)',
-//         title: 'Gardiennage résidence',
-//         status: 'pending',
-//         location: 'Paris 15e · 75015',
-//         date: '5 Mai · Toute la journée',
-//         type: 'B2B · 2 agents',
-//         timeAgo: 'Il y a 6 heures',
-//         quotesCount: 0,
-//         emptyQuotesMessage:
-//             'Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.',
-//         quotes: [],
-//     },
-//     {
-//         id: '4',
-//         icon: '📦',
-//         iconBg: 'rgba(249,115,22,0.12)',
-//         title: 'Déménagement appartement',
-//         status: 'open',
-//         location: 'Paris 14e → Lyon 6e',
-//         date: '10 Mai · Journée',
-//         type: 'T3 · 65 m²',
-//         timeAgo: 'Il y a 1 jour',
-//         quotesCount: 2,
-//         quotes: [
-//             {
-//                 id: 'q5',
-//                 vendorInitial: 'A',
-//                 vendorAvatarColor: '#DC2626',
-//                 vendorName: 'Alpha Déménagement',
-//                 rating: 4,
-//                 ratingCount: '4.3 · 78 missions',
-//                 amount: '650€',
-//                 unit: '/ déménagement',
-//                 description:
-//                     'Camion 20m³, équipe 3 personnes, Paris-Lyon. Chargement et déchargement inclus.',
-//             },
-//             {
-//                 id: 'q6',
-//                 vendorInitial: 'S',
-//                 vendorAvatarColor: '#0369A1',
-//                 vendorName: 'StarMove Pro',
-//                 rating: 5,
-//                 ratingCount: '4.8 · 45 missions',
-//                 amount: '580€',
-//                 unit: '/ déménagement',
-//                 description:
-//                     'Service complet avec emballage, camion 25m³, assurance incluse. Délai garanti.',
-//                 isBest: true,
-//             },
-//         ],
-//     },
-//     {
-//         id: '5',
-//         icon: '🔧',
-//         iconBg: 'rgba(255,255,255,0.05)',
-//         title: 'Fuite plomberie',
-//         status: 'closed',
-//         location: 'Paris 11e · 75011',
-//         date: '15 Avril · Passé',
-//         timeAgo: 'Il y a 13 jours',
-//         quotesCount: 5,
-//         acceptedBanner: {
-//             vendorName: 'Marc D.',
-//             amount: '280€',
-//             confirmedText: 'Demande fermée le 16 Avril · Mission accomplie',
-//         },
-//         quotes: [],
-//     },
-// ]
 
 type StatConfig = {
     icon: string
@@ -178,18 +22,7 @@ type StatConfig = {
 
 type TabKey = 'all' | 'open' | 'devis' | 'closed'
 
-const SERVICE_OPTIONS = [
-    'Tous les services',
-    '🧹 Nettoyage',
-    '🔒 Sécurité',
-    '🌿 Jardinage',
-    '📦 Déménagement',
-    '🔧 Plomberie',
-]
-
-const CITY_OPTIONS = ['Toutes les villes', 'Paris', 'Lyon', 'Marseille']
-
-const SORT_OPTIONS = [
+const SORT_OPTIONS: FilterOption[] = [
     { value: '', label: 'Trier par date' },
     { value: 'most_recent', label: 'Plus récent' },
     { value: 'oldest', label: 'Plus ancien' },
@@ -239,8 +72,30 @@ function StatCard({
 
 export default function ClientDashboard() {
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
     const { data: globalSettings } = useGetGlobalSettingsQuery()
     const quoteExpired = globalSettings?.data?.quote_expired ?? 7
+
+    const serviceCategoryOptions = useMemo<FilterOption[]>(
+        () => [
+            { value: 'all', label: 'Tous les services' },
+            ...(serviceCategoriesData?.data ?? []).map((cat) => ({
+                value: cat._id,
+                label: cat.title,
+            })),
+        ],
+        [serviceCategoriesData],
+    )
+
+    const cityOptions = useMemo<FilterOption[]>(() => {
+        const unique = [...new Set((allServiceRequestCitiesData?.data?.cities ?? []).filter(Boolean))]
+        return [
+            { value: 'all', label: 'Toutes les villes' },
+            ...unique.map((city) => ({ value: city, label: city })),
+        ]
+    }, [allServiceRequestCitiesData])
+
+    const filterSelectStyles = useMemo(() => buildDashboardFilterSelectStyles(), [])
 
     const [expandedId, setExpandedId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<TabKey>('all')
@@ -325,7 +180,9 @@ export default function ClientDashboard() {
         { key: 'closed', label: 'Fermées' },
     ]
 
-    const selectBgImage = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='rgba(100,116,139,0.7)' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")"
+    const selectedServiceOption = serviceCategoryOptions.find((o) => o.value === serviceFilter) ?? serviceCategoryOptions[0]
+    const selectedCityOption = cityOptions.find((o) => o.value === cityFilter) ?? cityOptions[0]
+    const selectedSortOption = SORT_OPTIONS.find((o) => o.value === sortFilter) ?? SORT_OPTIONS[0]
 
     return (
         <div className="body_x_axis_padding">
@@ -406,58 +263,42 @@ export default function ClientDashboard() {
                 </div>
 
                 {/* Service filter */}
-                <select
-                    value={serviceFilter}
-                    onChange={(e) => { setServiceFilter(e.target.value); resetPage() }}
-                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
-                    style={{
-                        backgroundImage: selectBgImage,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 8px center',
-                    }}
-                >
-                    {SERVICE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} className="bg-appSurface">
-                            {opt}
-                        </option>
-                    ))}
-                </select>
+                <ReactSelect<FilterOption, false>
+                    instanceId="client-dashboard-service-filter"
+                    options={serviceCategoryOptions}
+                    value={selectedServiceOption}
+                    onChange={(opt) => { setServiceFilter(opt?.value ?? 'all'); resetPage() }}
+                    isSearchable={false}
+                    styles={filterSelectStyles}
+                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                    menuPosition="fixed"
+                />
 
                 {/* City filter */}
-                <select
-                    value={cityFilter}
-                    onChange={(e) => { setCityFilter(e.target.value); resetPage() }}
-                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
-                    style={{
-                        backgroundImage: selectBgImage,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 8px center',
-                    }}
-                >
-                    {CITY_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} className="bg-appSurface">
-                            {opt}
-                        </option>
-                    ))}
-                </select>
+                <ReactSelect<FilterOption, false>
+                    instanceId="client-dashboard-city-filter"
+                    options={cityOptions}
+                    value={selectedCityOption}
+                    onChange={(opt) => { setCityFilter(opt?.value ?? 'all'); resetPage() }}
+                    isSearchable
+                    placeholder="Toutes les villes"
+                    noOptionsMessage={() => 'Aucune ville'}
+                    styles={filterSelectStyles}
+                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                    menuPosition="fixed"
+                />
 
                 {/* Sort */}
-                <select
-                    className="py-[9px] pl-3 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-primaryColor/40 appearance-none"
-                    style={{
-                        backgroundImage: selectBgImage,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 8px center',
-                    }}
-                    onChange={(e) => { setSortFilter(e.target.value); resetPage() }}
-                    value={sortFilter}
-                >
-                    {SORT_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value} className="bg-appSurface">
-                            {opt.label}
-                        </option>
-                    ))}
-                </select>
+                <ReactSelect<FilterOption, false>
+                    instanceId="client-dashboard-sort-filter"
+                    options={SORT_OPTIONS}
+                    value={selectedSortOption}
+                    onChange={(opt) => { setSortFilter(opt?.value ?? ''); resetPage() }}
+                    isSearchable={false}
+                    styles={filterSelectStyles}
+                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                    menuPosition="fixed"
+                />
             </div>
 
             {/* Demands list */}
