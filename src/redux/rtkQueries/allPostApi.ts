@@ -152,8 +152,14 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         url: `/user/service-requests/${requestId}/quotes/${quoteId}/ignore`,
         method: 'POST',
       }),
-      // invalidatesTags: ['ServiceRequestQuotes'],
-      invalidatesTags: ['CreatedServices']
+      invalidatesTags: ['CreatedServices', 'ServiceRequestQuotes'],
+    }),
+    acceptQuote: builder.mutation({
+      query: ({ requestId, quoteId }: { requestId: string; quoteId: string }) => ({
+        url: `/user/service-requests/${requestId}/quotes/${quoteId}/accept`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['CreatedServices', 'ServiceRequestQuotes'],
     }),
     postContactUs: builder.mutation({
       query: (payload: { name: string; email: string; message: string }) => ({
@@ -259,6 +265,7 @@ export const {
   useSubmitQuoteMutation,
   useCloseServiceRequestMutation,
   useIgnoreQuoteMutation,
+  useAcceptQuoteMutation,
   usePostContactUsMutation,
   usePurchaseCreditsMutation,
   // User Chat APIs

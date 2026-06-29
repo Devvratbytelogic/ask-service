@@ -11,6 +11,7 @@ import moment from 'moment'
 import { getEditRequestRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useAcceptQuoteMutation, useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
 
 type DemandCardProps = {
     demand: IAllRequestsDataEntity
@@ -62,11 +63,16 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
     const dispatch = useDispatch()
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const [menuOpen, setMenuOpen] = useState(false)
+    const [actionQuoteId, setActionQuoteId] = useState<string | null>(null)
+    const [actionType, setActionType] = useState<'accept' | 'ignore' | null>(null)
     const menuRef = useRef<HTMLDivElement>(null)
+    const [acceptQuote] = useAcceptQuoteMutation()
+    const [ignoreQuote] = useIgnoreQuoteMutation()
 
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
     const isClosed = demand?.quotes_status === 'closed'
     const isAccepted = demand?.quotes_status === 'accepted'
+    const totalQuotesCount = demand?.total_quotes_count ?? 0
     const canEdit = !isClosed && !isAccepted && demand?.status_label !== 'Quotes received'
     const canClose = !isClosed
     const showActionsMenu = canEdit || canClose
@@ -92,11 +98,39 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
         }))
     }
 
+    const handleAcceptQuote = async (e: React.MouseEvent, quoteId: string) => {
+        e.stopPropagation()
+        setActionQuoteId(quoteId)
+        setActionType('accept')
+        try {
+            await acceptQuote({ requestId: demand._id, quoteId }).unwrap()
+        } catch {
+            // Error handled by RTK Query
+        } finally {
+            setActionQuoteId(null)
+            setActionType(null)
+        }
+    }
+
+    const handleIgnoreQuote = async (e: React.MouseEvent, quoteId: string) => {
+        e.stopPropagation()
+        setActionQuoteId(quoteId)
+        setActionType('ignore')
+        try {
+            await ignoreQuote({ requestId: demand._id, quoteId }).unwrap()
+        } catch {
+            // Error handled by RTK Query
+        } finally {
+            setActionQuoteId(null)
+            setActionType(null)
+        }
+    }
+
     const viewBtnClasses = isAccepted
         ? 'text-[#6EE7B7] bg-trust-green/10 border-trust-green/20'
         : isClosed
             ? 'text-appTextSec bg-black/3 dark:bg-white/3 border-appBorderSub'
-            : demand.quotes_count === 0
+            : totalQuotesCount === 0
                 ? 'text-appTextSec bg-black/4 dark:bg-white/4 border-appBorder'
                 : 'text-[#7BA3E8] bg-blue-light border-[#B8CEF7] hover:bg-[#E5EBFF] hover:border-[#A8C3F5]'
 
@@ -145,6 +179,12 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             {statusCfg?.icon}
                             {demand?.quotes_status_label}
                         </span>
+                        {demand?.reference_no && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2 py-[3px] rounded-[5px]">
+                                <span className="text-appTextMuted">Réf.</span>
+                                <span className="font-bold text-appText">{demand.reference_no}</span>
+                            </span>
+                        )}
                         {demand?.new_quotes_count && demand?.new_quotes_count > 0 ? (
                             <span className="text-[10px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-[7px] py-[2px] rounded-[4px] uppercase tracking-[0.5px]">
                                 {demand?.new_quotes_count} nouveaux
@@ -177,29 +217,29 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <p
                         className={`text-[22px] font-extrabold leading-none ${isAccepted
                             ? 'text-[#6EE7B7]'
-                            : demand?.quotes_count === 0
+                            : totalQuotesCount === 0
                                 ? 'text-appTextMuted'
                                 : 'text-appText'
                             }`}
                     >
-                        {demand?.quotes_count}
+                        {totalQuotesCount}
                     </p>
                     <p className="text-[10px] text-appTextMuted mt-[2px]">devis reçus</p>
-                    {demand?.quotes_count && demand?.quotes_count > 0 ? (
+                    {demand?.new_quotes_count && demand?.new_quotes_count > 0 ? (
                         <p className="flex items-center gap-[3px] text-[10px] font-bold text-[#6EE7B7] mt-[3px]">
                             <svg width="8" height="8" fill="currentColor" viewBox="0 0 8 8">
                                 <circle cx="4" cy="4" r="4" />
                             </svg>
-                            {demand?.quotes_count} nouveaux
+                            {demand.new_quotes_count} nouveaux
                         </p>
                     ) : isAccepted ? (
                         <p className="flex items-center gap-[3px] text-[10px] font-bold text-[#6EE7B7] mt-[3px]">
                             <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <polyline points="20,6 9,17 4,12" />
                             </svg>
-                            1 accepté
+                            {demand.accepted_quotes_count ?? 1} accepté{(demand.accepted_quotes_count ?? 1) > 1 ? 's' : ''}
                         </p>
-                    ) : demand?.quotes_count === 0 ? (
+                    ) : totalQuotesCount === 0 ? (
                         <p className="text-[10px] text-appTextMuted mt-[3px]">Bientôt…</p>
                     ) : null}
                 </div>
@@ -271,7 +311,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                 <div className="border-t border-appBorderSub bg-appSurface px-5 py-4 animate-hero-fade-up">
                     {/* Accepted banner — shown when a quote was accepted */}
                     {isAccepted && (() => {
-                        const acceptedQuote = demand?.quotes?.find((q) => q?.status === 'accepted')
+                        const acceptedQuote = demand?.quotes?.find((q) => q?.status?.toLowerCase() === 'accepted')
                         if (!acceptedQuote) return null
                         return (
                             <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-[10px] mb-3">
@@ -291,10 +331,10 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     })()}
 
                     {/* Panel header */}
-                    {demand?.quotes_count > 0 && (
+                    {totalQuotesCount > 0 && (
                         <div className="flex items-center justify-between mb-3.5">
                             <p className="text-[13px] font-bold text-appText">
-                                {demand?.quotes_count} devis reçus
+                                {totalQuotesCount} devis reçus
                                 {!isAccepted && ' · choisissez le meilleur professionnel'}
                             </p>
                             {!isAccepted && (
@@ -306,16 +346,21 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     )}
 
                     {/* Quotes grid */}
-                    {demand?.quotes_count && demand?.quotes_count > 0 ? (
+                    {totalQuotesCount > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-                            {demand?.quotes && demand?.quotes?.length > 0 && demand?.quotes?.map((quote) => (
+                            {demand?.quotes && demand?.quotes?.length > 0 && demand?.quotes?.map((quote) => {
+                                if (!quote?._id) return null
+                                return (
                                 <QuoteCard
-                                    key={quote?._id}
+                                    key={quote._id}
                                     quoteData={quote}
-                                    onAccept={(e) => e.stopPropagation()}
-                                    onIgnore={(e) => e.stopPropagation()}
+                                    onAccept={(e) => handleAcceptQuote(e, quote._id)}
+                                    onIgnore={(e) => handleIgnoreQuote(e, quote._id)}
+                                    isAccepting={actionQuoteId === quote._id && actionType === 'accept'}
+                                    isIgnoring={actionQuoteId === quote._id && actionType === 'ignore'}
                                 />
-                            ))}
+                                )
+                            })}
                         </div>
                     ) :
                         <div className="text-center py-6 text-appTextMuted text-[13px]">

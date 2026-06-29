@@ -7,6 +7,8 @@ interface QuoteCardProps {
     quoteData: QuotesEntity | null
     onAccept?: (e: React.MouseEvent) => void
     onIgnore?: (e: React.MouseEvent) => void
+    isAccepting?: boolean
+    isIgnoring?: boolean
 }
 
 const AVATAR_COLORS = ['#16A34A', '#2563EB', '#7C3AED', '#DC2626', '#0369A1', '#D97706', '#0891B2']
@@ -17,10 +19,12 @@ function getAvatarColor(seed: string): string {
     return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
 }
 
-export default function QuoteCard({ onAccept, onIgnore, quoteData }: QuoteCardProps) {
+export default function QuoteCard({ onAccept, onIgnore, quoteData, isAccepting, isIgnoring }: QuoteCardProps) {
     if (!quoteData) return null
 
-    const isAccepted = quoteData?.status === 'accepted'
+    const isAccepted = quoteData?.status?.toLowerCase() === 'accepted'
+    const isIgnored = quoteData?.status?.toLowerCase() === 'ignored'
+    const isActionLoading = isAccepting || isIgnoring
     const vendorName = quoteData?.provider_name ||
         `${quoteData?.vendor?.first_name ?? ''} ${quoteData?.vendor?.last_name ?? ''}`.trim()
     const vendorInitial = vendorName.charAt(0).toUpperCase()
@@ -67,6 +71,10 @@ export default function QuoteCard({ onAccept, onIgnore, quoteData }: QuoteCardPr
                     <span className="text-[9px] font-extrabold uppercase tracking-[0.5px] bg-primaryColor/15 text-primaryColor border border-primaryColor/20 px-[7px] py-[2px] rounded-[4px]">
                         Accepté
                     </span>
+                ) : isIgnored ? (
+                    <span className="text-[9px] font-extrabold uppercase tracking-[0.5px] bg-black/5 dark:bg-white/5 text-appTextSec border border-appBorderSub px-[7px] py-[2px] rounded-[4px]">
+                        Ignoré
+                    </span>
                 ) : null}
             </div>
 
@@ -95,24 +103,30 @@ export default function QuoteCard({ onAccept, onIgnore, quoteData }: QuoteCardPr
                     </svg>
                     Devis accepté · Mission confirmée
                 </div>
+            ) : isIgnored ? (
+                <div className="flex items-center gap-1 text-xs text-appTextSec px-2.5 py-2 bg-black/5 dark:bg-white/5 border border-appBorderSub rounded-lg">
+                    Devis ignoré
+                </div>
             ) : (
                 <div className="flex gap-1.5">
                     <button
                         type="button"
                         onClick={onAccept}
-                        className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-linear-to-br from-trust-green to-[#059669] text-white text-xs font-bold cursor-pointer transition-all duration-200 hover:-translate-y-px shadow-[0_2px_8px_rgba(16,185,129,0.2)] hover:shadow-[0_4px_12px_rgba(16,185,129,0.35)]"
+                        disabled={isActionLoading}
+                        className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-linear-to-br from-trust-green to-[#059669] text-white text-xs font-bold cursor-pointer transition-all duration-200 hover:-translate-y-px shadow-[0_2px_8px_rgba(16,185,129,0.2)] hover:shadow-[0_4px_12px_rgba(16,185,129,0.35)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                             <polyline points="20,6 9,17 4,12" />
                         </svg>
-                        Accepter
+                        {isAccepting ? 'Acceptation…' : 'Accepter'}
                     </button>
                     <button
                         type="button"
                         onClick={onIgnore}
-                        className="px-2.5 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/8 hover:text-appText"
+                        disabled={isActionLoading}
+                        className="px-2.5 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/8 hover:text-appText disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        Ignorer
+                        {isIgnoring ? '…' : 'Ignorer'}
                     </button>
                 </div>
             )}

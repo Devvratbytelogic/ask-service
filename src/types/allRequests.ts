@@ -37,6 +37,9 @@ export interface IAllRequestsDataEntity {
   quotes_status: string;
   quotes_status_label: string;
   new_quotes_count: number;
+  total_quotes_count?: number;
+  accepted_quotes_count?: number;
+  ignored_quotes_count?: number;
   contact_details: ContactDetails;
   deletedAt?: null;
   reason?: null;
