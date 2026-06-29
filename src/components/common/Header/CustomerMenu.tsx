@@ -4,13 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
     getClientDashboardPageRoutePath,
-    getCreateRequestRoutePath,
     getMyQuotesRoutePath,
+    getRequestAServiceRoutePath,
 } from '@/routes/routes'
 
 const NAV_LINKS = [
     { label: 'Mes demandes', href: getClientDashboardPageRoutePath() },
-    { label: 'Nouvelle demande', href: getCreateRequestRoutePath() },
+    { label: 'Nouvelle demande', href: getRequestAServiceRoutePath() },
     { label: 'Mes devis', href: getMyQuotesRoutePath() },
 ] as const
 
