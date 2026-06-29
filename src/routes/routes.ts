@@ -43,13 +43,14 @@ export function getMessageRoutePath() {
 export function getVendorProfileRoutePath(vendorId: string) {
     return `/vendor-profile?vendorId=${vendorId}`;
 }
-export function getVendorAccountRoutePath(params?: { section?: string }) {
-    const search = params?.section ? `?section=${params.section}` : ''
-    return `/vendor/account${search}`;
+export type MyAccountSection = 'profile' | 'security' | 'notifications'
+export type VendorAccountSection = MyAccountSection | 'documents' | 'reviews' | 'payment-history'
+
+export function getVendorAccountRoutePath(section: VendorAccountSection = 'profile') {
+    return `/vendor/dashboard/account/${section}`;
 }
-export function getMyAccountRoutePath(params?: { section?: string }) {
-    const search = params?.section ? `?section=${params.section}` : ''
-    return `/my-account${search}`;
+export function getMyAccountRoutePath(section: MyAccountSection = 'profile') {
+    return `/client/dashboard/my-account/${section}`;
 }
 
 /** Dashboard path for the given role (User → client/dashboard, Vendor → vendor/dashboard). */
@@ -68,7 +69,7 @@ export function getDashboardPathForRole(
     return getClientDashboardPageRoutePath();
 }
 
-/** Profile / account settings path for the given role (User → my-account, Vendor → vendor/account). */
+/** Profile / account settings path for the given role (User → client/dashboard/my-account, Vendor → vendor/dashboard/account). */
 export function getProfilePathForRole(
     role: string | { name?: string; id?: string; _id?: string } | undefined | null,
 ): string {

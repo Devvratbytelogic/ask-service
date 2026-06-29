@@ -81,7 +81,7 @@ export default function VerifyEmailOtpModal() {
                 }
             } else {
                 dispatch(closeModal())
-                router.push(getMyAccountRoutePath({ section: 'profile' }))
+                router.push(getMyAccountRoutePath('profile'))
             }
         } catch {
             // Error toast from rtkQuerieSetup

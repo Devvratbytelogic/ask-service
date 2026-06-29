@@ -1,25 +1,24 @@
-import MyAccount from '@/components/pages/my-account/MyAccount'
-import React from 'react'
+import { getVendorAccountRoutePath, type VendorAccountSection } from '@/routes/routes'
+import { redirect } from 'next/navigation'
 
-export default function VendorAccountPage() {
-    return (
-        <>
-            <div className="min-h-screen body_x_axis_padding ">
-                {/* Header - centered */}
-                <div className="text-center mb-10 lg:mb-12">
-                    <h1 className="text-2xl md:text-5xl font-bold text-fontBlack mb-2">
-                        Paramètres <span className="text-darkSilver">du compte</span>
-                    </h1>
-                    <p className="text-sm md:text-base text-darkSilver">
-                        Gérez votre profil, votre sécurité et vos préférences
-                    </p>
-                </div>
+const VALID_SECTIONS: VendorAccountSection[] = [
+    'profile',
+    'security',
+    'notifications',
+    'documents',
+    'reviews',
+    'payment-history',
+]
 
-                {/* Two-column layout */}
-                <div className="flex flex-col lg:flex-row gap-6">
-                    <MyAccount variant="vendor" />
-                </div>
-            </div>
-        </>
-    )
+export default async function LegacyVendorAccountRedirectPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ section?: string }>
+}) {
+    const { section } = await searchParams
+    const targetSection =
+        section && VALID_SECTIONS.includes(section as VendorAccountSection)
+            ? (section as VendorAccountSection)
+            : 'profile'
+    redirect(getVendorAccountRoutePath(targetSection))
 }

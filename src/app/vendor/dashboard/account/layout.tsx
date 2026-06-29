@@ -1,23 +1,19 @@
+import MyAccountLayout from '@/components/pages/my-account/MyAccountLayout'
 import React from 'react'
-import MyAccount from '@/components/pages/my-account/MyAccount'
 
-export default function MyAccountPage() {
-    
+export default function VendorAccountLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen body_x_axis_padding ">
-            {/* Header - centered */}
+        <div className="min-h-screen body_x_axis_padding">
             <div className="text-center mb-10 lg:mb-12">
                 <h1 className="text-2xl md:text-5xl font-bold text-fontBlack mb-2">
-                    Paramètres du compte
+                    Paramètres <span className="text-darkSilver">du compte</span>
                 </h1>
                 <p className="text-sm md:text-base text-darkSilver">
                     Gérez votre profil, votre sécurité et vos préférences
                 </p>
             </div>
-
-            {/* Two-column layout */}
             <div className="flex flex-col lg:flex-row gap-6">
-                <MyAccount />
+                <MyAccountLayout variant="vendor">{children}</MyAccountLayout>
             </div>
         </div>
     )

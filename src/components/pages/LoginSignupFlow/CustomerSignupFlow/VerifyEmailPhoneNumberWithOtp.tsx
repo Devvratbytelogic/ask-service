@@ -87,7 +87,7 @@ const VerifyEmailPhoneNumberWithOtp = () => {
                 timeout: 3000,
             })
             dispatch(closeModal())
-            router.push(getMyAccountRoutePath({section: 'profile'}))
+            router.push(getMyAccountRoutePath('profile'))
         } catch {
             // Error toast from rtkQuerieSetup
         }

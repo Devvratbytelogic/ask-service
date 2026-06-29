@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { getVendorWalletRoutePath, getHomeRoutePath } from '@/routes/routes'
+import { HiOutlineCog6Tooth } from 'react-icons/hi2'
+import { getVendorWalletRoutePath, getHomeRoutePath, getVendorAccountRoutePath } from '@/routes/routes'
 import { clearAllCookiesAndReload } from '@/utils/authCookies'
-import { SignOutIconSVG } from '@/components/library/AllSVG'
+import { ProfileIconSVG, SignOutIconSVG } from '@/components/library/AllSVG'
 import NotificationsPopover from './NotificationsPopover'
 import ThemeToggle from '@/components/common/ThemeToggle'
 
@@ -55,6 +56,22 @@ export default function VendorActions({
                     <>
                         <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
                         <div className="absolute top-full right-0 mt-2 w-44 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-borderDark dark:border-white/10 z-50 py-1.5 px-1.5">
+                            <Link
+                                href={getVendorAccountRoutePath('profile')}
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-fontBlack dark:text-slate-200 text-sm font-medium hover:bg-borderDark/50 dark:hover:bg-white/10 transition-colors"
+                            >
+                                <span className="size-4 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
+                                Profil
+                            </Link>
+                            <Link
+                                href={getVendorAccountRoutePath('security')}
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-fontBlack dark:text-slate-200 text-sm font-medium hover:bg-borderDark/50 dark:hover:bg-white/10 transition-colors"
+                            >
+                                <HiOutlineCog6Tooth className="size-4 shrink-0 text-darkSilver" />
+                                Paramètres
+                            </Link>
                             <button
                                 type="button"
                                 onClick={() => clearAllCookiesAndReload(getHomeRoutePath())}

@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input } from '@heroui/react'
-import PhoneInput from 'react-phone-input-2'
 import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
@@ -335,23 +334,17 @@ export default function ProfileInfo() {
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
-                                <PhoneInput
-                                    country="fr"
-                                    countryCodeEditable={false}
-                                    enableSearch
+                                <Input
+                                    name="phone"
+                                    type="tel"
                                     value={values.phone}
-                                    onChange={(value) => setFieldValue('phone', value)}
-                                    onBlur={() => handleBlur({ target: { name: 'phone' } })}
-                                    inputProps={{
-                                        name: 'phone',
-                                        'aria-label': 'Numéro de téléphone',
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={!!(touched.phone && errors.phone)}
+                                    errorMessage={touched.phone && errors.phone}
+                                    classNames={{
+                                        inputWrapper: 'account_input_design',
                                     }}
-                                    containerClass="!w-full"
-                                    inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
-                                    inputStyle={{ height: '52px' }}
-                                    dropdownClass="!z-[9999]"
-                                    dropdownStyle={{ zIndex: 9999 }}
-                                // disabled
                                 />
                             </div>
                             {!hasPendingChanges && profileData?.is_phone_verified === false && profileData?.phone !== null && (
@@ -360,9 +353,6 @@ export default function ProfileInfo() {
                                 </Button>
                             )}
                         </div>
-                        {touched.phone && errors.phone && (
-                            <p className="text-danger text-tiny mt-1">{errors.phone}</p>
-                        )}
                     </div>
                 </div>
 
