@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle } from 'react-icons/fi'
+import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle, FiArrowLeft } from 'react-icons/fi'
 import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
@@ -13,12 +13,42 @@ import {
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
-import { useLoginMutation } from '@/redux/rtkQueries/authApi'
+import OtpInput from '@/components/library/OtpInput'
+import {
+  useLoginMutation,
+  useResendEmailVerificationMutation,
+  useVerifyEmailMutation,
+} from '@/redux/rtkQueries/authApi'
 import { useRouter } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData } from '@/utils/authCookies'
 import { useDispatch } from 'react-redux'
 import { loginWithGoogle } from '@/firebase/GoogleLogin'
+import { getFcmTokenFromCookie } from '@/firebase/getFcmTokenn'
+
+const OTP_LENGTH = 4
+const RESEND_COOLDOWN_SEC = 59
+
+type LoginApiResponse = {
+  http_status_code?: number
+  message?: string
+  data?: {
+    flow?: string
+    role?: string
+    token?: string
+    access_token?: string
+  } & AuthResponseData
+}
+
+function getRtkErrorMessage(error: unknown): string {
+  const err = error as { data?: { message?: string }; message?: string }
+  return err?.data?.message ?? err?.message ?? "Une erreur inattendue s'est produite"
+}
+
+function isEmailVerificationRequired(response: unknown): boolean {
+  const res = response as LoginApiResponse
+  return res?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED'
+}
 
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -57,12 +87,20 @@ interface LoginPageProps {
 export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
   const router = useRouter()
   const dispatch = useDispatch()
+  const fcmToken = getFcmTokenFromCookie()
   const [role, setRole] = useState<Role>('customer')
   const [showPassword, setShowPassword] = useState(false)
   const [shake, setShake] = useState(false)
   const [serverError, setServerError] = useState('')
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showEmailVerification, setShowEmailVerification] = useState(false)
+  const [verificationEmail, setVerificationEmail] = useState('')
+  const [otpValue, setOtpValue] = useState('')
+  const [otpError, setOtpError] = useState('')
+  const [resendCooldown, setResendCooldown] = useState(0)
   const [login, { isLoading }] = useLoginMutation()
+  const [verifyEmail, { isLoading: isVerifyingOtp }] = useVerifyEmailMutation()
+  const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
 
   const isVendor = role === 'vendor'
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
@@ -76,6 +114,91 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     setTimeout(() => setShake(false), 450)
   }
 
+  function startEmailVerificationFlow(email: string, message?: string) {
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail) {
+      const msg = message ?? "Vérification de l'e-mail requise"
+      setServerError(msg)
+      addToast({ title: msg, color: 'warning', timeout: 3000 })
+      return
+    }
+    setVerificationEmail(trimmedEmail)
+    setShowEmailVerification(true)
+    setOtpValue('')
+    setOtpError('')
+    setServerError('')
+    addToast({
+      title: message ?? "Vérification de l'e-mail requise",
+      description: `Un code a été envoyé à ${trimmedEmail}`,
+      color: 'warning',
+      timeout: 3000,
+    })
+  }
+
+  function handleLoginSuccess(response: LoginApiResponse) {
+    const responseData = response?.data
+    if (responseData?.token ?? responseData?.access_token) {
+      setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+      router.refresh()
+      router.push(getDashboardPageRoutePathForRole(responseData?.role as string))
+      addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
+    }
+  }
+
+  const handleVerifyOtp = useCallback(async (otp?: string) => {
+    const code = otp ?? otpValue
+    if (code.length !== OTP_LENGTH || !verificationEmail) return
+    setOtpError('')
+    try {
+      const res = await verifyEmail({
+        email: verificationEmail,
+        otp: code,
+        ...(fcmToken && { fcm_token: fcmToken }),
+      }).unwrap()
+      const responseData = (res as LoginApiResponse)?.data
+      if (responseData && typeof responseData === 'object') {
+        setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+        router.refresh()
+        router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+      }
+      addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
+    } catch {
+      setOtpError('Code incorrect ou expiré. Veuillez réessayer.')
+    }
+  }, [otpValue, verificationEmail, verifyEmail, fcmToken, dispatch, router])
+
+  const handleResendOtp = useCallback(async () => {
+    if (resendCooldown > 0 || !verificationEmail) return
+    try {
+      await resendEmailVerification({ email: verificationEmail }).unwrap()
+      setResendCooldown(RESEND_COOLDOWN_SEC)
+      setOtpValue('')
+      setOtpError('')
+      addToast({
+        title: 'Code de vérification envoyé',
+        description: 'Vérifiez votre e-mail.',
+        color: 'success',
+        timeout: 2000,
+      })
+    } catch (error: unknown) {
+      addToast({ title: getRtkErrorMessage(error), color: 'danger', timeout: 3000 })
+    }
+  }, [resendCooldown, verificationEmail, resendEmailVerification])
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const timer = setInterval(() => setResendCooldown((c) => (c <= 0 ? 0 : c - 1)), 1000)
+    return () => clearInterval(timer)
+  }, [resendCooldown])
+
+  function backToLoginForm() {
+    setShowEmailVerification(false)
+    setVerificationEmail('')
+    setOtpValue('')
+    setOtpError('')
+    setServerError('')
+  }
+
   const formik = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '', rememberMe: false },
     validationSchema: loginSchema,
@@ -84,18 +207,33 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     onSubmit: async (values) => {
       setServerError('')
       try {
-        const response = await login({ identifier: values.email, password: values.password }).unwrap()
-        const responseData = response?.data as AuthResponseData | undefined
-        if (responseData) {
-          setAuthAndRefetchProfile(responseData, dispatch)
-          router.refresh()
-          router.push(getDashboardPageRoutePathForRole(responseData.role as string))
+        const response = await login({
+          identifier: values.email,
+          password: values.password,
+          ...(fcmToken && { fcm_token: fcmToken }),
+        }).unwrap() as LoginApiResponse
+
+        if (isEmailVerificationRequired(response)) {
+          startEmailVerificationFlow(values.email, response.message)
+          return
+        }
+
+        if (
+          response?.http_status_code === 200 ||
+          response?.data?.token ||
+          response?.data?.access_token
+        ) {
+          handleLoginSuccess(response)
         }
       } catch (error: unknown) {
-        const message = (error as Error & { responseData?: { message?: string } })?.responseData?.message
-          ?? (error as Error)?.message
-          ?? "Une erreur inattendue s'est produite"
+        const err = error as { data?: { flow?: string; message?: string } }
+        if (err?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
+          startEmailVerificationFlow(values.email, err.data.message)
+          return
+        }
+        const message = getRtkErrorMessage(error)
         setServerError(message)
+        addToast({ title: message, color: 'danger', timeout: 3000 })
       }
     },
   })
@@ -118,6 +256,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     setRole(r)
     setServerError('')
     formik.setErrors({})
+    backToLoginForm()
   }
 
   async function handleGoogleLogin() {
@@ -198,10 +337,104 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
           {/* Form card */}
           <form
             noValidate
-            onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
+            onSubmit={(e) => { e.preventDefault(); if (!showEmailVerification) handleSubmit() }}
             className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white ${shake ? 'inscription-shake' : ''}`}
             style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '32px' }}
           >
+            {showEmailVerification ? (
+              <div className="animate-inscription-fade-up">
+                <button
+                  type="button"
+                  onClick={backToLoginForm}
+                  className="mb-5 flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-800"
+                  style={{ fontFamily: 'inherit', background: 'none', border: 'none', padding: 0 }}
+                >
+                  <FiArrowLeft size={14} />
+                  Retour à la connexion
+                </button>
+
+                <div className="mb-6 flex justify-center">
+                  <div
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-[28px]"
+                    style={{ background: accentDim }}
+                  >
+                    🔐
+                  </div>
+                </div>
+
+                <h4 className="mb-1.5 text-center text-[18px] font-bold text-slate-900">
+                  Vérification de l&apos;e-mail
+                </h4>
+                <p className="mb-6 text-center text-[13px] text-slate-500">
+                  Un code à {OTP_LENGTH} chiffres a été envoyé à{' '}
+                  <span className="font-semibold text-slate-700">{verificationEmail}</span>
+                </p>
+
+                <div className="mb-2 flex justify-center">
+                  <OtpInput
+                    value={otpValue}
+                    onChange={(value) => {
+                      setOtpValue(value)
+                      setOtpError('')
+                    }}
+                    length={OTP_LENGTH}
+                    onComplete={handleVerifyOtp}
+                    classNames={{ wrapper: 'flex gap-3 justify-center' }}
+                    ariaLabelPrefix="Chiffre"
+                  />
+                </div>
+
+                {otpError && (
+                  <p className="mt-1.5 text-center text-[12px] text-red-500">{otpError}</p>
+                )}
+
+                <p className="mt-4 text-center text-[13px] text-slate-500">
+                  Vous n&apos;avez pas reçu le code ?{' '}
+                  {resendCooldown > 0 ? (
+                    <span style={{ color: accentColor }}>Renvoyer dans {resendCooldown}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={isResendingOtp}
+                      className="cursor-pointer font-semibold underline underline-offset-2 disabled:opacity-50"
+                      style={{ color: accentColor, background: 'none', border: 'none', padding: 0, fontFamily: 'inherit' }}
+                    >
+                      {isResendingOtp ? 'Envoi…' : 'Renvoyer'}
+                    </button>
+                  )}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => handleVerifyOtp()}
+                  disabled={otpValue.length !== OTP_LENGTH || isVerifyingOtp}
+                  className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
+                  style={{
+                    background: accentColor,
+                    color: accentTextColor,
+                    boxShadow: `0 5px 16px ${accentShadow}`,
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                        style={{ opacity: 0.6 }}
+                      />
+                      Vérification…
+                    </>
+                  ) : (
+                    <>
+                      Vérifier et se connecter
+                      <FiArrowRight size={15} />
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <>
             {/* ─── Error banner ─── */}
             {serverError && (
               <div
@@ -395,6 +628,8 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
               )}
               {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
             </button>
+              </>
+            )}
           </form>
 
           {/* Bottom link */}
