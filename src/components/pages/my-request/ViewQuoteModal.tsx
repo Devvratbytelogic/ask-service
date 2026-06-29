@@ -166,7 +166,7 @@ export default function ViewQuoteModal() {
                                                 componentName: 'QuoteDetailModal',
                                                 data: {
                                                     requestId: request?._id,
-                                                    quoteId: quote?._id ?? quote?._id,
+                                                    quoteId: quote?._id ?? quote?.quote_id,
                                                     request,
                                                     quote: { ...quote, price: quote?.price, providerName: quote?.provider_name, rating: quote?.rating, reviews: quote?.reviews_count },
                                                 },

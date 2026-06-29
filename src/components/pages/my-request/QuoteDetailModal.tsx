@@ -3,84 +3,57 @@
 import { BackArrowSVG, FileUploadIconSVG, StarRatingIconSVG } from '@/components/library/AllSVG'
 import { RootState } from '@/redux/appStore'
 import { useGetServiceRequestQuotesDetailQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { useIgnoreQuoteMutation, useUserAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
+import { useAcceptQuoteMutation, useIgnoreQuoteMutation, useUserAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { closeModal, openModal } from '@/redux/slices/allModalSlice'
 import { addToast, Button, Spinner } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { HiOutlineArrowDownTray } from 'react-icons/hi2'
+import { FiX } from 'react-icons/fi'
 import moment from 'moment'
 import 'moment/locale/fr'
 import { useRouter } from 'next/navigation'
-import { getMessageRoutePath, getVendorProfileRoutePath } from '@/routes/routes'
+import { getVendorProfileRoutePath } from '@/routes/routes'
 
-function formatQuoteDate(dateStr: string) {
-    if (!dateStr) return '—'
-    const d = new Date(dateStr)
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
-function getValidUntilDate(availableStartDate: string, quoteValidDays: number | undefined): string {
-    if (!availableStartDate) return '—'
-    const start = new Date(availableStartDate)
-    if (quoteValidDays == null || quoteValidDays <= 0) return formatQuoteDate(availableStartDate)
-    const end = new Date(start)
-    end.setDate(end.getDate() + quoteValidDays)
-    return formatQuoteDate(end.toISOString())
-}
 
 export default function QuoteDetailModal() {
     const dispatch = useDispatch()
     const router = useRouter()
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const requestId = modalData?.requestId ?? modalData?.request?._id ?? null
-    const quoteId = modalData?.quoteId ?? modalData?.quote?._id ?? null
+    const quoteId = modalData?.quoteId ?? null
     const { data: apiData, isLoading } = useGetServiceRequestQuotesDetailQuery(
         { requestId: requestId ?? '', quoteId: quoteId ?? '' },
         { skip: !requestId || !quoteId }
     )
+    const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation()
     const [ignoreQuote, { isLoading: isIgnoring }] = useIgnoreQuoteMutation()
-    const [userAccessChat, { isLoading: isAccessingChat }] = useUserAccessChatMutation()
 
     const handleClose = () => {
-        const request = modalData?.request
-        if (request) {
-            dispatch(openModal({
-                componentName: 'ViewQuoteModal',
-                data: { request },
-                modalSize: '3xl',
-                modalPadding: 'p-0!',
-                hideCloseButton: true,
-            }))
-        } else {
-            dispatch(closeModal())
-        }
+        dispatch(closeModal())
     }
 
     const handleIgnoreQuote = async () => {
         if (!requestId || !quoteId) return
         try {
-            await ignoreQuote({ requestId, quoteId }).unwrap()
-            dispatch(closeModal())
-        } catch {
-            // Error handled by RTK Query / can add toast here
+            const response = await ignoreQuote({ requestId, quoteId }).unwrap()
+            if (response.success) {
+                dispatch(closeModal())
+            }
+        } catch (error) {
+            console.error('error ignoring quote', error);
         }
     }
 
     const handleChatWithVendor = async () => {
         if (!requestId || !vendor._id) return addToast({ title: 'Erreur', description: 'Veuillez réessayer plus tard', color: 'danger' })
         try {
-            const response = await userAccessChat({
-                userId: vendor._id,
-                quote_id: quoteId ?? '',
-            }).unwrap()
-            const chatId = response?.data?._id ?? response?._id
-            dispatch(closeModal())
-            const url = chatId
-                ? `${getMessageRoutePath()}?chatId=${chatId}`
-                : getMessageRoutePath()
-            router.push(url)
-        } catch {
-            // Error handled by RTK Query / can add toast here
+            const response = await acceptQuote({ requestId, quoteId }).unwrap()
+            console.log('response accepting quote', response);
+            if (response.success) {
+                dispatch(closeModal())
+            }
+        } catch (error) {
+            console.error('error accepting quote', error);
         }
     }
 
@@ -114,12 +87,10 @@ export default function QuoteDetailModal() {
     return (
         <>
             {/* Header */}
-            <div className="shrink-0 flex items-start gap-3 p-4 border-b border-borderDark">
-                <Button onPress={handleClose} isIconOnly className="btn_radius btn_bg_transparent shrink-0">
-                    <BackArrowSVG />
-                </Button>
-                <div className="min-w-0">
-                    <h2 className="font-bold text-xl text-fontBlack cursor-pointer" onClick={() => {router.push(getVendorProfileRoutePath(vendor._id)), dispatch(closeModal())}}>{vendor.provider_name}</h2>
+            <div className="shrink-0 flex items-start gap-3 p-4 px-6 border-b border-borderDark">
+
+                <div className="min-w-0 flex-1">
+                    <h2 className="font-bold text-xl text-fontBlack cursor-pointer" onClick={() => { router.push(getVendorProfileRoutePath(vendor._id)), dispatch(closeModal()) }}>{vendor.provider_name}</h2>
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-sm text-darkSilver">
                         <span className="flex items-center gap-1.5">
                             <StarRatingIconSVG />
@@ -134,10 +105,18 @@ export default function QuoteDetailModal() {
                         )}
                     </div>
                 </div>
+                <Button
+                    onPress={() => dispatch(closeModal())}
+                    isIconOnly
+                    className="btn_radius btn_bg_transparent shrink-0"
+                    aria-label="Fermer"
+                >
+                    <FiX size={20} strokeWidth={2.5} />
+                </Button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6">
-                <div className="shrink-0 mt-4 p-4 rounded-2xl border border-[#BEDBFF] bg-linear-to-br from-[#EFF6FF] to-[#EEF2FF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="shrink-0 mt-4 p-4 rounded-2xl border border-[#BEDBFF] bg-linear-to-br from-[#EFF6FF] to-blue-light flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <p className="text-xs text-darkSilver">Prix du devis</p>
                         <p className="font-bold text-2xl text-fontBlack mt-0.5">
@@ -147,7 +126,7 @@ export default function QuoteDetailModal() {
                     <div className="text-left sm:text-right">
                         <p className="text-xs text-darkSilver">Valide jusqu&apos;au</p>
                         <p className="text-sm text-fontBlack font-semibold mt-0.5">
-                            {getValidUntilDate(quote.available_start_date, quote.quote_valid_days)}
+                            {quote.available_start_date ? moment(quote.available_start_date).locale('fr').format('DD MMM YYYY') : '—'}
                         </p>
                         {quote.quote_valid_days != null && (
                             <p className="text-xs text-darkSilver mt-1">Devis valable {quote.quote_valid_days} jours</p>
@@ -180,7 +159,7 @@ export default function QuoteDetailModal() {
                         <button
                             type="button"
                             onClick={handleDownloadPdf}
-                            className="mt-2 w-full flex items-center gap-4 p-4 rounded-xl bg-transparent border border-borderDark hover:border-primaryColor/40 transition-colors text-left"
+                            className="mt-2 w-full cursor-pointer flex items-center gap-4 p-4 rounded-xl bg-transparent border border-borderDark hover:border-primaryColor/40 transition-colors text-left"
                         >
                             <FileUploadIconSVG />
                             <div className="flex-1 min-w-0">
@@ -205,11 +184,11 @@ export default function QuoteDetailModal() {
                 </Button>
                 <Button
                     onPress={handleChatWithVendor}
-                    isDisabled={isAccessingChat}
-                    isLoading={isAccessingChat}
+                    isDisabled={isAccepting}
+                    isLoading={isAccepting}
                     className="btn_radius btn_bg_blue w-full"
                 >
-                    Contacter le prestataire
+                    Accepter le devis
                 </Button>
             </div>
         </>

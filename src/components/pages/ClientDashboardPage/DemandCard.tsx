@@ -126,6 +126,21 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
         }
     }
 
+    const handleViewQuoteDetails = (e: React.MouseEvent, quoteId: string) => {
+        e.stopPropagation()
+        dispatch(openModal({
+            componentName: 'QuoteDetailModal',
+            data: {
+                requestId: demand._id,
+                quoteId,
+                request: demand,
+            },
+            modalSize: '3xl',
+            modalPadding: 'p-0!',
+            hideCloseButton: true,
+        }))
+    }
+
     const viewBtnClasses = isAccepted
         ? 'text-[#6EE7B7] bg-trust-green/10 border-trust-green/20'
         : isClosed
@@ -348,16 +363,18 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     {/* Quotes grid */}
                     {totalQuotesCount > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-                            {demand?.quotes && demand?.quotes?.length > 0 && demand?.quotes?.map((quote) => {
-                                if (!quote?._id) return null
+                            {(demand.quotes ?? []).filter((q): q is NonNullable<typeof q> => q != null).map((quote) => {
+                                const quoteId = quote._id ?? quote.quote_id
+                                if (!quoteId) return null
                                 return (
                                 <QuoteCard
-                                    key={quote._id}
+                                    key={quoteId}
                                     quoteData={quote}
-                                    onAccept={(e) => handleAcceptQuote(e, quote._id)}
-                                    onIgnore={(e) => handleIgnoreQuote(e, quote._id)}
-                                    isAccepting={actionQuoteId === quote._id && actionType === 'accept'}
-                                    isIgnoring={actionQuoteId === quote._id && actionType === 'ignore'}
+                                    onAccept={(e) => handleAcceptQuote(e, quoteId)}
+                                    onIgnore={(e) => handleIgnoreQuote(e, quoteId)}
+                                    onViewDetails={(e) => handleViewQuoteDetails(e, quoteId)}
+                                    isAccepting={actionQuoteId === quoteId && actionType === 'accept'}
+                                    isIgnoring={actionQuoteId === quoteId && actionType === 'ignore'}
                                 />
                                 )
                             })}
