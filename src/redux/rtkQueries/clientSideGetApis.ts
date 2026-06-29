@@ -1,6 +1,6 @@
 import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
 import { IAllTransactionHistoryAPIResponse } from '@/types/allTransactionHistory';
-import { IAllRequestsAPIResponse } from '@/types/allRequests';
+import { IAllRequestsAPIResponse, IAllRequestsDataEntity } from '@/types/allRequests';
 import { IAllServicesDocumentsRequiredAPIResponse } from '@/types/requiredDocument';
 import { IAllVendorReviewsAPIResponse } from '@/types/review';
 import { IAllServiceCategoriesAPIResponse } from '@/types/services';
@@ -25,6 +25,7 @@ import { IPopupNotificationsAPIResponse } from '@/types/popupNotifications';
 import { IGlobalSettingsAPIResponse } from '@/types/global';
 import { IVendorDetailsAPIResponse } from '@/types/vendorDetails';
 import { IAllCitiesAPIResponse } from '@/types/allCities';
+import { ISingleRequestAPIResponse } from '@/types/singleRequest';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -214,6 +215,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             },
             providesTags: ['CreatedServices', 'ServiceRequestQuotes'],
         }),
+        getCreatedServiceById: builder.query<ISingleRequestAPIResponse, { id: string }>({
+            query: ({ id }) => ({
+                url: `/user/get-created-services/${id}`,
+                method: 'GET',
+            }),
+        }),
         getServiceRequestQuotes: builder.query<IServiceRequestQuotesAPIResponse, { requestId: string; sort?: string }>({
             query: ({ requestId, sort }) => ({
                 url: `/user/service-requests/${requestId}/quotes`,
@@ -321,6 +328,7 @@ export const {
     useLazyGetCreditsTransactionInvoiceQuery,
     useGetCreditsPackagesQuery,
     useGetCreatedServicesQuery,
+    useGetCreatedServiceByIdQuery,
     useGetServiceRequestQuotesQuery,
     useGetServiceRequestQuotesDetailQuery,
     // User Chat APIs

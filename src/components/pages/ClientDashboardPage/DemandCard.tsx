@@ -1,12 +1,16 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { IAllRequestsDataEntity } from '@/types/allRequests'
 import QuoteCard from './QuoteCard'
 import { LocationIconSVG, CalendarIconSVG, FileIconSVG, ClockCircleOutlineIconSVG, ChevronIconSVG } from '@/components/library/AllSVG'
 import moment from 'moment'
-
-
+import { getEditRequestRoutePath } from '@/routes/routes'
+import { openModal } from '@/redux/slices/allModalSlice'
+import { useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 type DemandCardProps = {
     demand: IAllRequestsDataEntity
@@ -55,23 +59,53 @@ const MetaItem = ({ children }: { children: React.ReactNode }) => (
 )
 
 export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardProps) {
+    const dispatch = useDispatch()
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    const [menuOpen, setMenuOpen] = useState(false)
+    const menuRef = useRef<HTMLDivElement>(null)
+
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
     const isClosed = demand?.quotes_status === 'closed'
     const isAccepted = demand?.quotes_status === 'accepted'
-    const hasPendingQuotes = demand?.quotes_status === 'open' && demand?.quotes_count > 0
+    const canEdit = !isClosed && !isAccepted && demand?.status_label !== 'Quotes received'
+    const canClose = !isClosed
+    const showActionsMenu = canEdit || canClose
+
+    useEffect(() => {
+        if (!menuOpen) return
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [menuOpen])
+
+    const handleCloseRequest = () => {
+        setMenuOpen(false)
+        dispatch(openModal({
+            componentName: 'CloseRequestModal',
+            data: { request: demand },
+            modalSize: 'lg',
+            modalPadding: 'p-0!',
+        }))
+    }
+
     const viewBtnClasses = isAccepted
         ? 'text-[#6EE7B7] bg-trust-green/10 border-trust-green/20'
         : isClosed
             ? 'text-appTextSec bg-black/3 dark:bg-white/3 border-appBorderSub'
             : demand.quotes_count === 0
                 ? 'text-appTextSec bg-black/4 dark:bg-white/4 border-appBorder'
-                : 'text-[#93C5FD] bg-primaryColor/[0.12] border-primaryColor/20 hover:bg-primaryColor/20 hover:text-white'
+                : 'text-[#7BA3E8] bg-blue-light border-[#B8CEF7] hover:bg-[#E5EBFF] hover:border-[#A8C3F5]'
 
     const viewBtnLabel = isClosed ? 'Historique' : isAccepted ? 'Voir le détail' : 'Voir les devis'
 
     return (
         <div
-            className={`bg-appCard rounded-2xl overflow-hidden transition-all duration-250 cursor-pointer 
+            className={`bg-appCard rounded-2xl transition-all duration-250 cursor-pointer 
+                ${menuOpen ? 'overflow-visible' : 'overflow-hidden'}
                 ${isClosed ? 'opacity-60' : ''}
                 ${isExpanded
                     ? 'border border-primaryColor/25'
@@ -178,19 +212,57 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <button
                         type="button"
                         onClick={onToggle}
-                        className={`flex items-center gap-[5px] px-3.5 py-2 rounded-[8px] border text-xs font-semibold transition-all duration-200 ${viewBtnClasses} ${hasPendingQuotes ? 'hover:bg-primaryColor/20 hover:text-white' : ''
-                            }`}
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-xs font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
                     >
                         {viewBtnLabel}
-                        <ChevronIconSVG />
+                        <span className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+                            <ChevronIconSVG />
+                        </span>
                     </button>
-                    <button
-                        type="button"
-                        className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText"
-                        aria-label="Options"
-                    >
-                        ···
-                    </button>
+                    {showActionsMenu && (
+                        <div ref={menuRef} className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setMenuOpen((prev) => !prev)}
+                                className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText"
+                                aria-label="Options"
+                                aria-haspopup="menu"
+                                aria-expanded={menuOpen}
+                            >
+                                ···
+                            </button>
+                            {menuOpen && (
+                                <div
+                                    role="menu"
+                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-[190px] rounded-[10px] border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                                >
+                                    {canEdit && (
+                                        <Link
+                                            href={getEditRequestRoutePath(demand._id)}
+                                            role="menuitem"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setMenuOpen(false)
+                                            }}
+                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                        >
+                                            Modifier
+                                        </Link>
+                                    )}
+                                    {canClose && (
+                                        <button
+                                            type="button"
+                                            role="menuitem"
+                                            onClick={handleCloseRequest}
+                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                        >
+                                            Clôturer la demande
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -31,6 +31,9 @@ export function getHomeRoutePath() {
 export function getMyRequestRoutePath() {
     return `/my-request`;
 }
+export function getEditRequestRoutePath(id: string) {
+    return `/my-request/edit/${id}`;
+}
 export function getCreateRequestRoutePath() {
     return `/create-request`;
 }
