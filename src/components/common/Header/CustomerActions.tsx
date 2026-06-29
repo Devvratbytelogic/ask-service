@@ -1,31 +1,20 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { HiOutlineCog6Tooth } from 'react-icons/hi2'
-import { getHomeRoutePath, getMyAccountRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
-import { clearAllCookiesAndReload } from '@/utils/authCookies'
-import { ProfileIconSVG, SignOutIconSVG } from '@/components/library/AllSVG'
+import { getRequestAServiceRoutePath } from '@/routes/routes'
 import NotificationsPopover from './NotificationsPopover'
 import ThemeToggle from '@/components/common/ThemeToggle'
+import AccountMenuDropdown from './AccountMenuDropdown'
 
 interface CustomerActionsProps {
-    userInitials?: string
     isAuthenticated?: boolean
 }
 
-export default function CustomerActions({
-    userInitials = 'ML',
-    isAuthenticated = false,
-}: CustomerActionsProps) {
-    const [menuOpen, setMenuOpen] = useState(false)
-
+export default function CustomerActions({ isAuthenticated = false }: CustomerActionsProps) {
     return (
         <div className="flex items-center gap-2">
-            {/* Notification bell */}
             <NotificationsPopover isVendor={false} isAuthenticated={isAuthenticated} />
 
-            {/* New request button */}
             <Link
                 href={getRequestAServiceRoutePath()}
                 className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-primaryColor text-white text-[13px] font-bold rounded-lg shadow-[0_3px_10px_rgba(27,79,255,0.3)] hover:bg-blue-dark hover:-translate-y-px hover:shadow-[0_5px_14px_rgba(27,79,255,0.4)] transition-all"
@@ -37,53 +26,9 @@ export default function CustomerActions({
                 Nouvelle demande
             </Link>
 
-            {/* Theme toggle */}
             <ThemeToggle />
 
-            {/* Avatar with logout dropdown */}
-            <div className="relative">
-                <button
-                    type="button"
-                    aria-label="Account menu"
-                    aria-expanded={menuOpen}
-                    onClick={() => setMenuOpen(prev => !prev)}
-                    className="w-8 h-8 rounded-full bg-primaryColor text-white text-[12px] font-bold border-2 border-primaryColor/40 hover:shadow-[0_0_0_3px_rgba(27,79,255,0.25)] transition-all flex items-center justify-center shrink-0"
-                >
-                    {userInitials}
-                </button>
-
-                {menuOpen && (
-                    <>
-                        <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-                        <div className="absolute top-full right-0 mt-2 w-44 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-borderDark dark:border-white/10 z-50 py-1.5 px-1.5">
-                            <Link
-                                href={getMyAccountRoutePath('profile')}
-                                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-fontBlack dark:text-slate-200 text-sm font-medium hover:bg-borderDark/50 dark:hover:bg-white/10 transition-colors"
-                            >
-                                <span className="size-4 shrink-0 flex text-darkSilver"><ProfileIconSVG /></span>
-                                Profil
-                            </Link>
-                            <Link
-                                href={getMyAccountRoutePath('security')}
-                                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-fontBlack dark:text-slate-200 text-sm font-medium hover:bg-borderDark/50 dark:hover:bg-white/10 transition-colors"
-                            >
-                                <HiOutlineCog6Tooth className="size-4 shrink-0 text-darkSilver" />
-                                Paramètres
-                            </Link>
-                            <button
-                                type="button"
-                                onClick={() => clearAllCookiesAndReload(getHomeRoutePath())}
-                                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-red-500 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                            >
-                                <span className="size-4 shrink-0 flex"><SignOutIconSVG /></span>
-                                Déconnexion
-                            </button>
-                        </div>
-                    </>
-                )}
-            </div>
+            <AccountMenuDropdown isVendorView={false} />
         </div>
     )
 }
