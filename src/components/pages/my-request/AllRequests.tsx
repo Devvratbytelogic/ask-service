@@ -3,7 +3,7 @@ import { CalendarSVG, HorizontalDotsSVG, InfoSVG, LocationSVG, RequestNumberSVG 
 import RequestFilters from '@/components/pages/my-request/RequestFilters'
 import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
-import { getCreateRequestRoutePath } from '@/routes/routes'
+import { getCreateRequestRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
 import type { RequestServiceFormValues } from '@/components/pages/RequestServiceFlow/RequestServiceFlowIndex'
 import type { IAllRequestsDataEntity } from '@/types/allRequests'
 import Link from 'next/link'
@@ -116,7 +116,7 @@ export default function AllRequests() {
                     <div className="flex justify-end">
                         <Button
                             as={Link}
-                            href={getCreateRequestRoutePath()}
+                            href={getRequestAServiceRoutePath()}
                             className='btn_radius btn_bg_blue'
                             endContent={<FiArrowRight />}
                         >

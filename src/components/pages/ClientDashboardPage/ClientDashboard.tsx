@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { getCreateRequestRoutePath } from '@/routes/routes'
+import { getCreateRequestRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
 import { useGetCreatedServicesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -561,7 +561,7 @@ export default function ClientDashboard() {
                     Postez une nouvelle demande gratuitement et recevez des devis en moins de 24h.
                 </p>
                 <Link
-                    href={getCreateRequestRoutePath()}
+                    href={getRequestAServiceRoutePath()}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-[10px] text-sm font-bold transition-all duration-250 hover:-translate-y-px shadow-[0_4px_16px_rgba(27,79,255,0.3)] hover:shadow-[0_6px_20px_rgba(27,79,255,0.4)]"
                 >
                     <svg

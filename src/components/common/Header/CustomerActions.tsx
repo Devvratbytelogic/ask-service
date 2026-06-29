@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { getCreateRequestRoutePath, getHomeRoutePath } from '@/routes/routes'
+import { getHomeRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
 import { clearAllCookiesAndReload } from '@/utils/authCookies'
 import { SignOutIconSVG } from '@/components/library/AllSVG'
 import NotificationsPopover from './NotificationsPopover'
@@ -26,7 +26,7 @@ export default function CustomerActions({
 
             {/* New request button */}
             <Link
-                href={getCreateRequestRoutePath()}
+                href={getRequestAServiceRoutePath()}
                 className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-primaryColor text-white text-[13px] font-bold rounded-lg shadow-[0_3px_10px_rgba(27,79,255,0.3)] hover:bg-blue-dark hover:-translate-y-px hover:shadow-[0_5px_14px_rgba(27,79,255,0.4)] transition-all"
             >
                 <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
