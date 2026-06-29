@@ -4,14 +4,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
     getClientDashboardPageRoutePath,
-    getMyQuotesRoutePath,
+    getMessageRoutePath,
     getRequestAServiceRoutePath,
 } from '@/routes/routes'
 
 const NAV_LINKS = [
     { label: 'Mes demandes', href: getClientDashboardPageRoutePath() },
     { label: 'Nouvelle demande', href: getRequestAServiceRoutePath() },
-    { label: 'Mes devis', href: getMyQuotesRoutePath() },
+    { label: 'Mes messages', href: getMessageRoutePath() },
 ] as const
 
 export default function CustomerMenu() {
