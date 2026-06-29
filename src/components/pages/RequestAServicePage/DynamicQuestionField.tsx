@@ -72,8 +72,15 @@ export default function DynamicQuestionField({
 
   const hasError = !!error
   const minDate = getTodayMin()
-  const strVal = value as string
-  const arrVal = Array.isArray(value) ? value : []
+  const isMulti = question.is_multiple || question.type === 'checkbox'
+  const strVal = Array.isArray(value) ? value[0] ?? '' : (value ?? '')
+  const arrVal = isMulti
+    ? Array.isArray(value)
+      ? value
+      : value
+        ? [String(value)]
+        : []
+    : []
 
   function toggleOption(optValue: string, multi: boolean) {
     if (!multi) {

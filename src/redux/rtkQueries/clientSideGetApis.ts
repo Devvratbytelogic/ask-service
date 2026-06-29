@@ -220,6 +220,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 url: `/user/get-created-services/${id}`,
                 method: 'GET',
             }),
+            providesTags: ['CreatedServices'],
         }),
         getServiceRequestQuotes: builder.query<IServiceRequestQuotesAPIResponse, { requestId: string; sort?: string }>({
             query: ({ requestId, sort }) => ({

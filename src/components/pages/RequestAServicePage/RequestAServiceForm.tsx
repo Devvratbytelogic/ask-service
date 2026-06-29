@@ -1,16 +1,18 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { serviceRequestContactSchema } from '@/utils/validation'
-import Link from 'next/link'
 import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
 import ReactSelect from 'react-select'
 import {
   useGetAllServicesQuery,
   useGetServicesQuetionsQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
-import { useCreateServiceRequestMutation } from '@/redux/rtkQueries/allPostApi'
+import {
+  useCreateServiceRequestMutation,
+  useUpdateServiceRequestMutation,
+} from '@/redux/rtkQueries/allPostApi'
 import {
   buildServiceSelectStyles,
   type ServiceOption,
@@ -25,6 +27,7 @@ import DynamicQuestionField, { FieldLabel, inputCls } from './DynamicQuestionFie
 import OtpVerificationScreen from './OtpVerificationScreen'
 import LoginRequiredScreen from './LoginRequiredScreen'
 import RequestSentScreen from './RequestSentScreen'
+import type { ISingleRequestData } from '@/types/singleRequest'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type ClientType = 'Individual' | 'Company' | ''
@@ -98,8 +101,49 @@ function SummaryRow({
   )
 }
 
+type RequestAServiceFormProps = {
+  mode?: 'create' | 'edit'
+  requestId?: string
+  data?: ISingleRequestData
+}
+
+function mapClientType(clientType?: string): ClientType {
+  if (clientType === 'Company' || clientType === 'Entreprise') return 'Company'
+  if (clientType === 'Individual' || clientType === 'Particulier') return 'Individual'
+  return ''
+}
+
+function parseDynamicAnswerValue(
+  value?: string,
+  question?: Pick<ListEntity, 'is_multiple' | 'type'>,
+): string | string[] {
+  const isMulti = question?.is_multiple || question?.type === 'checkbox'
+
+  if (!value) return isMulti ? [] : ''
+
+  const parsed: string | string[] = value.includes(',')
+    ? value.split(',').map((s) => s.trim()).filter(Boolean)
+    : value
+
+  if (isMulti) {
+    return Array.isArray(parsed) ? parsed : [parsed]
+  }
+
+  return Array.isArray(parsed) ? parsed[0] ?? '' : parsed
+}
+
+function getServiceCategoryId(category?: ISingleRequestData['service_category'] | string): string {
+  if (typeof category === 'string') return category
+  return category?._id ?? ''
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function RequestAServiceForm() {
+export default function RequestAServiceForm({
+  mode = 'create',
+  requestId,
+  data,
+}: RequestAServiceFormProps = {}) {
+  const isEditMode = mode === 'edit'
   // ── Services API
   const {
     data: servicesResponse,
@@ -112,8 +156,10 @@ export default function RequestAServiceForm() {
     image: s.image ?? null,
   }))
 
-  // ── Mutation
-  const [createServiceRequest, { isLoading: isSubmitting }] = useCreateServiceRequestMutation()
+  // ── Mutations
+  const [createServiceRequest, { isLoading: isCreateSubmitting }] = useCreateServiceRequestMutation()
+  const [updateServiceRequest, { isLoading: isUpdateSubmitting }] = useUpdateServiceRequestMutation()
+  const isSubmitting = isCreateSubmitting || isUpdateSubmitting
 
   // ── UI state
   const [uiStep, setUiStep] = useState(1)
@@ -125,18 +171,32 @@ export default function RequestAServiceForm() {
   const [shakeStep, setShakeStep] = useState<number | null>(null)
 
   // ── Step 1 state (service + clientType)
-  const [service, setService] = useState('')
+  const [service, setService] = useState(() => getServiceCategoryId(data?.service_category))
   const [serviceTouched, setServiceTouched] = useState(false)
-  const [clientType, setClientType] = useState<ClientType>('')
+  const [clientType, setClientType] = useState<ClientType>(() =>
+    mapClientType(data?.contact_details?.client_type),
+  )
   const [clientTypeTouched, setClientTypeTouched] = useState(false)
 
-  // ── Dynamic answers
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
+  // ── Dynamic answers (prefilled by API key, e.g. time_slot, start_date)
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>(() => {
+    if (!data?.dynamic_answers?.length) return {}
+    return Object.fromEntries(
+      data.dynamic_answers.map((a) => [a.key, parseDynamicAnswerValue(a.value)]),
+    )
+  })
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
   // ── Contact step — Formik
   const contactFormik = useFormik({
-    initialValues: { firstName: '', lastName: '', phone: '', email: '', notes: '' },
+    initialValues: {
+      firstName: data?.contact_details?.first_name ?? '',
+      lastName: data?.contact_details?.last_name ?? '',
+      phone: data?.contact_details?.phone ?? '',
+      email: data?.contact_details?.email ?? '',
+      notes: data?.note ?? '',
+    },
+    enableReinitialize: true,
     validationSchema: serviceRequestContactSchema,
     validateOnBlur: true,
     validateOnChange: true,
@@ -152,11 +212,29 @@ export default function RequestAServiceForm() {
     [questionsResponse],
   )
 
-  // Reset dynamic answers whenever the selected service changes
+  // Reset dynamic answers when the user changes service (skip initial edit prefill)
+  const skipServiceResetRef = useRef(true)
   useEffect(() => {
+    if (skipServiceResetRef.current) {
+      skipServiceResetRef.current = false
+      return
+    }
     setAnswers({})
     setTouchedFields(new Set())
   }, [service])
+
+  // Re-apply saved answers once questions load (keys match API dynamic_answers.key)
+  useEffect(() => {
+    if (!isEditMode || !data?.dynamic_answers?.length || questionsList.length === 0) return
+    setAnswers((prev) => {
+      const next = { ...prev }
+      for (const q of questionsList) {
+        const saved = data.dynamic_answers!.find((a) => a.key === q.key)
+        if (saved) next[q.key] = parseDynamicAnswerValue(saved.value, q)
+      }
+      return next
+    })
+  }, [isEditMode, data?.dynamic_answers, questionsList])
 
   // Group questions by API `step`, sorted by `order` within each step
   const apiSteps = useMemo(
@@ -219,12 +297,12 @@ export default function RequestAServiceForm() {
     } else if (currentApiStep != null) {
       const hasErr = currentQuestions.some((q) => {
         if (!q.is_required) return false
-        const val = answers[q._id]
+        const val = answers[q.key]
         return !val || (Array.isArray(val) ? val.length === 0 : val === '')
       })
       setTouchedFields((prev) => {
         const next = new Set(prev)
-        currentQuestions.forEach((q) => next.add(q._id))
+        currentQuestions.forEach((q) => next.add(q.key))
         return next
       })
       if (hasErr) {
@@ -255,7 +333,7 @@ export default function RequestAServiceForm() {
 
     const dynamic_answers: IDynamicAnswerPayload[] = questionsList
       .filter((q) => {
-        const val = answers[q._id]
+        const val = answers[q.key]
         return val !== undefined && (Array.isArray(val) ? val.length > 0 : val !== '')
       })
       .map((q) => ({
@@ -263,9 +341,9 @@ export default function RequestAServiceForm() {
         key: q.key,
         label: q.label,
         type: q.type,
-        value: Array.isArray(answers[q._id])
-          ? (answers[q._id] as string[]).join(', ')
-          : (answers[q._id] as string),
+        value: Array.isArray(answers[q.key])
+          ? (answers[q.key] as string[]).join(', ')
+          : (answers[q.key] as string),
       }))
 
     const payload: ICreateServiceRequestPayload = {
@@ -282,6 +360,14 @@ export default function RequestAServiceForm() {
     }
 
     try {
+      if (isEditMode && requestId) {
+        await updateServiceRequest({ id: requestId, value: payload }).unwrap()
+        setSubmissionRef(data?.reference_no ?? null)
+        setIsSuccess(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+
       const res = await createServiceRequest(payload).unwrap()
       // The base query converts certain 403s (EMAIL_VERIFICATION_REQUIRED) into
       // data, so we also check flow/type on the success path.
@@ -372,8 +458,8 @@ export default function RequestAServiceForm() {
   }
 
   function getFieldError(q: ListEntity): string | undefined {
-    if (!touchedFields.has(q._id) || !q.is_required) return undefined
-    const val = answers[q._id]
+    if (!touchedFields.has(q.key) || !q.is_required) return undefined
+    const val = answers[q.key]
     if (!val || (Array.isArray(val) ? val.length === 0 : val === '')) {
       return 'Ce champ est obligatoire'
     }
@@ -638,10 +724,10 @@ export default function RequestAServiceForm() {
                 <DynamicQuestionField
                   key={q._id}
                   question={q}
-                  value={answers[q._id] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
+                  value={answers[q.key] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
                   error={getFieldError(q)}
-                  onChange={(val) => handleAnswer(q._id, val)}
-                  onBlur={() => touchField(q._id)}
+                  onChange={(val) => handleAnswer(q.key, val)}
+                  onBlur={() => touchField(q.key)}
                 />
               ))
             )}
@@ -726,6 +812,8 @@ export default function RequestAServiceForm() {
                   onChange={contactFormik.handleChange}
                   onBlur={contactFormik.handleBlur}
                   placeholder="+33 6 12 34 56 78"
+                  readOnly={isEditMode}
+                  disabled={isEditMode}
                   className={`${inputCls(!!(contactFormik.touched.phone && contactFormik.errors.phone))} pl-9`}
                   style={{ fontFamily: 'inherit' }}
                 />
@@ -745,6 +833,8 @@ export default function RequestAServiceForm() {
                 onChange={contactFormik.handleChange}
                 onBlur={contactFormik.handleBlur}
                 placeholder="email@example.com"
+                readOnly={isEditMode}
+                disabled={isEditMode}
                 className={inputCls(!!(contactFormik.touched.email && contactFormik.errors.email))}
                 style={{ fontFamily: 'inherit' }}
               />
@@ -834,7 +924,7 @@ export default function RequestAServiceForm() {
                 value={sumType}
               />
               {questionsList.map((q) => {
-                const val = answers[q._id]
+                const val = answers[q.key]
                 if (!val || (Array.isArray(val) && val.length === 0)) return null
                 return (
                   <SummaryRow
@@ -941,11 +1031,11 @@ export default function RequestAServiceForm() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Envoi en cours…
+                    {isEditMode ? 'Mise à jour en cours…' : 'Envoi en cours…'}
                   </>
                 ) : (
                   <>
-                    Envoyer ma demande
+                    {isEditMode ? 'Enregistrer les modifications' : 'Envoyer ma demande'}
                     <FiCheck size={16} strokeWidth={2.5} />
                   </>
                 )}
@@ -955,7 +1045,9 @@ export default function RequestAServiceForm() {
         )}
 
         {/* ── Screen: Request Sent ──────────────────────────────────────────────── */}
-        {isSuccess && <RequestSentScreen submissionRef={submissionRef} />}
+        {isSuccess && (
+          <RequestSentScreen submissionRef={submissionRef} variant={isEditMode ? 'edit' : 'create'} />
+        )}
 
         {/* ── Screen: Email OTP Verification ───────────────────────────────────── */}
         {!isSuccess && flowScreen === 'EMAIL_VERIFICATION_REQUIRED' && (
