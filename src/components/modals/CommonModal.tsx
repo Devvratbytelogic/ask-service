@@ -7,9 +7,8 @@ import LoginSignupIndex from "../pages/LoginSignupFlow/LoginSignupIndex";
 import MobileOtpVerification from "./MobileOtpVerification";
 import VendorDocumentVerification from "../pages/LoginSignupFlow/VendorSignupFlow/VendorDocumentVerification";
 import SubmissionSuccess from "../pages/RequestServiceFlow/SubmissionSuccess";
-import ViewQuoteModal from "../pages/my-request/ViewQuoteModal";
-import QuoteDetailModal from "../pages/my-request/QuoteDetailModal";
-import CloseRequestModal from "../pages/my-request/CloseRequestModal";
+import QuoteDetailModal from "../pages/ClientDashboardPage/QuoteDetailModal";
+import CloseRequestModal from "../pages/ClientDashboardPage/CloseRequestModal";
 import LeaveReviewModal from "../vendor/profile/LeaveReviewModal";
 import ReportProfileModal from "../vendor/profile/ReportProfileModal";
 import ReportSubmittedModal from "../vendor/profile/ReportSubmittedModal";
@@ -44,9 +43,6 @@ const CommonModal = () => {
 
             case "SubmissionSuccess":
                 return <SubmissionSuccess />
-
-            case "ViewQuoteModal":
-                return <ViewQuoteModal />
 
             case "QuoteDetailModal":
                 return <QuoteDetailModal />

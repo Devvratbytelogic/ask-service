@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const VENDOR_DASHBOARD_PATH = '/vendor/dashboard';
-const USER_DASHBOARD_PATH = '/my-request';
+const USER_DASHBOARD_PATH = '/client/dashboard';
 
 /** Paths that require auth token; children are blocked too (e.g. /vendor/dashboard). */
-const PROTECTED_PATH_PREFIXES = ['/create-request', '/my-account', '/my-request', '/vendor'] as const;
+const PROTECTED_PATH_PREFIXES = ['/create-request', '/my-account', '/client', '/vendor'] as const;
 
 /** User-only paths; vendors cannot access these. */
-const USER_PATH_PREFIXES = ['/create-request', '/my-account', '/my-request'] as const;
+const USER_PATH_PREFIXES = ['/create-request', '/my-account', '/client'] as const;
 
 /** Vendor-only paths; users cannot access these. */
 const VENDOR_PATH_PREFIXES = ['/vendor'] as const;
@@ -63,5 +63,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/my-request/:path*', '/vendor/:path*', '/message', '/message/:path*'],
+    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/client/:path*', '/vendor/:path*', '/message', '/message/:path*'],
 };

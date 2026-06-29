@@ -9,7 +9,7 @@ interface MyAccountProps {
     variant?: 'default' | 'vendor'
 }
 
-const VALID_SECTIONS: NavId[] = ['profile', 'security', 'notifications', 'documents', 'reviews', 'payment-history', 'my-requests']
+const VALID_SECTIONS: NavId[] = ['profile', 'security', 'notifications', 'documents', 'reviews', 'payment-history']
 
 export default function MyAccount({ variant = 'default' }: MyAccountProps) {
     const searchParams = useSearchParams()

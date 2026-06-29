@@ -5,7 +5,7 @@ import { FiArrowLeft } from 'react-icons/fi'
 import { useGetCreatedServiceByIdQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import RequestAServiceForm from '@/components/pages/RequestAServicePage/RequestAServiceForm'
 import AppLoader from '@/components/common/AppLoader'
-import { getMyRequestRoutePath } from '@/routes/routes'
+import { getClientDashboardPageRoutePath } from '@/routes/routes'
 
 export default function EditRequest({ requestId }: { requestId: string }) {
   const { data: response, isLoading, isError } = useGetCreatedServiceByIdQuery({ id: requestId })
@@ -24,7 +24,7 @@ export default function EditRequest({ requestId }: { requestId: string }) {
             Cette demande n&apos;existe pas ou vous n&apos;y avez pas accès.
           </p>
           <Link
-            href={getMyRequestRoutePath()}
+            href={getClientDashboardPageRoutePath()}
             className="inline-flex items-center gap-2 rounded-[12px] bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline"
           >
             <FiArrowLeft size={14} />
@@ -40,7 +40,7 @@ export default function EditRequest({ requestId }: { requestId: string }) {
     <section className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] py-8 sm:px-[5%] sm:py-12">
       <div className="mb-8 w-full max-w-[620px]">
         <Link
-          href={getMyRequestRoutePath()}
+          href={getClientDashboardPageRoutePath()}
           className="inline-flex items-center gap-1.5 text-[13px] font-medium text-appTextSec no-underline transition-colors hover:text-primaryColor"
         >
           <FiArrowLeft size={14} />

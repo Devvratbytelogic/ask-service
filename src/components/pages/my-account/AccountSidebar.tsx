@@ -2,7 +2,7 @@
 
 import { BriefcaseIconSVG, ChatBubbleLeftRightIconSVG, DocumentArrowIconSVG, LockGreenIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, NotificationsIconSVG, ProfileIconSVG, SecurityIconSVG, VendorDocumentIconSVG, VendorPaymentHistoryIconSVG, VendorReviewIconSVG } from '@/components/library/AllSVG'
 import { HiPlus } from 'react-icons/hi2'
-import { getCreateRequestRoutePath, getMyAccountRoutePath, getMyRequestRoutePath, getVendorAccountRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
+import { getCreateRequestRoutePath, getMyAccountRoutePath, getVendorAccountRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
@@ -12,7 +12,6 @@ export type NavId =
     | 'create-request'
     | 'dashboard'
     | 'my-leads'
-    | 'my-requests'
     | 'profile'
     | 'prospects'
     | 'security'
@@ -31,7 +30,6 @@ const defaultNavItems: NavItem[] = [
 ]
 
 export const customerNavItems: NavItem[] = [
-    // { id: 'my-requests', label: 'Mes demandes', icon: <BriefcaseIconSVG />, href: getMyRequestRoutePath() },
     { id: 'profile', label: 'Profil', icon: <ProfileIconSVG />, href: getMyAccountRoutePath({ section: 'profile' }) },
     { id: 'security', label: 'Sécurité', icon: <SecurityIconSVG />, href: getMyAccountRoutePath({ section: 'security' }) },
     { id: 'notifications', label: 'Notifications', icon: <NotificationsIconSVG />, href: getMyAccountRoutePath({ section: 'notifications' }) },
@@ -80,9 +78,8 @@ export default function AccountSidebar({
                     const isAccountSectionActive = isLink && item.id && item.id !== 'dashboard' && item.id !== 'prospects' && item.id !== 'messages' && item.id !== 'all-quotes' && pathname === '/vendor/account' && urlSection === item.id
                     const isMessagesActive = isLink && item.id === 'messages' && pathname === '/vendor/message'
                     const isCreateRequestActive = isLink && item.id === 'create-request' && pathname === '/create-request'
-                    const isMyRequestsActive = isLink && item.id === 'my-requests' && pathname === '/my-request'
-                    const isMyAccountSectionActive = isLink && item.id && item.id !== 'my-requests' && item.id !== 'create-request' && pathname === '/my-account' && urlSection === item.id
-                    const isLinkActive = isLink && (isDashboardActive || isProspectsActive || isMyLeadsActive || isAllQuotesActive || isAccountSectionActive || isMessagesActive || isCreateRequestActive || isMyRequestsActive || isMyAccountSectionActive)
+                    const isMyAccountSectionActive = isLink && item.id && item.id !== 'create-request' && pathname === '/my-account' && urlSection === item.id
+                    const isLinkActive = isLink && (isDashboardActive || isProspectsActive || isMyLeadsActive || isAllQuotesActive || isAccountSectionActive || isMessagesActive || isCreateRequestActive || isMyAccountSectionActive)
                     const isSectionActive = !isLink && activeSection === item.id
                     const isActive = isLinkActive || isSectionActive
                     const key = item.id ?? `link-${idx}`

@@ -28,11 +28,8 @@ export function getVendorWalletRoutePath() {
 export function getHomeRoutePath() {
     return `/`;
 }
-export function getMyRequestRoutePath() {
-    return `/my-request`;
-}
 export function getEditRequestRoutePath(id: string) {
-    return `/my-request/edit/${id}`;
+    return `/client/dashboard/edit/${id}`;
 }
 export function getCreateRequestRoutePath() {
     return `/create-request`;
@@ -55,7 +52,7 @@ export function getMyAccountRoutePath(params?: { section?: string }) {
     return `/my-account${search}`;
 }
 
-/** Dashboard path for the given role (User → my-request, Vendor → vendor/dashboard). */
+/** Dashboard path for the given role (User → client/dashboard, Vendor → vendor/dashboard). */
 // Deprecated
 export function getDashboardPathForRole(
     role: string | { name?: string; id?: string; _id?: string } | undefined | null
@@ -68,7 +65,7 @@ export function getDashboardPathForRole(
                 : String(role.name ?? role.id ?? role._id ?? '');
     const rLower = r.toLowerCase();
     if (rLower === 'vendor') return getVendorDashboardRoutePath();
-    return getMyRequestRoutePath();
+    return getClientDashboardPageRoutePath();
 }
 
 /** Profile / account settings path for the given role (User → my-account, Vendor → vendor/account). */

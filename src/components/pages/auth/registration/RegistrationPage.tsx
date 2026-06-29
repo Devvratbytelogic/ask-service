@@ -9,7 +9,7 @@ import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, Fi
 import ReactSelect from 'react-select'
 import { buildSelectStyles, type CategoryOption } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
-import { getLoginPageRoutePath, getMyRequestRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
+import { getLoginPageRoutePath, getClientDashboardPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import LeftPanel from './LeftPanel'
 import { addToast } from '@heroui/react'
 import { useGetAllServicesQuery, useGetAllServicesDocumentsRequiredQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -500,7 +500,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       </div>
                     )}
                     <Link
-                      href={isVendor ? '/' : getMyRequestRoutePath()}
+                      href={isVendor ? '/' : getClientDashboardPageRoutePath()}
                       className="flex w-full items-center justify-center gap-2 rounded-[10px] py-3.5 text-[14px] font-semibold no-underline transition-all hover:-translate-y-px"
                       style={{
                         background: accentColor,

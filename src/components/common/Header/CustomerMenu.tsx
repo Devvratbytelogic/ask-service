@@ -2,11 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-    getClientDashboardPageRoutePath,
-    getMessageRoutePath,
-    getRequestAServiceRoutePath,
-} from '@/routes/routes'
+import { getClientDashboardPageRoutePath, getMessageRoutePath, getRequestAServiceRoutePath } from '@/routes/routes'
 
 const NAV_LINKS = [
     { label: 'Mes demandes', href: getClientDashboardPageRoutePath() },
