@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { resolveImageSrc } from '@/utils/resolveImageSrc';
 
 interface ImageComponentProps {
   url?: string;
@@ -13,10 +14,11 @@ interface ImageComponentProps {
 
 export default function ImageComponent({ url, img_title, object_cover = true, object_contain = false }: ImageComponentProps) {
   const [hasError, setHasError] = useState(false);
+  const resolvedUrl = useMemo(() => resolveImageSrc(url), [url]);
 
   useEffect(() => {
     setHasError(false);
-  }, [url]);
+  }, [resolvedUrl]);
 
   const objectFitClass = object_contain ? 'object-contain' : object_cover ? 'object-cover' : '';
   const fallbackLetters = img_title
@@ -26,7 +28,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
       .toUpperCase()
     : '??';
 
-  if (hasError || !url) {
+  if (hasError || !resolvedUrl) {
     return (
       <div
         className={`w-full h-full flex items-center justify-center text-gray-600 font-semibold ${objectFitClass}`}
@@ -39,7 +41,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
 
   return (
     <Image
-      src={url}
+      src={resolvedUrl}
       width={1000}
       height={1000}
       alt={img_title || 'title not found'}

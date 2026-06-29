@@ -12,6 +12,7 @@ import { getEditRequestRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useAcceptQuoteMutation, useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
+import ImageComponent from '@/components/library/ImageComponent'
 
 type DemandCardProps = {
     demand: IAllRequestsDataEntity
@@ -167,12 +168,10 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                 {/* Service icon */}
                 <div className="w-11 h-11 rounded-[13px] overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
                     {demand?.service_category?.image ? (
-                        <Image
-                            src={demand.service_category.image}
-                            alt={demand.service_category.title ?? ''}
-                            width={44}
-                            height={44}
-                            className="w-full h-full object-cover"
+                        <ImageComponent
+                            url={demand.service_category.image || ''}
+                            img_title={demand.service_category.title ?? ''}
+                            object_cover={true}
                         />
                     ) : (
                         <span className="text-[22px]">

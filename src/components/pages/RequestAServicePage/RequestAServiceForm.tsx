@@ -2,13 +2,17 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
+import { useSelector } from 'react-redux'
 import { serviceRequestContactSchema } from '@/utils/validation'
 import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
 import ReactSelect from 'react-select'
 import {
   useGetAllServicesQuery,
   useGetServicesQuetionsQuery,
+  useGetUserProfileInfoQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
+import { RootState } from '@/redux/appStore'
+import { getAuthToken } from '@/utils/authCookies'
 import {
   useCreateServiceRequestMutation,
   useUpdateServiceRequestMutation,
@@ -144,6 +148,13 @@ export default function RequestAServiceForm({
   data,
 }: RequestAServiceFormProps = {}) {
   const isEditMode = mode === 'edit'
+  const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
+  const isAuthenticated = !!getAuthToken() || isClientAuthenticated
+  const { data: profileResponse } = useGetUserProfileInfoQuery(undefined, {
+    skip: !isAuthenticated,
+  })
+  const profile = profileResponse?.data
+
   // ── Services API
   const {
     data: servicesResponse,
@@ -190,10 +201,10 @@ export default function RequestAServiceForm({
   // ── Contact step — Formik
   const contactFormik = useFormik({
     initialValues: {
-      firstName: data?.contact_details?.first_name ?? '',
-      lastName: data?.contact_details?.last_name ?? '',
-      phone: data?.contact_details?.phone ?? '',
-      email: data?.contact_details?.email ?? '',
+      firstName: data?.contact_details?.first_name ?? profile?.first_name ?? '',
+      lastName: data?.contact_details?.last_name ?? profile?.last_name ?? '',
+      phone: data?.contact_details?.phone ?? profile?.phone ?? '',
+      email: data?.contact_details?.email ?? profile?.email ?? '',
       notes: data?.note ?? '',
     },
     enableReinitialize: true,

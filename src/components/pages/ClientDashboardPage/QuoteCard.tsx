@@ -142,10 +142,10 @@ export default function QuoteCard({ onAccept, onIgnore, onViewDetails, quoteData
                 </div>
             ) : isIgnored ? (
                 <div className="space-y-1.5">
-                    <div className="flex items-center gap-1 text-xs text-appTextSec px-2.5 py-2 bg-black/5 dark:bg-white/5 border border-appBorderSub rounded-lg">
+                    <div className="w-fit flex items-center gap-1 text-xs text-appTextSec px-2.5 py-2 bg-black/5 dark:bg-white/5 border border-appBorderSub rounded-lg">
                         Devis ignoré
                     </div>
-                    {onViewDetails && (
+                    {/* {onViewDetails && (
                         <button
                             type="button"
                             onClick={onViewDetails}
@@ -153,7 +153,7 @@ export default function QuoteCard({ onAccept, onIgnore, onViewDetails, quoteData
                         >
                             Voir les détails
                         </button>
-                    )}
+                    )} */}
                 </div>
             ) : (
                 <div className="space-y-1.5">
