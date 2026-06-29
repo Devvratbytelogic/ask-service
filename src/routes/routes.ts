@@ -29,7 +29,7 @@ export function getHomeRoutePath() {
     return `/`;
 }
 export function getEditRequestRoutePath(id: string) {
-    return `/client/dashboard/edit/${id}`;
+    return `/client/dashboard/edit-service/${id}`;
 }
 export function getCreateRequestRoutePath() {
     return `/create-request`;
