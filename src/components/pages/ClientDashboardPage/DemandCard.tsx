@@ -13,6 +13,7 @@ import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useAcceptQuoteMutation, useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
 import ImageComponent from '@/components/library/ImageComponent'
+import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 
 type DemandCardProps = {
     demand: IAllRequestsDataEntity
@@ -57,7 +58,7 @@ const STATUS_CONFIG: Record<string, { classes: string; icon: React.ReactNode }> 
 }
 
 const MetaItem = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center gap-[5px] text-xs text-appTextSec">{children}</div>
+    <div className="flex items-center gap-[5px] text-xs text-appTextSec capitalize">{children}</div>
 )
 
 export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardProps) {
@@ -208,11 +209,11 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <div className="flex items-center gap-3.5 flex-wrap">
                         <MetaItem>
                             <LocationIconSVG />
-                            {demand?.location}
+                            {resolvePostalOption(demand?.cityOrPostalCode ?? '')?.label ?? demand?.cityOrPostalCode ?? '—'}
                         </MetaItem>
                         <MetaItem>
-                            <CalendarIconSVG />
-                            {demand?.preferred_start_date}
+                            <CalendarIconSVG /> 
+                            {demand?.desiredDate ? moment(demand?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {demand?.timeSlot}
                         </MetaItem>
                         {demand?.child_category?.title && (
                             <MetaItem>
