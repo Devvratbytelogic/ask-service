@@ -24,6 +24,7 @@ export interface IAvailableLeadByCategoryAPIResponse {
   }
   export interface IAvailableLeadByCategoryDataEntity {
     service_category: IAvailableLeadByCategoryServiceCategory;
+    parent_service_category: IAvailableLeadByCategoryServiceCategory;
     leads_count: number;
     status: string | null;
     status_label: string | null;
@@ -80,12 +81,16 @@ export interface IAvailableLeadByCategoryAPIResponse {
     state?: string | null;
     country?: string | null;
     frequency?: string | null;
+    cityOrPostalCode?: string | null;
+    desiredDate?: string | null;
+    timeSlot?: string | null;
   }
   export interface IAvailableLeadByCategoryServiceCategory1 {
     _id: string;
     title: string;
     company_credit: number;
     credit: number;
+    image?: string | null;
   }
   export interface IAvailableLeadByCategoryContactDetailsEntity {
     first_name: string;

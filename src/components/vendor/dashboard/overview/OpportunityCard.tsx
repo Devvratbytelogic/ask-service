@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowSendIconSVG, ChatOutlineIconSVG, LockPrimaryColorSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, } from '@/components/library/AllSVG'
+import { ArrowSendIconSVG, CalendarIconSVG, ChatOutlineIconSVG, LocationIconSVG, LockPrimaryColorSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, } from '@/components/library/AllSVG'
 import { Tooltip } from '@heroui/react'
 import { IAvailableLeadByCategoryContactDetailsEntity, IAvailableLeadByCategoryDynamicAnswersEntity, IAvailableLeadByCategoryLeadsEntity, } from '@/types/availableLeadByCategory'
 import { generateLeadDetailRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
@@ -8,6 +8,9 @@ import { openModal } from '@/redux/slices/allModalSlice'
 import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'nextjs-toploader/app';
+import ImageComponent from '@/components/library/ImageComponent'
+import moment from 'moment'
+import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 
 type ButtonVariant = 'green' | 'blue' | 'amber' | 'gray'
 type LeadActionType = 'unlock' | 'send-quote' | 'view-quote' | 'contact' | 'ignored'
@@ -146,6 +149,12 @@ function ClientBlock({ client }: { client: IAvailableLeadByCategoryContactDetail
                 {client?.email}
             </div>
         </div>
+    )
+}
+
+function MetaItem({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="flex items-center gap-[5px] text-[12px] text-appTextSec capitalize">{children}</div>
     )
 }
 
@@ -292,9 +301,19 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                         className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center text-[14px] shrink-0"
                         style={{ background: 'rgba(16,185,129,0.12)' }}
                     >
-                        🏠
+                        {lead?.service_category?.image ? (
+                            <ImageComponent
+                                url={lead?.service_category?.image || ''}
+                                img_title={lead?.service_category?.title ?? ''}
+                                object_cover={true}
+                            />
+                        ) : (
+                            <span className="text-[18px]">
+                                {lead?.service_category?.title?.charAt(0)}
+                            </span>
+                        )}
                     </div>
-                    Prospect
+                    {lead?.service_category?.title}
                 </div>
                 {/* <button
                     type="button"
@@ -309,6 +328,18 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             <div className="flex items-center gap-1.5 text-[12px] text-appTextSec mb-3">
                 <span className="text-appTextMuted shrink-0">Réf.:</span>
                 <span className="font-semibold text-appText truncate">{lead?.reference_no}</span>
+            </div>
+
+            <div className="flex items-center gap-3.5 flex-wrap mb-3">
+                <MetaItem>
+                    <LocationIconSVG />
+                    {resolvePostalOption(lead?.cityOrPostalCode ?? '')?.label ?? lead?.cityOrPostalCode ?? '—'}
+                </MetaItem>
+                <MetaItem>
+                    <CalendarIconSVG />
+                    {lead?.desiredDate ? moment(lead.desiredDate).locale('fr').format('DD MMM YYYY') : '—'}
+                    {lead?.timeSlot ? ` · ${lead.timeSlot}` : ''}
+                </MetaItem>
             </div>
 
             {lead.dynamic_answers && lead.dynamic_answers.length > 0 && (
@@ -336,7 +367,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                         disabled={isButtonDisabled}
                         onClick={handlePrimaryAction}
                     /> */}
-                     <PrimaryButton
+                    <PrimaryButton
                         label={isAccessingChat && action.action === 'contact' ? 'Ouverture…' : action.label}
                         variant={action.variant}
                         action={action.action}

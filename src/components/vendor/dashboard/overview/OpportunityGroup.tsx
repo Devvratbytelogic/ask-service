@@ -69,27 +69,27 @@ export default function OpportunityGroup({
     canPurchaseLeads: boolean
 }) {
     const leads = item?.leads ?? []
-    const hasLeads = leads.length > 0
-    const categoryId = item.service_category?._id ?? ''
-    const currentPage = item.pagination?.page ?? 1
-    const currentLimit = item.pagination?.limit ?? 6
-    const totalPages = item.pagination?.totalPages ?? 0
+    const hasLeads = leads?.length > 0
+    const categoryId = item?.service_category?._id ?? ''
+    const currentPage = item?.pagination?.page ?? 1
+    const currentLimit = item?.pagination?.limit ?? 6
+    const totalPages = item?.pagination?.totalPages ?? 0
     return (
         <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
             <div className="px-[18px] py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
-                <OppGroupStatusBadge status={item.status} label={item.status_label} />
-                <span className="text-[16px] font-extrabold text-appText">{item.service_category?.title}</span>
+                <OppGroupStatusBadge status={item?.status} label={item?.status_label} />
+                <span className="text-[16px] font-extrabold text-appText">{item?.parent_service_category?.title}</span>
                 {item?.leads_count > 0 && (
                     <span className="text-[12px] text-appTextMuted bg-black/2 dark:bg-white/3 border border-appBorderSub px-2 py-[3px] rounded-[6px]">
-                        {item?.leads_count} prospect{item?.leads_count > 1 ? 's' : ''}
+                        {item?.leads_count} prospect{item?.leads_count && item?.leads_count > 1 ? 's' : ''}
                     </span>
                 )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-appBorderSub">
                 {hasLeads ? (
-                    leads.map((lead, index) => (
-                        <OpportunityCard key={lead._id ?? index} lead={lead} canPurchaseLeads={canPurchaseLeads} />
+                    leads?.map((lead, index) => (
+                        <OpportunityCard key={index} lead={lead} canPurchaseLeads={canPurchaseLeads} />
                     ))
                 ) : (
                     <div className="col-span-full px-[18px] py-10 text-center">
@@ -99,54 +99,54 @@ export default function OpportunityGroup({
             </div>
 
             {hasLeads && totalPages > 0 && (
-            <div className="px-[18px] py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
-                <Pagination
-                    total={totalPages}
-                    page={currentPage}
-                    onChange={(page) => {
-                        setLeadsPage(page)
-                        setPaginateServiceCategory(categoryId)
-                    }}
-                    showControls
-                    color="primary"
-                    radius="full"
-                    size="sm"
-                    classNames={{
-                        cursor: 'bg-primaryColor text-white',
-                        item: 'cursor-pointer',
-                        prev: 'cursor-pointer',
-                        next: 'cursor-pointer',
-                        ellipsis: 'cursor-pointer',
-                    }}
-                />
-                <div className="flex items-center gap-2">
-                    <Select
-                        selectedKeys={[String(currentLimit)]}
-                        onSelectionChange={(keys) => {
-                            const key = Array.from(keys as Set<string>)[0]
-                            if (key) {
-                                setLeadsLimit(Number(key))
-                                setLeadsPage(1)
-                                setPaginateServiceCategory(categoryId)
-                            }
+                <div className="px-[18px] py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
+                    <Pagination
+                        total={totalPages}
+                        page={currentPage}
+                        onChange={(page) => {
+                            setLeadsPage(page)
+                            setPaginateServiceCategory(categoryId)
                         }}
-                        className="min-w-[72px]"
+                        showControls
+                        color="primary"
+                        radius="full"
                         size="sm"
                         classNames={{
-                            trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none',
-                            value: 'text-[12px]',
+                            cursor: 'bg-primaryColor text-white',
+                            item: 'cursor-pointer',
+                            prev: 'cursor-pointer',
+                            next: 'cursor-pointer',
+                            ellipsis: 'cursor-pointer',
                         }}
-                        aria-label="Prospects par page"
-                    >
-                        {LEADS_LIMIT_OPTIONS.map((n) => (
-                            <SelectItem key={n}>{n}</SelectItem>
-                        ))}
-                    </Select>
-                    <span className="text-[11px] text-appTextMuted whitespace-nowrap">
-                        Prospects par page
-                    </span>
+                    />
+                    <div className="flex items-center gap-2">
+                        <Select
+                            selectedKeys={[String(currentLimit)]}
+                            onSelectionChange={(keys) => {
+                                const key = Array.from(keys as Set<string>)[0]
+                                if (key) {
+                                    setLeadsLimit(Number(key))
+                                    setLeadsPage(1)
+                                    setPaginateServiceCategory(categoryId)
+                                }
+                            }}
+                            className="min-w-[72px]"
+                            size="sm"
+                            classNames={{
+                                trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none',
+                                value: 'text-[12px]',
+                            }}
+                            aria-label="Prospects par page"
+                        >
+                            {LEADS_LIMIT_OPTIONS.map((n) => (
+                                <SelectItem key={n}>{n}</SelectItem>
+                            ))}
+                        </Select>
+                        <span className="text-[11px] text-appTextMuted whitespace-nowrap">
+                            Prospects par page
+                        </span>
+                    </div>
                 </div>
-            </div>
             )}
         </div>
     )

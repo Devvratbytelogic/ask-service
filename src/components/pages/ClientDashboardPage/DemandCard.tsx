@@ -215,12 +215,6 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <CalendarIconSVG /> 
                             {demand?.desiredDate ? moment(demand?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {demand?.timeSlot}
                         </MetaItem>
-                        {demand?.child_category?.title && (
-                            <MetaItem>
-                                <FileIconSVG />
-                                {demand?.child_category?.title}
-                            </MetaItem>
-                        )}
                         <MetaItem>
                             <ClockCircleOutlineIconSVG />
                             Créée {moment(demand?.createdAt ?? '').locale('fr').fromNow()} ({moment(demand?.createdAt ?? '').locale('fr').format('DD MMM YYYY [à] HH:mm')})                        </MetaItem>
