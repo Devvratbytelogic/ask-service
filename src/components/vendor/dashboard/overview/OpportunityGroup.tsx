@@ -62,11 +62,13 @@ export default function OpportunityGroup({
     setLeadsPage,
     setLeadsLimit,
     setPaginateServiceCategory,
+    canPurchaseLeads,
 }: {
     item: IAvailableLeadByCategoryDataEntity
     setLeadsPage: (page: number) => void
     setLeadsLimit: (limit: number) => void
     setPaginateServiceCategory: (serviceCategory: string) => void
+    canPurchaseLeads: boolean
 }) {
     const leads = item?.leads ?? []
     const hasLeads = leads.length > 0
@@ -90,7 +92,7 @@ export default function OpportunityGroup({
                 {hasLeads ? (
                     leads.map((lead, index) => (
                         <Link href={generateLeadDetailRoutePath(lead._id)} key={index}>
-                            <OpportunityCard lead={lead} />
+                            <OpportunityCard lead={lead} canPurchaseLeads={canPurchaseLeads} />
                         </Link>
                     ))
                 ) : (

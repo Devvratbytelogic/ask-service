@@ -149,7 +149,7 @@ function HiddenAnswersTooltip({ answers }: { answers: IAvailableLeadByCategoryDy
 
 // ─── OpportunityCard ──────────────────────────────────────────────────────────
 
-export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCategoryLeadsEntity }) {
+export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAvailableLeadByCategoryLeadsEntity, canPurchaseLeads: boolean   }) {
     const actions = getLeadActionConfig(lead)
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
 
@@ -188,7 +188,6 @@ export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCatego
                 </div>
             )}
 
-            {/* <AlertTag type={card.alertType} text={card.alertText} /> */}
             <ClientBlock client={lead.contact_details} />
 
             <div className="flex items-center gap-2">
@@ -196,14 +195,15 @@ export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCatego
                     label={actions.primary.label}
                     variant={actions.primary.variant}
                     action={actions.primary.action}
-                    disabled={actions.primary.action === 'unlock'}
+                    disabled={!canPurchaseLeads}
                     onClick={() => { }}
                 />
                 {actions.secondary && (
                     <button
                         type="button"
+                        disabled={!canPurchaseLeads}
                         onClick={() => { }}
-                        className="px-3 py-[9px] rounded-[9px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-[12px] font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/9 hover:text-appText whitespace-nowrap"
+                        className="px-3 py-[9px] rounded-[9px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-[12px] font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/9 hover:text-appText whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-black/5 dark:disabled:hover:bg-white/5 disabled:hover:text-appTextSec"
                     >
                         {actions.secondary.label}
                     </button>

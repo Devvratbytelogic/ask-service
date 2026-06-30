@@ -27,6 +27,7 @@ export default function VendorDashboardOverview() {
 
     const totalOpportunities = data?.length ?? 0
     const displayedOpportunities = data?.length ?? 0
+    const canPurchaseLeads = stats?.canPurchaseLeads ?? false;
 
     if (isLoading || isFetching) {
         return <VendorDashboardOverviewSkeleton />
@@ -71,6 +72,7 @@ export default function VendorDashboardOverview() {
                         setLeadsPage={setLeadsPage}
                         setLeadsLimit={setLeadsLimit}
                         setPaginateServiceCategory={setPaginateServiceCategory}
+                        canPurchaseLeads={canPurchaseLeads}
                     />
                 ))
                 ) : (
