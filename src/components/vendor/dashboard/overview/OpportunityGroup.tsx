@@ -1,8 +1,6 @@
 import { ArrowSendIconSVG, CheckmarkIconSVG, ClockCircleIconSVG, } from '@/components/library/AllSVG'
 import OpportunityCard from './OpportunityCard'
 import { IAvailableLeadByCategoryDataEntity } from '@/types/availableLeadByCategory'
-import { generateLeadDetailRoutePath } from '@/routes/routes'
-import Link from 'next/link'
 import { Pagination, Select, SelectItem } from '@heroui/react'
 
 const LEADS_LIMIT_OPTIONS = ['3', '6', '9'] as const
@@ -91,9 +89,7 @@ export default function OpportunityGroup({
             <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-appBorderSub">
                 {hasLeads ? (
                     leads.map((lead, index) => (
-                        <Link href={generateLeadDetailRoutePath(lead._id)} key={index}>
-                            <OpportunityCard lead={lead} canPurchaseLeads={canPurchaseLeads} />
-                        </Link>
+                        <OpportunityCard key={lead._id ?? index} lead={lead} canPurchaseLeads={canPurchaseLeads} />
                     ))
                 ) : (
                     <div className="col-span-full px-[18px] py-10 text-center">

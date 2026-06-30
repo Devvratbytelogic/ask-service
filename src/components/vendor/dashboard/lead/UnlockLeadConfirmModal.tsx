@@ -53,7 +53,7 @@ export default function UnlockLeadConfirmModal() {
                 </div>
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 p-4 px-6 mt-4">
+            <div className="flex justify-center gap-3 pb-4">
                 <Button
                     onPress={handleCancel}
                     className="btn_radius btn_bg_white"
