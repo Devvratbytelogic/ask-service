@@ -38,11 +38,7 @@ export default function LeadDetailView({ leadId }: Props) {
         <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
             {/* Sidebar — hidden on small screens */}
             <div className="hidden lg:block">
-                <LeadSidebar
-                    leads={SIDEBAR_LEADS}
-                    selectedId={selectedId}
-                    onSelect={setSelectedId}
-                />
+                <LeadSidebar selectedId={leadId} />
             </div>
 
             {/* Center — main content */}

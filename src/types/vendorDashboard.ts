@@ -66,6 +66,8 @@ export interface IVendorAvailableLeadsAPIResponse {
     unlocked: boolean;
     creditsToUnlock: number;
     quotes_count: number;
+    lead_status?: string;
+    lead_status_label?: string;
   }
   export interface ServiceCategory {
     _id: string;

@@ -283,7 +283,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             tabIndex={0}
         >
             {(lead.lead_status || lead.lead_status_label) && (
-                <LeadStatusRibbon status={lead.lead_status} label={lead.lead_status_label} />
+                <LeadStatusRibbon status={lead?.lead_status} label={lead?.lead_status_label} />
             )}
 
             <div className="flex items-center justify-between mb-2.5">
@@ -308,24 +308,24 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
 
             <div className="flex items-center gap-1.5 text-[12px] text-appTextSec mb-3">
                 <span className="text-appTextMuted shrink-0">Réf.:</span>
-                <span className="font-semibold text-appText truncate">{lead.reference_no}</span>
+                <span className="font-semibold text-appText truncate">{lead?.reference_no}</span>
             </div>
 
             {lead.dynamic_answers && lead.dynamic_answers.length > 0 && (
                 <div className="flex flex-col gap-[5px] mb-3">
-                    {lead.dynamic_answers.slice(0, 3).map((answer) => (
+                    {lead?.dynamic_answers?.slice(0, 3).map((answer) => (
                         <div key={answer._id} className="flex items-center gap-1.5 text-[12px] text-appTextSec">
                             <span className="text-appTextMuted shrink-0">{answer.label}:</span>
                             <span className="truncate">{answer.value || '—'}</span>
                         </div>
                     ))}
-                    {lead.dynamic_answers.length > 3 ? (
+                    {lead?.dynamic_answers?.length > 3 ? (
                         <HiddenAnswersTooltip answers={hiddenAnswers} />
                     ) : null}
                 </div>
             )}
 
-            <ClientBlock client={lead.contact_details} />
+            <ClientBlock client={lead?.contact_details} />
 
             {action && (
                 <div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
