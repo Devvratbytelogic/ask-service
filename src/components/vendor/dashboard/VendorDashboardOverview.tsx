@@ -10,7 +10,17 @@ import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQue
 export default function VendorDashboardOverview() {
     const [cityFilter, setCityFilter] = useState('')
     const [serviceFilter, setServiceFilter] = useState('')
-    const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery()
+    const [leadsPage, setLeadsPage] = useState(1)
+    const [leadsLimit, setLeadsLimit] = useState(3)
+    const [paginateServiceCategory, setPaginateServiceCategory] = useState('')
+
+    const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+        service: serviceFilter || undefined,
+        city: cityFilter || undefined,
+        page: leadsPage || undefined,
+        limit: leadsLimit || undefined,
+        paginate_service: paginateServiceCategory || undefined,
+    })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
 
@@ -50,7 +60,15 @@ export default function VendorDashboardOverview() {
             {/* Opportunity groups */}
             <>
                 {data && data?.length > 0 ? (data?.map((item, index) => (
-                    <OpportunityGroup key={index} item={item} />
+                    <OpportunityGroup
+                        key={index}
+                        item={item}
+                        leadsPage={leadsPage}
+                        leadsLimit={leadsLimit}
+                        setLeadsPage={setLeadsPage}
+                        setLeadsLimit={setLeadsLimit}
+                        setPaginateServiceCategory={setPaginateServiceCategory}
+                    />
                 ))
                 ) : (
                     <div className="bg-appSurface border border-appBorder rounded-2xl p-8 text-center mb-4">

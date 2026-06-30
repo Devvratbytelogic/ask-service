@@ -10,6 +10,7 @@ export interface IAvailableLeadByCategoryAPIResponse {
   export interface IAvailableLeadByCategoryData {
     summary: IAvailableLeadByCategorySummary;
     data?: (IAvailableLeadByCategoryDataEntity)[] | null;
+    pagination?: IAvailableLeadByCategoryPagination;
     total_categories: number;
     total_leads: number;
   }
@@ -27,6 +28,13 @@ export interface IAvailableLeadByCategoryAPIResponse {
     status: string;
     status_label: string;
     leads?: (IAvailableLeadByCategoryLeadsEntity)[] | null;
+    pagination?: IAvailableLeadByCategoryPagination;
+  }
+  export interface IAvailableLeadByCategoryPagination {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
   }
   export interface IAvailableLeadByCategoryServiceCategory {
     _id: string;

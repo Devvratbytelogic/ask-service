@@ -3,6 +3,9 @@ import OpportunityCard from './OpportunityCard'
 import { IAvailableLeadByCategoryDataEntity } from '@/types/availableLeadByCategory'
 import { generateLeadDetailRoutePath } from '@/routes/routes'
 import Link from 'next/link'
+import { Pagination, Select, SelectItem } from '@heroui/react'
+
+const LEADS_LIMIT_OPTIONS = ['3', '6', '9'] as const
 
 type GroupStatus = 'new' | 'pending' | 'accepted' | 'ignored'
 
@@ -52,9 +55,23 @@ function OppGroupStatusBadge({ status, label }: { status: string; label: string 
 
 // ─── OpportunityGroup ─────────────────────────────────────────────────────────
 
-export default function OpportunityGroup({ item }: { item: IAvailableLeadByCategoryDataEntity }) {
+export default function OpportunityGroup({
+    item,
+    leadsPage,
+    leadsLimit,
+    setLeadsPage,
+    setLeadsLimit,
+    setPaginateServiceCategory,
+}: {
+    item: IAvailableLeadByCategoryDataEntity
+    leadsPage: number
+    leadsLimit: number
+    setLeadsPage: (page: number) => void
+    setLeadsLimit: (limit: number) => void
+    setPaginateServiceCategory: (serviceCategory: string) => void
+}) {
     const leads = item?.leads ?? []
-
+    const totalPages = item?.pagination?.totalPages ?? 0
     return (
         <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
             <div className="px-[18px] py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
@@ -73,6 +90,55 @@ export default function OpportunityGroup({ item }: { item: IAvailableLeadByCateg
                         <OpportunityCard lead={lead} />
                     </Link>
                 ))}
+            </div>
+
+            <div className="px-[18px] py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
+                <Pagination
+                    total={totalPages}
+                    page={leadsPage}
+                    onChange={(page) => {
+                        setLeadsPage(page)
+                        setPaginateServiceCategory(item.service_category?._id ?? '')
+                    }}
+                    showControls
+                    color="primary"
+                    radius="full"
+                    size="sm"
+                    classNames={{
+                        cursor: 'bg-primaryColor text-white',
+                        item: 'cursor-pointer',
+                        prev: 'cursor-pointer',
+                        next: 'cursor-pointer',
+                        ellipsis: 'cursor-pointer',
+                    }}
+                />
+                <div className="flex items-center gap-2">
+                    <Select
+                        selectedKeys={[String(leadsLimit)]}
+                        onSelectionChange={(keys) => {
+                            const key = Array.from(keys as Set<string>)[0]
+                            if (key) {
+                                setLeadsLimit(Number(key))
+                                setLeadsPage(1)
+                                setPaginateServiceCategory(item.service_category?._id ?? '')
+                            }
+                        }}
+                        className="min-w-[72px]"
+                        size="sm"
+                        classNames={{
+                            trigger: 'min-h-8 border border-appBorderSub bg-appSurface',
+                            value: 'text-[12px]',
+                        }}
+                        aria-label="Prospects par page"
+                    >
+                        {LEADS_LIMIT_OPTIONS.map((n) => (
+                            <SelectItem key={n}>{n}</SelectItem>
+                        ))}
+                    </Select>
+                    <span className="text-[11px] text-appTextMuted whitespace-nowrap">
+                        Prospects par page
+                    </span>
+                </div>
             </div>
         </div>
     )

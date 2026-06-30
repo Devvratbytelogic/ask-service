@@ -146,7 +146,7 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
             }),
             providesTags: ['VendorAvailableLeads'],
         }),
-        getVendorAvailableLeadsByServiceCategory: builder.query<IAvailableLeadByCategoryAPIResponse, { sort?: string; city?: string } | void>({
+        getVendorAvailableLeadsByServiceCategory: builder.query<IAvailableLeadByCategoryAPIResponse, { sort?: string; city?: string; service?: string; page?: number; limit?: number; paginate_service?: string } | void>({
             query: (arg) => ({
                 url: `/vendor/available-leads-by-service-category`,
                 method: 'GET',
