@@ -11,7 +11,7 @@ export default function VendorDashboardOverview() {
     const [cityFilter, setCityFilter] = useState('')
     const [serviceFilter, setServiceFilter] = useState('')
     const [leadsPage, setLeadsPage] = useState(1)
-    const [leadsLimit, setLeadsLimit] = useState(3)
+    const [leadsLimit, setLeadsLimit] = useState(6)
     const [paginateServiceCategory, setPaginateServiceCategory] = useState('')
 
     const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery({
@@ -23,6 +23,7 @@ export default function VendorDashboardOverview() {
     })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
+    // console.log('data', data);
 
     const totalOpportunities = data?.length ?? 0
     const displayedOpportunities = data?.length ?? 0
@@ -63,8 +64,6 @@ export default function VendorDashboardOverview() {
                     <OpportunityGroup
                         key={index}
                         item={item}
-                        leadsPage={leadsPage}
-                        leadsLimit={leadsLimit}
                         setLeadsPage={setLeadsPage}
                         setLeadsLimit={setLeadsLimit}
                         setPaginateServiceCategory={setPaginateServiceCategory}

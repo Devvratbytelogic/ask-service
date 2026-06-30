@@ -25,8 +25,8 @@ export interface IAvailableLeadByCategoryAPIResponse {
   export interface IAvailableLeadByCategoryDataEntity {
     service_category: IAvailableLeadByCategoryServiceCategory;
     leads_count: number;
-    status: string;
-    status_label: string;
+    status: string | null;
+    status_label: string | null;
     leads?: (IAvailableLeadByCategoryLeadsEntity)[] | null;
     pagination?: IAvailableLeadByCategoryPagination;
   }

@@ -28,8 +28,8 @@ const GROUP_STATUS_VARIANTS: Record<GroupStatus, { wrapperClass: string; icon: R
     },
 }
 
-function resolveGroupStatus(status: string): GroupStatus {
-    switch (status.toLowerCase()) {
+function resolveGroupStatus(status: string | null | undefined): GroupStatus {
+    switch ((status ?? '').toLowerCase()) {
         case 'pending':
             return 'pending'
         case 'accepted':
@@ -42,13 +42,15 @@ function resolveGroupStatus(status: string): GroupStatus {
     }
 }
 
-function OppGroupStatusBadge({ status, label }: { status: string; label: string }) {
+function OppGroupStatusBadge({ status, label }: { status: string | null | undefined; label: string | null | undefined }) {
+    if (!status && !label) return null
+
     const { wrapperClass, icon } = GROUP_STATUS_VARIANTS[resolveGroupStatus(status)]
 
     return (
         <span className={`flex items-center gap-[5px] text-[11px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1 rounded-[5px] ${wrapperClass}`}>
             {icon}
-            {label}
+            {label ?? status ?? ''}
         </span>
     )
 }
@@ -57,21 +59,21 @@ function OppGroupStatusBadge({ status, label }: { status: string; label: string 
 
 export default function OpportunityGroup({
     item,
-    leadsPage,
-    leadsLimit,
     setLeadsPage,
     setLeadsLimit,
     setPaginateServiceCategory,
 }: {
     item: IAvailableLeadByCategoryDataEntity
-    leadsPage: number
-    leadsLimit: number
     setLeadsPage: (page: number) => void
     setLeadsLimit: (limit: number) => void
     setPaginateServiceCategory: (serviceCategory: string) => void
 }) {
     const leads = item?.leads ?? []
-    const totalPages = item?.pagination?.totalPages ?? 0
+    const hasLeads = leads.length > 0
+    const categoryId = item.service_category?._id ?? ''
+    const currentPage = item.pagination?.page ?? 1
+    const currentLimit = item.pagination?.limit ?? 6
+    const totalPages = item.pagination?.totalPages ?? 0
     return (
         <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
             <div className="px-[18px] py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
@@ -85,20 +87,27 @@ export default function OpportunityGroup({
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-appBorderSub">
-                {leads && leads?.length > 0 && leads?.map((lead, index) => (
-                    <Link href={generateLeadDetailRoutePath(lead._id)} key={index}>
-                        <OpportunityCard lead={lead} />
-                    </Link>
-                ))}
+                {hasLeads ? (
+                    leads.map((lead, index) => (
+                        <Link href={generateLeadDetailRoutePath(lead._id)} key={index}>
+                            <OpportunityCard lead={lead} />
+                        </Link>
+                    ))
+                ) : (
+                    <div className="col-span-full px-[18px] py-10 text-center">
+                        <p className="text-[14px] text-appTextSec">Aucun prospect pour cette catégorie.</p>
+                    </div>
+                )}
             </div>
 
+            {hasLeads && totalPages > 0 && (
             <div className="px-[18px] py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
                 <Pagination
                     total={totalPages}
-                    page={leadsPage}
+                    page={currentPage}
                     onChange={(page) => {
                         setLeadsPage(page)
-                        setPaginateServiceCategory(item.service_category?._id ?? '')
+                        setPaginateServiceCategory(categoryId)
                     }}
                     showControls
                     color="primary"
@@ -114,19 +123,19 @@ export default function OpportunityGroup({
                 />
                 <div className="flex items-center gap-2">
                     <Select
-                        selectedKeys={[String(leadsLimit)]}
+                        selectedKeys={[String(currentLimit)]}
                         onSelectionChange={(keys) => {
                             const key = Array.from(keys as Set<string>)[0]
                             if (key) {
                                 setLeadsLimit(Number(key))
                                 setLeadsPage(1)
-                                setPaginateServiceCategory(item.service_category?._id ?? '')
+                                setPaginateServiceCategory(categoryId)
                             }
                         }}
                         className="min-w-[72px]"
                         size="sm"
                         classNames={{
-                            trigger: 'min-h-8 border border-appBorderSub bg-appSurface',
+                            trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none',
                             value: 'text-[12px]',
                         }}
                         aria-label="Prospects par page"
@@ -140,6 +149,7 @@ export default function OpportunityGroup({
                     </span>
                 </div>
             </div>
+            )}
         </div>
     )
 }

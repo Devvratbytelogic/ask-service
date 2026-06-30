@@ -1,7 +1,7 @@
 'use client'
 
 import ReactSelect from 'react-select'
-import { ArrowSendIconSVG, CheckmarkIconSVG, LightningBoltIconSVG, } from '@/components/library/AllSVG'
+import { LightningBoltIconSVG, } from '@/components/library/AllSVG'
 import { buildDashboardFilterSelectStyles, type FilterOption } from '@/components/pages/ClientDashboardPage/selectStyles'
 import { useGetAllServiceRequestCitiesQuery, useGetServiceCategoriesQuery, } from '@/redux/rtkQueries/clientSideGetApis'
 
@@ -26,7 +26,7 @@ export default function OpportunitySectionHeader({
     const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
 
     const serviceOptions = [
-        { value: 'Tous services', label: 'Tous les services' },
+        { value: '', label: 'Tous les services' },
         ...(serviceCategoriesData?.data ?? []).map((cat) => ({
             value: cat._id,
             label: cat.title,
@@ -34,7 +34,7 @@ export default function OpportunitySectionHeader({
     ]
 
     const cityOptions = [
-        { value: 'Toutes les villes', label: 'Toutes les villes' },
+        { value: '', label: 'Toutes les villes' },
         ...(allServiceRequestCitiesData?.data?.cities ?? []).map((city) => ({
             value: city,
             label: city
@@ -55,14 +55,14 @@ export default function OpportunitySectionHeader({
                         <LightningBoltIconSVG size={10} />
                         {totalOpportunities} opportunités actives
                     </span>
-                    <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#93C5FD] bg-primaryColor/10 border-primaryColor/20">
+                    {/* <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#93C5FD] bg-primaryColor/10 border-primaryColor/20">
                         <ArrowSendIconSVG size={10} />
                         6 devis envoyés
                     </span>
                     <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#6EE7B7] bg-trust-green/10 border-trust-green/20">
                         <CheckmarkIconSVG />
                         3 clients gagnés
-                    </span>
+                    </span> */}
                 </div>
             </div>
 
