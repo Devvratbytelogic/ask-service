@@ -222,7 +222,6 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
     const action = getLeadActionConfig(lead)
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
     const isButtonDisabled = !canPurchaseLeads
-    const cardTitle = lead.city ?? lead.child_category ?? lead.manual_child_category ?? 'Prospect'
     const leadDetailPath = generateLeadDetailRoutePath(lead._id)
 
     const handleCardClick = () => {
@@ -295,7 +294,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                     >
                         🏠
                     </div>
-                    {cardTitle}
+                    Prospect
                 </div>
                 {/* <button
                     type="button"
