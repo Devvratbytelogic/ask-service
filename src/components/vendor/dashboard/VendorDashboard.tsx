@@ -85,6 +85,7 @@ export default function VendorDashboard() {
             componentName: 'UnlockLeadConfirmModal',
             data: { leadId: lead._id, creditsToUnlock: lead.creditsToUnlock },
             modalSize: 'sm',
+            modalPadding: 'p-0',
         }))
     }
 

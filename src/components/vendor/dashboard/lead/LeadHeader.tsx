@@ -31,6 +31,7 @@ export default function LeadHeader({ data, leadId }: LeadHeaderProps) {
                 componentName: 'UnlockLeadConfirmModal',
                 data: { leadId, creditsToUnlock: data?.creditsToUnlock },
                 modalSize: 'sm',
+                modalPadding: 'p-0',
             }))
         }
     }

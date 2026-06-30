@@ -7,6 +7,7 @@ import { buildDashboardFilterSelectStyles, type FilterOption } from '@/component
 import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useRouter } from 'nextjs-toploader/app'
 import { generateLeadDetailRoutePath } from '@/routes/routes'
+import moment from 'moment'
 
 type LeadStatus = 'new' | 'unlocked' | 'pending' | 'accepted' | 'ignored' | 'withdrawn'
 
@@ -139,7 +140,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                         </span>
                     </div>
                     <div className="flex flex-col gap-[2px]">
-                        <span className="text-[11px] font-semibold text-appTextMuted">
+                        <span className="text-[11px] font-medium text-appTextMuted">
                             {lead?.note}
                         </span>
                         <div className="flex items-center gap-1 text-[11px] text-appTextSec">
@@ -152,7 +153,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                             <span className="text-appTextMuted flex shrink-0">
                                 <CalendarOutlineIconSVG size={11} />
                             </span>
-                            {/* {lead?.dateInfo} */}
+                            {lead?.createdAt ? moment(lead.createdAt).locale('fr').format('DD MMM YYYY, hh:mm A') : null}
                         </div>
                     </div>
                     <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-black/3 dark:bg-white/3`}>
