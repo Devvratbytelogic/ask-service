@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import DashboardStatCard from './overview/DashboardStatCard'
 import OpportunityGroup from './overview/OpportunityGroup'
 import OpportunitySectionHeader from './overview/OpportunitySectionHeader'
 import FindLeadsCTA from './overview/FindLeadsCTA'
+import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
 import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 export default function VendorDashboardOverview() {
@@ -14,7 +15,7 @@ export default function VendorDashboardOverview() {
     const [leadsLimit, setLeadsLimit] = useState(6)
     const [paginateServiceCategory, setPaginateServiceCategory] = useState('')
 
-    const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+    const { data: response, isLoading, isFetching } = useGetVendorAvailableLeadsByServiceCategoryQuery({
         service: serviceFilter || undefined,
         city: cityFilter || undefined,
         page: leadsPage || undefined,
@@ -23,10 +24,13 @@ export default function VendorDashboardOverview() {
     })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
-    // console.log('data', data);
 
     const totalOpportunities = data?.length ?? 0
     const displayedOpportunities = data?.length ?? 0
+
+    if (isLoading || isFetching) {
+        return <VendorDashboardOverviewSkeleton />
+    }
 
     return (
         <div className="max-w-[1400px] mx-auto px-7 py-7">

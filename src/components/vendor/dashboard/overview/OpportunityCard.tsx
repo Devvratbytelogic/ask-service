@@ -7,6 +7,16 @@ import { IAvailableLeadByCategoryContactDetailsEntity, IAvailableLeadByCategoryD
 type ButtonVariant = 'green' | 'blue' | 'amber'
 type LeadActionType = 'unlock' | 'navigate'
 
+const AVATAR_COLORS = ['#16A34A', '#2563EB', '#7C3AED', '#DC2626', '#0369A1', '#D97706', '#0891B2']
+
+function getAvatarColor(seed: string): string {
+    let hash = 0
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
 interface LeadActionConfig {
     primary: { label: string; variant: ButtonVariant; action: LeadActionType }
     secondary?: { label: string }
@@ -47,14 +57,18 @@ function getLeadActionConfig(lead: IAvailableLeadByCategoryLeadsEntity): LeadAct
 }
 
 function ClientBlock({ client }: { client: IAvailableLeadByCategoryContactDetailsEntity }) {
+    const clientName = `${client?.first_name ?? ''} ${client?.last_name ?? ''}`.trim()
+    const clientInitial = (client?.first_name?.charAt(0) ?? client?.last_name?.charAt(0) ?? '?').toUpperCase()
+    const avatarColor = getAvatarColor(client?.email || client?.phone || clientName || 'client')
+
     return (
         <div className="px-3 py-2.5 bg-black/3 dark:bg-white/3 border border-appBorder rounded-[10px] mb-3.5 space-y-[5px]">
             <div className="flex items-center gap-2 text-[13px] text-appText">
                 <div
                     className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
-                    style={{ background: 'rgba(16,185,129,0.12)' }}
+                    style={{ backgroundColor: avatarColor }}
                 >
-                    {client?.first_name?.charAt(0)}
+                    {clientInitial}
                 </div>
                 <span className="font-bold text-appText">{client?.first_name} {client?.last_name}</span>
             </div>
