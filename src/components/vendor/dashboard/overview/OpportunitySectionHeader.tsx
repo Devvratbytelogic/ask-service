@@ -1,11 +1,9 @@
 'use client'
 
-import {
-    ArrowSendIconSVG,
-    CheckmarkIconSVG,
-    LightningBoltIconSVG,
-} from '@/components/library/AllSVG'
-import { CHEVRON_DOWN_SVG, CITY_OPTIONS, SERVICE_OPTIONS } from './data'
+import ReactSelect from 'react-select'
+import { ArrowSendIconSVG, CheckmarkIconSVG, LightningBoltIconSVG, } from '@/components/library/AllSVG'
+import { buildDashboardFilterSelectStyles, type FilterOption } from '@/components/pages/ClientDashboardPage/selectStyles'
+import { useGetAllServiceRequestCitiesQuery, useGetServiceCategoriesQuery, } from '@/redux/rtkQueries/clientSideGetApis'
 
 interface OpportunitySectionHeaderProps {
     totalOpportunities: number
@@ -24,6 +22,28 @@ export default function OpportunitySectionHeader({
     onCityChange,
     onServiceChange,
 }: OpportunitySectionHeaderProps) {
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
+
+    const serviceOptions = [
+        { value: 'Tous services', label: 'Tous les services' },
+        ...(serviceCategoriesData?.data ?? []).map((cat) => ({
+            value: cat._id,
+            label: cat.title,
+        })),
+    ]
+
+    const cityOptions = [
+        { value: 'Toutes les villes', label: 'Toutes les villes' },
+        ...(allServiceRequestCitiesData?.data?.cities ?? []).map((city) => ({
+            value: city,
+            label: city
+        })),
+    ]
+
+    const selectedServiceOption = serviceOptions.find((o) => o.value === serviceFilter) ?? serviceOptions[0]
+    const selectedCityOption = cityOptions.find((o) => o.value === cityFilter) ?? cityOptions[0]
+
     return (
         <div className="flex items-center justify-between flex-wrap gap-3 mb-[18px] animate-hero-fade-up">
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -47,39 +67,29 @@ export default function OpportunitySectionHeader({
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-                <select
-                    value={cityFilter}
-                    onChange={(e) => onCityChange(e.target.value)}
-                    className="py-[7px] pl-2.5 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[12px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
-                    style={{
-                        backgroundImage: CHEVRON_DOWN_SVG,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 8px center',
-                    }}
-                >
-                    {CITY_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} className="bg-appSurface">
-                            {opt}
-                        </option>
-                    ))}
-                </select>
+                <ReactSelect
+                    instanceId="vendor-overview-service-filter"
+                    options={serviceOptions}
+                    value={selectedServiceOption}
+                    onChange={(opt) => onServiceChange(opt?.value ?? 'Tous services')}
+                    isSearchable={false}
+                    styles={buildDashboardFilterSelectStyles()}
+                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                    menuPosition="fixed"
+                />
 
-                <select
-                    value={serviceFilter}
-                    onChange={(e) => onServiceChange(e.target.value)}
-                    className="py-[7px] pl-2.5 pr-7 bg-appCard border border-appBorder rounded-[8px] text-[12px] text-appTextSec outline-none cursor-pointer transition-all duration-200 focus:border-amber appearance-none"
-                    style={{
-                        backgroundImage: CHEVRON_DOWN_SVG,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 8px center',
-                    }}
-                >
-                    {SERVICE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt} className="bg-appSurface">
-                            {opt}
-                        </option>
-                    ))}
-                </select>
+                <ReactSelect
+                    instanceId="vendor-overview-city-filter"
+                    options={cityOptions}
+                    value={selectedCityOption}
+                    onChange={(opt) => onCityChange(opt?.value ?? 'Toutes les villes')}
+                    isSearchable
+                    placeholder="Toutes les villes"
+                    noOptionsMessage={() => 'Aucune ville'}
+                    styles={buildDashboardFilterSelectStyles()}
+                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                    menuPosition="fixed"
+                />
 
                 <span className="text-[11px] text-appTextMuted whitespace-nowrap">
                     1–{displayedOpportunities} sur {totalOpportunities} opportunités

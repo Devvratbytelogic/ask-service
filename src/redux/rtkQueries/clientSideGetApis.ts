@@ -26,6 +26,7 @@ import { IGlobalSettingsAPIResponse } from '@/types/global';
 import { IVendorDetailsAPIResponse } from '@/types/vendorDetails';
 import { IAllCitiesAPIResponse } from '@/types/allCities';
 import { ISingleRequestAPIResponse } from '@/types/singleRequest';
+import { IAvailableLeadByCategoryAPIResponse } from '@/types/availableLeadByCategory';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -140,6 +141,14 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
         getVendorAvailableLeads: builder.query<IVendorAvailableLeadsAPIResponse, { service?: string; sort?: string; city?: string; page?: number; limit?: number; quoted?: boolean, unlocked?: boolean } | void>({
             query: (arg) => ({
                 url: `/vendor/available-leads`,
+                method: 'GET',
+                ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
+            }),
+            providesTags: ['VendorAvailableLeads'],
+        }),
+        getVendorAvailableLeadsByServiceCategory: builder.query<IAvailableLeadByCategoryAPIResponse, { sort?: string; city?: string } | void>({
+            query: (arg) => ({
+                url: `/vendor/available-leads-by-service-category`,
                 method: 'GET',
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
@@ -321,6 +330,7 @@ export const {
     useLazyGetTransactionHistoryExportPDFQuery,
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
+    useGetVendorAvailableLeadsByServiceCategoryQuery,
     useGetVendorAllQuotesQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,

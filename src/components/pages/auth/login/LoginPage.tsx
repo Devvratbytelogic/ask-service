@@ -233,7 +233,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
         }
         const message = getRtkErrorMessage(error)
         setServerError(message)
-        addToast({ title: message, color: 'danger', timeout: 3000 })
+        // addToast({ title: message, color: 'danger', timeout: 3000 })
       }
     },
   })

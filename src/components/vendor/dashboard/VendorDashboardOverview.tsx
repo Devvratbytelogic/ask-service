@@ -1,25 +1,21 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { OPPORTUNITY_GROUPS, STATS } from './overview/data'
 import DashboardStatCard from './overview/DashboardStatCard'
 import OpportunityGroup from './overview/OpportunityGroup'
 import OpportunitySectionHeader from './overview/OpportunitySectionHeader'
 import FindLeadsCTA from './overview/FindLeadsCTA'
+import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 export default function VendorDashboardOverview() {
-    const [cityFilter, setCityFilter] = useState('Toutes les villes')
-    const [serviceFilter, setServiceFilter] = useState('Tous services')
+    const [cityFilter, setCityFilter] = useState('')
+    const [serviceFilter, setServiceFilter] = useState('')
+    const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery()
+    const data = response?.data?.data;
+    const stats = response?.data?.summary;
 
-    const filteredGroups = useMemo(() => {
-        if (serviceFilter === 'Tous services') return OPPORTUNITY_GROUPS
-        return OPPORTUNITY_GROUPS.filter((g) =>
-            g.serviceName.toLowerCase().includes(serviceFilter.toLowerCase()),
-        )
-    }, [serviceFilter])
-
-    const totalOpportunities = OPPORTUNITY_GROUPS.reduce((sum, g) => sum + g.cards.length, 0)
-    const displayedOpportunities = filteredGroups.reduce((sum, g) => sum + g.cards.length, 0)
+    const totalOpportunities = data?.length ?? 0
+    const displayedOpportunities = data?.length ?? 0
 
     return (
         <div className="max-w-[1400px] mx-auto px-7 py-7">
@@ -35,9 +31,10 @@ export default function VendorDashboardOverview() {
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-                {STATS.map((stat) => (
-                    <DashboardStatCard key={stat.label} {...stat} />
-                ))}
+                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.availableLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={`#`} highlight={true} />
+                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={`#`} />
+                <DashboardStatCard icon="🪙" iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={`#`} />
+                <DashboardStatCard icon="📋" iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={`#`} />
             </div>
 
             {/* Section header + filters */}
@@ -51,18 +48,17 @@ export default function VendorDashboardOverview() {
             />
 
             {/* Opportunity groups */}
-            <div>
-                {filteredGroups.length > 0 ? (
-                    filteredGroups.map((group) => (
-                        <OpportunityGroup key={group.id} group={group} />
-                    ))
+            <>
+                {data && data?.length > 0 ? (data?.map((item, index) => (
+                    <OpportunityGroup key={index} item={item} />
+                ))
                 ) : (
                     <div className="bg-appSurface border border-appBorder rounded-2xl p-8 text-center mb-4">
                         <div className="text-[32px] mb-3">🔍</div>
                         <p className="text-[14px] text-appTextSec">Aucune opportunité pour ce filtre.</p>
                     </div>
                 )}
-            </div>
+            </>
 
             {/* Find new leads CTA */}
             <FindLeadsCTA />
