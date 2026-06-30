@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
-import { getVendorDashboardRoutePath, getVendorLeadsRoutePath } from '@/routes/routes'
+import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { DEFAULT_LEAD_ID, getLeadDetail, INITIAL_WALLET_BALANCE, SIDEBAR_LEADS } from './data'
 import LeadSidebar from './LeadSidebar'
 import LeadCard from './LeadCard'
@@ -52,7 +52,7 @@ export default function LeadDetailView({ leadId }: Props) {
                         <ArrowLeftIconSVG size={13} />
                     </Link>
                     <Link
-                        href={getVendorLeadsRoutePath()}
+                        href={getVendorDashboardRoutePath()}
                         className="text-appTextMuted hover:text-appTextSec transition-colors"
                     >
                         Prospects
