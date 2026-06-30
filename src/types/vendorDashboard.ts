@@ -49,9 +49,6 @@ export interface IVendorAvailableLeadsItemsEntity {
   start_time?: null;
   end_date?: null;
   end_time?: null;
-  cityOrPostalCode?: string | null;
-  desiredDate?: string | null;
-  timeSlot?: string | null;
   note?: string | null;
   contact_details: IVendorAvailableLeadsContactDetails;
   status: string;
@@ -67,6 +64,10 @@ export interface IVendorAvailableLeadsItemsEntity {
   lead_status?: string;
   lead_status_label?: string;
   lead_status_message?: string;
+  cityOrPostalCode?: string;
+  desiredDate?: string;
+  timeSlot?: string;
+  additionalDetails?: string;
 }
 export interface IVendorAvailableLeadsServiceCategory {
   _id: string;

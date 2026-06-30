@@ -7,8 +7,10 @@ import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import LeadSidebar from './LeadSidebar'
+import LeadSidebarSkeleton from './LeadSidebarSkeleton'
 import LeadCard from './LeadCard'
 import UnlockPanel from './UnlockPanel'
+import LeadDetailViewSkeleton from './LeadDetailViewSkeleton'
 
 interface Props {
     leadId: string
@@ -17,11 +19,22 @@ interface Props {
 export default function LeadDetailView({ leadId }: Props) {
     const dispatch = useDispatch()
 
-    const { data: leadResponse } = useGetSingleLeadQuery({ id: leadId })
+    const { data: leadResponse, isLoading } = useGetSingleLeadQuery({ id: leadId })
     const data = leadResponse?.data
     const isUnlocked = data?.unlocked ?? false
     const creditsToUnlock = data?.creditsToUnlock ?? 0
 
+    if (isLoading) {
+        return (
+            <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
+                <div className="hidden lg:block">
+                    <LeadSidebarSkeleton />
+                </div>
+
+                <LeadDetailViewSkeleton />
+            </div>
+        )
+    }
 
     return (
         <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">

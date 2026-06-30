@@ -10,6 +10,7 @@ import { generateLeadDetailRoutePath } from '@/routes/routes'
 import moment from 'moment'
 import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 import LeadStatusBadge from './LeadStatusBadge'
+import LeadSidebarSkeleton from './LeadSidebarSkeleton'
 
 interface Props {
     selectedId: string
@@ -19,7 +20,7 @@ export default function LeadSidebar({ selectedId }: Props) {
     const router = useRouter()
     const [serviceFilter, setServiceFilter] = useState('')
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
-    const { data: leadsData } = useGetVendorAvailableLeadsQuery({
+    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
         service: serviceFilter || undefined,
         sort: 'newest',
         unlocked: false,
@@ -54,6 +55,11 @@ export default function LeadSidebar({ selectedId }: Props) {
         if (id === selectedId) return
         router.push(generateLeadDetailRoutePath(id))
     }
+
+    if (leadsLoading) {
+        return <LeadSidebarSkeleton />
+    }
+
     return (
         <aside className="bg-appSurface border-r border-appBorder overflow-y-auto sticky top-[58px] h-[calc(100vh-58px)]">
             <div className="p-4 pb-2.5">
@@ -99,7 +105,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                     </div>
                     <div className="flex flex-col gap-[2px]">
                         <span className="text-[11px] font-medium text-appTextMuted">
-                            {lead?.note ?? '—'}
+                            {lead?.additionalDetails ?? '—'}
                         </span>
                         <div className="flex items-center gap-1 text-[11px] text-appTextSec">
                             <span className="text-appTextMuted flex shrink-0">
