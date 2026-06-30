@@ -147,7 +147,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                 </div>
 
                 {/* Competitors Alert */}
-                <div className="mt-3.5 px-4 py-3 bg-linear-to-r from-orange-500/10 to-amber/8 border border-orange-500/25 rounded-[10px] flex items-center justify-between gap-3">
+                {lead?.lead_status_message !== null && <div className="mt-3.5 px-4 py-3 bg-linear-to-r from-orange-500/10 to-amber/8 border border-orange-500/25 rounded-[10px] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-[13px] font-semibold text-[#FCA5A5]">
                         <span className="text-orange-500 flex shrink-0">
                             <LightningBoltIconSVG size={14} />
@@ -165,6 +165,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         </button>
                     )}
                 </div>
+                }
             </div>
 
             {/* Client Info Block */}
@@ -176,6 +177,22 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     Client vérifié
                 </div>
                 <div className="flex flex-col gap-2.5">
+                    {/* Name */}
+                    <div className="flex items-center gap-2.5 text-[14px]">
+                        <span className="text-appTextMuted flex shrink-0">
+                            <UserOutlineIconSVG size={14} />
+                        </span>
+                        <span className="text-appTextSec">
+                            {[lead?.contact_details?.first_name, lead?.contact_details?.last_name]
+                                .filter(Boolean)
+                                .join(' ') ||
+                                [lead?.user?.first_name, lead?.user?.last_name]
+                                    .filter(Boolean)
+                                    .join(' ') ||
+                                '—'}
+                        </span>
+                    </div>
+
                     {/* Phone */}
                     <div className="flex items-center gap-2.5 text-[14px]">
                         <span className="text-appTextMuted flex shrink-0">

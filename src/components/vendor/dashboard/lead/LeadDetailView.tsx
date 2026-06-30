@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
@@ -11,6 +12,7 @@ import LeadSidebarSkeleton from './LeadSidebarSkeleton'
 import LeadCard from './LeadCard'
 import UnlockPanel from './UnlockPanel'
 import LeadDetailViewSkeleton from './LeadDetailViewSkeleton'
+import SubmitQuoteForm from './SubmitQuoteForm'
 
 interface Props {
     leadId: string
@@ -18,11 +20,23 @@ interface Props {
 
 export default function LeadDetailView({ leadId }: Props) {
     const dispatch = useDispatch()
+    const [showSubmitQuoteForm, setShowSubmitQuoteForm] = useState(false)
+    const submitQuoteFormRef = useRef<HTMLDivElement>(null)
 
     const { data: leadResponse, isLoading } = useGetSingleLeadQuery({ id: leadId })
     const data = leadResponse?.data
     const isUnlocked = data?.unlocked ?? false
     const creditsToUnlock = data?.creditsToUnlock ?? 0
+
+    useEffect(() => {
+        if (showSubmitQuoteForm && submitQuoteFormRef.current) {
+            submitQuoteFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    }, [showSubmitQuoteForm])
+
+    useEffect(() => {
+        setShowSubmitQuoteForm(false)
+    }, [leadId])
 
     if (isLoading) {
         return (
@@ -72,10 +86,22 @@ export default function LeadDetailView({ leadId }: Props) {
                         modalPadding: 'p-0',
                     }))}
                 />
+
+                {showSubmitQuoteForm && (
+                    <div ref={submitQuoteFormRef}>
+                        <SubmitQuoteForm
+                            leadId={leadId}
+                            onCancel={() => setShowSubmitQuoteForm(false)}
+                        />
+                    </div>
+                )}
             </section>
 
             <div className="hidden lg:block">
-                <UnlockPanel leadId={leadId} />
+                <UnlockPanel
+                    leadId={leadId}
+                    onSendQuoteClick={() => setShowSubmitQuoteForm(true)}
+                />
             </div>
         </div>
     )

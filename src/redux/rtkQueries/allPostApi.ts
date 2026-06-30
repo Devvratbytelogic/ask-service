@@ -129,7 +129,12 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         url: `/vendor/leads/${leadId}/unlock`,
         method: 'POST',
       }),
-      invalidatesTags: ['VendorAvailableLeads', 'VendorDashboard', 'VendorTransactions'],
+      invalidatesTags: (_result, _error, leadId) => [
+        'VendorAvailableLeads',
+        'VendorDashboard',
+        'VendorTransactions',
+        { type: 'VendorAvailableLeads', id: leadId },
+      ],
     }),
     submitQuote: builder.mutation({
       query: ({ leadId, formData }: { leadId: string; formData: FormData }) => ({
@@ -137,7 +142,12 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      invalidatesTags: ['VendorAvailableLeads', 'VendorDashboard', 'VendorAllQuotes'],
+      invalidatesTags: (_result, _error, { leadId }) => [
+        'VendorAvailableLeads',
+        'VendorDashboard',
+        'VendorAllQuotes',
+        { type: 'VendorAvailableLeads', id: leadId },
+      ],
     }),
     closeServiceRequest: builder.mutation({
       query: ({ id, body }: { id: string; body: { reason: string; reason_comment: string } }) => ({
