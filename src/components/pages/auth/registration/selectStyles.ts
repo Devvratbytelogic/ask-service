@@ -1,8 +1,10 @@
-import type { StylesConfig } from 'react-select'
+import type { GroupBase, StylesConfig } from 'react-select'
 
 export type CategoryOption = { value: string; label: string; image: string | null }
 
-export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOption, true> {
+export type CategoryGroup = GroupBase<CategoryOption>
+
+export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOption, true, CategoryGroup> {
   return {
     control: (base, state) => ({
       ...base,
@@ -77,28 +79,30 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       ...base,
       padding: 6,
     }),
+    group: (base) => ({
+      ...base,
+      padding: 0,
+    }),
     option: (base, state) => ({
       ...base,
       borderRadius: 8,
       fontSize: 14,
       fontFamily: 'inherit',
       padding: '8px 10px',
-      backgroundColor: state.isSelected
-        ? 'var(--color-amber-light)'
-        : state.isFocused
-          ? 'var(--color-slate-50)'
-          : 'transparent',
-      color: state.isSelected ? 'var(--color-amber-dark)' : 'var(--color-slate-900)',
+      backgroundColor: state.isFocused ? 'var(--color-primaryColor)' : 'transparent',
+      color: state.isFocused ? '#fff' : 'var(--color-slate-900)',
       cursor: 'pointer',
     }),
     groupHeading: (base) => ({
       ...base,
-      fontSize: 11,
-      fontWeight: 700,
       color: 'var(--color-slate-400)',
-      textTransform: 'uppercase',
-      letterSpacing: '0.06em',
-      padding: '6px 10px 3px',
+      fontSize: 12,
+      fontWeight: 600,
+      textTransform: 'none',
+      letterSpacing: 0,
+      padding: '10px 10px 4px',
+      margin: 0,
+      cursor: 'default',
       fontFamily: 'inherit',
     }),
     multiValue: (base) => ({

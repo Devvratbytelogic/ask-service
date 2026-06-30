@@ -1,37 +1,37 @@
 export interface IAllServiceQuestionsAPIResponse {
-    http_status_code: number;
-    http_status_msg: string;
-    success: boolean;
-    data: IAllServiceQuestionsData;
-    message: string;
-    timestamp: string;
-  }
-  export interface IAllServiceQuestionsData {
-    list?: (ListEntity)[] | null;
-  }
-  export interface ListEntity {
-    _id: string;
-    label: string;
-    key: string;
-    type: string;
-    options?: (OptionsEntity | null)[] | null;
-    is_multiple: boolean;
-    is_required: boolean;
-    placeholder?: string | null;
-    service_id: string;
-    step: number;
-    order: number;
-    status: string;
-    deletedAt?: null;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-  }
-  export interface OptionsEntity {
-    label: string;
-    value: string;
-    _id: string;
-  }
+  http_status_code: number;
+  http_status_msg: string;
+  success: boolean;
+  data: IAllServiceQuestionsData;
+  message: string;
+  timestamp: string;
+}
+export interface IAllServiceQuestionsData {
+  list?: (ListEntity)[] | null;
+}
+export interface ListEntity {
+  _id: string;
+  label: string;
+  key: string;
+  type: string;
+  options?: (OptionsEntity | null)[] | null;
+  is_multiple: boolean;
+  is_required: boolean;
+  placeholder?: string | null;
+  service_id: string;
+  step: number;
+  order: number;
+  status: string;
+  deletedAt?: null;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+export interface OptionsEntity {
+  label: string;
+  value: string;
+  _id: string;
+}
 
 /** Single dynamic answer sent in create service request */
 export interface IDynamicAnswerPayload {
@@ -54,4 +54,8 @@ export interface ICreateServiceRequestPayload {
     phone: string;
     email: string;
   };
+  cityOrPostalCode?: string;
+  desiredDate?: string;
+  timeSlot?: string;
+  additionalDetails?: string;
 }

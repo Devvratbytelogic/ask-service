@@ -1,9 +1,9 @@
 import { rtkQuerieSetup } from '@/redux/services/rtkQuerieSetup';
 import { IAllTransactionHistoryAPIResponse } from '@/types/allTransactionHistory';
-import { IAllRequestsAPIResponse, IAllRequestsDataEntity } from '@/types/allRequests';
+import { IAllRequestsAPIResponse } from '@/types/allRequests';
 import { IAllServicesDocumentsRequiredAPIResponse } from '@/types/requiredDocument';
 import { IAllVendorReviewsAPIResponse } from '@/types/review';
-import { IAllServiceCategoriesAPIResponse } from '@/types/services';
+import { IAllServiceCategoriesAPIResponse, IAllServicesGroupedByParentCategoryAPIResponse } from '@/types/services';
 import { ISingleLeadAPIResponse } from '@/types/singleLead';
 import { IUserProfileInfoAPIResponse } from '@/types/userProfile';
 import { IAllQuotesAPIResponse } from '@/types/allquotes';
@@ -63,6 +63,12 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
         getAllServicesDocumentsRequired: builder.query<IAllServicesDocumentsRequiredAPIResponse, void>({
             query: () => ({
                 url: `/vendor/get-all-services-document-required`,
+                method: 'GET',
+            }),
+        }),
+        getAllServicesGroupedByParentCategory: builder.query<IAllServicesGroupedByParentCategoryAPIResponse, void>({
+            query: () => ({
+                url: `/vendor/services-grouped-by-parent-category`,
                 method: 'GET',
             }),
         }),
@@ -317,6 +323,7 @@ export const {
     useGetServicesQuetionsQuery,
     useGetAllServicesQuery,
     useGetAllServicesDocumentsRequiredQuery,
+    useGetAllServicesGroupedByParentCategoryQuery,
     useGetVendorProfileInfoQuery,
     useGetVendorDetailsByIdQuery,
     useGetUserProfileInfoQuery,

@@ -62,6 +62,10 @@ export interface ISingleRequestAPIResponse {
     client_type: string;
     phone: string;
     email: string;
+    cityOrPostalCode: string;
+    desiredDate: string;
+    timeSlot: string;
+    additionalDetails: string;
   }
   export interface DynamicAnswersEntity {
     question_id: string;

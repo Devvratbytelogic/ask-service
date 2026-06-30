@@ -1,8 +1,17 @@
-import type { StylesConfig } from 'react-select'
+import type { GroupBase, StylesConfig } from 'react-select'
 
 export type ServiceOption = { value: string; label: string; image: string | null }
 
+export type ServiceGroup = GroupBase<ServiceOption>
+
 export type DynOption = { value: string; label: string }
+
+export type PostalOption = {
+  value: string
+  label: string
+  code: string
+  name: string
+}
 
 export function buildDynSelectStyles<IsMulti extends boolean>(
   hasError: boolean,
@@ -124,7 +133,47 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
   } as StylesConfig<DynOption, IsMulti>
 }
 
-export function buildServiceSelectStyles(hasError: boolean): StylesConfig<ServiceOption, false> {
+export function buildPostalSelectStyles(hasError: boolean): StylesConfig<PostalOption, false> {
+  const base = buildDynSelectStyles<false>(hasError)
+  return {
+    ...base,
+    dropdownIndicator: (indicatorBase) => ({
+      ...indicatorBase,
+      color: 'var(--app-text-muted)',
+      padding: '0 14px',
+      cursor: 'default',
+    }),
+    indicatorSeparator: () => ({ display: 'none' }),
+    option: (optionBase, state) => ({
+      ...optionBase,
+      borderRadius: 0,
+      fontSize: 14,
+      fontFamily: 'inherit',
+      padding: '10px 12px',
+      borderBottom: '1px solid var(--app-border-sub)',
+      backgroundColor: state.isSelected
+        ? 'var(--color-primary-dim)'
+        : state.isFocused
+          ? 'var(--app-elevated)'
+          : 'transparent',
+      color: 'var(--app-text)',
+      fontWeight: 400,
+      cursor: 'pointer',
+      ':last-of-type': {
+        borderBottom: 'none',
+      },
+    }),
+    menuList: (menuBase) => ({
+      ...menuBase,
+      padding: 0,
+      maxHeight: 280,
+    }),
+  } as StylesConfig<PostalOption, false>
+}
+
+export function buildServiceSelectStyles(
+  hasError: boolean,
+): StylesConfig<ServiceOption, false, ServiceGroup> {
   return {
     control: (base, state) => ({
       ...base,
@@ -206,19 +255,30 @@ export function buildServiceSelectStyles(hasError: boolean): StylesConfig<Servic
       ...base,
       padding: 6,
     }),
+    group: (base) => ({
+      ...base,
+      padding: 0,
+    }),
+    groupHeading: (base) => ({
+      ...base,
+      color: 'var(--app-text-muted)',
+      fontSize: 12,
+      fontWeight: 600,
+      textTransform: 'none',
+      letterSpacing: 0,
+      padding: '10px 10px 4px',
+      margin: 0,
+      cursor: 'default',
+    }),
     option: (base, state) => ({
       ...base,
       borderRadius: 8,
       fontSize: 14,
       fontFamily: 'inherit',
       padding: '8px 10px',
-      backgroundColor: state.isSelected
-        ? 'var(--color-primary-dim)'
-        : state.isFocused
-          ? 'var(--app-elevated)'
-          : 'transparent',
-      color: state.isSelected ? 'var(--color-primaryColor)' : 'var(--app-text)',
-      fontWeight: state.isSelected ? 600 : 400,
+      backgroundColor: state.isFocused ? 'var(--color-primaryColor)' : 'transparent',
+      color: state.isFocused ? '#fff' : 'var(--app-text)',
+      fontWeight: 400,
       cursor: 'pointer',
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),

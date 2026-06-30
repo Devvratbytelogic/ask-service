@@ -4,10 +4,10 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { useSelector } from 'react-redux'
 import { serviceRequestContactSchema } from '@/utils/validation'
-import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
-import ReactSelect from 'react-select'
+import { FiArrowLeft, FiArrowRight, FiCalendar, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
+import ReactSelect, { components, type OptionProps } from 'react-select'
 import {
-  useGetAllServicesQuery,
+  useGetAllServicesGroupedByParentCategoryQuery,
   useGetServicesQuetionsQuery,
   useGetUserProfileInfoQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
@@ -18,7 +18,9 @@ import {
   useUpdateServiceRequestMutation,
 } from '@/redux/rtkQueries/allPostApi'
 import {
+  buildDynSelectStyles,
   buildServiceSelectStyles,
+  type ServiceGroup,
   type ServiceOption,
   type DynOption,
 } from './selectStyles'
@@ -28,6 +30,7 @@ import type {
   IDynamicAnswerPayload,
 } from '@/types/serviceQuestions'
 import DynamicQuestionField, { FieldLabel, inputCls } from './DynamicQuestionField'
+import PostalCitySelect, { resolvePostalOption } from './PostalCitySelect'
 import OtpVerificationScreen from './OtpVerificationScreen'
 import LoginRequiredScreen from './LoginRequiredScreen'
 import RequestSentScreen from './RequestSentScreen'
@@ -60,6 +63,37 @@ function formatDate(dateStr: string) {
   if (!dateStr) return '—'
   const d = new Date(dateStr + 'T00:00:00')
   return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function getTodayMin() {
+  const t = new Date()
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
+}
+
+function openDatePicker(input: HTMLInputElement | null) {
+  if (!input) return
+  if (typeof input.showPicker === 'function') {
+    try {
+      input.showPicker()
+      return
+    } catch {
+      // fall through to focus + click
+    }
+  }
+  input.focus()
+  input.click()
+}
+
+const TIME_SLOT_OPTIONS: DynOption[] = [
+  { value: 'morning', label: 'Matin (8h – 12h)' },
+  { value: 'afternoon', label: 'Après-midi (13h – 17h)' },
+  { value: 'evening', label: 'Soirée (17h – 20h)' },
+  { value: 'all_day', label: 'Toute la journée' },
+  { value: 'flexible', label: 'Je suis flexible' },
+]
+
+function getTimeSlotLabel(value: string) {
+  return TIME_SLOT_OPTIONS.find((o) => o.value === value)?.label ?? value
 }
 
 function formatAnswerForDisplay(question: ListEntity, value: string | string[]): string {
@@ -141,6 +175,63 @@ function getServiceCategoryId(category?: ISingleRequestData['service_category'] 
   return category?._id ?? ''
 }
 
+function ServiceOptionImage({ label, image }: { label: string; image: string | null }) {
+  if (image) {
+    return (
+      <img
+        src={image}
+        alt={label}
+        style={{
+          width: 28,
+          height: 28,
+          objectFit: 'contain',
+          borderRadius: 6,
+          flexShrink: 0,
+          background: 'var(--color-slate-100)',
+        }}
+      />
+    )
+  }
+
+  return (
+    <div
+      style={{
+        width: 28,
+        height: 28,
+        borderRadius: 6,
+        background: 'var(--color-slate-100)',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
+
+function ServiceSelectOption(props: OptionProps<ServiceOption, false, ServiceGroup>) {
+  const { data, isSelected, isFocused } = props
+
+  return (
+    <components.Option {...props}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span
+          style={{
+            width: 16,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: isFocused ? '#fff' : 'var(--color-primaryColor)',
+          }}
+          aria-hidden
+        >
+          {isSelected ? <FiCheck size={14} strokeWidth={3} /> : null}
+        </span>
+        <ServiceOptionImage label={data.label} image={data.image} />
+        <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{data.label}</span>
+      </div>
+    </components.Option>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function RequestAServiceForm({
   mode = 'create',
@@ -157,15 +248,31 @@ export default function RequestAServiceForm({
 
   // ── Services API
   const {
-    data: servicesResponse,
+    data: servicesGroupedResponse,
     isLoading: isServicesLoading,
     isError: isServicesError,
-  } = useGetAllServicesQuery()
-  const serviceOptions: ServiceOption[] = (servicesResponse?.data ?? []).map((s) => ({
-    value: s._id,
-    label: s.title,
-    image: s.image ?? null,
-  }))
+  } = useGetAllServicesGroupedByParentCategoryQuery()
+
+  const serviceOptionGroups = useMemo<ServiceGroup[]>(() => {
+    return (servicesGroupedResponse?.data ?? [])
+      .filter((parent) => parent != null)
+      .map((parent) => ({
+        label: parent.title,
+        options: (parent.child_categories ?? [])
+          .filter((child) => child != null)
+          .map((child) => ({
+            value: child._id,
+            label: child.title,
+            image: child.image ?? null,
+          })),
+      }))
+      .filter((group) => group.options.length > 0)
+  }, [servicesGroupedResponse])
+
+  const serviceOptions = useMemo(
+    () => serviceOptionGroups.flatMap((group) => group.options),
+    [serviceOptionGroups],
+  )
 
   // ── Mutations
   const [createServiceRequest, { isLoading: isCreateSubmitting }] = useCreateServiceRequestMutation()
@@ -197,6 +304,7 @@ export default function RequestAServiceForm({
     )
   })
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
+  const desiredDateInputRef = useRef<HTMLInputElement>(null)
 
   // ── Contact step — Formik
   const contactFormik = useFormik({
@@ -206,6 +314,10 @@ export default function RequestAServiceForm({
       phone: data?.contact_details?.phone ?? profile?.phone ?? '',
       email: data?.contact_details?.email ?? profile?.email ?? '',
       notes: data?.note ?? '',
+      cityOrPostalCode: data?.contact_details?.cityOrPostalCode ?? '',
+      desiredDate: data?.contact_details?.desiredDate ?? '',
+      timeSlot: data?.contact_details?.timeSlot ?? '',
+      additionalDetails: data?.contact_details?.additionalDetails ?? '',
     },
     enableReinitialize: true,
     validationSchema: serviceRequestContactSchema,
@@ -266,15 +378,17 @@ export default function RequestAServiceForm({
 
   // ── Step mapping:
   //   uiStep 1           → service + clientType
-  //   uiStep 2 … N+1     → API question groups (apiSteps[0] … apiSteps[N-1])
-  //   uiStep N+2         → contact details
-  //   uiStep N+3         → summary
-  const totalUiSteps = 1 + apiSteps.length + 2
-  const contactUiStep = 1 + apiSteps.length + 1
+  //   uiStep 2           → static location / availability fields
+  //   uiStep 3 … N+2     → API question groups (apiSteps[0] … apiSteps[N-1])
+  //   uiStep N+3         → contact details
+  //   uiStep N+4         → summary
+  const staticDetailsUiStep = 2
+  const totalUiSteps = 1 + 1 + apiSteps.length + 2
+  const contactUiStep = staticDetailsUiStep + apiSteps.length + 1
   const summaryUiStep = totalUiSteps
   const progress = Math.round((uiStep / totalUiSteps) * 100)
 
-  const currentApiStepIdx = uiStep - 2
+  const currentApiStepIdx = uiStep - 3
   const currentApiStep =
     currentApiStepIdx >= 0 && currentApiStepIdx < apiSteps.length
       ? apiSteps[currentApiStepIdx]
@@ -304,7 +418,25 @@ export default function RequestAServiceForm({
         triggerShake()
         return
       }
-      navTo(2)
+      navTo(staticDetailsUiStep)
+    } else if (uiStep === staticDetailsUiStep) {
+      await contactFormik.setTouched(
+        {
+          ...contactFormik.touched,
+          cityOrPostalCode: true,
+          desiredDate: true,
+          timeSlot: true,
+          additionalDetails: true,
+        },
+        true,
+      )
+      const errors = await contactFormik.validateForm()
+      const staticFieldErrors = ['cityOrPostalCode', 'desiredDate', 'timeSlot'] as const
+      if (staticFieldErrors.some((field) => errors[field])) {
+        triggerShake()
+        return
+      }
+      navTo(uiStep + 1)
     } else if (currentApiStep != null) {
       const hasErr = currentQuestions.some((q) => {
         if (!q.is_required) return false
@@ -368,6 +500,10 @@ export default function RequestAServiceForm({
         phone: contactFormik.values.phone,
         email: contactFormik.values.email,
       },
+      cityOrPostalCode: contactFormik.values.cityOrPostalCode,
+      desiredDate: contactFormik.values.desiredDate,
+      timeSlot: contactFormik.values.timeSlot,
+      additionalDetails: contactFormik.values.additionalDetails,
     }
 
     try {
@@ -480,15 +616,17 @@ export default function RequestAServiceForm({
   // ── Step header content
   function getStepTitle(): string {
     if (uiStep === 1) return 'Votre besoin'
+    if (uiStep === staticDetailsUiStep) return 'Lieu et disponibilité'
     if (uiStep === contactUiStep) return 'Vos coordonnées'
     if (uiStep === summaryUiStep) return 'Récapitulatif'
     return 'Vos informations'
   }
   function getStepDesc(): string {
     if (uiStep === 1) return 'Sélectionnez le service et votre profil.'
+    if (uiStep === staticDetailsUiStep) return 'Où et quand souhaitez-vous le service ?'
     if (uiStep === contactUiStep) return 'Comment les prestataires peuvent-ils vous contacter ?'
     if (uiStep === summaryUiStep) return 'Vérifiez et confirmez votre demande.'
-    return `Étape ${uiStep - 1} sur ${apiSteps.length}`
+    return `Étape ${uiStep - 2} sur ${apiSteps.length}`
   }
 
   // ── Derived for summary
@@ -579,9 +717,9 @@ export default function RequestAServiceForm({
           >
             <div className="mb-5">
               <FieldLabel required>Catégorie de service</FieldLabel>
-              <ReactSelect<ServiceOption, false>
+              <ReactSelect<ServiceOption, false, ServiceGroup>
                 instanceId="service"
-                options={serviceOptions}
+                options={serviceOptionGroups}
                 value={serviceOptions.find((o) => o.value === service) ?? null}
                 onChange={(opt) => setService(opt?.value ?? '')}
                 onBlur={() => setServiceTouched(true)}
@@ -594,32 +732,10 @@ export default function RequestAServiceForm({
                 menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                 menuPosition="fixed"
                 styles={buildServiceSelectStyles(!!(serviceTouched && !service))}
+                components={{ Option: ServiceSelectOption }}
                 formatOptionLabel={({ label, image }) => (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    {image ? (
-                      <img
-                        src={image}
-                        alt={label}
-                        style={{
-                          width: 28,
-                          height: 28,
-                          objectFit: 'contain',
-                          borderRadius: 6,
-                          flexShrink: 0,
-                          background: 'var(--color-slate-100)',
-                        }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: 6,
-                          background: 'var(--color-slate-100)',
-                          flexShrink: 0,
-                        }}
-                      />
-                    )}
+                    <ServiceOptionImage label={label} image={image} />
                     <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
                   </div>
                 )}
@@ -696,8 +812,123 @@ export default function RequestAServiceForm({
           </div>
         )}
 
+        {/* ─── STEP 2: Static location / availability ─── */}
+        {!isSuccess && !flowScreen && uiStep === staticDetailsUiStep && (
+          <div
+            key={`static-${shakeKey}`}
+            className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
+          >
+            <div className="mb-5">
+              <FieldLabel required>Ville ou code postal</FieldLabel>
+              <PostalCitySelect
+                value={contactFormik.values.cityOrPostalCode}
+                onChange={(val) => {
+                  void contactFormik.setFieldValue('cityOrPostalCode', val)
+                }}
+                onBlur={() => contactFormik.setFieldTouched('cityOrPostalCode', true)}
+                hasError={!!(contactFormik.touched.cityOrPostalCode && contactFormik.errors.cityOrPostalCode)}
+              />
+              {contactFormik.touched.cityOrPostalCode && contactFormik.errors.cityOrPostalCode && (
+                <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.cityOrPostalCode}</p>
+              )}
+            </div>
+
+            <div className="mb-5 grid grid-cols-2 gap-2.5">
+              <div>
+                <FieldLabel required>Date souhaitée</FieldLabel>
+                <div className="relative">
+                  <input
+                    ref={desiredDateInputRef}
+                    type="date"
+                    name="desiredDate"
+                    value={contactFormik.values.desiredDate}
+                    onChange={contactFormik.handleChange}
+                    onBlur={contactFormik.handleBlur}
+                    min={getTodayMin()}
+                    className={`${inputCls(
+                      !!(contactFormik.touched.desiredDate && contactFormik.errors.desiredDate),
+                    )} cursor-pointer pr-10 scheme-light dark:scheme-dark [&::-webkit-calendar-picker-indicator]:hidden`}
+                    style={{ fontFamily: 'inherit' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => openDatePicker(desiredDateInputRef.current)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
+                    aria-label="Ouvrir le calendrier"
+                  >
+                    <FiCalendar size={16} />
+                  </button>
+                </div>
+                {contactFormik.touched.desiredDate && contactFormik.errors.desiredDate && (
+                  <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.desiredDate}</p>
+                )}
+              </div>
+
+              <div>
+                <FieldLabel required>Créneau horaire</FieldLabel>
+                <ReactSelect<DynOption, false>
+                  instanceId="timeSlot"
+                  options={TIME_SLOT_OPTIONS}
+                  value={
+                    TIME_SLOT_OPTIONS.find((o) => o.value === contactFormik.values.timeSlot) ?? null
+                  }
+                  onChange={(opt) => {
+                    void contactFormik.setFieldValue('timeSlot', opt?.value ?? '')
+                  }}
+                  onBlur={() => contactFormik.setFieldTouched('timeSlot', true)}
+                  placeholder="Choisir un créneau"
+                  isSearchable={false}
+                  menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                  menuPosition="fixed"
+                  styles={buildDynSelectStyles<false>(
+                    !!(contactFormik.touched.timeSlot && contactFormik.errors.timeSlot),
+                  )}
+                />
+                {contactFormik.touched.timeSlot && contactFormik.errors.timeSlot && (
+                  <p className="mt-1 text-[11px] text-red-500">{contactFormik.errors.timeSlot}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <FieldLabel optional>Détails complémentaires</FieldLabel>
+              <textarea
+                name="additionalDetails"
+                value={contactFormik.values.additionalDetails}
+                onChange={contactFormik.handleChange}
+                onBlur={contactFormik.handleBlur}
+                placeholder="Décrivez vos besoins plus en détail : surface, matériaux..."
+                rows={3}
+                className={`${inputCls(false)} resize-y leading-[1.6]`}
+                style={{ fontFamily: 'inherit', minHeight: 96 }}
+              />
+            </div>
+
+            <div className="mt-6 flex gap-2.5">
+              <button
+                type="button"
+                onClick={goPrev}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+                style={{ fontFamily: 'inherit' }}
+              >
+                <FiArrowLeft size={14} strokeWidth={2.5} />
+                Retour
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
+              >
+                Continuer
+                <FiArrowRight size={16} strokeWidth={2.5} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ─── DYNAMIC QUESTION STEPS ─── */}
-        {!isSuccess && !flowScreen && uiStep >= 2 && uiStep < summaryUiStep && uiStep !== contactUiStep && (
+        {!isSuccess && !flowScreen && uiStep > staticDetailsUiStep && uiStep < contactUiStep && (
           <div
             key={`step${uiStep}-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -934,6 +1165,41 @@ export default function RequestAServiceForm({
                 label="Profil"
                 value={sumType}
               />
+              {contactFormik.values.cityOrPostalCode && (
+                <SummaryRow
+                  icon={IconInfo}
+                  label="Ville ou code postal"
+                  value={
+                    resolvePostalOption(contactFormik.values.cityOrPostalCode)?.label
+                    ?? contactFormik.values.cityOrPostalCode
+                  }
+                />
+              )}
+              {contactFormik.values.desiredDate && (
+                <SummaryRow
+                  icon={IconInfo}
+                  label="Date souhaitée"
+                  value={formatDate(contactFormik.values.desiredDate)}
+                />
+              )}
+              {contactFormik.values.timeSlot && (
+                <SummaryRow
+                  icon={IconInfo}
+                  label="Créneau horaire"
+                  value={getTimeSlotLabel(contactFormik.values.timeSlot)}
+                />
+              )}
+              {contactFormik.values.additionalDetails.trim() && (
+                <SummaryRow
+                  icon={IconInfo}
+                  label="Détails complémentaires"
+                  value={
+                    contactFormik.values.additionalDetails.length > 80
+                      ? `${contactFormik.values.additionalDetails.slice(0, 80)}…`
+                      : contactFormik.values.additionalDetails
+                  }
+                />
+              )}
               {questionsList.map((q) => {
                 const val = answers[q.key]
                 if (!val || (Array.isArray(val) && val.length === 0)) return null
