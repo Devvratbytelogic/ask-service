@@ -1,10 +1,13 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
+import { useDispatch } from 'react-redux'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
-import { DEFAULT_LEAD_ID, getLeadDetail, INITIAL_WALLET_BALANCE, SIDEBAR_LEADS } from './data'
+import { openModal } from '@/redux/slices/allModalSlice'
+import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { DEFAULT_LEAD_ID, getLeadDetail, SIDEBAR_LEADS } from './data'
 import LeadSidebar from './LeadSidebar'
 import LeadCard from './LeadCard'
 import UnlockPanel from './UnlockPanel'
@@ -14,36 +17,24 @@ interface Props {
 }
 
 export default function LeadDetailView({ leadId }: Props) {
+    const dispatch = useDispatch()
     const validId = SIDEBAR_LEADS.some((l) => l.id === leadId) ? leadId : DEFAULT_LEAD_ID
+    const [selectedId] = useState(validId)
 
-    const [selectedId, setSelectedId] = useState(validId)
-    const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set())
-    const [walletBalance, setWalletBalance] = useState(INITIAL_WALLET_BALANCE)
-    const [modalOpen, setModalOpen] = useState(false)
+    const { data: leadResponse } = useGetSingleLeadQuery({ id: leadId })
+    const apiLead = leadResponse?.data
+    const isUnlocked = apiLead?.unlocked ?? false
+    const creditsToUnlock = apiLead?.creditsToUnlock ?? 0
 
     const lead = getLeadDetail(selectedId)
-    const isUnlocked = unlockedIds.has(selectedId)
-
-    const handleConfirmUnlock = useCallback(() => {
-        setUnlockedIds((prev) => {
-            const next = new Set(prev)
-            next.add(selectedId)
-            return next
-        })
-        setWalletBalance((prev) => prev - lead.credits)
-        setModalOpen(false)
-    }, [selectedId, lead.credits])
 
     return (
         <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
-            {/* Sidebar — hidden on small screens */}
             <div className="hidden lg:block">
                 <LeadSidebar selectedId={leadId} />
             </div>
 
-            {/* Center — main content */}
-            <main className="bg-appBg overflow-y-auto p-5">
-                {/* Breadcrumb */}
+            <section className="bg-appBg overflow-y-auto p-5">
                 <div className="flex items-center gap-[7px] text-[12px] text-appTextMuted mb-[18px]">
                     <Link
                         href={getVendorDashboardRoutePath()}
@@ -63,20 +54,20 @@ export default function LeadDetailView({ leadId }: Props) {
                     <span className="text-appTextSec font-semibold">{lead.serviceLabel}</span>
                 </div>
 
-                <LeadCard lead={lead} isUnlocked={isUnlocked} onUnlock={() => setModalOpen(true)} />
-            </main>
-
-            {/* Right panel — hidden on small screens */}
-            <div className="hidden lg:block">
-                <UnlockPanel
+                <LeadCard
                     lead={lead}
                     isUnlocked={isUnlocked}
-                    walletBalance={walletBalance}
-                    modalOpen={modalOpen}
-                    onOpenModal={() => setModalOpen(true)}
-                    onCloseModal={() => setModalOpen(false)}
-                    onConfirmUnlock={handleConfirmUnlock}
+                    onUnlock={() => dispatch(openModal({
+                        componentName: 'UnlockLeadConfirmModal',
+                        data: { leadId, creditsToUnlock },
+                        modalSize: 'sm',
+                        modalPadding: 'p-0',
+                    }))}
                 />
+            </section>
+
+            <div className="hidden lg:block">
+                <UnlockPanel leadId={leadId} />
             </div>
         </div>
     )

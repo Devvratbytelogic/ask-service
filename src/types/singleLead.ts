@@ -37,6 +37,8 @@ export interface ISingleLeadAPIResponseData {
   __v: number;
   canQuote: boolean;
   unlocked: boolean;
+  creditsToUnlock?: number;
+  quotes_count?: number;
   quote_id?: string;
 }
 export interface User {
