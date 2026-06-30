@@ -11,6 +11,7 @@ export interface ISingleLeadAPIResponseData {
   reference_no: string;
   user: User;
   service_category: ServiceCategory;
+  parent_service_category: ServiceCategory;
   child_category?: null;
   manual_child_category?: null;
   selected_options?: (null)[] | null;
@@ -40,6 +41,13 @@ export interface ISingleLeadAPIResponseData {
   creditsToUnlock?: number;
   quotes_count?: number;
   quote_id?: string;
+  lead_status?: string;
+  lead_status_label?: string;
+  lead_status_message?: string;
+  cityOrPostalCode?: string;
+  desiredDate?: string;
+  timeSlot?: string;
+  additionalDetails?: string;
 }
 export interface User {
   _id: string;
@@ -53,6 +61,7 @@ export interface User {
 export interface ServiceCategory {
   _id: string;
   title: string;
+  image?: string | null;
 }
 export interface ContactDetails {
   first_name: string;

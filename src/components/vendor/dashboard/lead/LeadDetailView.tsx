@@ -1,13 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { DEFAULT_LEAD_ID, getLeadDetail, SIDEBAR_LEADS } from './data'
 import LeadSidebar from './LeadSidebar'
 import LeadCard from './LeadCard'
 import UnlockPanel from './UnlockPanel'
@@ -18,15 +16,12 @@ interface Props {
 
 export default function LeadDetailView({ leadId }: Props) {
     const dispatch = useDispatch()
-    const validId = SIDEBAR_LEADS.some((l) => l.id === leadId) ? leadId : DEFAULT_LEAD_ID
-    const [selectedId] = useState(validId)
 
     const { data: leadResponse } = useGetSingleLeadQuery({ id: leadId })
-    const apiLead = leadResponse?.data
-    const isUnlocked = apiLead?.unlocked ?? false
-    const creditsToUnlock = apiLead?.creditsToUnlock ?? 0
+    const data = leadResponse?.data
+    const isUnlocked = data?.unlocked ?? false
+    const creditsToUnlock = data?.creditsToUnlock ?? 0
 
-    const lead = getLeadDetail(selectedId)
 
     return (
         <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
@@ -51,11 +46,11 @@ export default function LeadDetailView({ leadId }: Props) {
                     <span className="text-appTextMuted flex">
                         <ChevronRightIconSVG size={12} />
                     </span>
-                    <span className="text-appTextSec font-semibold">{lead.serviceLabel}</span>
+                    <span className="text-appTextSec font-semibold">{data?.parent_service_category?.title ?? '—'}</span>
                 </div>
 
                 <LeadCard
-                    lead={lead}
+                    lead={data}
                     isUnlocked={isUnlocked}
                     onUnlock={() => dispatch(openModal({
                         componentName: 'UnlockLeadConfirmModal',

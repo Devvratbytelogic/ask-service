@@ -1,43 +1,33 @@
 'use client'
 
-import {
-    CalendarOutlineIconSVG,
-    CheckmarkIconSVG,
-    ChevronRightIconSVG,
-    ClockCircleIconSVG,
-    HomeOutlineIconSVG,
-    LightningBoltIconSVG,
-    LocationPinIconSVG,
-    MailOutlineIconSVG,
-    PhoneOutlineIconSVG,
-    ShieldOutlineIconSVG,
-    UserOutlineIconSVG,
-    UsersGroupIconSVG,
-} from '@/components/library/AllSVG'
-import type { LeadDetail, NeedIconType } from './types'
-
-function NeedIcon({ type }: { type: NeedIconType }) {
-    if (type === 'shield') return <ShieldOutlineIconSVG size={14} />
-    if (type === 'clock') return <ClockCircleIconSVG size={14} />
-    return <UsersGroupIconSVG size={14} />
-}
-
-function ServicePill({ label, variant }: { label: string; variant: 'security' | 'cleaning' }) {
-    const cls =
-        variant === 'security'
-            ? 'bg-primaryColor/[12%] border-primaryColor/25 text-[#93C5FD]'
-            : 'bg-trust-green/10 border-trust-green/20 text-[#6EE7B7]'
-    return (
-        <div className={`flex items-center gap-1.5 px-3 py-[5px] rounded-full text-[12px] font-bold border ${cls}`}>
-            {label}
-        </div>
-    )
-}
+import { CalendarOutlineIconSVG, CheckmarkIconSVG, ChevronRightIconSVG, HomeOutlineIconSVG, LightningBoltIconSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, UserOutlineIconSVG, } from '@/components/library/AllSVG'
+import moment from 'moment'
+import { ISingleLeadAPIResponseData } from '@/types/singleLead'
+import LeadStatusBadge from './LeadStatusBadge'
+import ImageComponent from '@/components/library/ImageComponent'
 
 interface Props {
-    lead: LeadDetail
+    lead: ISingleLeadAPIResponseData | undefined
     isUnlocked: boolean
     onUnlock: () => void
+}
+
+function formatDynamicAnswerValue(value: string | undefined): string {
+    const raw = value?.trim() ?? ''
+    if (!raw) return '—'
+
+    const formatSingle = (val: string) => {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            return moment(val).locale('fr').format('DD MMM YYYY')
+        }
+        return val
+    }
+
+    if (raw.includes(',')) {
+        return raw.split(',').map((part) => formatSingle(part.trim())).join(', ')
+    }
+
+    return formatSingle(raw)
 }
 
 export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
@@ -47,35 +37,39 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             <div className="px-[22px] py-5 border-b border-appBorderSub">
                 <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                        <ServicePill label={lead.serviceLabel} variant={lead.serviceVariant} />
-                        {lead.isNew && (
-                            <span className="text-[9px] font-extrabold uppercase tracking-[0.8px] bg-red-500 text-white px-[7px] py-[3px] rounded-[4px]">
-                                NOUVEAU
-                            </span>
-                        )}
-                        {lead.clientType === 'b2b' ? (
-                            <span className="text-[9px] font-bold bg-primaryColor/20 text-[#93C5FD] border border-primaryColor/30 px-[7px] py-[3px] rounded-[4px]">
-                                B2B
-                            </span>
-                        ) : (
-                            <span className="text-[9px] font-bold bg-trust-green/15 text-[#6EE7B7] border border-trust-green/25 px-[7px] py-[3px] rounded-[4px]">
-                                B2C
-                            </span>
-                        )}
-                    </div>
-                    {lead.isUrgent && (
-                        <div className="flex items-center gap-[5px] px-3 py-[6px] bg-red-500/10 border border-red-500/25 rounded-full text-[11px] font-bold text-[#FCA5A5] animate-urgency-pulse shrink-0">
-                            <ClockCircleIconSVG size={11} />
-                            {lead.urgencyLabel}
+                        <div className={`flex items-center gap-1.5 px-3 py-[5px] rounded-full text-[12px] font-bold border bg-primaryColor/12 border-primaryColor/25 text-[#93C5FD]`}>
+                            {lead?.parent_service_category?.title ?? '—'}
                         </div>
-                    )}
+
+                        <LeadStatusBadge
+                            status={lead?.lead_status}
+                            label={lead?.lead_status_label}
+                            size="md"
+                        />
+
+                        <span className="text-[9px] font-bold bg-trust-green/15 text-[#6EE7B7] border border-trust-green/25 px-[7px] py-[3px] rounded-[4px]">
+                            {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}
+                        </span>
+                    </div>
                 </div>
 
                 <div className="text-[24px] font-extrabold tracking-[-0.5px] text-appText mb-2.5 flex items-center gap-[7px]">
-                    <span className="text-amber flex shrink-0">
-                        <LocationPinIconSVG size={18} />
-                    </span>
-                    {lead.location}
+                    <div
+                        className="border border-appBorder w-[32px] h-[32px] rounded-[9px] overflow-hidden flex items-center justify-center shrink-0 bg-primaryColor/12"
+                    >
+                        {lead?.service_category?.image ? (
+                            <ImageComponent
+                                url={lead.service_category.image}
+                                img_title={lead.service_category.title ?? ''}
+                                object_cover={true}
+                            />
+                        ) : (
+                            <span className="text-[16px]">
+                                {lead?.service_category?.title?.charAt(0) ?? '—'}
+                            </span>
+                        )}
+                    </div>
+                    {lead?.service_category?.title ?? '—'}
                 </div>
 
                 <div className="flex items-center gap-4 flex-wrap">
@@ -83,25 +77,25 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         <span className="text-appTextMuted flex shrink-0">
                             <CalendarOutlineIconSVG size={13} />
                         </span>
-                        {lead.dateInfo}
+                        {lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {lead?.timeSlot ?? '—'}
                     </div>
                     <div className="flex items-center gap-1.5 text-[13px] text-appTextSec">
                         <span className="text-appTextMuted flex shrink-0">
                             <UserOutlineIconSVG size={13} />
                         </span>
-                        {lead.staffInfo}
+                        {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}
                     </div>
                     <div className="flex items-center gap-1.5 text-[13px] text-appTextSec">
                         <span className="text-appTextMuted flex shrink-0">
                             <HomeOutlineIconSVG size={13} />
                         </span>
-                        {lead.venueType}
+                        {lead?.reference_no ?? '—'}
                     </div>
                 </div>
             </div>
 
             {/* Quality Bar */}
-            <div className="px-[22px] py-3 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
+            {/* <div className="px-[22px] py-3 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                     <span className="text-[14px]">⭐</span>
                     <span className="text-[12px] text-appTextSec">Qualité du prospect :</span>
@@ -118,9 +112,9 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     </div>
                 </div>
                 <span className="text-[13px] font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap">
-                    🪙 {lead.credits} crédits
+                    🪙 {lead?.creditsToUnlock} crédits
                 </span>
-            </div>
+            </div> */}
 
             {/* Needs Block */}
             <div className="px-[22px] py-[18px] border-b border-appBorderSub">
@@ -130,15 +124,26 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     </div>
                     Besoins du client
                 </div>
-                <div className="flex flex-col gap-[9px]">
-                    {lead.needs.map((need, i) => (
-                        <div key={i} className="flex items-center gap-[9px] text-[14px] text-appTextSec">
-                            <span className="text-appTextMuted flex shrink-0">
-                                <NeedIcon type={need.iconType} />
-                            </span>
-                            {need.text}
+                <div className="grid gap-2.5 sm:grid-cols-2">
+                    {lead?.dynamic_answers && lead.dynamic_answers.length > 0 ? (
+                        lead.dynamic_answers.map((answer) => (
+                            <div
+                                key={answer._id}
+                                className="rounded-[10px] border border-appBorderSub bg-black/2 dark:bg-white/3 px-3.5 py-3"
+                            >
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.4px] text-appTextMuted mb-1.5 leading-none">
+                                    {answer.label ?? '—'}
+                                </p>
+                                <p className="text-[13px] font-medium text-appText leading-snug wrap-break-word">
+                                    {formatDynamicAnswerValue(answer.value)}
+                                </p>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="sm:col-span-2 rounded-[10px] border border-dashed border-appBorderSub bg-black/1.5 dark:bg-white/2 px-4 py-3.5 text-center">
+                            <p className="text-[13px] text-appTextMuted">Aucun détail renseigné pour cette demande.</p>
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 {/* Competitors Alert */}
@@ -147,15 +152,13 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         <span className="text-orange-500 flex shrink-0">
                             <LightningBoltIconSVG size={14} />
                         </span>
-                        {lead.competitorsCount > 0
-                            ? `${lead.competitorsCount} professionnels ont déjà consulté · Agissez vite !`
-                            : 'Aucun concurrent pour le moment — soyez le premier !'}
+                        {lead?.lead_status_message ?? '—'}
                     </div>
                     {!isUnlocked && (
                         <button
                             type="button"
                             onClick={onUnlock}
-                            className="text-[12px] font-bold text-amber flex items-center gap-0.5 whitespace-nowrap hover:text-primaryColor transition-colors shrink-0"
+                            className="cursor-pointer text-[12px] font-bold text-amber flex items-center gap-0.5 whitespace-nowrap hover:text-primaryColor transition-colors shrink-0"
                         >
                             Débloquer
                             <ChevronRightIconSVG size={12} />
@@ -177,19 +180,11 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     <div className="flex items-center gap-2.5 text-[14px]">
                         <span className="text-appTextMuted flex shrink-0">
                             <PhoneOutlineIconSVG size={14} />
-                        </span>
-                        {isUnlocked ? (
-                            <span className="text-appText">{lead.phoneRevealed}</span>
-                        ) : (
-                            <div className="relative inline-flex items-center">
-                                <span className="text-appTextSec tracking-[2px] select-none" style={{ filter: 'blur(6px)' }}>
-                                    {lead.phoneBlurred}
-                                </span>
-                                <div className="absolute inset-0 flex items-center justify-center bg-linear-to-r from-transparent via-appCard/60 to-transparent">
-                                    <span className="text-[14px]">🔒</span>
-                                </div>
-                            </div>
-                        )}
+                        </span><div className="relative inline-flex items-center">
+                            <span className="text-appTextSec tracking-[2px] select-none">
+                                {lead?.contact_details?.phone ?? '—'}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Email */}
@@ -197,18 +192,11 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         <span className="text-appTextMuted flex shrink-0">
                             <MailOutlineIconSVG size={14} />
                         </span>
-                        {isUnlocked ? (
-                            <span className="text-appText">{lead.emailRevealed}</span>
-                        ) : (
-                            <div className="relative inline-flex items-center">
-                                <span className="text-appTextSec tracking-[2px] select-none" style={{ filter: 'blur(6px)' }}>
-                                    {lead.emailBlurred}
-                                </span>
-                                <div className="absolute inset-0 flex items-center justify-center bg-linear-to-r from-transparent via-appCard/60 to-transparent">
-                                    <span className="text-[14px]">🔒</span>
-                                </div>
-                            </div>
-                        )}
+                        <div className="relative inline-flex items-center">
+                            <span className="text-appTextSec tracking-[2px] select-none">
+                                {lead?.contact_details?.email ?? '—'}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Verified chips */}

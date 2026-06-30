@@ -35,7 +35,6 @@ export default function UnlockPanel({ leadId }: Props) {
     const credits = lead?.creditsToUnlock ?? 0
     const walletBalance = dashboardData?.data?.creditBalance ?? 0
     const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
-    const competitorsCount = lead?.quotes_count ?? 0
 
 
     const handleUnlockClick = () => {
@@ -110,15 +109,14 @@ export default function UnlockPanel({ leadId }: Props) {
                         </div>
                     )}
 
-                    {!isUnlocked && competitorsCount > 0 && (
+                    {
                         <div className="px-3 py-2.5 bg-linear-to-r from-orange-500/15 to-amber/10 border border-orange-500/30 rounded-[10px] flex items-center gap-2">
-                            <span className="text-[18px] shrink-0">⚡</span>
-                            <p className="text-[12px] font-semibold text-[#FDBA74] leading-[1.4]">
-                                {competitorsCount} professionnels ont déjà consulté cette
-                                demande — ne perdez pas ce client !
-                            </p>
-                        </div>
-                    )}
+                        <span className="text-[18px] shrink-0">⚡</span>
+                        <p className="text-[12px] font-semibold text-[#FDBA74] leading-[1.4]">
+                            {lead?.lead_status_message ?? '—'}
+                        </p>
+                    </div>
+                    }
 
                     {isUnlocked ? (
                         <div className="w-full py-[15px] bg-linear-to-br from-trust-green to-[#059669] text-white rounded-[12px] text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2">

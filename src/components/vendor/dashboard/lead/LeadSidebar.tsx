@@ -8,50 +8,8 @@ import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery } from '@
 import { useRouter } from 'nextjs-toploader/app'
 import { generateLeadDetailRoutePath } from '@/routes/routes'
 import moment from 'moment'
-
-type LeadStatus = 'new' | 'unlocked' | 'pending' | 'accepted' | 'ignored' | 'withdrawn'
-
-function resolveLeadStatus(status: string | null | undefined): LeadStatus {
-    switch ((status ?? '').toLowerCase()) {
-        case 'unlocked':
-            return 'unlocked'
-        case 'pending':
-            return 'pending'
-        case 'accepted':
-            return 'accepted'
-        case 'ignored':
-            return 'ignored'
-        case 'withdrawn':
-            return 'withdrawn'
-        case 'new':
-        default:
-            return 'new'
-    }
-}
-
-const LEAD_STATUS_BADGE_CLASS: Record<LeadStatus, string | null> = {
-    new: 'bg-red-500 text-white',
-    unlocked: 'bg-trust-green text-white',
-    pending: 'bg-trust-green text-white',
-    accepted: 'bg-trust-green text-white',
-    ignored: null,
-    withdrawn: null,
-}
-
-function LeadStatusBadge({ status, label }: { status?: string | null; label?: string | null }) {
-    if (!status) return null
-
-    const resolved = resolveLeadStatus(status)
-    const badgeClass = LEAD_STATUS_BADGE_CLASS[resolved]
-    if (!badgeClass) return null
-
-    return (
-        <span className={`text-[8px] font-extrabold uppercase tracking-[0.5px] px-[5px] py-[2px] rounded-[3px] shrink-0 ${badgeClass}`}>
-            {label}
-        </span>
-    )
-}
-
+import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
+import LeadStatusBadge from './LeadStatusBadge'
 
 interface Props {
     selectedId: string
@@ -117,12 +75,12 @@ export default function LeadSidebar({ selectedId }: Props) {
             </div>
 
             <div className="text-[11px] font-semibold text-appTextMuted px-[14px] mb-1.5">
-                {leads.length} prospects disponibles
+                {leads?.length} prospects disponibles
             </div>
 
-            {leads.length > 0 && leads.map((lead) => (
+            {leads?.length > 0 && leads?.map((lead) => (
                 <button
-                    key={lead._id}
+                    key={lead?._id}
                     type="button"
                     onClick={() => handleSelect(lead?._id)}
                     className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-white/4 ${selectedId === lead?._id
@@ -141,23 +99,24 @@ export default function LeadSidebar({ selectedId }: Props) {
                     </div>
                     <div className="flex flex-col gap-[2px]">
                         <span className="text-[11px] font-medium text-appTextMuted">
-                            {lead?.note}
+                            {lead?.note ?? '—'}
                         </span>
                         <div className="flex items-center gap-1 text-[11px] text-appTextSec">
                             <span className="text-appTextMuted flex shrink-0">
                                 <LocationPinIconSVG size={11} />
                             </span>
-                            {/* {lead?.address_1} */}
+                            {resolvePostalOption(lead?.cityOrPostalCode ?? '')?.label ?? '—'}
                         </div>
                         <div className="flex items-center gap-1 text-[11px] text-appTextSec">
                             <span className="text-appTextMuted flex shrink-0">
                                 <CalendarOutlineIconSVG size={11} />
                             </span>
-                            {lead?.createdAt ? moment(lead.createdAt).locale('fr').format('DD MMM YYYY, hh:mm A') : null}
+                            {lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {lead?.timeSlot ?? '—'}
                         </div>
                     </div>
-                    <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-black/3 dark:bg-white/3`}>
-                        Gardiennage · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}
+                    <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
+                        {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
+                        {lead?.lead_status_message ?? '—'}
                     </div>
                 </button>
             ))}
