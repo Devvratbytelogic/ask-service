@@ -1,12 +1,13 @@
 'use client'
 
-import { ArrowSendIconSVG, LockPrimaryColorSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, } from '@/components/library/AllSVG'
+import { ArrowSendIconSVG, ChatOutlineIconSVG, LockPrimaryColorSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, } from '@/components/library/AllSVG'
 import { Tooltip } from '@heroui/react'
 import { IAvailableLeadByCategoryContactDetailsEntity, IAvailableLeadByCategoryDynamicAnswersEntity, IAvailableLeadByCategoryLeadsEntity, } from '@/types/availableLeadByCategory'
-import { generateLeadDetailRoutePath } from '@/routes/routes'
+import { generateLeadDetailRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
-import { useRouter } from 'next/navigation'
+import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'nextjs-toploader/app';
 
 type ButtonVariant = 'green' | 'blue' | 'amber' | 'gray'
 type LeadActionType = 'unlock' | 'send-quote' | 'view-quote' | 'contact' | 'ignored'
@@ -165,7 +166,7 @@ function PrimaryButton({ label, variant, action, disabled, onClick, }: {
         unlock: <LockPrimaryColorSVG className="size-3.5 text-white" />,
         'send-quote': <ArrowSendIconSVG />,
         'view-quote': <ArrowSendIconSVG />,
-        contact: <PhoneOutlineIconSVG size={13} />,
+        contact: <ChatOutlineIconSVG size={13} />,
         ignored: null,
     }
 
@@ -214,13 +215,13 @@ function HiddenAnswersTooltip({ answers }: { answers: IAvailableLeadByCategoryDy
 
 // ─── OpportunityCard ──────────────────────────────────────────────────────────
 
-export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAvailableLeadByCategoryLeadsEntity, canPurchaseLeads: boolean   }) {
+export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAvailableLeadByCategoryLeadsEntity, canPurchaseLeads: boolean }) {
     const dispatch = useDispatch()
     const router = useRouter()
+    const [vendorAccessChat, { isLoading: isAccessingChat }] = useVendorAccessChatMutation()
     const action = getLeadActionConfig(lead)
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
-    const isUnlockAction = action?.action === 'unlock'
-    const isButtonDisabled = action?.disabled || (isUnlockAction && !canPurchaseLeads)
+    const isButtonDisabled = !canPurchaseLeads
     const cardTitle = lead.city ?? lead.child_category ?? lead.manual_child_category ?? 'Prospect'
     const leadDetailPath = generateLeadDetailRoutePath(lead._id)
 
@@ -228,7 +229,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
         router.push(leadDetailPath)
     }
 
-    const handlePrimaryAction = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handlePrimaryAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         event.stopPropagation()
 
@@ -243,9 +244,24 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                     modalPadding: 'p-0',
                 }))
                 break
+            case 'contact': {
+                const clientUserId = lead.user
+                const quoteId = lead.quote_id
+                if (!clientUserId || !quoteId) return
+                try {
+                    const response = await vendorAccessChat({
+                        userId: clientUserId,
+                        quote_id: quoteId,
+                    }).unwrap()
+                    const chatId = response?.data?._id
+                    router.push(chatId ? `${getVendorMessageRoutePath()}?chatId=${chatId}` : getVendorMessageRoutePath())
+                } catch (error) {
+                    console.error('error accessing chat', error)
+                }
+                break
+            }
             case 'send-quote':
             case 'view-quote':
-            case 'contact':
             case 'ignored':
                 router.push(leadDetailPath)
                 break
@@ -314,11 +330,18 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
 
             {action && (
                 <div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
-                    <PrimaryButton
+                    {/* <PrimaryButton
                         label={action.label}
                         variant={action.variant}
                         action={action.action}
                         disabled={isButtonDisabled}
+                        onClick={handlePrimaryAction}
+                    /> */}
+                     <PrimaryButton
+                        label={isAccessingChat && action.action === 'contact' ? 'Ouverture…' : action.label}
+                        variant={action.variant}
+                        action={action.action}
+                        disabled={isButtonDisabled || (action.action === 'contact' && isAccessingChat)}
                         onClick={handlePrimaryAction}
                     />
                 </div>
