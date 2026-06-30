@@ -23,6 +23,10 @@ export interface ISingleRequestAPIResponse {
     end_time?: null;
     note: string;
     pincode?: null;
+    cityOrPostalCode?: string;
+    desiredDate?: string;
+    timeSlot?: string;
+    additionalDetails?: string;
     contact_details: ContactDetails;
     status: string;
     deletedAt?: null;
@@ -62,10 +66,10 @@ export interface ISingleRequestAPIResponse {
     client_type: string;
     phone: string;
     email: string;
-    cityOrPostalCode: string;
-    desiredDate: string;
-    timeSlot: string;
-    additionalDetails: string;
+    cityOrPostalCode?: string;
+    desiredDate?: string;
+    timeSlot?: string;
+    additionalDetails?: string;
   }
   export interface DynamicAnswersEntity {
     question_id: string;

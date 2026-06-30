@@ -70,6 +70,16 @@ function getTodayMin() {
   return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
 }
 
+function toDateInputValue(dateStr?: string): string {
+  if (!dateStr) return ''
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+  const isoDate = dateStr.match(/^(\d{4}-\d{2}-\d{2})/)?.[1]
+  if (isoDate) return isoDate
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return ''
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function openDatePicker(input: HTMLInputElement | null) {
   if (!input) return
   if (typeof input.showPicker === 'function') {
@@ -314,10 +324,10 @@ export default function RequestAServiceForm({
       phone: data?.contact_details?.phone ?? profile?.phone ?? '',
       email: data?.contact_details?.email ?? profile?.email ?? '',
       notes: data?.note ?? '',
-      cityOrPostalCode: data?.contact_details?.cityOrPostalCode ?? '',
-      desiredDate: data?.contact_details?.desiredDate ?? '',
-      timeSlot: data?.contact_details?.timeSlot ?? '',
-      additionalDetails: data?.contact_details?.additionalDetails ?? '',
+      cityOrPostalCode: data?.cityOrPostalCode ?? '',
+      desiredDate: toDateInputValue(data?.desiredDate),
+      timeSlot: data?.timeSlot ?? '',
+      additionalDetails: data?.additionalDetails ?? '',
     },
     enableReinitialize: true,
     validationSchema: serviceRequestContactSchema,

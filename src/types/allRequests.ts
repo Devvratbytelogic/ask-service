@@ -41,6 +41,10 @@ export interface IAllRequestsDataEntity {
   accepted_quotes_count?: number;
   ignored_quotes_count?: number;
   contact_details: ContactDetails;
+  cityOrPostalCode: string;
+  desiredDate: string;
+  timeSlot: string;
+  additionalDetails: string;
   deletedAt?: null;
   reason?: null;
   createdAt: string;

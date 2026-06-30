@@ -167,7 +167,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
             {/* Main row */}
             <div className="p-5 grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto_auto] gap-3 md:gap-4 items-center">
                 {/* Service icon */}
-                <div className="w-11 h-11 rounded-[13px] overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
+                <div className="border border-appBorder w-11 h-11 rounded-[13px] overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
                     {demand?.service_category?.image ? (
                         <ImageComponent
                             url={demand.service_category.image || ''}
