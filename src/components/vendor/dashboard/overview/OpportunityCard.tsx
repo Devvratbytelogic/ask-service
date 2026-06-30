@@ -1,7 +1,8 @@
 'use client'
 
 import { ArrowSendIconSVG, LockPrimaryColorSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, } from '@/components/library/AllSVG'
-import { IAvailableLeadByCategoryContactDetailsEntity, IAvailableLeadByCategoryLeadsEntity, } from '@/types/availableLeadByCategory'
+import { Tooltip } from '@heroui/react'
+import { IAvailableLeadByCategoryContactDetailsEntity, IAvailableLeadByCategoryDynamicAnswersEntity, IAvailableLeadByCategoryLeadsEntity, } from '@/types/availableLeadByCategory'
 
 type ButtonVariant = 'green' | 'blue' | 'amber'
 type LeadActionType = 'unlock' | 'navigate'
@@ -102,10 +103,42 @@ function PrimaryButton({ label, variant, action, disabled, onClick, }: {
 
 
 
+function HiddenAnswersTooltip({ answers }: { answers: IAvailableLeadByCategoryDynamicAnswersEntity[] }) {
+    return (
+        <Tooltip
+            placement="top-start"
+            delay={100}
+            offset={8}
+            classNames={{
+                content: 'p-0 bg-transparent border-0 shadow-none overflow-visible',
+            }}
+            content={
+                <div className="w-[268px] px-3 py-2.5 bg-appElevated border border-appBorder rounded-[10px] shadow-[0_4px_16px_rgba(15,23,42,0.08)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
+                    <div className="flex flex-col gap-2.5">
+                        {answers.map((answer) => (
+                            <div key={answer._id} className="space-y-0.5">
+                                <p className="text-[11px] text-appTextMuted leading-snug">{answer.label}</p>
+                                <p className="text-[12px] text-appText leading-snug">{answer.value || '—'}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            }
+        >
+            <span className="inline-flex items-center w-fit mt-0.5 px-2 py-[3px] rounded-[6px] text-[11px] font-semibold text-primaryColor/80 bg-primaryColor/6 border border-primaryColor/15 cursor-help transition-colors duration-200 hover:bg-primaryColor/10 hover:border-primaryColor/25">
+                +{answers.length} autre{answers.length > 1 ? 's' : ''}
+            </span>
+        </Tooltip>
+    )
+}
+
+
 // ─── OpportunityCard ──────────────────────────────────────────────────────────
 
 export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCategoryLeadsEntity }) {
     const actions = getLeadActionConfig(lead)
+    const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
+
     return (
         <div className="p-[18px] bg-appCard hover:bg-appElevated transition-colors duration-200 h-full">
             <div className="flex items-center justify-between mb-2.5">
@@ -135,11 +168,9 @@ export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCatego
                             <span className="truncate">{answer.value || '—'}</span>
                         </div>
                     ))}
-                    {lead.dynamic_answers.length > 3 && (
-                        <div className="text-[12px] text-appTextMuted">
-                            +{lead.dynamic_answers.length - 3} autres
-                        </div>
-                    )}
+                    {lead.dynamic_answers.length > 3 ? (
+                        <HiddenAnswersTooltip answers={hiddenAnswers} />
+                    ) : null}
                 </div>
             )}
 
@@ -152,12 +183,12 @@ export default function OpportunityCard({ lead }: { lead: IAvailableLeadByCatego
                     variant={actions.primary.variant}
                     action={actions.primary.action}
                     disabled={actions.primary.action === 'unlock'}
-                    onClick={() => {}}
+                    onClick={() => { }}
                 />
                 {actions.secondary && (
                     <button
                         type="button"
-                        onClick={() => {}}
+                        onClick={() => { }}
                         className="px-3 py-[9px] rounded-[9px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-[12px] font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/9 hover:text-appText whitespace-nowrap"
                     >
                         {actions.secondary.label}
