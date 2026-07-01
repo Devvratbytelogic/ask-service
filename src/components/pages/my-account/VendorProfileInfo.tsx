@@ -3,16 +3,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
-import PhoneInput from 'react-phone-input-2'
-import { BriefcaseIconSVG, BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, GlobeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
+import ReactSelect from 'react-select'
+import { BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, GlobeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
+import { CategoryOptionImage, CategorySelectOption } from '@/components/pages/auth/registration/categorySelectShared'
+import { buildSelectStyles, type CategoryGroup, type CategoryOption } from '@/components/pages/auth/registration/selectStyles'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
-import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetAllServicesGroupedByParentCategoryQuery, useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useGetGeoLocationQuery } from '@/redux/geo-location/geoLocation'
 import Cookies from 'js-cookie'
 import ImageComponent from '@/components/library/ImageComponent'
+import type { IVendorProfileInfoData } from '@/types/vendorProfile'
 
 const COMPANY_SIZE_OPTIONS = [
     '1 - 10 employés',
@@ -26,7 +29,7 @@ const COMPANY_SIZE_OPTIONS = [
 const defaultInitialValues = {
     businessName: '',
     ownerName: '',
-    // serviceCategory: '',
+    serviceCategory: [] as string[],
     email: '',
     phone: '',
     businessAddress: '',
@@ -42,6 +45,17 @@ const defaultInitialValues = {
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
+function getProfileServiceIds(
+    service: IVendorProfileInfoData['service'] | undefined,
+): string[] {
+    if (!service) return []
+
+    const services = Array.isArray(service) ? service : [service]
+    return services
+        .map((item) => item._id ?? item.id)
+        .filter((id): id is string => Boolean(id))
+}
+
 export default function VendorProfileInfo() {
     const dispatch = useDispatch()
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
@@ -49,6 +63,32 @@ export default function VendorProfileInfo() {
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const [updateVendorProfileInfo, { isLoading: isUpdating }] = useUpdateVendorProfileInfoMutation()
     const { data } = useGetVendorProfileInfoQuery()
+    const {
+        data: servicesGroupedResponse,
+        isLoading: isServicesLoading,
+        isError: isServicesError,
+    } = useGetAllServicesGroupedByParentCategoryQuery()
+
+    const serviceOptionGroups = useMemo<CategoryGroup[]>(() => {
+        return (servicesGroupedResponse?.data ?? [])
+            .filter((parent) => parent != null)
+            .map((parent) => ({
+                label: parent.title,
+                options: (parent.child_categories ?? [])
+                    .filter((child) => child != null)
+                    .map((child) => ({
+                        value: child._id,
+                        label: child.title,
+                        image: child.image ?? null,
+                    })),
+            }))
+            .filter((group) => group.options.length > 0)
+    }, [servicesGroupedResponse])
+
+    const serviceOptions = useMemo(
+        () => serviceOptionGroups.flatMap((group) => group.options),
+        [serviceOptionGroups],
+    )
 
     const handleVerifyPhone = () => {
         dispatch(
@@ -69,7 +109,7 @@ export default function VendorProfileInfo() {
     const initialValues = {
         businessName: profileData?.business_name ?? defaultInitialValues.businessName,
         ownerName: [profileData?.first_name, profileData?.last_name].filter(Boolean).join(' '),
-        // serviceCategory: profileData?.service?.title ?? defaultInitialValues.serviceCategory,
+        serviceCategory: getProfileServiceIds(profileData?.service),
         email: profileData?.email ?? defaultInitialValues.email,
         phone: profileData?.phone ?? defaultInitialValues.phone,
         businessAddress: profileData?.address ?? defaultInitialValues.businessAddress,
@@ -83,7 +123,7 @@ export default function VendorProfileInfo() {
         websiteLink: profileData?.website_link ?? defaultInitialValues.websiteLink,
     }
 
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, dirty } = useFormik({
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, setFieldTouched, dirty } = useFormik({
         initialValues,
         enableReinitialize: true,
         validationSchema: vendorProfileInfoValidationSchema,
@@ -106,7 +146,9 @@ export default function VendorProfileInfo() {
             formData.append('company_size', formValues.companySize)
             formData.append('about_company', formValues.aboutCompany)
             formData.append('website_link', formValues.websiteLink.trim())
-            // formData.append('service', formValues.serviceCategory)
+            formValues.serviceCategory.forEach((serviceId) => {
+                formData.append('service', serviceId)
+            })
 
             if (profilePicFile) {
                 formData.append('profile_pic', profilePicFile)
@@ -329,7 +371,7 @@ export default function VendorProfileInfo() {
                 </div>
 
 
-                {/* Owner Name | Service Category */}
+                {/* Owner Name */}
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
@@ -346,23 +388,50 @@ export default function VendorProfileInfo() {
                             startContent={<ProfileIconSVG />}
                         />
                     </div>
-                    {/* <div>
+                    <div>
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                            Type de service
+                            Catégorie de service
                         </label>
-                        <Input
+                        <ReactSelect<CategoryOption, true, CategoryGroup>
+                            isMulti
+                            instanceId="vendorProfileServiceCategory"
                             name="serviceCategory"
-                            value={values.serviceCategory}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={!!(touched.serviceCategory && errors.serviceCategory)}
-                            errorMessage={touched.serviceCategory && errors.serviceCategory}
-                            classNames={{ inputWrapper: 'account_input_design flex-1' }}
-                            isDisabled={false}
-                            startContent={<BriefcaseIconSVG />}
+                            options={serviceOptionGroups}
+                            value={serviceOptions.filter((opt) =>
+                                values.serviceCategory.includes(opt.value)
+                            )}
+                            onChange={(selected) => {
+                                setFieldValue(
+                                    'serviceCategory',
+                                    selected ? selected.map((opt) => opt.value) : [],
+                                )
+                            }}
+                            onBlur={() => setFieldTouched('serviceCategory', true)}
+                            placeholder="— Choisir des catégories —"
+                            isLoading={isServicesLoading}
+                            loadingMessage={() => 'Chargement…'}
+                            noOptionsMessage={() => isServicesError ? 'Erreur de chargement' : 'Aucune option'}
+                            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                            menuPosition="fixed"
+                            styles={buildSelectStyles(!!(touched.serviceCategory && typeof errors.serviceCategory === 'string' && errors.serviceCategory))}
+                            components={{ Option: CategorySelectOption }}
+                            formatOptionLabel={({ label, image }, { context }) =>
+                                context === 'value' ? (
+                                    <span style={{ fontSize: 12, fontFamily: 'inherit' }}>{label}</span>
+                                ) : (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <CategoryOptionImage label={label} image={image} />
+                                        <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
+                                    </div>
+                                )
+                            }
                         />
-                    </div> */}
+                        {touched.serviceCategory && typeof errors.serviceCategory === 'string' && (
+                            <p className="text-danger text-tiny mt-1">{errors.serviceCategory}</p>
+                        )}
+                    </div>
                 </div>
+
 
                 {/* Email | Phone */}
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -389,23 +458,17 @@ export default function VendorProfileInfo() {
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
-                                <PhoneInput
-                                    country="fr"
-                                    countryCodeEditable={false}
-                                    enableSearch
+                                <Input
+                                    name="phone"
+                                    type="tel"
                                     value={values.phone}
-                                    onChange={(value) => setFieldValue('phone', value)}
-                                    onBlur={() => handleBlur({ target: { name: 'phone' } })}
-                                    inputProps={{
-                                        name: 'phone',
-                                        'aria-label': 'Numéro de téléphone',
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={!!(touched.phone && errors.phone)}
+                                    errorMessage={touched.phone && errors.phone}
+                                    classNames={{
+                                        inputWrapper: 'account_input_design',
                                     }}
-                                    containerClass="!w-full"
-                                    inputClass="!w-full !rounded-[12px] !border-borderDark account_input_design"
-                                    inputStyle={{ height: '52px' }}
-                                    dropdownClass="!z-[9999]"
-                                    dropdownStyle={{ zIndex: 9999 }}
-                                // disabled
                                 />
                             </div>
                             {!hasPendingChanges && profileData?.is_phone_verified === false && profileData?.phone !== null && (
@@ -414,9 +477,6 @@ export default function VendorProfileInfo() {
                                 </Button>
                             )}
                         </div>
-                        {touched.phone && errors.phone && (
-                            <p className="text-danger text-tiny mt-1">{errors.phone}</p>
-                        )}
                     </div>
                 </div>
 

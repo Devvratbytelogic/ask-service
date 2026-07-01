@@ -6,13 +6,11 @@ import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useResendPhoneOtpMutation, useResendPhoneOtpGoogleLoginMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import type { AuthResponseData } from "@/utils/authCookies"
-import { addToast, Button } from "@heroui/react"
+import { addToast, Button, Input } from "@heroui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { getDashboardPathForRole } from "@/routes/routes"
-import PhoneInput from "react-phone-input-2"
-import "react-phone-input-2/lib/style.css"
 import { IoPencilOutline } from "react-icons/io5"
 import { formatPhoneWithCountryCode } from "@/utils/formatPhone"
 
@@ -48,7 +46,7 @@ const MobileOtpVerification = () => {
     const [otpExpirySeconds, setOtpExpirySeconds] = useState(skipToCodeEntry ? OTP_EXPIRY_SEC : 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    const isPhoneValid = phoneNumber.length >= 5
+    const isPhoneValid = phoneNumber.trim().length >= 5
 
     const handleSendCode = useCallback(async () => {
         if (!isPhoneValid) return
@@ -236,27 +234,23 @@ const MobileOtpVerification = () => {
                 <div className="space-y-2">
                     <p className="custom_label_text_light">Numéro de téléphone</p>
                     <div className="mt-1.5">
-                        <PhoneInput
-                            country="fr"
-                            countryCodeEditable={false}
-                            enableSearch
+                        <Input
+                            type="tel"
+                            name="phoneNumber"
                             value={phoneNumber}
-                            onChange={(value) => {
+                            onChange={(e) => {
                                 if (readonlyPhone) return
-                                setPhoneNumber(value)
+                                setPhoneNumber(e.target.value)
                                 setErrorMessage(null)
                             }}
-                            inputProps={{
-                                name: "phoneNumber",
-                                "aria-label": "Numéro de téléphone",
-                                readOnly: readonlyPhone,
+                            isReadOnly={readonlyPhone}
+                            aria-label="Numéro de téléphone"
+                            placeholder="+33 6 12 34 56 78"
+                            classNames={{
+                                inputWrapper: readonlyPhone
+                                    ? 'rounded-[12px] border-borderDark bg-gray-100 opacity-70'
+                                    : 'rounded-[12px] border-borderDark',
                             }}
-                            disabled={readonlyPhone}
-                            containerClass="!w-full"
-                            inputClass={`!w-full !rounded-[12px] !border-borderDark${readonlyPhone ? " !bg-gray-100 !cursor-not-allowed !opacity-70" : ""}`}
-                            inputStyle={{ height: "52px" }}
-                            dropdownClass="!z-[9999]"
-                            dropdownStyle={{ zIndex: 9999 }}
                         />
                     </div>
                 </div>
@@ -297,7 +291,7 @@ const MobileOtpVerification = () => {
                                     ? <>{parts.countryCode} {parts.nationalNumber}</>
                                     : phoneNumber
                             })()} */}
-                            {phoneNumber ? formatPhoneWithCountryCode(phoneNumber, "FR").formatted : "—"}
+                            {phoneNumber ? phoneNumber : "—"}
                         </span>
                         {!readonlyPhone && (
                             <button

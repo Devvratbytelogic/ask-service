@@ -132,7 +132,7 @@ export const serviceRequestContactSchema = Yup.object({
 export const vendorProfileInfoValidationSchema = Yup.object({
     businessName: Yup.string().required('Ce champ est obligatoire'),
     ownerName: Yup.string().required('Ce champ est obligatoire'),
-    // serviceCategory: Yup.string().required('Service category is required'),
+    serviceCategory: Yup.array().min(1, 'Veuillez choisir au moins une catégorie'),
     email: yupRequiredEmail(),
     phone: Yup.string().required('Ce champ est obligatoire'),
     businessAddress: Yup.string().required('Ce champ est obligatoire'),

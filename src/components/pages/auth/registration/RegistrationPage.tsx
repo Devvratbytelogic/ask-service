@@ -6,7 +6,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi'
-import ReactSelect, { components, type OptionProps } from 'react-select'
+import ReactSelect from 'react-select'
+import { CategoryOptionImage, CategorySelectOption } from './categorySelectShared'
 import { buildSelectStyles, type CategoryGroup, type CategoryOption } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getClientDashboardPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
@@ -47,64 +48,6 @@ const OTP_LENGTH = 4
 const ALLOWED_DOC_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.doc', '.docx', '.pdf', '.svg']
 const MAX_DOC_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB
 const ALLOWED_FORMATS_HINT = `${ALLOWED_DOC_EXTENSIONS.map((e) => e.slice(1).toUpperCase()).join(', ')} (Max ${MAX_DOC_SIZE_BYTES / (1024 * 1024)}MB)`
-
-function CategoryOptionImage({ label, image }: { label: string; image: string | null }) {
-  if (image) {
-    return (
-      <img
-        src={image}
-        alt={label}
-        style={{
-          width: 28,
-          height: 28,
-          objectFit: 'contain',
-          borderRadius: 6,
-          flexShrink: 0,
-          background: 'var(--color-slate-100)',
-        }}
-      />
-    )
-  }
-
-  return (
-    <div
-      style={{
-        width: 28,
-        height: 28,
-        borderRadius: 6,
-        background: 'var(--color-slate-100)',
-        flexShrink: 0,
-      }}
-    />
-  )
-}
-
-function CategorySelectOption(props: OptionProps<CategoryOption, true, CategoryGroup>) {
-  const { data, isSelected, isFocused } = props
-
-  return (
-    <components.Option {...props}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span
-          style={{
-            width: 16,
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: isFocused ? '#fff' : 'var(--color-primaryColor)',
-          }}
-          aria-hidden
-        >
-          {isSelected ? <FiCheck size={14} strokeWidth={3} /> : null}
-        </span>
-        <CategoryOptionImage label={data.label} image={data.image} />
-        <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{data.label}</span>
-      </div>
-    </components.Option>
-  )
-}
-
 
 // ─── Main component ───────────────────────────────────────────────────────────
 interface RegistrationPageProps {

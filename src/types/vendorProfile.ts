@@ -36,7 +36,7 @@ export interface IVendorProfileInfoData {
     createdAt: string;
     updatedAt: string;
     __v: number;
-    service: IVendorProfileInfoService;
+    service: IVendorProfileInfoService | IVendorProfileInfoService[];
     id: string;
     is_vendor?: boolean;
 }
