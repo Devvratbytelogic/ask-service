@@ -1,9 +1,17 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { getRegistrationPageRoutePath, getLoginPageRoutePath } from '@/routes/routes'
+import {
+  getRegistrationPageRoutePath,
+  getLoginPageRoutePath,
+  getForgotPasswordRoutePath,
+} from '@/routes/routes'
 
-const NO_CHROME_ROUTES = [getRegistrationPageRoutePath(), getLoginPageRoutePath()]
+const NO_CHROME_ROUTES = [
+  getRegistrationPageRoutePath(),
+  getLoginPageRoutePath(),
+  getForgotPasswordRoutePath(),
+]
 
 export default function ConditionalChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
