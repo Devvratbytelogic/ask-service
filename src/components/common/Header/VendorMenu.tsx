@@ -9,7 +9,7 @@ import {
 
 export const VENDOR_NAV_LINKS = [
     { label: 'Tableau de bord', shortLabel: 'Tableau', href: getVendorDashboardRoutePath() },
-    { label: 'Trouver des prospects', shortLabel: 'Prospects', href: getVendorDashboardRoutePath({ leads: 'available' }) },
+    { label: 'Trouver des prospects', shortLabel: 'Prospects', href: getVendorDashboardRoutePath({ leads: 'locked' }) },
     { label: 'Mes messages', shortLabel: 'Messages', href: getVendorMessageRoutePath() },
 ] as const
 

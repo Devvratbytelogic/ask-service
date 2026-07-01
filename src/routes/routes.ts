@@ -6,8 +6,8 @@ export function generateLeadDetailRoutePath(
     const fromParam = params?.from ? `?from=${params.from}` : ''
     return `/vendor/dashboard/lead/${id}${fromParam}`
 }
-export function getVendorDashboardRoutePath(params?: { leads?: 'purchased' | 'quoted' | 'available' }) {
-    const leadsParam = params?.leads === 'purchased' ? 'purchased' : params?.leads === 'quoted' ? 'quoted' : params?.leads === 'available' ? 'available' : undefined
+export function getVendorDashboardRoutePath(params?: { leads?: 'unlocked' | 'quoted' | 'locked' }) {
+    const leadsParam = params?.leads === 'unlocked' ? 'unlocked' : params?.leads === 'quoted' ? 'quoted' : params?.leads === 'locked' ? 'locked' : undefined
     const search = leadsParam ? `?leads=${leadsParam}` : ''
     return `/vendor/dashboard${search}`;
 }

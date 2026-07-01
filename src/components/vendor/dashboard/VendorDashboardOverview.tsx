@@ -8,9 +8,19 @@ import FindLeadsCTA from './overview/FindLeadsCTA'
 import VendorKycStatusAlert from './VendorKycStatusAlert'
 import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
 import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { getCreditsRoutePath, getVendorAllQuotesRoutePath } from '@/routes/routes'
+import { getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
+import { useSearchParams } from 'next/navigation'
 
 export default function VendorDashboardOverview() {
+    const searchParams = useSearchParams()
+    const leadsFilter = searchParams.get('leads')
+    const unlocked =
+        leadsFilter === 'unlocked' ? true :
+            leadsFilter === 'locked' ? false :
+                true
+    console.log('unlocked', unlocked);
+    console.log('leadsFilter', leadsFilter);
+
     const [cityFilter, setCityFilter] = useState('')
     const [serviceFilter, setServiceFilter] = useState('')
     const [leadsPage, setLeadsPage] = useState(1)
@@ -23,6 +33,7 @@ export default function VendorDashboardOverview() {
         page: leadsPage || undefined,
         limit: leadsLimit || undefined,
         paginate_service: paginateServiceCategory || undefined,
+        unlocked: unlocked,
     })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
@@ -51,8 +62,8 @@ export default function VendorDashboardOverview() {
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.availableLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={`#`} highlight={true} />
-                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={`#`} />
+                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath({ leads: 'unlocked' })} highlight={true} />
+                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} />
                 <DashboardStatCard icon="🪙" iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
                 <DashboardStatCard icon="📋" iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
             </div>
