@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DashboardStatCard from './overview/DashboardStatCard'
 import OpportunityGroup from './overview/OpportunityGroup'
 import OpportunitySectionHeader from './overview/OpportunitySectionHeader'
@@ -13,13 +13,8 @@ import { useSearchParams } from 'next/navigation'
 
 export default function VendorDashboardOverview() {
     const searchParams = useSearchParams()
-    const leadsFilter = searchParams.get('leads')
-    const unlocked =
-        leadsFilter === 'unlocked' ? true :
-            leadsFilter === 'locked' ? false :
-                true
-    console.log('unlocked', unlocked);
-    console.log('leadsFilter', leadsFilter);
+    const leadsFilter = searchParams.get('leads') || 'unlocked'
+    const isUnlocked = leadsFilter === 'unlocked' ? true : false
 
     const [cityFilter, setCityFilter] = useState('')
     const [serviceFilter, setServiceFilter] = useState('')
@@ -33,10 +28,18 @@ export default function VendorDashboardOverview() {
         page: leadsPage || undefined,
         limit: leadsLimit || undefined,
         paginate_service: paginateServiceCategory || undefined,
-        unlocked: unlocked,
+        unlocked: isUnlocked,
     })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
+
+    useEffect(() => {
+        setCityFilter('')
+        setServiceFilter('')
+        setLeadsPage(1)
+        setLeadsLimit(6)
+        setPaginateServiceCategory('')
+    }, [isUnlocked]);
 
     const totalOpportunities = data?.length ?? 0
     const displayedOpportunities = data?.length ?? 0
@@ -62,8 +65,8 @@ export default function VendorDashboardOverview() {
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath({ leads: 'unlocked' })} highlight={true} />
-                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} />
+                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath()} highlight={isUnlocked} />
+                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} highlight={!isUnlocked} highlightColor="blue" />
                 <DashboardStatCard icon="🪙" iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
                 <DashboardStatCard icon="📋" iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
             </div>
@@ -92,14 +95,14 @@ export default function VendorDashboardOverview() {
                 ))
                 ) : (
                     <div className="bg-appSurface border border-appBorder rounded-2xl p-8 text-center mb-4">
-                        <div className="text-[32px] mb-3">🔍</div>
-                        <p className="text-[14px] text-appTextSec">Aucune opportunité pour ce filtre.</p>
+                        <div className="text-[32px] mb-3">{isUnlocked ? '🔓' : '🔍'}</div>
+                        <p className="text-[14px] text-appTextSec">{isUnlocked ? 'Aucune opportunité active pour ce filtre.' : 'Aucun prospect disponible pour ce filtre.'}</p>
                     </div>
                 )}
             </>
 
             {/* Find new leads CTA */}
-            <FindLeadsCTA />
+            {isUnlocked ? <FindLeadsCTA availableLeadsCount={stats?.availableLeadsCount ?? 0} /> : null}
         </div>
     )
 }
