@@ -7,29 +7,36 @@ import {
     getVendorMessageRoutePath,
 } from '@/routes/routes'
 
-const NAV_LINKS = [
-    { label: 'Tableau de bord', href: getVendorDashboardRoutePath() },
-    { label: 'Trouver des prospects', href: getVendorDashboardRoutePath({ leads: 'available' }) },
-    { label: 'Mes messages', href: getVendorMessageRoutePath() },
+export const VENDOR_NAV_LINKS = [
+    { label: 'Tableau de bord', shortLabel: 'Tableau', href: getVendorDashboardRoutePath() },
+    { label: 'Trouver des prospects', shortLabel: 'Prospects', href: getVendorDashboardRoutePath({ leads: 'available' }) },
+    { label: 'Mes messages', shortLabel: 'Messages', href: getVendorMessageRoutePath() },
 ] as const
 
-export default function VendorMenu() {
+interface VendorMenuProps {
+    onNavigate?: () => void
+    className?: string
+}
+
+export default function VendorMenu({ onNavigate, className = '' }: VendorMenuProps) {
     const pathname = usePathname()
 
     return (
-        <nav className="absolute left-1/2 -translate-x-1/2 flex gap-0.5">
-            {NAV_LINKS.map(({ label, href }) => {
+        <nav className={`flex min-w-0 items-center gap-0.5 ${className}`}>
+            {VENDOR_NAV_LINKS.map(({ label, shortLabel, href }) => {
                 const isActive = pathname === href || pathname.startsWith(href + '/')
                 return (
                     <Link
                         key={href}
                         href={href}
-                        className={`text-[13px] font-medium px-3 py-1.5 rounded-lg transition-all duration-200 ${isActive
+                        onClick={onNavigate}
+                        className={`whitespace-nowrap text-[12px] xl:text-[13px] font-medium px-2 lg:px-2.5 xl:px-3 py-1.5 rounded-lg transition-all duration-200 ${isActive
                                 ? 'text-amber bg-amber/10'
                                 : 'text-fontBlack/50 dark:text-slate-400 hover:text-fontBlack dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-white/8'
                             }`}
                     >
-                        {label}
+                        <span className="xl:hidden">{shortLabel}</span>
+                        <span className="hidden xl:inline">{label}</span>
                     </Link>
                 )
             })}

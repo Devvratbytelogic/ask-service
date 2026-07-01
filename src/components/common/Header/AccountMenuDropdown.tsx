@@ -79,7 +79,7 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                 <span className="w-8 h-8 rounded-full bg-primaryColor/15 text-primaryColor text-[12px] font-bold flex items-center justify-center shrink-0">
                     {initials}
                 </span>
-                <span className="hidden sm:inline text-[13px] font-semibold text-fontBlack dark:text-slate-200 max-w-[120px] truncate">
+                <span className="hidden xl:inline text-[13px] font-semibold text-fontBlack dark:text-slate-200 max-w-[120px] truncate">
                     {handle || 'Compte'}
                 </span>
                 <HiChevronDown className={`size-4 text-darkSilver transition-transform ${menuOpen ? 'rotate-180' : ''}`} />

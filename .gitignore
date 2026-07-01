@@ -20,6 +20,9 @@
 # production
 /build
 
+# cursor (local AI rules and settings)
+.cursor/
+
 # misc
 .DS_Store
 *.pem

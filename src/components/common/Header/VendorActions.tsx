@@ -18,17 +18,21 @@ export default function VendorActions({
         skip: !isAuthenticated,
     })
     const credits = dashboardData?.data?.creditBalance ?? 0
+
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 shrink-0">
             <NotificationsPopover isVendor isAuthenticated={isAuthenticated} />
 
             <Link
                 href={getVendorWalletRoutePath()}
-                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all"
+                title={`${credits} crédits`}
+                className="hidden md:flex items-center gap-1 lg:gap-1.5 max-w-36 lg:max-w-44 xl:max-w-none px-2 lg:px-3 xl:px-3.5 py-1.5 rounded-full bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all shrink-0"
             >
-                <span aria-hidden="true">🪙</span>
-                <strong className="text-[14px] font-extrabold text-amber leading-none">{credits}</strong>
-                <span className="text-[11px] text-amber/70 leading-none">crédits</span>
+                <span aria-hidden="true" className="shrink-0">🪙</span>
+                <strong className="text-[13px] lg:text-[14px] font-extrabold text-amber leading-none truncate">
+                    {credits}
+                </strong>
+                <span className="hidden lg:inline text-[11px] text-amber/70 leading-none shrink-0">crédits</span>
             </Link>
 
             <ThemeToggle />
