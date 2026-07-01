@@ -11,7 +11,7 @@ import {
     getRegistrationPageRoutePath,
     getRequestAServiceRoutePath,
     getServiceProviderRoutePath,
-    getVendorWalletRoutePath,
+    getCreditsRoutePath,
 } from "@/routes/routes"
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
 import { usePathname } from "next/navigation"
@@ -148,7 +148,7 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
 
                                 {isVendorUser && (
                                     <Link
-                                        href={getVendorWalletRoutePath()}
+                                        href={getCreditsRoutePath()}
                                         onClick={closeMenu}
                                         className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all md:hidden"
                                     >

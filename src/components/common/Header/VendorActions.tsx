@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { getVendorWalletRoutePath } from '@/routes/routes'
+import { getCreditsRoutePath } from '@/routes/routes'
 import NotificationsPopover from './NotificationsPopover'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import AccountMenuDropdown from './AccountMenuDropdown'
@@ -24,7 +24,7 @@ export default function VendorActions({
             <NotificationsPopover isVendor isAuthenticated={isAuthenticated} />
 
             <Link
-                href={getVendorWalletRoutePath()}
+                href={getCreditsRoutePath()}
                 title={`${credits} crédits`}
                 className="hidden md:flex items-center gap-1 lg:gap-1.5 max-w-36 lg:max-w-44 xl:max-w-none px-2 lg:px-3 xl:px-3.5 py-1.5 rounded-full bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all shrink-0"
             >

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'nextjs-toploader/app'
 import { Spinner } from '@heroui/react'
 import { ArrowSendIconSVG, CheckmarkIconSVG, ChatOutlineIconSVG, ClockCircleIconSVG, LockPrimaryColorSVG, } from '@/components/library/AllSVG'
-import { getVendorMessageRoutePath, getVendorWalletRoutePath } from '@/routes/routes'
+import { getCreditsRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetSingleLeadQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -150,7 +150,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             </div>
                         </div>
                         <Link
-                            href={getVendorWalletRoutePath()}
+                            href={getCreditsRoutePath()}
                             className="text-[12px] font-semibold text-primaryColor bg-blue-light dark:bg-primaryColor/15 px-2.5 py-1.5 rounded-[8px] transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
                         >
                             + Recharger

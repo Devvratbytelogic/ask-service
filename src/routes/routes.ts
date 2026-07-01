@@ -17,9 +17,6 @@ export function getVendorAllQuotesRoutePath() {
 export function getCreditsRoutePath() {
     return `/vendor/credits`;
 }
-export function getVendorWalletRoutePath() {
-    return `/vendor/wallet`;
-}
 
 // General app routes
 export function getHomeRoutePath() {
