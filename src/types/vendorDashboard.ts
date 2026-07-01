@@ -35,6 +35,7 @@ export interface IVendorAvailableLeadsData {
   totalPages: number;
 }
 export interface IVendorAvailableLeadsItemsEntity {
+  city: string;
   _id: string;
   reference_no: string;
   user: string;

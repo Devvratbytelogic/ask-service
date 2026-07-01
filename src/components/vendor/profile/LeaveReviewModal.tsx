@@ -3,7 +3,6 @@
 import { StarRatingIconSVG, StarOutlineIconSVG } from '@/components/library/AllSVG'
 import { useGetCreatedServicesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { closeModal } from '@/redux/slices/allModalSlice'
-import type { DataEntity } from '@/types/allRequests'
 import { addToast, Autocomplete, AutocompleteItem, Avatar, Button, Spinner, Textarea } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMemo, useState } from 'react'
@@ -104,7 +103,7 @@ export default function LeaveReviewModal() {
                     </span>
                     {isLoading && <Spinner size="sm" color="primary" />}
                 </label>
-                <Autocomplete<DataEntity>
+                <Autocomplete
                     placeholder={selectPlaceholder}
                     inputValue={requestInput}
                     onInputChange={(value) => {
