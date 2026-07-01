@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { MagnifierIconSVG } from '@/components/library/AllSVG'
-import { getVendorLeadsRoutePath } from '@/routes/routes'
+import { getVendorDashboardRoutePath } from '@/routes/routes'
 
 export default function FindLeadsCTA() {
     return (
@@ -12,7 +12,7 @@ export default function FindLeadsCTA() {
                 26 prospects disponibles dans votre zone — débloquez ceux qui vous intéressent.
             </p>
             <Link
-                href={getVendorLeadsRoutePath()}
+                href={getVendorDashboardRoutePath({ leads: 'available' })}
                 className="inline-flex items-center gap-2 px-6 py-[11px] bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-[10px] text-[14px] font-bold transition-all duration-250 hover:-translate-y-px shadow-[0_4px_16px_rgba(27,79,255,0.3)] hover:shadow-[0_6px_20px_rgba(27,79,255,0.4)]"
             >
                 <MagnifierIconSVG />

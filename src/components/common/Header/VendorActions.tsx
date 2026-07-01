@@ -5,16 +5,19 @@ import { getVendorWalletRoutePath } from '@/routes/routes'
 import NotificationsPopover from './NotificationsPopover'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import AccountMenuDropdown from './AccountMenuDropdown'
+import { useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 interface VendorActionsProps {
     isAuthenticated?: boolean
-    credits?: number
 }
 
 export default function VendorActions({
     isAuthenticated = false,
-    credits = 0,
 }: VendorActionsProps) {
+    const { data: dashboardData } = useGetVendorDashboardDataQuery(undefined, {
+        skip: !isAuthenticated,
+    })
+    const credits = dashboardData?.data?.creditBalance ?? 0
     return (
         <div className="flex items-center gap-2">
             <NotificationsPopover isVendor isAuthenticated={isAuthenticated} />
