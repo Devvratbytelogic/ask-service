@@ -20,7 +20,21 @@ import {
     getServiceProviderRoutePath,
 } from '@/routes/routes'
 
-const MESSAGE_PATHS = [getHomeRoutePath(), getCreateRequestRoutePath(), getServiceProviderRoutePath()]
+const MESSAGE_PATHS = [
+    getHomeRoutePath(),
+    getCreateRequestRoutePath(),
+    getServiceProviderRoutePath(),
+    getCreateRequestRoutePath(),
+    getHelpCenterRoutePath(),
+    getCreditsRoutePath(),
+    getContactUsRoutePath(),
+    getTermsRoutePath(),
+    getPrivacyRoutePath(),
+    getCookiesRoutePath(),
+    getFacebookUrl(),
+    getTwitterUrl(),
+    getLinkedinUrl(),
+]
 
 const linkClass = "text-sm font-medium text-[#ffffff73] no-underline transition-colors duration-200 hover:text-white"
 
@@ -33,6 +47,7 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
     if (!MESSAGE_PATHS.some((path) => pathname === path)) {
         return null
     }
+    
     const facebookUrl = settings?.facebook_link || getFacebookUrl()
     const twitterUrl = settings?.x_link || getTwitterUrl()
     const linkedinUrl = settings?.linkedin_link || getLinkedinUrl()
