@@ -292,7 +292,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             tabIndex={0}
         >
             {(lead.lead_status || lead.lead_status_label) && (
-                <LeadStatusRibbon status={lead?.lead_status} label={lead?.lead_status_label} />
+                <LeadStatusRibbon status={lead?.lead_status} label={lead?.lead_status_label === 'NEW' ? 'Locked' : lead?.lead_status_label ?? ''} />
             )}
 
             <div className="flex items-center justify-between mb-2.5">

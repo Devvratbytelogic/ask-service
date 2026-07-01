@@ -150,7 +150,7 @@ export default function VendorDashboard() {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <Link
-                                href={getVendorDashboardRoutePath({ leads: 'purchased' })}
+                                href={getVendorDashboardRoutePath()}
                                 className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActivePurchased ? 'border-[#4CAF50] bg-[#4CAF50]/10' : 'border-borderDark bg-white hover:border-[#4CAF50]/30 hover:bg-[#4CAF50]/5'}`}
                             >
                                 <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F5E9] mb-3">
@@ -166,7 +166,7 @@ export default function VendorDashboard() {
                             </Link>
 
                             <Link
-                                href={getVendorDashboardRoutePath({ leads: 'available' })}
+                                href={getVendorDashboardRoutePath()}
                                 className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveLocked ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
                             >
                                 <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F4FD] mb-3">

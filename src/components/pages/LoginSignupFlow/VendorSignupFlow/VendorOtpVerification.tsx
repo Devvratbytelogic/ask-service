@@ -76,7 +76,7 @@ const VendorOtpVerification = () => {
                 color: "success",
                 timeout: 3000,
             })
-            router.push(getVendorDashboardRoutePath({ leads: 'available' }))
+            router.push(getVendorDashboardRoutePath())
             dispatch(
                 openModal({
                     componentName: "LoginSignupIndex",
