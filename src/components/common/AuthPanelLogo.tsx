@@ -25,7 +25,7 @@ export default function AuthPanelLogo({
   return (
     <Link
       href="/"
-      className={`flex items-center gap-1.5 no-underline ${compact ? 'mb-0' : 'mb-14'}`}
+      className={`flex items-center gap-1.5 no-underline h-12 ${compact ? 'mb-0' : 'mb-10'}`}
       style={{ textDecoration: 'none', color: textColor }}
       aria-label="Ask-Service — Accueil"
     >

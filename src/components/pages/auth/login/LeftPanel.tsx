@@ -2,25 +2,22 @@ import Link from 'next/link'
 import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import LoginTestimonialSlider from '@/components/pages/auth/login/LoginTestimonialSlider'
-import { useGetGlobalSettingsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 type Role = 'customer' | 'vendor'
 
 interface LeftPanelProps {
   role: Role
   logoUrl?: string | null
+  activeVendorsCount?: number
+  activeClientsCount?: number
+  averageRating?: number
 }
 
-export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
+export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeClientsCount, averageRating }: LeftPanelProps) {
   const isVendor = role === 'vendor'
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentBg = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
   const accentBorder = isVendor ? 'rgba(245,158,11,0.2)' : 'rgba(27,79,255,0.2)'
-  const { data: globalSettings } = useGetGlobalSettingsQuery()
-  const data = globalSettings?.data;
-  const activeVendorsCount = data?.activeVendorsCount ?? 0;
-  const activeClientsCount = data?.activeClientsCount ?? 0;
-  const averageRating = data?.averageRating ?? 0;
 
   const descText = isVendor
     ? 'Accédez à vos leads, gérez vos devis et développez votre activité depuis votre espace professionnel.'

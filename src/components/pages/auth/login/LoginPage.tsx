@@ -83,9 +83,19 @@ function GoogleIcon() {
 // ─── Main component ───────────────────────────────────────────────────────────
 interface LoginPageProps {
   logoUrl?: string | null
+  vendorLogoUrl?: string | null
+  activeVendorsCount?: number
+  activeClientsCount?: number
+  averageRating?: number
 }
 
-export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
+export default function LoginPage({
+  logoUrl,
+  vendorLogoUrl,
+  activeVendorsCount,
+  activeClientsCount,
+  averageRating,
+}: LoginPageProps = {}) {
   const router = useRouter()
   const dispatch = useDispatch()
   const fcmToken = getFcmTokenFromCookie()
@@ -104,6 +114,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
   const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
 
   const isVendor = role === 'vendor'
+  const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
   const accentShadow = isVendor ? 'rgba(245,158,11,0.3)' : 'rgba(27,79,255,0.28)'
@@ -291,12 +302,12 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
 
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={role} logoUrl={logoUrl} />
+      <LeftPanel role={role} logoUrl={activeLogoUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} />
 
       {/* ─── Right panel ─── */}
       <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <div className="w-full max-w-[440px]">
-          <AuthMobileHeader logoUrl={logoUrl} accentColor={accentColor} />
+          <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Header */}
           <div className="mb-6 text-center min-[901px]:mb-8">
@@ -430,199 +441,199 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
               </div>
             ) : (
               <>
-            {/* ─── Error banner ─── */}
-            {serverError && (
-              <div
-                className="mb-5 flex animate-inscription-fade-up items-center gap-2.5 rounded-[10px] border px-4 py-3 text-[13px] font-medium text-red-600"
-                style={{ background: 'var(--color-red-light)', borderColor: 'rgba(239,68,68,0.2)' }}
-              >
-                <FiAlertCircle size={15} className="shrink-0" />
-                {serverError}
-              </div>
-            )}
+                {/* ─── Error banner ─── */}
+                {serverError && (
+                  <div
+                    className="mb-5 flex animate-inscription-fade-up items-center gap-2.5 rounded-[10px] border px-4 py-3 text-[13px] font-medium text-red-600"
+                    style={{ background: 'var(--color-red-light)', borderColor: 'rgba(239,68,68,0.2)' }}
+                  >
+                    <FiAlertCircle size={15} className="shrink-0" />
+                    {serverError}
+                  </div>
+                )}
 
-            {/* ─── Email ─── */}
-            <div className="mb-4">
-              <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
-                Adresse email
-              </label>
-              <div className="relative">
-                <input
-                  name="email"
-                  type="email"
-                  placeholder={isVendor ? 'email@entreprise.com' : 'votre@email.com'}
-                  autoComplete="email"
-                  value={values.email}
-                  onChange={(e) => { handleChange(e); setServerError('') }}
-                  onBlur={handleBlur}
-                  className={[
-                    'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-                    touched.email && errors.email
-                      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                      : `border-slate-200 bg-slate-50 hover:border-slate-400 focus:bg-white focus:shadow-[0_0_0_3px_${accentDim}]`,
-                  ].join(' ')}
+                {/* ─── Email ─── */}
+                <div className="mb-4">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                    Adresse email
+                  </label>
+                  <div className="relative">
+                    <input
+                      name="email"
+                      type="email"
+                      placeholder={isVendor ? 'email@entreprise.com' : 'votre@email.com'}
+                      autoComplete="email"
+                      value={values.email}
+                      onChange={(e) => { handleChange(e); setServerError('') }}
+                      onBlur={handleBlur}
+                      className={[
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        touched.email && errors.email
+                          ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
+                          : `border-slate-200 bg-slate-50 hover:border-slate-400 focus:bg-white focus:shadow-[0_0_0_3px_${accentDim}]`,
+                      ].join(' ')}
+                      style={{
+                        fontFamily: 'inherit',
+                        ...(!(touched.email && errors.email) ? { ['--tw-border-opacity' as string]: '1' } : {}),
+                      }}
+                      onFocus={(e) => {
+                        if (!(touched.email && errors.email)) {
+                          e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+                        }
+                      }}
+                      onBlurCapture={(e) => {
+                        if (!(touched.email && errors.email)) {
+                          e.currentTarget.style.borderColor = ''
+                        }
+                      }}
+                    />
+                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </span>
+                  </div>
+                  {touched.email && errors.email && (
+                    <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* ─── Password ─── */}
+                <div className="mb-4">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                    Mot de passe
+                  </label>
+                  <div className="relative">
+                    <input
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      value={values.password}
+                      onChange={(e) => { handleChange(e); setServerError('') }}
+                      onBlur={handleBlur}
+                      className={[
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        touched.password && errors.password
+                          ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
+                          : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                      ].join(' ')}
+                      style={{ fontFamily: 'inherit' }}
+                      onFocus={(e) => {
+                        if (!(touched.password && errors.password)) {
+                          e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+                          e.currentTarget.style.background = 'white'
+                          e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
+                        }
+                      }}
+                      onBlurCapture={(e) => {
+                        e.currentTarget.style.borderColor = ''
+                        e.currentTarget.style.background = ''
+                        e.currentTarget.style.boxShadow = ''
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                      aria-label="Afficher/masquer le mot de passe"
+                    >
+                      {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                    </button>
+                  </div>
+                  {touched.password && errors.password && (
+                    <p className="mt-1 text-[11px] text-red-500">{errors.password}</p>
+                  )}
+                </div>
+
+                {/* ─── Remember me + Forgot password ─── */}
+                <div className="mb-6 flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between">
+                  <div
+                    role="checkbox"
+                    aria-checked={values.rememberMe}
+                    tabIndex={0}
+                    className="flex cursor-pointer select-none items-center gap-2 outline-none"
+                    onClick={() => setFieldValue('rememberMe', !values.rememberMe)}
+                    onKeyDown={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault()
+                        setFieldValue('rememberMe', !values.rememberMe)
+                      }
+                    }}
+                  >
+                    <div
+                      aria-hidden
+                      className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
+                      style={{
+                        borderColor: values.rememberMe ? accentColor : 'var(--color-slate-300)',
+                        background: values.rememberMe ? accentColor : 'transparent',
+                      }}
+                    >
+                      {values.rememberMe && <FiCheck size={10} color={isVendor ? 'var(--color-slate-900)' : 'white'} strokeWidth={3} />}
+                    </div>
+                    <span className="text-[13px] text-slate-600">Se souvenir de moi</span>
+                  </div>
+
+                  <Link
+                    href={getForgotPasswordRoutePath()}
+                    className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
+                    style={{ color: accentColor }}
+                  >
+                    Mot de passe oublié ?
+                  </Link>
+                </div>
+
+                {/* ─── Submit button ─── */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
+                    background: accentColor,
+                    color: accentTextColor,
+                    boxShadow: `0 5px 16px ${accentShadow}`,
                     fontFamily: 'inherit',
-                    ...(!(touched.email && errors.email) ? { ['--tw-border-opacity' as string]: '1' } : {}),
                   }}
-                  onFocus={(e) => {
-                    if (!(touched.email && errors.email)) {
-                      e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-                    }
-                  }}
-                  onBlurCapture={(e) => {
-                    if (!(touched.email && errors.email)) {
-                      e.currentTarget.style.borderColor = ''
-                    }
-                  }}
-                />
-                <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </span>
-              </div>
-              {touched.email && errors.email && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
-              )}
-            </div>
+                >
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                        style={{ opacity: 0.6 }}
+                      />
+                      Connexion…
+                    </>
+                  ) : (
+                    <>
+                      Se connecter
+                      <FiArrowRight size={15} />
+                    </>
+                  )}
+                </button>
 
-            {/* ─── Password ─── */}
-            <div className="mb-4">
-              <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <input
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  value={values.password}
-                  onChange={(e) => { handleChange(e); setServerError('') }}
-                  onBlur={handleBlur}
-                  className={[
-                    'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
-                    touched.password && errors.password
-                      ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                      : 'border-slate-200 bg-slate-50 hover:border-slate-400',
-                  ].join(' ')}
-                  style={{ fontFamily: 'inherit' }}
-                  onFocus={(e) => {
-                    if (!(touched.password && errors.password)) {
-                      e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-                      e.currentTarget.style.background = 'white'
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
-                    }
-                  }}
-                  onBlurCapture={(e) => {
-                    e.currentTarget.style.borderColor = ''
-                    e.currentTarget.style.background = ''
-                    e.currentTarget.style.boxShadow = ''
-                  }}
-                />
+                {/* ─── Divider ─── */}
+                <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
+                  <div className="h-px flex-1 bg-slate-200" />
+                  ou continuer avec
+                  <div className="h-px flex-1 bg-slate-200" />
+                </div>
+
+                {/* ─── Google button ─── */}
                 <button
                   type="button"
-                  onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
-                  aria-label="Afficher/masquer le mot de passe"
+                  disabled={isGoogleLoading || isLoading}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ fontFamily: 'inherit' }}
+                  onClick={handleGoogleLogin}
                 >
-                  {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                  {isGoogleLoading ? (
+                    <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
+                  ) : (
+                    <GoogleIcon />
+                  )}
+                  {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
                 </button>
-              </div>
-              {touched.password && errors.password && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.password}</p>
-              )}
-            </div>
-
-            {/* ─── Remember me + Forgot password ─── */}
-            <div className="mb-6 flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between">
-              <div
-                role="checkbox"
-                aria-checked={values.rememberMe}
-                tabIndex={0}
-                className="flex cursor-pointer select-none items-center gap-2 outline-none"
-                onClick={() => setFieldValue('rememberMe', !values.rememberMe)}
-                onKeyDown={(e) => {
-                  if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault()
-                    setFieldValue('rememberMe', !values.rememberMe)
-                  }
-                }}
-              >
-                <div
-                  aria-hidden
-                  className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
-                  style={{
-                    borderColor: values.rememberMe ? accentColor : 'var(--color-slate-300)',
-                    background: values.rememberMe ? accentColor : 'transparent',
-                  }}
-                >
-                  {values.rememberMe && <FiCheck size={10} color={isVendor ? 'var(--color-slate-900)' : 'white'} strokeWidth={3} />}
-                </div>
-                <span className="text-[13px] text-slate-600">Se souvenir de moi</span>
-              </div>
-
-              <Link
-                href={getForgotPasswordRoutePath()}
-                className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
-                style={{ color: accentColor }}
-              >
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
-            {/* ─── Submit button ─── */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
-              style={{
-                background: accentColor,
-                color: accentTextColor,
-                boxShadow: `0 5px 16px ${accentShadow}`,
-                fontFamily: 'inherit',
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <span
-                    className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-                    style={{ opacity: 0.6 }}
-                  />
-                  Connexion…
-                </>
-              ) : (
-                <>
-                  Se connecter
-                  <FiArrowRight size={15} />
-                </>
-              )}
-            </button>
-
-            {/* ─── Divider ─── */}
-            <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
-              <div className="h-px flex-1 bg-slate-200" />
-              ou continuer avec
-              <div className="h-px flex-1 bg-slate-200" />
-            </div>
-
-            {/* ─── Google button ─── */}
-            <button
-              type="button"
-              disabled={isGoogleLoading || isLoading}
-              className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ fontFamily: 'inherit' }}
-              onClick={handleGoogleLogin}
-            >
-              {isGoogleLoading ? (
-                <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
-              ) : (
-                <GoogleIcon />
-              )}
-              {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
-            </button>
               </>
             )}
           </form>

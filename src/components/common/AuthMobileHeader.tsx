@@ -10,7 +10,7 @@ export default function AuthMobileHeader({
   accentColor = 'var(--color-primaryColor)',
 }: AuthMobileHeaderProps) {
   return (
-    <div className="mb-6 hidden w-full justify-center max-[900px]:flex">
+    <div className="mb-6 hidden h-12 w-full justify-center max-[900px]:flex">
       <AuthPanelLogo logoUrl={logoUrl} accentColor={accentColor} theme="light" compact />
     </div>
   )

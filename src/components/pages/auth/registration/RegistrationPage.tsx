@@ -53,9 +53,10 @@ const ALLOWED_FORMATS_HINT = `${ALLOWED_DOC_EXTENSIONS.map((e) => e.slice(1).toU
 // ─── Main component ───────────────────────────────────────────────────────────
 interface RegistrationPageProps {
   logoUrl?: string | null
+  vendorLogoUrl?: string | null
 }
 
-export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}) {
+export default function RegistrationPage({ logoUrl, vendorLogoUrl }: RegistrationPageProps = {}) {
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const router = useRouter()
@@ -132,6 +133,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
 
   // ── Derived state ─────────────────────────────────────────────────────────
   const isVendor = values.role === 'vendor'
+  const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
   const pwdStrength = getPasswordStrength(values.password)
@@ -450,11 +452,11 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={values.role || null} logoUrl={logoUrl} />
+      <LeftPanel role={values.role || null} logoUrl={activeLogoUrl} />
 
       <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <div className="w-full max-w-[480px]">
-          <AuthMobileHeader logoUrl={logoUrl} accentColor={accentColor} />
+          <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Already have account */}
           <div className="mb-5 text-center text-[13px] text-slate-500 min-[901px]:mb-7">
