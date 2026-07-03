@@ -47,34 +47,33 @@ export function ProgressSteps({ currentStep, isVendor }: { currentStep: Step; is
     ]
 
   return (
-    <div className="mb-8">
+    <div className="mb-6 min-[901px]:mb-8">
       <div className="flex items-center">
         {steps.map((s, idx) => {
           const state: 'done' | 'active' | 'pending' =
             s.id < currentStep ? 'done' : s.id === currentStep ? 'active' : 'pending'
 
           return (
-            <div key={s.id} className="relative flex flex-1 flex-col items-center gap-1.5">
+            <div key={s.id} className="relative flex flex-1 flex-col items-center gap-1 min-[901px]:gap-1.5">
               {idx < steps.length - 1 && (
                 <div
-                  className={`absolute top-3.5 z-0 h-0.5 transition-colors duration-300 ${state === 'done' ? 'bg-trust-green' : 'bg-slate-200'}`}
+                  className={`absolute top-3 z-0 h-0.5 transition-colors duration-300 min-[901px]:top-3.5 ${state === 'done' ? 'bg-trust-green' : 'bg-slate-200'}`}
                   style={{ left: '50%', right: '-50%' }}
                 />
               )}
               <div
-                className={`relative z-10 flex items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                className={`relative z-10 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 min-[901px]:h-7 min-[901px]:w-7 min-[901px]:text-xs ${
                   state === 'pending'
                     ? 'bg-slate-200 text-slate-400'
                     : state === 'active'
                       ? 'bg-primaryColor text-white shadow-[0_0_0_4px_var(--color-primary-dim)]'
                       : 'bg-trust-green text-white'
                 }`}
-                style={{ width: 28, height: 28 }}
               >
                 {state === 'done' ? '✓' : s.id}
               </div>
               <span
-                className={`text-center text-[11px] font-medium transition-colors ${
+                className={`hidden text-center text-[10px] font-medium transition-colors min-[480px]:block min-[901px]:text-[11px] ${
                   state === 'pending'
                     ? 'text-slate-400'
                     : state === 'active'
@@ -88,6 +87,9 @@ export function ProgressSteps({ currentStep, isVendor }: { currentStep: Step; is
           )
         })}
       </div>
+      <p className="mt-2 text-center text-[11px] font-semibold text-primaryColor min-[480px]:hidden">
+        {steps.find((s) => s.id === currentStep)?.label}
+      </p>
     </div>
   )
 }

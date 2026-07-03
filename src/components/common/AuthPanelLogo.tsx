@@ -8,14 +8,25 @@ interface AuthPanelLogoProps {
   logoUrl?: string | null
   /** CSS colour value used for the dot and accent text in the fallback. */
   accentColor: string
+  /** Text colour context — dark panel (default) or light mobile header. */
+  theme?: 'dark' | 'light'
+  /** Reduce bottom margin for compact mobile headers. */
+  compact?: boolean
 }
 
-export default function AuthPanelLogo({ logoUrl, accentColor }: AuthPanelLogoProps) {
+export default function AuthPanelLogo({
+  logoUrl,
+  accentColor,
+  theme = 'dark',
+  compact = false,
+}: AuthPanelLogoProps) {
+  const textColor = theme === 'light' ? 'var(--color-slate-900)' : 'white'
+
   return (
     <Link
       href="/"
-      className="mb-14 flex items-center gap-1.5 no-underline"
-      style={{ textDecoration: 'none', color: 'white' }}
+      className={`flex items-center gap-1.5 no-underline ${compact ? 'mb-0' : 'mb-14'}`}
+      style={{ textDecoration: 'none', color: textColor }}
       aria-label="Ask-Service — Accueil"
     >
       {logoUrl ? (

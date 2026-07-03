@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import LoginTestimonialSlider from '@/components/pages/auth/login/LoginTestimonialSlider'
+import { useGetGlobalSettingsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 type Role = 'customer' | 'vendor'
 
@@ -13,8 +14,13 @@ interface LeftPanelProps {
 export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const isVendor = role === 'vendor'
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-  const accentBg    = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
+  const accentBg = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
   const accentBorder = isVendor ? 'rgba(245,158,11,0.2)' : 'rgba(27,79,255,0.2)'
+  const { data: globalSettings } = useGetGlobalSettingsQuery()
+  const data = globalSettings?.data;
+  const activeVendorsCount = data?.activeVendorsCount ?? 0;
+  const activeClientsCount = data?.activeClientsCount ?? 0;
+  const averageRating = data?.averageRating ?? 0;
 
   const descText = isVendor
     ? 'Accédez à vos leads, gérez vos devis et développez votre activité depuis votre espace professionnel.'
@@ -22,7 +28,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
 
   return (
     <div
-      className="relative flex h-screen flex-col overflow-y-scroll px-11 py-12 max-[900px]:hidden"
+      className="relative flex h-full min-h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[900px]:hidden"
       style={{
         background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)',
         position: 'sticky',
@@ -110,9 +116,9 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
             }}
           >
             {[
-              { val: '1', sup: 'k+', label: 'Pros actifs' },
-              { val: '8', sup: 'k+', label: 'Demandes' },
-              { val: '4.9', sup: '',  label: 'Satisfaction' },
+              { val: activeVendorsCount, sup: 'k+', label: 'Pros actifs' },
+              { val: activeClientsCount, sup: 'k+', label: 'Demandes' },
+              { val: averageRating, sup: '', label: 'Satisfaction' },
             ].map((s, i) => (
               <div
                 key={s.label}

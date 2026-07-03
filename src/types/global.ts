@@ -27,6 +27,7 @@ export interface IGlobalSettingsAPIResponseData {
   quote_expired: number;
   logo: string;
   vendor_logo: string;
+  vendor_dark_logo: string;
   icon_image: string;
   instagram_logo: string;
   facebook_logo: string;
@@ -40,4 +41,7 @@ export interface IGlobalSettingsAPIResponseData {
   linkedin_logo: string;
   footer_logo: string;
   home_youtube_link?: string;
+  activeVendorsCount?: number;
+  activeClientsCount?: number;
+  averageRating?: number;
 }

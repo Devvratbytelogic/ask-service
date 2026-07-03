@@ -12,6 +12,7 @@ import {
   getForgotPasswordRoutePath,
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
+import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import LeftPanel from './LeftPanel'
 import OtpInput from '@/components/library/OtpInput'
 import {
@@ -289,25 +290,20 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
     : 'Accédez à votre espace client ou prestataire'
 
   return (
-    <div
-      className="flex min-h-screen max-[900px]:flex-col"
-      style={{ display: 'grid', gridTemplateColumns: '420px 1fr' }}
-    >
+    <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
       <LeftPanel role={role} logoUrl={logoUrl} />
 
       {/* ─── Right panel ─── */}
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-[5%] py-12">
-        <div className="w-full" style={{ maxWidth: 440 }}>
+      <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+        <div className="w-full max-w-[440px]">
+          <AuthMobileHeader logoUrl={logoUrl} accentColor={accentColor} />
 
           {/* Header */}
-          <div className="mb-8 text-center">
-            <h3
-              className="mb-1.5 text-slate-900"
-              style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.5px' }}
-            >
+          <div className="mb-6 text-center min-[901px]:mb-8">
+            <h3 className="mb-1.5 text-[22px] font-extrabold tracking-tight text-slate-900 min-[901px]:text-[26px]">
               Connexion
             </h3>
-            <p className="text-[14px] text-slate-500">{subtitleText}</p>
+            <p className="text-[13px] text-slate-500 min-[901px]:text-[14px]">{subtitleText}</p>
           </div>
 
           {/* Role switcher */}
@@ -338,8 +334,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
           <form
             noValidate
             onSubmit={(e) => { e.preventDefault(); if (!showEmailVerification) handleSubmit() }}
-            className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white ${shake ? 'inscription-shake' : ''}`}
-            style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '32px' }}
+            className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] min-[901px]:p-8 ${shake ? 'inscription-shake' : ''}`}
           >
             {showEmailVerification ? (
               <div className="animate-inscription-fade-up">
@@ -379,7 +374,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
                     }}
                     length={OTP_LENGTH}
                     onComplete={handleVerifyOtp}
-                    classNames={{ wrapper: 'flex gap-3 justify-center' }}
+                    classNames={{ wrapper: 'flex gap-2 justify-center min-[480px]:gap-3' }}
                     ariaLabelPrefix="Chiffre"
                   />
                 </div>
@@ -542,7 +537,7 @@ export default function LoginPage({ logoUrl }: LoginPageProps = {}) {
             </div>
 
             {/* ─── Remember me + Forgot password ─── */}
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between">
               <div
                 role="checkbox"
                 aria-checked={values.rememberMe}

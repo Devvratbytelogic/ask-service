@@ -11,6 +11,7 @@ import { CategoryOptionImage, CategorySelectOption } from './categorySelectShare
 import { buildSelectStyles, type CategoryGroup, type CategoryOption } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getClientDashboardPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
+import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import LeftPanel from './LeftPanel'
 import { addToast } from '@heroui/react'
 import { useGetAllServicesGroupedByParentCategoryQuery, useGetAllServicesDocumentsRequiredQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -448,17 +449,15 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div
-      className="flex min-h-screen max-[900px]:flex-col"
-      style={{ display: 'grid', gridTemplateColumns: '420px 1fr' }}
-    >
+    <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
       <LeftPanel role={values.role || null} logoUrl={logoUrl} />
 
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-[5%] py-12">
-        <div className="w-full" style={{ maxWidth: 480 }}>
+      <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+        <div className="w-full max-w-[480px]">
+          <AuthMobileHeader logoUrl={logoUrl} accentColor={accentColor} />
 
           {/* Already have account */}
-          <div className="mb-7 text-center text-[13px] text-slate-500">
+          <div className="mb-5 text-center text-[13px] text-slate-500 min-[901px]:mb-7">
             Déjà un compte ?{' '}
             <Link href={getLoginPageRoutePath()} className="font-semibold text-primaryColor no-underline hover:underline">
               Se connecter
@@ -474,18 +473,15 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
           >
             <form onSubmit={handleStepSubmit} noValidate>
               {!isSuccess && (
-                <div className="px-8 pb-0 pt-7">
-                  <h3
-                    className="mb-1 text-slate-900"
-                    style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.4px' }}
-                  >
+                <div className="px-4 pb-0 pt-5 min-[901px]:px-8 min-[901px]:pt-7">
+                  <h3 className="mb-1 text-[20px] font-extrabold tracking-tight text-slate-900 min-[901px]:text-[22px]">
                     {stepTitles[step]}
                   </h3>
                   <p className="text-[13px] text-slate-500">{stepDescs[step]}</p>
                 </div>
               )}
 
-              <div className="px-8 pb-8 pt-6">
+              <div className="px-4 pb-6 pt-5 min-[901px]:px-8 min-[901px]:pb-8 min-[901px]:pt-6">
 
                 {/* ─── SUCCESS ─── */}
                 {isSuccess && (
@@ -550,7 +546,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                     className={`animate-inscription-fade-up ${shakeStep === 1 ? 'inscription-shake' : ''}`}
                     key={`step1-${shakeKey}`}
                   >
-                    <div className="mb-6 grid grid-cols-2 gap-3">
+                    <div className="mb-6 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
                       <button
                         type="button"
                         onClick={() => setFieldValue('role', 'customer')}
@@ -618,7 +614,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                     className={`animate-inscription-fade-up ${shakeStep === 2 ? 'inscription-shake' : ''}`}
                     key={`step2-${shakeKey}`}
                   >
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
                       <Field label="Prénom" required errorMessage={touched.prenom && errors.prenom}>
                         <StyledInput
                           name="prenom" type="text" placeholder="Jean"
@@ -783,7 +779,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                       <button
                         type="button"
                         onClick={() => goStep(1)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -938,7 +934,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                         type="button"
                         onClick={() => goStep(2)}
                         disabled={isSigningUp || isVendorRegistering}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -979,7 +975,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                     </div>
 
                     {/* 6-digit boxes */}
-                    <div className="mb-2 flex justify-center gap-2.5">
+                    <div className="mb-2 flex justify-center gap-2 min-[480px]:gap-2.5">
                       {otpDigits.map((digit, idx) => (
                         <input
                           key={idx}
@@ -993,7 +989,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                           onPaste={handleOtpPaste}
                           onFocus={(e) => e.target.select()}
                           className={[
-                            'h-12 w-10 rounded-[10px] border-[1.5px] text-center text-[20px] font-bold text-slate-900 outline-none transition-all',
+                            'h-11 w-9 rounded-[10px] border-[1.5px] text-center text-[18px] font-bold text-slate-900 outline-none transition-all min-[480px]:h-12 min-[480px]:w-10 min-[480px]:text-[20px]',
                             digit
                               ? 'border-primaryColor bg-blue-light shadow-[0_0_0_3px_var(--color-primary-dim)]'
                               : otpError
@@ -1035,7 +1031,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                         type="button"
                         onClick={() => navTo(3)}
                         disabled={isVerifyingEmail || isVerifyingVendorOtp}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -1098,7 +1094,7 @@ export default function RegistrationPage({ logoUrl }: RegistrationPageProps = {}
                         type="button"
                         onClick={() => navTo(4)}
                         disabled={isUploadingDocs}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-5 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
