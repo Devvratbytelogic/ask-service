@@ -22,7 +22,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
 
   return (
     <div
-      className="relative flex h-screen flex-col overflow-hidden px-11 py-12 max-[900px]:hidden"
+      className="relative flex h-screen flex-col overflow-y-scroll px-11 py-12 max-[900px]:hidden"
       style={{
         background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)',
         position: 'sticky',

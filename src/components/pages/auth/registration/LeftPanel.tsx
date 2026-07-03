@@ -88,7 +88,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
 
   return (
     <div
-      className="relative flex h-screen flex-col overflow-hidden px-11 py-12 max-[900px]:hidden"
+      className="relative flex h-screen flex-col overflow-y-scroll px-11 py-12 max-[900px]:hidden"
       style={{
         // Gradient uses slate-900 CSS var for the first stop; mid and dark stops are
         // decorative-only values kept inline.
