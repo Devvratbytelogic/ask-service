@@ -63,15 +63,20 @@ const MetaItem = ({ children }: { children: React.ReactNode }) => (
 
 export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardProps) {
     const dispatch = useDispatch()
-    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const [menuOpen, setMenuOpen] = useState(false)
     const [actionQuoteId, setActionQuoteId] = useState<string | null>(null)
     const [actionType, setActionType] = useState<'accept' | 'ignore' | null>(null)
     const menuRef = useRef<HTMLDivElement>(null)
     const [acceptQuote] = useAcceptQuoteMutation()
     const [ignoreQuote] = useIgnoreQuoteMutation()
+    console.log('demand', demand);
 
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
+    const postalCodeRaw = demand?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    const desiredDateRaw = demand?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+    const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+    const timeSlotRaw = demand?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+
     const isClosed = demand?.quotes_status === 'closed'
     const isAccepted = demand?.quotes_status === 'accepted'
     const totalQuotesCount = demand?.total_quotes_count ?? 0
@@ -209,11 +214,11 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <div className="flex items-center gap-3.5 flex-wrap">
                         <MetaItem>
                             <LocationIconSVG />
-                            {resolvePostalOption(demand?.cityOrPostalCode ?? '')?.label ?? demand?.cityOrPostalCode ?? '—'}
+                            {postalCodeRaw || '—'}
                         </MetaItem>
                         <MetaItem>
-                            <CalendarIconSVG /> 
-                            {demand?.desiredDate ? moment(demand?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {demand?.timeSlot}
+                            <CalendarIconSVG />
+                            {desiredDate} · {timeSlotRaw}
                         </MetaItem>
                         <MetaItem>
                             <ClockCircleOutlineIconSVG />
@@ -361,15 +366,15 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                 const quoteId = quote._id ?? quote.quote_id
                                 if (!quoteId) return null
                                 return (
-                                <QuoteCard
-                                    key={quoteId}
-                                    quoteData={quote}
-                                    onAccept={(e) => handleAcceptQuote(e, quoteId)}
-                                    onIgnore={(e) => handleIgnoreQuote(e, quoteId)}
-                                    onViewDetails={(e) => handleViewQuoteDetails(e, quoteId)}
-                                    isAccepting={actionQuoteId === quoteId && actionType === 'accept'}
-                                    isIgnoring={actionQuoteId === quoteId && actionType === 'ignore'}
-                                />
+                                    <QuoteCard
+                                        key={quoteId}
+                                        quoteData={quote}
+                                        onAccept={(e) => handleAcceptQuote(e, quoteId)}
+                                        onIgnore={(e) => handleIgnoreQuote(e, quoteId)}
+                                        onViewDetails={(e) => handleViewQuoteDetails(e, quoteId)}
+                                        isAccepting={actionQuoteId === quoteId && actionType === 'accept'}
+                                        isIgnoring={actionQuoteId === quoteId && actionType === 'ignore'}
+                                    />
                                 )
                             })}
                         </div>

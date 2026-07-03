@@ -43,6 +43,8 @@ export interface ISingleLeadAPIResponseData {
   quote_id?: string;
   lead_status?: string;
   lead_status_label?: string;
+  lead_stars_label?: string;
+  lead_stars?: number;
   lead_status_message?: string;
   cityOrPostalCode?: string;
   desiredDate?: string;

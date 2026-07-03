@@ -55,6 +55,14 @@ export interface IAllRequestsDataEntity {
   quotes?: (QuotesEntity | null)[] | null;
   status_label: string;
   location: string;
+  dynamic_answers?: (DynamicAnswersEntity)[] | null;
+}
+export interface DynamicAnswersEntity {
+  question_id: string;
+  key: string;
+  label: string;
+  value: string;
+  _id: string;
 }
 export interface QuotesEntity {
   _id: string;

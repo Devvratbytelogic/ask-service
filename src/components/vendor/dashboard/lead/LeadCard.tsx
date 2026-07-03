@@ -1,6 +1,6 @@
 'use client'
 
-import { CalendarOutlineIconSVG, CheckmarkIconSVG, ChevronRightIconSVG, HomeOutlineIconSVG, LightningBoltIconSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, UserOutlineIconSVG, } from '@/components/library/AllSVG'
+import { CalendarOutlineIconSVG, CheckmarkIconSVG, ChevronRightIconSVG, HomeOutlineIconSVG, LightningBoltIconSVG, LocationPinIconSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, StarOutlineIconSVG, StarRatingIconSVG, UserOutlineIconSVG, } from '@/components/library/AllSVG'
 import moment from 'moment'
 import { ISingleLeadAPIResponseData } from '@/types/singleLead'
 import LeadStatusBadge from './LeadStatusBadge'
@@ -31,6 +31,10 @@ function formatDynamicAnswerValue(value: string | undefined): string {
 }
 
 export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
+    const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+    const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+    const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
     return (
         <div className="bg-appCard border border-appBorder rounded-2xl overflow-hidden mb-3.5 animate-hero-fade-up">
             {/* Card Header */}
@@ -75,9 +79,15 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                 <div className="flex items-center gap-4 flex-wrap">
                     <div className="flex items-center gap-1.5 text-[13px] text-appTextSec">
                         <span className="text-appTextMuted flex shrink-0">
+                            <LocationPinIconSVG size={13} />
+                        </span>
+                        {postalCodeRaw ?? '—'}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[13px] text-appTextSec">
+                        <span className="text-appTextMuted flex shrink-0">
                             <CalendarOutlineIconSVG size={13} />
                         </span>
-                        {lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {lead?.timeSlot ?? '—'}
+                        {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
                     </div>
                     <div className="flex items-center gap-1.5 text-[13px] text-appTextSec">
                         <span className="text-appTextMuted flex shrink-0">
@@ -95,18 +105,19 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             </div>
 
             {/* Quality Bar */}
-            {/* <div className="px-[22px] py-3 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
+            <div className="px-[22px] py-3 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                     <span className="text-[14px]">⭐</span>
                     <span className="text-[12px] text-appTextSec">Qualité du prospect :</span>
                     <div className="flex items-center gap-1.5 text-[12px] font-bold text-amber">
-                        {lead.qualityLabel}
-                        <div className="flex gap-[3px] ml-1">
+                        {lead?.lead_stars_label}
+                        <div className="flex items-center gap-1 ml-1">
                             {Array.from({ length: 5 }, (_, i) => (
-                                <div
-                                    key={i}
-                                    className={`w-2 h-2 rounded-full ${i < lead.qualityDots ? 'bg-amber' : 'bg-black/10 dark:bg-white/10'}`}
-                                />
+                                i < (lead?.lead_stars ?? 0) ? (
+                                    <StarRatingIconSVG key={i} size={18} />
+                                ) : (
+                                    <StarOutlineIconSVG key={i} size={18} />
+                                )
                             ))}
                         </div>
                     </div>
@@ -114,7 +125,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                 <span className="text-[13px] font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap">
                     🪙 {lead?.creditsToUnlock} crédits
                 </span>
-            </div> */}
+            </div>
 
             {/* Needs Block */}
             <div className="px-[22px] py-[18px] border-b border-appBorderSub">

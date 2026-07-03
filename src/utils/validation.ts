@@ -123,10 +123,6 @@ export const serviceRequestContactSchema = Yup.object({
         .matches(/^[+\d][\d\s\-().]{4,}$/, 'Numéro de téléphone invalide'),
     email: yupRequiredEmail('Ce champ est obligatoire'),
     notes: Yup.string(),
-    cityOrPostalCode: Yup.string().trim().required('Ce champ est obligatoire'),
-    desiredDate: Yup.string().required('Ce champ est obligatoire'),
-    timeSlot: Yup.string().required('Veuillez choisir un créneau'),
-    additionalDetails: Yup.string(),
 })
 
 export const vendorProfileInfoValidationSchema = Yup.object({

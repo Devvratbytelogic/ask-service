@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
+import LoginTestimonialSlider from '@/components/pages/auth/login/LoginTestimonialSlider'
 
 type Role = 'customer' | 'vendor'
 
@@ -97,45 +98,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
             {descText}
           </p>
 
-          {/* Testimonial card */}
-          <div
-            className="mb-5 rounded-2xl p-5 transition-all"
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}
-          >
-            {/* Stars */}
-            <div className="mb-2.5 flex gap-0.5">
-              {Array(5).fill(null).map((_, i) => (
-                <span key={i} style={{ color: 'var(--color-amber)', fontSize: 14 }}>★</span>
-              ))}
-            </div>
-
-            {/* Quote */}
-            <p
-              className="mb-3.5"
-              style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, fontStyle: 'italic' }}
-            >
-              &ldquo;Ask-Service a transformé ma façon de trouver des clients. Je me connecte chaque matin pour consulter les nouvelles demandes. Indispensable !&rdquo;
-            </p>
-
-            {/* Author */}
-            <div className="flex items-center gap-2.5">
-              <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold text-white"
-                style={{ background: 'var(--color-amber)', fontFamily: 'inherit' }}
-              >
-                N
-              </div>
-              <div>
-                <p className="text-[12px] font-semibold text-white">Nicolas M.</p>
-                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>
-                  Jardinier indépendant · Lyon
-                </p>
-              </div>
-            </div>
-          </div>
+          <LoginTestimonialSlider />
 
           {/* Stats mini bar */}
           <div

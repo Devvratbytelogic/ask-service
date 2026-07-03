@@ -4,7 +4,7 @@ import { Mutex } from 'async-mutex';
 import Cookies from "js-cookie";
 import { addToast } from '@heroui/react';
 import { API_BASE_URL } from '@/utils/config';
-import { getAndClearResetTokenForNextRequest, isUnauthorizedError } from '@/utils/authCookies';
+import { getAndClearResetTokenForNextRequest, isUnauthorizedError, logoutAndRedirectToHome } from '@/utils/authCookies';
 
 const mutex = new Mutex();
 
@@ -59,9 +59,17 @@ const baseQueryWithAuth: BaseQueryFn<
             if (status === 403 && responseData?.data?.flow === 'EMAIL_VERIFICATION_REQUIRED') {
                 return { data: responseData as IAPIResponse };
             }
-            // if (status === 401) {
-                addToast({ title: "", description: responseData?.message ?? "Erreur inconnue", color: "danger", timeout: 2000 })
-            // }
+            if (typeof window !== 'undefined' && isUnauthorizedError(message, status)) {
+                logoutAndRedirectToHome();
+                return {
+                    error: {
+                        status: "CUSTOM_ERROR",
+                        data: { message, httpStatus: status },
+                        error: message,
+                    },
+                };
+            }
+            addToast({ title: "", description: responseData?.message ?? "Erreur inconnue", color: "danger", timeout: 2000 })
             console.error(`API: ${args}, Failed to fetch data`);
             return {
                 error: {

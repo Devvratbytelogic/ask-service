@@ -103,7 +103,12 @@ export function clearAllCookiesAndReload(homePath: string = '/'): void {
 export function isUnauthorizedError(message: string, status?: number): boolean {
     if (status === 401) return true
     const lower = (message || '').toLowerCase()
-    return lower.includes('unauthorized') || lower.includes('invalid token') || lower.includes('token expired')
+    return (
+        lower.includes('unauthorized')
+        || lower.includes('invalid token')
+        || lower.includes('jeton invalide')
+        || lower.includes('token expired')
+    )
 }
 
 /**

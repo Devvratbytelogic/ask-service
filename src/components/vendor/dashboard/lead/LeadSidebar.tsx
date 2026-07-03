@@ -56,6 +56,7 @@ export default function LeadSidebar({ selectedId }: Props) {
         router.push(generateLeadDetailRoutePath(id))
     }
 
+
     if (leadsLoading) {
         return <LeadSidebarSkeleton />
     }
@@ -84,48 +85,54 @@ export default function LeadSidebar({ selectedId }: Props) {
                 {leads?.length} prospects disponibles
             </div>
 
-            {leads?.length > 0 && leads?.map((lead) => (
-                <button
-                    key={lead?._id}
-                    type="button"
-                    onClick={() => handleSelect(lead?._id)}
-                    className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-white/4 ${selectedId === lead?._id
-                        ? 'bg-amber/8 border-l-[3px] border-l-amber'
-                        : 'border-l-[3px] border-l-transparent'
-                        }`}
-                >
-                    <div className="flex items-center justify-between mb-[5px] gap-2">
-                        <div className="text-[13px] font-bold text-appText flex items-center gap-[5px] min-w-0">
-                            <LeadStatusBadge status={lead?.lead_status} label={lead?.lead_status_label} />
-                            <span className="truncate">{lead?.service_category?.title}</span>
-                        </div>
-                        <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-[7px] py-[2px] rounded-full whitespace-nowrap shrink-0">
-                            {lead?.creditsToUnlock} pts
-                        </span>
-                    </div>
-                    <div className="flex flex-col gap-[2px]">
-                        <span className="text-[11px] font-medium text-appTextMuted">
-                            {lead?.additionalDetails ?? '—'}
-                        </span>
-                        <div className="flex items-center gap-1 text-[11px] text-appTextSec">
-                            <span className="text-appTextMuted flex shrink-0">
-                                <LocationPinIconSVG size={11} />
+            {leads?.length > 0 && leads?.map((lead) => {
+                const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+                const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+                const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+                const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+                return (
+                    <button
+                        key={lead?._id}
+                        type="button"
+                        onClick={() => handleSelect(lead?._id)}
+                        className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-white/4 ${selectedId === lead?._id
+                            ? 'bg-amber/8 border-l-[3px] border-l-amber'
+                            : 'border-l-[3px] border-l-transparent'
+                            }`}
+                    >
+                        <div className="flex items-center justify-between mb-[5px] gap-2">
+                            <div className="text-[13px] font-bold text-appText flex items-center gap-[5px] min-w-0">
+                                <LeadStatusBadge status={lead?.lead_status} label={lead?.lead_status_label} />
+                                <span className="truncate">{lead?.service_category?.title}</span>
+                            </div>
+                            <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-[7px] py-[2px] rounded-full whitespace-nowrap shrink-0">
+                                {lead?.creditsToUnlock} pts
                             </span>
-                            {resolvePostalOption(lead?.cityOrPostalCode ?? '')?.label ?? '—'}
                         </div>
-                        <div className="flex items-center gap-1 text-[11px] text-appTextSec">
-                            <span className="text-appTextMuted flex shrink-0">
-                                <CalendarOutlineIconSVG size={11} />
+                        <div className="flex flex-col gap-[2px]">
+                            <span className="text-[11px] font-medium text-appTextMuted">
+                                {lead?.additionalDetails ?? ''}
                             </span>
-                            {lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—'} · {lead?.timeSlot ?? '—'}
+                            <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                                <span className="text-appTextMuted flex shrink-0">
+                                    <LocationPinIconSVG size={11} />
+                                </span>
+                                {postalCodeRaw ?? '—'}
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                                <span className="text-appTextMuted flex shrink-0">
+                                    <CalendarOutlineIconSVG size={11} />
+                                </span>
+                                {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
+                            </div>
                         </div>
-                    </div>
-                    <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
-                        {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
-                        {lead?.lead_status_message ?? '—'}
-                    </div>
-                </button>
-            ))}
+                        <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
+                            {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
+                            {lead?.lead_status_message ?? '—'}
+                        </div>
+                    </button>
+                )
+            })}
         </aside>
     )
 }
