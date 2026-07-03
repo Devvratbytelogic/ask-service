@@ -58,6 +58,7 @@ export default async function RootLayout({
   const isVendor = userRole?.toLowerCase() === "vendor";
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
+  console.log('globalSettings', globalSettings);
   const logoUrl = globalSettings?.data?.logo;
   const logoDarkUrl = globalSettings?.data?.footer_logo;
   const vendorLogoUrl = globalSettings?.data?.vendor_logo;
