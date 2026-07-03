@@ -41,7 +41,7 @@ export interface IGlobalSettingsAPIResponseData {
   linkedin_logo: string;
   footer_logo: string;
   home_youtube_link?: string;
-  activeVendorsCount?: number;
-  activeClientsCount?: number;
-  averageRating?: number;
+  total_active_vendors?: number;
+  total_service_requests?: number;
+  satisfaction?: number;
 }

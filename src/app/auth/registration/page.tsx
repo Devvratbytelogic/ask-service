@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 export default async function InscriptionRoute() {
   const globalSettings = await getGlobalSettings()
   const logoUrl = globalSettings?.data?.logo ?? null
+  const logoDarkUrl = globalSettings?.data?.footer_logo ?? null
   const vendorLogoUrl = globalSettings?.data?.vendor_logo ?? null
-
-  return <RegistrationPage logoUrl={logoUrl} vendorLogoUrl={vendorLogoUrl} />
+  const vendorLogoDarkUrl = globalSettings?.data?.vendor_dark_logo ?? null
+  
+  return <RegistrationPage logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} vendorLogoUrl={vendorLogoUrl} vendorLogoDarkUrl={vendorLogoDarkUrl} />
 }

@@ -22,7 +22,7 @@ import VendorActions from "./VendorActions"
 import ThemeToggle from "@/components/common/ThemeToggle"
 import type { RootState } from "@/redux/appStore"
 
-export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticated }: { logoUrl: string, vendorLogoUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
+export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogoDarkUrl, isVendor, isAuthenticated }: { logoUrl: string, logoDarkUrl: string, vendorLogoUrl: string, vendorLogoDarkUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
     const [scrolled, setScrolled] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const pathname = usePathname()
@@ -32,8 +32,10 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
     const clientUserRole = useSelector((state: RootState) => state.auth.userRole)
     const isAuth = isAuthenticated || isClientAuthenticated
     const isVendorUser = isVendor || clientUserRole?.toLowerCase() === 'vendor'
+    const showVendorLogo = isServiceProviderPage || isVendorUser
 
-    const logo = isServiceProviderPage ? vendorLogoUrl : logoUrl;
+    const lightLogo = showVendorLogo ? vendorLogoUrl : logoUrl
+    const darkLogo = showVendorLogo ? vendorLogoDarkUrl : logoDarkUrl
     const navLinks = isVendorUser ? VENDOR_NAV_LINKS : CUSTOMER_NAV_LINKS
     const mobileMenuBreakpoint = isAuth ? 'lg' : 'sm'
 
@@ -54,15 +56,20 @@ export default function Header({ logoUrl, vendorLogoUrl, isVendor, isAuthenticat
             className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center gap-2 sm:gap-3 px-4 sm:px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-slate-200/60 dark:border-white/7 bg-white/90 dark:bg-slate-900/92 ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0 min-w-0">
-                {logo ? (
-                    <span className="w-28 sm:w-36 inline-flex items-center">
-                        <ImageComponent url={logo} img_title={`logo image`} object_contain />
-                    </span>
+                {lightLogo || darkLogo ? (
+                    <>
+                        <span className="w-28 sm:w-36 inline-flex items-center dark:hidden">
+                            <ImageComponent url={lightLogo} img_title="logo image" object_contain />
+                        </span>
+                        <span className="w-28 sm:w-36 hidden dark:inline-flex items-center">
+                            <ImageComponent url={darkLogo} img_title="logo image" object_contain />
+                        </span>
+                    </>
                 ) : (
                     <>
-                        <span className={`w-2 h-2 rounded-full ${isServiceProviderPage ? 'bg-amber' : 'bg-primaryColor'} shrink-0`} />
+                        <span className={`w-2 h-2 rounded-full ${showVendorLogo ? 'bg-amber' : 'bg-primaryColor'} shrink-0`} />
                         <span className="font-extrabold text-[18px] sm:text-[20px] tracking-tight text-fontBlack dark:text-slate-100 leading-none">
-                            Ask<span className={`${isServiceProviderPage ? 'text-amber' : 'text-primaryColor'}`}>-Service</span>
+                            Ask<span className={`${showVendorLogo ? 'text-amber' : 'text-primaryColor'}`}>-Service</span>
                         </span>
                     </>
                 )}

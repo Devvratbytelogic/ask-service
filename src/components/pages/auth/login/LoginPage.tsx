@@ -83,7 +83,9 @@ function GoogleIcon() {
 // ─── Main component ───────────────────────────────────────────────────────────
 interface LoginPageProps {
   logoUrl?: string | null
+  logoDarkUrl?: string | null
   vendorLogoUrl?: string | null
+  vendorLogoDarkUrl?: string | null
   activeVendorsCount?: number
   activeClientsCount?: number
   averageRating?: number
@@ -91,7 +93,9 @@ interface LoginPageProps {
 
 export default function LoginPage({
   logoUrl,
+  logoDarkUrl,
   vendorLogoUrl,
+  vendorLogoDarkUrl,
   activeVendorsCount,
   activeClientsCount,
   averageRating,
@@ -120,6 +124,7 @@ export default function LoginPage({
   const accentShadow = isVendor ? 'rgba(245,158,11,0.3)' : 'rgba(27,79,255,0.28)'
   const accentDim = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
   const accentBorder = isVendor ? 'rgba(245,158,11,0.25)' : 'rgba(27,79,255,0.25)'
+  const activeLogoDarkUrl = isVendor ? vendorLogoDarkUrl : logoDarkUrl
 
   function triggerShake() {
     setShake(true)
@@ -302,7 +307,7 @@ export default function LoginPage({
 
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={role} logoUrl={activeLogoUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} />
+      <LeftPanel role={role} logoUrl={activeLogoDarkUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} />
 
       {/* ─── Right panel ─── */}
       <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">

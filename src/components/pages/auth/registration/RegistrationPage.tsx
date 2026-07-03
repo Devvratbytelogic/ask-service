@@ -54,9 +54,11 @@ const ALLOWED_FORMATS_HINT = `${ALLOWED_DOC_EXTENSIONS.map((e) => e.slice(1).toU
 interface RegistrationPageProps {
   logoUrl?: string | null
   vendorLogoUrl?: string | null
+  logoDarkUrl?: string | null
+  vendorLogoDarkUrl?: string | null
 }
 
-export default function RegistrationPage({ logoUrl, vendorLogoUrl }: RegistrationPageProps = {}) {
+export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogoDarkUrl }: RegistrationPageProps = {}) {
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const router = useRouter()
@@ -134,6 +136,7 @@ export default function RegistrationPage({ logoUrl, vendorLogoUrl }: Registratio
   // ── Derived state ─────────────────────────────────────────────────────────
   const isVendor = values.role === 'vendor'
   const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
+  const activeLogoDarkUrl = isVendor ? vendorLogoDarkUrl : logoDarkUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
   const pwdStrength = getPasswordStrength(values.password)
@@ -452,7 +455,7 @@ export default function RegistrationPage({ logoUrl, vendorLogoUrl }: Registratio
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={values.role || null} logoUrl={activeLogoUrl} />
+      <LeftPanel role={values.role || null} logoUrl={activeLogoDarkUrl} />
 
       <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <div className="w-full max-w-[480px]">

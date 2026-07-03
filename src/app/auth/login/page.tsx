@@ -10,15 +10,19 @@ export const metadata: Metadata = {
 export default async function LoginRoute() {
   const globalSettings = await getGlobalSettings()
   const logoUrl = globalSettings?.data?.logo ?? null
+  const logoDarkUrl = globalSettings?.data?.footer_logo ?? null
   const vendorLogoUrl = globalSettings?.data?.vendor_logo ?? null
-  const activeVendorsCount = globalSettings?.data?.activeVendorsCount ?? 0
-  const activeClientsCount = globalSettings?.data?.activeClientsCount ?? 0
-  const averageRating = globalSettings?.data?.averageRating ?? 0
+  const vendorLogoDarkUrl = globalSettings?.data?.vendor_dark_logo ?? null
+  const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
+  const activeClientsCount = globalSettings?.data?.total_service_requests ?? 0
+  const averageRating = globalSettings?.data?.satisfaction ?? 0
 
   return (
     <LoginPage
       logoUrl={logoUrl}
+      logoDarkUrl={logoDarkUrl}
       vendorLogoUrl={vendorLogoUrl}
+      vendorLogoDarkUrl={vendorLogoDarkUrl}
       activeVendorsCount={activeVendorsCount}
       activeClientsCount={activeClientsCount}
       averageRating={averageRating}

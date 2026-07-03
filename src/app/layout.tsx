@@ -59,7 +59,9 @@ export default async function RootLayout({
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
   const logoUrl = globalSettings?.data?.logo;
+  const logoDarkUrl = globalSettings?.data?.footer_logo;
   const vendorLogoUrl = globalSettings?.data?.vendor_logo;
+  const vendorLogoDarkUrl = globalSettings?.data?.vendor_dark_logo;
   const footerLogoUrl = globalSettings?.data?.footer_logo;
   const platformDescription = globalSettings?.data?.platformDescription;
   const marketplaceName = globalSettings?.data?.marketplace_name;
@@ -72,7 +74,7 @@ export default async function RootLayout({
         <AppProviders>
           <div className="flex min-h-screen flex-col">
             <ConditionalChrome>
-              <Header logoUrl={logoUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} isVendor={isVendor} isAuthenticated={initialIsAuthenticated} />
+              <Header logoUrl={logoUrl || ""} logoDarkUrl={logoDarkUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} vendorLogoDarkUrl={vendorLogoDarkUrl || ""} isVendor={isVendor} isAuthenticated={initialIsAuthenticated} />
             </ConditionalChrome>
             {children}
             <ConditionalChrome>
