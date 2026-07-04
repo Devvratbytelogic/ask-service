@@ -83,7 +83,7 @@ const NavbarComponent = () => {
                         onClick={() => setMenuOpen(false)}
                     />
                     {/* Menu panel */}
-                    <div className="md:hidden absolute top-full right-0 mt-2 w-64 bg-white rounded-2xl shadow-lg border border-borderDark z-50 py-2 px-2">
+                    <div className="md:hidden absolute top-full right-0 mt-2 w-64 bg-appCard rounded-2xl shadow-lg border border-appBorder z-50 py-2 px-2">
                         <button
                             type="button"
                             onClick={signupSiginModal}

@@ -19,16 +19,16 @@ export default function VendorProfileDetails({ profile, review }: VendorProfileD
 
     return (
         <>
-            <div className="rounded-2xl border border-borderDark p-6">
+            <div className="rounded-2xl border border-appBorder p-6">
                 <Tabs
                     selectedKey={activeTab}
                     onSelectionChange={(key) => setActiveTab(key as TabId)}
                     variant="light"
                     classNames={{
                         base: 'w-full',
-                        tabList: 'mb-6 gap-0 p-1 rounded-full bg-[#F3F4F6] w-full flex w-full',
+                        tabList: 'mb-6 gap-0 p-1 rounded-full bg-appElevated w-full flex w-full',
                         tab: 'rounded-full p-6 text-sm font-normal text-darkSilver data-[selected=true]:text-fontBlack',
-                        cursor: 'rounded-full bg-white shadow-sm',
+                        cursor: 'rounded-full bg-appCard shadow-sm',
                         // panel: 'overflow-visible',
                     }}
                 >

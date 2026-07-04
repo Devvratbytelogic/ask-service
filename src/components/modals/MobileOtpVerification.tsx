@@ -248,8 +248,8 @@ const MobileOtpVerification = () => {
                             placeholder="+33 6 12 34 56 78"
                             classNames={{
                                 inputWrapper: readonlyPhone
-                                    ? 'rounded-[12px] border-borderDark bg-gray-100 opacity-70'
-                                    : 'rounded-[12px] border-borderDark',
+                                    ? 'rounded-[12px] border-appBorder bg-gray-100 opacity-70'
+                                    : 'rounded-[12px] border-appBorder',
                             }}
                         />
                     </div>

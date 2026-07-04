@@ -45,13 +45,13 @@ export default function AccountSidebar({ navItems = customerNavItems }: AccountS
     const pathname = usePathname()
 
     return (
-        <div className="rounded-2xl border border-borderDark p-4 bg-white">
+        <div className="rounded-2xl border border-appBorder p-4 bg-appCard">
             <nav className="flex flex-col gap-0.5">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href
                     const baseClassName = `cursor-pointer flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors w-full ${isActive
                         ? 'bg-primaryColor/10 text-primaryColor'
-                        : 'text-fontBlack hover:bg-[#F9FAFB]'
+                        : 'text-appText hover:bg-appSurface'
                         }`
 
                     return (
@@ -61,7 +61,7 @@ export default function AccountSidebar({ navItems = customerNavItems }: AccountS
                             className={baseClassName}
                             aria-current={isActive ? 'page' : undefined}
                         >
-                            <span className={isActive ? 'text-primaryColor' : 'text-darkSilver'}>{item.icon}</span>
+                            <span className={`shrink-0 ${isActive ? 'text-primaryColor' : 'text-appTextSec'}`}>{item.icon}</span>
                             <span>{item.label}</span>
                         </Link>
                     )

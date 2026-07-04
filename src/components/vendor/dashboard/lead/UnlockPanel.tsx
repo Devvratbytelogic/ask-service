@@ -116,7 +116,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                     <div className="text-center py-2">
                         {isUnlocked ? (
                             isIgnored ? (
-                                <div className="text-2xl font-extrabold text-slate-500 tracking-[-1px] leading-none flex items-center justify-center gap-2">
+                                <div className="text-2xl font-extrabold text-appTextSec tracking-[-1px] leading-none flex items-center justify-center gap-2">
                                     Devis ignoré
                                 </div>
                             ) : isQuoteSent || isAccepted ? (
@@ -199,7 +199,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                                         type="button"
                                         onClick={handleContactClient}
                                         disabled={isAccessingChat}
-                                        className="w-full py-[13px] bg-appCard border border-appBorder text-appText rounded-[12px] text-[14px] font-bold cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-black/3 dark:hover:bg-white/4 hover:border-primaryColor/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="w-full py-[13px] bg-appCard border border-appBorder text-appText rounded-[12px] text-[14px] font-bold cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-black/3 dark:hover:bg-appCard/4 hover:border-primaryColor/30 disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         <ChatOutlineIconSVG size={15} />
                                         {isAccessingChat ? 'Ouverture…' : 'Contacter le client'}

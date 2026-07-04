@@ -12,7 +12,7 @@ export function inputCls(hasError: boolean) {
     'w-full rounded-[12px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all',
     hasError
       ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-      : 'border-appBorder bg-appSurface hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+      : 'border-appBorder bg-appSurface hover:border-appBorder dark:hover:border-slate-600 hover:bg-appCard focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
   ].join(' ')
 }
 
@@ -30,7 +30,7 @@ export function FieldLabel({
       {children}
       {required && <span className="ml-0.5 text-primaryColor">*</span>}
       {optional && (
-        <span className="ml-1.5 text-[12px] font-normal text-slate-400">(optionnel)</span>
+        <span className="ml-1.5 text-[12px] font-normal text-appTextMuted">(optionnel)</span>
       )}
     </label>
   )
@@ -102,7 +102,7 @@ export default function DynamicQuestionField({
         ? 'border-primaryColor bg-blue-light dark:bg-[rgba(27,79,255,0.2)] font-semibold text-primaryColor'
         : hasError
           ? 'border-red-200 bg-appSurface text-appText hover:border-red-300'
-          : 'border-appBorder bg-appSurface text-appText hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appCard',
+          : 'border-appBorder bg-appSurface text-appText hover:border-appBorder dark:hover:border-slate-600 hover:bg-appCard',
     ].join(' ')
 
   return (
@@ -157,7 +157,7 @@ export default function DynamicQuestionField({
               >
                 <span
                   className={`flex size-[15px] shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                    selected ? 'border-primaryColor' : 'border-slate-300'
+                    selected ? 'border-primaryColor' : 'border-appBorder'
                   }`}
                 >
                   {selected && <span className="size-[7px] rounded-full bg-primaryColor" />}
@@ -184,7 +184,7 @@ export default function DynamicQuestionField({
               >
                 <span
                   className={`flex size-[15px] shrink-0 items-center justify-center rounded-[4px] border-2 transition-colors ${
-                    checked ? 'border-primaryColor bg-primaryColor' : 'border-slate-300'
+                    checked ? 'border-primaryColor bg-primaryColor' : 'border-appBorder'
                   }`}
                 >
                   {checked && <FiCheck size={9} strokeWidth={3} className="text-white" />}

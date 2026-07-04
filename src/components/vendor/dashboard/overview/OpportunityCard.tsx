@@ -318,7 +318,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                 {/* <button
                     type="button"
                     onClick={(event) => event.stopPropagation()}
-                    className="relative z-20 w-7 h-7 rounded-[7px] bg-black/5 dark:bg-white/5 text-appTextSec flex items-center justify-center tracking-widest transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText leading-none text-[16px]"
+                    className="relative z-20 w-7 h-7 rounded-[7px] bg-black/5 dark:bg-white/5 text-appTextSec flex items-center justify-center tracking-widest transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText leading-none text-[16px]"
                     aria-label="Plus d'options"
                 >
                     ···

@@ -10,15 +10,15 @@
 }
 
 .btn_bg_whiteSilver {
-    @apply bg-customWhite text-fontBlack;
+    @apply bg-appSurface text-appText;
 }
 
 .btn_bg_whiteSilver_border {
-    @apply bg-customWhite border border-borderDark text-fontBlack;
+    @apply bg-appSurface border border-appBorder text-appText;
 }
 
 .btn_bg_blue {
-    @apply bg-primaryColor text-customWhite;
+    @apply bg-primaryColor text-white;
 }
 
 .btn_outline_blue {
@@ -26,17 +26,17 @@
 }
 
 .btn_bg_transparent {
-    @apply bg-transparent text-fontBlack border-none;
+    @apply bg-transparent text-appText border-none;
 }
 
 .btn_bg_white {
-    @apply border border-borderDark text-fontBlack bg-white
+    @apply border border-appBorder text-appText bg-appCard
 }
 
 .outline_btn {
-    @apply bg-transparent border-[1.5px] px-5 border-slate-300 hover:border-primaryColor hover:text-primaryColor hover:bg-primaryColor/5 transition-all;
+    @apply bg-transparent border-[1.5px] px-5 border-appBorder hover:border-primaryColor hover:text-primaryColor hover:bg-primaryColor/5 transition-all;
 }
 
 .outline_btn_vendor {
-    @apply border-[1.5px] border-slate-300 dark:border-white/15 bg-transparent px-5 text-sm font-medium text-slate-600 dark:text-white/70 transition-all hover:border-amber hover:bg-amber-dim hover:text-amber;
+    @apply border-[1.5px] border-appBorder bg-transparent px-5 text-sm font-medium text-appTextSec transition-all hover:border-amber hover:bg-amber-dim hover:text-amber;
 }

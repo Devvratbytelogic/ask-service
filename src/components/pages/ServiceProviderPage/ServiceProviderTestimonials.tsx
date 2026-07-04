@@ -35,11 +35,11 @@ const TESTIMONIALS: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     return (
-        <article className="rounded-[20px] border-[1.5px] border-slate-100 dark:border-white/8 bg-white dark:bg-appCard p-7 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-[0_8px_24px_rgba(245,158,11,0.1)]">
+        <article className="rounded-[20px] border-[1.5px] border-appBorderSub bg-appCard p-7 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-[0_8px_24px_rgba(245,158,11,0.1)]">
             <div className="mb-3.5 flex gap-[3px] text-[15px] text-amber-500">
                 ★★★★★
             </div>
-            <p className="mb-5 text-sm leading-[1.7] text-slate-600 dark:text-slate-300 italic">
+            <p className="mb-5 text-sm leading-[1.7] text-appTextSec dark:text-slate-300 italic">
                 &ldquo;{testimonial.quote}&rdquo;
             </p>
             <div className="flex items-center gap-3">
@@ -50,10 +50,10 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
                     {testimonial.initial}
                 </div>
                 <div>
-                    <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">
+                    <div className="text-[13px] font-bold text-appText">
                         {testimonial.name}
                     </div>
-                    <div className="mt-px text-[11px] text-slate-500 dark:text-slate-400">
+                    <div className="mt-px text-[11px] text-appTextSec">
                         {testimonial.role}
                     </div>
                 </div>
@@ -64,15 +64,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
 export default function ServiceProviderTestimonials() {
     return (
-        <section className="bg-white dark:bg-appBg px-[5%] py-[100px]">
+        <section className="bg-appBg px-[5%] py-[100px]">
             <div className="mb-12 text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-amber-light dark:bg-amber-500/15 px-3.5 py-1.5 text-[11px] font-bold tracking-[1.2px] text-amber-500 uppercase">
                     ✦ Témoignages
                 </div>
-                <h2 className="mb-3.5 text-[clamp(28px,3.5vw,42px)] leading-[1.12] font-extrabold tracking-[-0.8px] text-slate-900 dark:text-slate-100">
+                <h2 className="mb-3.5 text-[clamp(28px,3.5vw,42px)] leading-[1.12] font-extrabold tracking-[-0.8px] text-appText">
                     Ils ont développé leur activité
                 </h2>
-                <p className="mx-auto max-w-[520px] text-base leading-[1.65] text-slate-500 dark:text-slate-400">
+                <p className="mx-auto max-w-[520px] text-base leading-[1.65] text-appTextSec">
                     Des professionnels qui utilisent Ask-Service au quotidien.
                 </p>
             </div>

@@ -57,12 +57,12 @@ const HomeBanner = () => {
                             Trouvez des professionnels fiables pour tous vos besoins
                         </h2>
                         {/* <span></span> */}
-                        <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-white/80">
+                        <span className="relative border border-dashed border-borderColor rounded-lg flex items-center px-4 py-1 gap-2 min-h-9 bg-appCard/80">
                             {/* Corner circular icons */}
-                            <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
-                            <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
-                            <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-customWhite" />
+                            <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-appSurface" />
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-appSurface" />
+                            <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-appSurface" />
+                            <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full border border-borderColor bg-appSurface" />
                             <span className="h-7 w-7 shrink-0 flex items-center justify-center overflow-hidden">
                                 <ImageComponent url="/images/home/logo_light_black.png" img_title="logo_light_black" object_contain />
                             </span>
@@ -118,7 +118,7 @@ const HomeBanner = () => {
                                     inputWrapper: [
                                         "btn_radius h-[60px]! min-h-[60px]!",
                                         "bg-transparent",
-                                        "border-borderDark border-1",
+                                        "border-appBorder border-1",
                                         "data-[hover=true]:bg-transparent",
                                         "group-data-[focus=true]:bg-transparent",
                                     ],

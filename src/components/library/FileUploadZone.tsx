@@ -86,7 +86,7 @@ export default function FileUploadZone({
             <div
                 className={`
                     flex items-center gap-3 p-3 rounded-xl border min-h-[56px]
-                    ${isDragging ? "border-primaryColor border-dashed bg-primaryColor/5" : "border-borderDark"}
+                    ${isDragging ? "border-primaryColor border-dashed bg-primaryColor/5" : "border-appBorder"}
                 `}
             >
                 <IoDocumentTextOutline className="size-8 text-darkSilver shrink-0" />
@@ -117,7 +117,7 @@ export default function FileUploadZone({
             onDragLeave={onDragLeave}
             className={`
                 flex flex-col items-center justify-center gap-2 py-8 px-4 rounded-xl border-2 border-dashed min-h-[140px] transition-colors
-                ${isDragging ? "border-primaryColor bg-primaryColor/5" : "border-borderDark bg-customWhite"}
+                ${isDragging ? "border-primaryColor bg-primaryColor/5" : "border-appBorder bg-appSurface"}
             `}
         >
             <FiUploadCloud className="size-12 text-placeHolderText" />
@@ -126,7 +126,7 @@ export default function FileUploadZone({
             <Button
                 type="button"
                 variant={buttonClassName ? "solid" : "bordered"}
-                className={buttonClassName ?? "rounded-xl border-borderDark text-fontBlack bg-white"}
+                className={buttonClassName ?? "rounded-xl border-appBorder text-fontBlack bg-appCard"}
                 onPress={() => inputRef.current?.click()}
             >
                 {browseLabel}

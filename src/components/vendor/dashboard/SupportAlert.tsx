@@ -8,7 +8,7 @@ export default function SupportAlert({ title, content }: { title: string, conten
     const router = useRouter()
     return (
         <>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-[#EFF6FF] border border-[#BEDBFF] p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-blue-light border border-primaryColor/30 p-5">
                 <div className="flex items-center gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full  text-primaryColor">
                         <InfoBlueIconSVG />

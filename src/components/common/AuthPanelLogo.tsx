@@ -20,7 +20,7 @@ export default function AuthPanelLogo({
   theme = 'dark',
   compact = false,
 }: AuthPanelLogoProps) {
-  const textColor = theme === 'light' ? 'var(--color-slate-900)' : 'white'
+  const textColor = theme === 'light' ? 'var(--app-text)' : 'white'
 
   return (
     <Link

@@ -12,6 +12,7 @@ import { buildSelectStyles, type CategoryGroup, type CategoryOption } from './se
 import { registrationSchema } from '@/utils/validation'
 import { getLoginPageRoutePath, getClientDashboardPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
+import AuthThemeToggle from '@/components/common/AuthThemeToggle'
 import LeftPanel from './LeftPanel'
 import { addToast } from '@heroui/react'
 import { useGetAllServicesGroupedByParentCategoryQuery, useGetAllServicesDocumentsRequiredQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -457,12 +458,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
       <LeftPanel role={values.role || null} logoUrl={activeLogoDarkUrl} />
 
-      <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+      <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+        <AuthThemeToggle />
         <div className="w-full max-w-[480px]">
           <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Already have account */}
-          <div className="mb-5 text-center text-[13px] text-slate-500 min-[901px]:mb-7">
+          <div className="mb-5 text-center text-[13px] text-appTextSec min-[901px]:mb-7">
             Déjà un compte ?{' '}
             <Link href={getLoginPageRoutePath()} className="font-semibold text-primaryColor no-underline hover:underline">
               Se connecter
@@ -473,16 +475,16 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
 
           {/* Form card */}
           <div
-            className="overflow-hidden rounded-[20px] border border-slate-200 bg-white"
+            className="overflow-hidden rounded-[20px] border border-appBorder bg-appCard"
             style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
           >
             <form onSubmit={handleStepSubmit} noValidate>
               {!isSuccess && (
                 <div className="px-4 pb-0 pt-5 min-[901px]:px-8 min-[901px]:pt-7">
-                  <h3 className="mb-1 text-[20px] font-extrabold tracking-tight text-slate-900 min-[901px]:text-[22px]">
+                  <h3 className="mb-1 text-[20px] font-extrabold tracking-tight text-appText min-[901px]:text-[22px]">
                     {stepTitles[step]}
                   </h3>
-                  <p className="text-[13px] text-slate-500">{stepDescs[step]}</p>
+                  <p className="text-[13px] text-appTextSec">{stepDescs[step]}</p>
                 </div>
               )}
 
@@ -502,13 +504,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       {isVendor ? '⏳' : '✓'}
                     </div>
                     <h3
-                      className="mb-2 text-slate-900"
+                      className="mb-2 text-appText"
                       style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.4px' }}
                     >
                       {isVendor ? 'Compte créé !' : 'Bienvenue !'}
                     </h3>
                     <p
-                      className="mx-auto mb-6 text-[14px] text-slate-500"
+                      className="mx-auto mb-6 text-[14px] text-appTextSec"
                       style={{ lineHeight: 1.65, maxWidth: 320 }}
                     >
                       {isVendor
@@ -537,7 +539,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     {!isVendor && (
                       <Link
                         href="/"
-                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-slate-100 py-3.5 text-[14px] font-semibold text-slate-700 no-underline transition-all hover:bg-slate-200"
+                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-appElevated py-3.5 text-[14px] font-semibold text-appText no-underline transition-all hover:bg-appBorder"
                       >
                         Retour à l&apos;accueil
                       </Link>
@@ -555,7 +557,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       <button
                         type="button"
                         onClick={() => setFieldValue('role', 'customer')}
-                        className="relative cursor-pointer rounded-[14px] border-2 bg-slate-50 px-4 py-5 text-center transition-all hover:-translate-y-px hover:border-slate-300 hover:bg-white"
+                        className="relative cursor-pointer rounded-[14px] border-2 bg-appSurface px-4 py-5 text-center transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appCard"
                         style={{
                           borderColor: values.role === 'customer' ? 'var(--color-primaryColor)' : 'var(--color-slate-200)',
                           background: values.role === 'customer' ? 'var(--color-blue-light)' : undefined,
@@ -567,8 +569,8 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primaryColor text-[11px] font-bold text-white">✓</span>
                         )}
                         <span className="mb-2.5 block text-[28px]">🔍</span>
-                        <div className="mb-1 text-[14px] font-bold text-slate-900">Je suis client</div>
-                        <div className="text-[12px] leading-relaxed text-slate-500">
+                        <div className="mb-1 text-[14px] font-bold text-appText">Je suis client</div>
+                        <div className="text-[12px] leading-relaxed text-appTextSec">
                           Je cherche des professionnels pour mes besoins
                         </div>
                       </button>
@@ -576,7 +578,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       <button
                         type="button"
                         onClick={() => setFieldValue('role', 'vendor')}
-                        className="relative cursor-pointer rounded-[14px] border-2 bg-slate-50 px-4 py-5 text-center transition-all hover:-translate-y-px hover:border-slate-300 hover:bg-white"
+                        className="relative cursor-pointer rounded-[14px] border-2 bg-appSurface px-4 py-5 text-center transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appCard"
                         style={{
                           borderColor: values.role === 'vendor' ? 'var(--color-amber)' : 'var(--color-slate-200)',
                           background: values.role === 'vendor' ? 'var(--color-amber-light)' : undefined,
@@ -588,8 +590,8 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[11px] font-bold text-white">✓</span>
                         )}
                         <span className="mb-2.5 block text-[28px]">💼</span>
-                        <div className="mb-1 text-[14px] font-bold text-slate-900">Je suis pro</div>
-                        <div className="text-[12px] leading-relaxed text-slate-500">
+                        <div className="mb-1 text-[14px] font-bold text-appText">Je suis pro</div>
+                        <div className="text-[12px] leading-relaxed text-appTextSec">
                           Je propose mes services et cherche des clients
                         </div>
                       </button>
@@ -654,10 +656,10 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
 
                     {isVendor && (
                       <div>
-                        <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
-                          <div className="h-px flex-1 bg-slate-200" />
+                        <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
+                          <div className="h-px flex-1 bg-appBorder" />
                           Informations professionnelles
-                          <div className="h-px flex-1 bg-slate-200" />
+                          <div className="h-px flex-1 bg-appBorder" />
                         </div>
 
                         <Field label="Nom de l'entreprise" required errorMessage={touched.nomEntreprise && errors.nomEntreprise}>
@@ -728,7 +730,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                               'flex min-h-12 cursor-text flex-wrap items-center gap-1.5 rounded-[10px] border-[1.5px] px-3 py-2 transition-all',
                               touched.zones && errors.zones
                                 ? 'border-red-500 bg-red-light'
-                                : 'border-slate-200 bg-slate-50 focus-within:border-primaryColor focus-within:bg-white focus-within:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+                                : 'border-appBorder bg-appSurface focus-within:border-primaryColor focus-within:bg-appCard focus-within:shadow-[0_0_0_3px_var(--color-primary-dim)]',
                             ].join(' ')}
                             onClick={() => tagsInputRef.current?.focus()}
                           >
@@ -751,7 +753,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                             <input
                               ref={tagsInputRef}
                               type="text"
-                              className="min-w-[100px] flex-1 border-none bg-transparent text-[13px] text-slate-900 outline-none placeholder:text-slate-400"
+                              className="min-w-[100px] flex-1 border-none bg-transparent text-[13px] text-appText outline-none placeholder:text-appTextMuted"
                               placeholder={values.zones.length === 0 ? 'Ex : Paris, Lyon…' : 'Ajouter une ville…'}
                               value={zoneInput}
                               onChange={(e) => setZoneInput(e.target.value)}
@@ -771,9 +773,9 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                               </button>
                             )}
                           </div>
-                          <p className="mt-1.5 text-[11px] text-slate-400">
+                          <p className="mt-1.5 text-[11px] text-appTextMuted">
                             Saisissez une ville puis cliquez <strong>+</strong> ou appuyez sur{' '}
-                            <kbd className="rounded bg-slate-200 px-1 py-px font-mono text-[10px]">Entrée</kbd>.
+                            <kbd className="rounded bg-appBorder px-1 py-px font-mono text-[10px]">Entrée</kbd>.
                             Vous pouvez aussi coller une liste séparée par des virgules.
                           </p>
                         </Field>
@@ -784,7 +786,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       <button
                         type="button"
                         onClick={() => goStep(1)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -827,24 +829,24 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           onChange={handleChange}
                           onBlur={handleBlur}
                           className={[
-                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                             touched.password && errors.password
                               ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                              : 'border-slate-200 bg-slate-50 focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+                              : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
                           ].join(' ')}
                           style={{ fontFamily: 'inherit' }}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword((p) => !p)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
                           aria-label="Afficher/masquer le mot de passe"
                         >
                           {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
                         </button>
                       </div>
                       <div className="mt-1.5">
-                        <div className="mb-1 h-[3px] overflow-hidden rounded-sm bg-slate-200">
+                        <div className="mb-1 h-[3px] overflow-hidden rounded-sm bg-appBorder">
                           <div
                             className="h-full rounded-sm transition-all duration-300"
                             style={{ width: pwdStrength.width, background: pwdStrength.color }}
@@ -870,17 +872,17 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           onChange={handleChange}
                           onBlur={handleBlur}
                           className={[
-                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                             touched.passwordConfirm && errors.passwordConfirm
                               ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                              : 'border-slate-200 bg-slate-50 focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+                              : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
                           ].join(' ')}
                           style={{ fontFamily: 'inherit' }}
                         />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword((p) => !p)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
                           aria-label="Afficher/masquer la confirmation"
                         >
                           {showConfirmPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
@@ -917,7 +919,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         >
                           {values.termsAccepted && <FiCheck size={10} color="white" strokeWidth={3} />}
                         </div>
-                        <span className="text-[13px] leading-relaxed text-slate-700">
+                        <span className="text-[13px] leading-relaxed text-appText">
                           J&apos;accepte les{' '}
                           <Link href={getTermsRoutePath()} className="text-primaryColor no-underline hover:underline" onClick={(e) => e.stopPropagation()}>
                             Conditions d&apos;utilisation
@@ -939,7 +941,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         type="button"
                         onClick={() => goStep(2)}
                         disabled={isSigningUp || isVendorRegistering}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -994,12 +996,12 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           onPaste={handleOtpPaste}
                           onFocus={(e) => e.target.select()}
                           className={[
-                            'h-11 w-9 rounded-[10px] border-[1.5px] text-center text-[18px] font-bold text-slate-900 outline-none transition-all min-[480px]:h-12 min-[480px]:w-10 min-[480px]:text-[20px]',
+                            'h-11 w-9 rounded-[10px] border-[1.5px] text-center text-[18px] font-bold text-appText outline-none transition-all min-[480px]:h-12 min-[480px]:w-10 min-[480px]:text-[20px]',
                             digit
                               ? 'border-primaryColor bg-blue-light shadow-[0_0_0_3px_var(--color-primary-dim)]'
                               : otpError
                                 ? 'border-red-400 bg-red-50'
-                                : 'border-slate-200 bg-slate-50 focus:border-primaryColor focus:bg-white focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
+                                : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
                           ].join(' ')}
                           style={{ fontFamily: 'inherit' }}
                           aria-label={`Chiffre ${idx + 1}`}
@@ -1012,10 +1014,10 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     )}
 
                     {/* Resend */}
-                    <p className="mt-4 text-center text-[12px] text-slate-500">
+                    <p className="mt-4 text-center text-[12px] text-appTextSec">
                       Vous n&apos;avez pas reçu le code ?{' '}
                       {resendCountdown > 0 ? (
-                        <span className="font-semibold text-slate-400">
+                        <span className="font-semibold text-appTextMuted">
                           Renvoyer dans {resendCountdown}s
                         </span>
                       ) : (
@@ -1036,7 +1038,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         type="button"
                         onClick={() => navTo(3)}
                         disabled={isVerifyingEmail || isVerifyingVendorOtp}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />
@@ -1071,7 +1073,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     key={`step5-${shakeKey}`}
                   >
                     {isDocsLoading && (
-                      <p className="mb-4 text-center text-[13px] text-slate-400">Chargement des documents requis…</p>
+                      <p className="mb-4 text-center text-[13px] text-appTextMuted">Chargement des documents requis…</p>
                     )}
                     {isDocsError && (
                       <p className="mb-4 text-center text-[13px] text-red-500">Impossible de charger les documents. Veuillez réessayer.</p>
@@ -1099,7 +1101,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         type="button"
                         onClick={() => navTo(4)}
                         disabled={isUploadingDocs}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white px-3 py-3 text-[14px] font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 min-[901px]:px-5 disabled:opacity-50"
+                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5 disabled:opacity-50"
                         style={{ fontFamily: 'inherit' }}
                       >
                         <FiArrowLeft size={13} strokeWidth={2.5} />

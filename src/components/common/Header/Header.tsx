@@ -53,7 +53,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
     return (
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center gap-2 sm:gap-3 px-4 sm:px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-slate-200/60 dark:border-white/7 bg-white/90 dark:bg-slate-900/92 ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
+            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center gap-2 sm:gap-3 px-4 sm:px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0 min-w-0">
                 {lightLogo || darkLogo ? (
@@ -68,7 +68,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                 ) : (
                     <>
                         <span className={`w-2 h-2 rounded-full ${showVendorLogo ? 'bg-amber' : 'bg-primaryColor'} shrink-0`} />
-                        <span className="font-extrabold text-[18px] sm:text-[20px] tracking-tight text-fontBlack dark:text-slate-100 leading-none">
+                        <span className="font-extrabold text-[18px] sm:text-[20px] tracking-tight text-appText leading-none">
                             Ask<span className={`${showVendorLogo ? 'text-amber' : 'text-primaryColor'}`}>-Service</span>
                         </span>
                     </>
@@ -107,14 +107,14 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
                 <button
                     type="button"
-                    className={`${isAuth ? 'lg:hidden' : 'sm:hidden'} flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-white/10 shrink-0`}
+                    className={`${isAuth ? 'lg:hidden' : 'sm:hidden'} flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-appOverlay-5 shrink-0`}
                     onClick={() => setMenuOpen(prev => !prev)}
                     aria-label="Menu"
                     aria-expanded={menuOpen}
                 >
-                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? 'opacity-0' : ''}`} />
-                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-slate-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'opacity-0' : ''}`} />
+                    <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
                 </button>
             </div>
 
@@ -125,11 +125,11 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                         onClick={closeMenu}
                         aria-hidden="true"
                     />
-                    <div className={`${mobileMenuBreakpoint}:hidden absolute top-full right-4 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl shadow-lg z-50 py-2 px-2 border bg-white dark:bg-slate-800 border-borderDark dark:border-white/10 max-h-[calc(100vh-5rem)] overflow-y-auto`}>
+                    <div className={`${mobileMenuBreakpoint}:hidden absolute top-full right-4 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl shadow-lg z-50 py-2 px-2 border bg-appCard border-appBorder dark:border-white/10 max-h-[calc(100vh-5rem)] overflow-y-auto`}>
                         {isAuth ? (
                             <>
                                 <div className="px-2 py-1">
-                                    <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-appTextSec">
                                         Navigation
                                     </p>
                                     {navLinks.map(({ label, href }) => {
@@ -144,7 +144,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                                 onClick={closeMenu}
                                                 className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
                                                     ? activeClass
-                                                    : 'text-fontBlack dark:text-slate-200 hover:bg-borderDark/50 dark:hover:bg-white/10'
+                                                    : 'text-appText hover:bg-appOverlay-5'
                                                     }`}
                                             >
                                                 {label}
@@ -176,27 +176,27 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                     </Link>
                                 )}
 
-                                <div className="my-1 border-t border-borderDark/60 dark:border-white/10" />
+                                <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
                                 <div className="flex items-center justify-between px-3 py-2">
-                                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Thème</span>
+                                    <span className="text-xs font-semibold text-appTextSec">Thème</span>
                                     <ThemeToggle />
                                 </div>
                             </>
                         ) : (
                             <>
                                 <div className="flex items-center justify-between px-3 py-2">
-                                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Thème</span>
+                                    <span className="text-xs font-semibold text-appTextSec">Thème</span>
                                     <ThemeToggle />
                                 </div>
 
-                                <div className="my-1 border-t border-borderDark/60 dark:border-white/10" />
+                                <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
                                 <div className="flex flex-col gap-1 px-2 py-1">
                                     <Link
                                         href={getLoginPageRoutePath()}
                                         onClick={closeMenu}
-                                        className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-fontBlack dark:text-slate-200 hover:bg-borderDark/50 dark:hover:bg-white/10"
+                                        className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-appText hover:bg-appOverlay-5"
                                     >
                                         Connexion / Inscription
                                     </Link>

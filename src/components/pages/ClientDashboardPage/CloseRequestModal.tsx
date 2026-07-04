@@ -50,7 +50,7 @@ export default function CloseRequestModal() {
     }
     return (
         <>
-            <div className="p-4 px-6 border-b border-borderDark space-y-1">
+            <div className="p-4 px-6 border-b border-appBorder space-y-1">
                 <h2 className="font-bold text-xl text-fontBlack">Clôturer cette demande ?</h2>
                 {/* Request summary */}
                 <p className="text-sm text-darkSilver">
@@ -75,7 +75,7 @@ export default function CloseRequestModal() {
 
             <div className='flex-1 overflow-y-auto px-6'>
                 {/* Warning banner */}
-                <div className="flex gap-3 p-4 rounded-xl bg-[#FFFBEB] border border-[#FEE685]">
+                <div className="flex gap-3 p-4 rounded-xl bg-amber-light border border-amber/40">
                     <div className='min-w-max'><WarningIconSVG /></div>
                     <p className="text-sm text-[#7B3306]">
                         La fermeture de cette demande est définitive. Vous ne recevrez plus de nouveaux devis et les devis existants ne seront plus disponibles.
@@ -92,7 +92,7 @@ export default function CloseRequestModal() {
                             key={reason.key}
                             className={`
                                 flex items-center gap-3 p-4 rounded-xl border cursor-pointer
-                                bg-white border-borderDark hover:border-primaryColor/50
+                                bg-appCard border-appBorder hover:border-primaryColor/50
                                 transition-colors
                                 ${selectedReason === reason.key ? 'border-primaryColor bg-primaryColor/5' : ''}
                             `}
@@ -126,7 +126,7 @@ export default function CloseRequestModal() {
                             minRows={3}
                             classNames={{
                                 input: 'text-sm',
-                                inputWrapper: 'border border-borderDark rounded-xl bg-white',
+                                inputWrapper: 'border border-appBorder rounded-xl bg-appCard',
                             }}
                         />
                     </div>
@@ -134,7 +134,7 @@ export default function CloseRequestModal() {
             </div>
 
             {/* Actions */}
-            <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 px-6 mt-auto border-t border-borderDark bg-[#F9FAFB]">
+            <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 px-6 mt-auto border-t border-appBorder bg-appSurface">
                 <Button
                     onPress={handleCancel}
                     className="btn_radius btn_bg_white w-full"

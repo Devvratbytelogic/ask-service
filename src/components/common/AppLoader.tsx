@@ -14,7 +14,7 @@ export default function AppLoader({ message = "Chargement…", fullScreen = true
     <div
       className={
         fullScreen
-          ? "fixed inset-0 z-9999 flex flex-col items-center justify-center bg-white/10 backdrop-blur-sm"
+          ? "fixed inset-0 z-9999 flex flex-col items-center justify-center bg-appOverlay-5 backdrop-blur-sm"
           : "flex flex-col items-center justify-center gap-4 py-12"
       }
       role="status"

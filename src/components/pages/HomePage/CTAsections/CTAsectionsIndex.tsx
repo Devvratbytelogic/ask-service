@@ -34,7 +34,7 @@ const CTAsectionsIndex = () => {
                     </div>
                     <Button
                         endContent={<FiArrowRight className="text-base xl:text-lg" />}
-                        className="btn_radius bg-[#ECEEF2] border border-borderColor text-fontBlack text-xs md:text-base xl:text-lg xl:py-6"
+                        className="btn_radius bg-appElevated border border-borderColor text-fontBlack text-xs md:text-base xl:text-lg xl:py-6"
                         onPress={scrollToBannerSearch}
                     >
                         Déposer une demande

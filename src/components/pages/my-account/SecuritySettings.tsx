@@ -89,7 +89,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
 
             <div className="space-y-4">
                 {/* Password Card */}
-                <div className="rounded-xl border border-borderDark p-5">
+                <div className="rounded-xl border border-appBorder p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-start gap-4">
                             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primaryColor/15">
@@ -121,7 +121,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                     </div>
 
                     {isChangingPassword && (
-                        <div className="mt-6 space-y-4 border-t border-borderDark pt-6">
+                        <div className="mt-6 space-y-4 border-t border-appBorder pt-6">
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                                     Mot de passe actuel
@@ -220,7 +220,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 </div>
 
                 {/* Delete Account Card */}
-                <div className="rounded-xl border border-borderDark p-5">
+                <div className="rounded-xl border border-appBorder p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-start gap-4">
                             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15">
@@ -254,7 +254,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 classNames={{ base: 'rounded-3xl' }}
             >
                 <ModalContent>
-                    <ModalBody className="bg-white px-6 py-6 rounded-3xl">
+                    <ModalBody className="bg-appCard px-6 py-6 rounded-3xl">
                         <div className="flex items-start gap-4">
                             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15">
                                 <DeleteIconSVG />

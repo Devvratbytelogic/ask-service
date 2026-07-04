@@ -25,7 +25,7 @@ export default function VendorServices({ profile }: VendorServicesProps) {
                 defaultExpandedKeys={services[0] ? [services[0].key] : ['private-security']}
                 showDivider={false}
                 itemClasses={{
-                    base: 'rounded-xl bg-white px-4 shadow-none',
+                    base: 'rounded-xl bg-appCard px-4 shadow-none',
                     title: 'font-bold text-fontBlack py-4',
                     trigger: 'py-0 min-h-0 cursor-pointer data-[hover=true]:bg-transparent',
                     content: 'pb-4 pt-0',
@@ -44,8 +44,8 @@ export default function VendorServices({ profile }: VendorServicesProps) {
                             </span>
                         )}
                         classNames={{
-                            base: 'rounded-xl border border-[#E5E7EB] bg-white mb-3 px-3',
-                            content: 'border-t border-[#E5E7EB] py-4',
+                            base: 'rounded-xl border border-appBorder bg-appCard mb-3 px-3',
+                            content: 'border-t border-appBorder py-4',
                         }}
                     >
                         <p className="text-sm text-darkSilver leading-relaxed">

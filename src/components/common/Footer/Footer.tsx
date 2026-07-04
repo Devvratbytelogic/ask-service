@@ -106,15 +106,15 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                 <span>© {new Date().getFullYear()} {marketplaceName}. Tous droits réservés.</span>
                 <div className="flex gap-3">
                     <Link href={twitterUrl} target="_blank" rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-white/15">
+                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-appCard/15">
                         <FaXTwitter />
                     </Link>
                     <Link href={linkedinUrl} target="_blank" rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-white/15">
+                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-appCard/15">
                         <BsLinkedin />
                     </Link>
                     <Link href={facebookUrl} target="_blank" rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-white/15">
+                        className="w-9 h-9 rounded-[10px] bg-white/[0.07] flex items-center justify-center text-base text-white/60 transition-colors duration-200 hover:bg-appCard/15">
                         <BsFacebook />
                     </Link>
                 </div>

@@ -92,11 +92,11 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
     }
 
     return (
-        <div className="rounded-2xl border border-borderDark bg-white p-5 mt-4">
+        <div className="rounded-2xl border border-appBorder bg-appCard p-5 mt-4">
             <h3 className="font-bold text-xl text-fontBlack mb-4">Envoyer un devis</h3>
 
             {/* Info box */}
-            <div className="flex gap-3 p-4 rounded-xl bg-[#E8F4FD] border border-[#BEDBFF] mb-6">
+            <div className="flex gap-3 p-4 rounded-xl bg-blue-light border border-primaryColor/30 mb-6">
                 <InfoBlueIconSVG />
 
                 <div>

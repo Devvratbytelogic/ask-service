@@ -41,10 +41,10 @@ const SelectUserType = () => {
                 </p>
             </div>
             <div className="w-full space-y-3.5">
-                <div className="border border-borderDark rounded-3xl p-3 md:p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("customer")}>
+                <div className="border border-appBorder rounded-3xl p-3 md:p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("customer")}>
                     <div className="flex justify-between items-start">
                         <div className='flex gap-5'>
-                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
+                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-appSurface overflow-hidden">
                                 <CustomerIconSVG />
                             </div>
                             <div>
@@ -53,18 +53,18 @@ const SelectUserType = () => {
                         </div>
 
                         {(userType === 'customer') ?
-                            <div className="border border-borderDark h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
+                            <div className="border border-appBorder h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
                                 <FaCheck className="text-white" />
                             </div>
-                            : <div className="border border-borderDark h-5 w-5 rounded-full" />}
+                            : <div className="border border-appBorder h-5 w-5 rounded-full" />}
 
                     </div>
 
                 </div>
-                <div className="border border-borderDark rounded-3xl p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
+                <div className="border border-appBorder rounded-3xl p-5 space-y-3.5 w-full cursor-pointer hover:border-darkSilver" onClick={() => setUserType("service")}>
                     <div className="flex justify-between items-start">
                         <div className='flex gap-5'>
-                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-customWhite overflow-hidden">
+                            <div className="flex items-center justify-center size-8 md:size-11 rounded-[10px] bg-appSurface overflow-hidden">
                                 <ServiceProviderIconSVG />
                             </div>
                             <div>
@@ -72,10 +72,10 @@ const SelectUserType = () => {
                             </div>
                         </div>
                         {(userType === 'service') ?
-                            <div className="border border-borderDark h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
+                            <div className="border border-appBorder h-5 w-5 rounded-full bg-primary flex items-center justify-center shrink-0 p-1">
                                 <FaCheck className="text-white" />
                             </div>
-                            : <div className="border border-borderDark h-5 w-5 rounded-full" />}
+                            : <div className="border border-appBorder h-5 w-5 rounded-full" />}
                     </div>
 
                 </div>

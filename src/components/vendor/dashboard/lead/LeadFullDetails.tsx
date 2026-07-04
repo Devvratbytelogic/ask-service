@@ -120,7 +120,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                 {/* Main Content */}
                 <div className="flex-1 min-w-0 space-y-4">
                     {/* Client Information Card */}
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                         <div className="flex items-start gap-4">
                             <div className="flex w-12 h-12 shrink-0 items-center justify-center rounded-full bg-primaryColor/20 text-base font-bold text-white overflow-hidden">
                                 <ImageComponent url={displayData.clientProfilePicture} img_title={displayData.clientName} object_cover={true} />
@@ -130,14 +130,14 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                     <h3 className="font-bold text-fontBlack">
                                         {displayData.clientName}
                                     </h3>
-                                    <span className="inline-flex rounded-full bg-[#E8F4FD] px-2.5 py-0.5 text-xs font-medium text-primaryColor">
+                                    <span className="inline-flex rounded-full bg-blue-light px-2.5 py-0.5 text-xs font-medium text-primaryColor">
                                         {displayData.businessType}
                                     </span>
                                 </div>
                                 <p className="text-sm text-darkSilver mt-0.5">
                                     Inscrit depuis le {displayData.memberSince}
                                 </p>
-                                <div className="border-t border-borderDark space-y-1 mt-4 pt-4">
+                                <div className="border-t border-appBorder space-y-1 mt-4 pt-4">
                                     <div className='flex items-center justify-between gap-2'>
                                         <p className='text-sm text-darkSilver'>Téléphone</p>
                                         <p className='text-sm text-fontBlack'>{formatPhoneWithCountryCode(displayData.phoneMasked).formatted}</p>
@@ -152,7 +152,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                     </div>
 
                     {/* Service Location Card */}
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                         <div className="flex items-center gap-3 mb-3">
                             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                                 <LocationSVG className='text-primary' />
@@ -165,22 +165,22 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                     </div>
 
                     {/* Service Requirements Card */}
-                    <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                         <h3 className="font-bold text-fontBlack mb-4">Exigences du service</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-xl border border-borderDark px-4 py-3">
+                            <div className="rounded-xl border border-appBorder px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Type de service</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.serviceType}
                                 </p>
                             </div>
-                            {displayData.frequency !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3">
+                            {displayData.frequency !== 'N/A' && <div className="rounded-xl border border-appBorder px-4 py-3">
                                 <p className="text-xs text-darkSilver mb-1">Fréquence</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.frequency}
                                 </p>
                             </div>}
-                            {displayData.clientType !== 'N/A' && <div className="rounded-xl border border-borderDark px-4 py-3 sm:col-span-2">
+                            {displayData.clientType !== 'N/A' && <div className="rounded-xl border border-appBorder px-4 py-3 sm:col-span-2">
                                 <p className="text-xs text-darkSilver mb-1">Type de client</p>
                                 <p className="text-sm font-medium text-fontBlack">
                                     {displayData.clientType}
@@ -191,7 +191,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
                     {/* Dynamic answers (from new request flow) */}
                     {displayData.dynamicAnswers.length > 0 && (
-                        <div className="rounded-2xl border border-borderDark bg-white p-5">
+                        <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                             <h3 className="font-bold text-fontBlack mb-4">Détails du service</h3>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {displayData.dynamicAnswers.map((a: DynamicAnswersEntity) => {
@@ -206,7 +206,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                         ? a.value.split(',').map((s) => formatValue(s.trim())).join(', ')
                                         : formatValue(a.value ?? '—')
                                     return (
-                                        <div key={a._id || a.question_id} className="rounded-xl border border-borderDark px-4 py-3">
+                                        <div key={a._id || a.question_id} className="rounded-xl border border-appBorder px-4 py-3">
                                             <p className="text-xs text-darkSilver mb-1">{a.label}</p>
                                             <p className="text-sm font-medium text-fontBlack">{displayValue || '—'}</p>
                                         </div>
@@ -217,7 +217,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                     )}
 
                     {/* Requested Tasks Card (legacy) */}
-                    {displayData.tasks.length > 0 && <div className="rounded-2xl border border-borderDark bg-white p-5">
+                    {displayData.tasks.length > 0 && <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                         <h3 className="font-bold text-fontBlack mb-4">Tâches demandées</h3>
                         <div className="flex flex-wrap gap-2">
                             {displayData.tasks.map((task: string, i: number) => (
@@ -233,11 +233,11 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
 
                     {/* Schedule Preference Card - only show when at least one schedule value exists */}
                     {(displayData.preferredStartDate !== 'N/A' || displayData.preferredTime !== 'N/A' || displayData.startDate || displayData.startTime || displayData.endDate || displayData.endTime) && (
-                        <div className="rounded-2xl border border-borderDark bg-white p-5">
+                        <div className="rounded-2xl border border-appBorder bg-appCard p-5">
                             <h3 className="font-bold text-fontBlack mb-4">Préférence de planning</h3>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {displayData.preferredStartDate !== 'N/A' && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Date de début souhaitée</p>
                                         <p className="text-sm font-medium text-fontBlack">
                                             {displayData.preferredStartDate}
@@ -245,7 +245,7 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                     </div>
                                 )}
                                 {displayData.preferredTime !== 'N/A' && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Heure souhaitée</p>
                                         <p className="text-sm font-medium text-fontBlack">
                                             {displayData.preferredTime}
@@ -253,25 +253,25 @@ export default function LeadFullDetails({ id }: LeadFullDetailsProps) {
                                     </div>
                                 )}
                                 {displayData.startDate && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Date de début</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.startDate}</p>
                                     </div>
                                 )}
                                 {displayData.startTime && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Heure de début</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.startTime}</p>
                                     </div>
                                 )}
                                 {displayData.endDate && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Date de fin</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.endDate}</p>
                                     </div>
                                 )}
                                 {displayData.endTime && (
-                                    <div className="rounded-xl border border-borderDark px-4 py-3">
+                                    <div className="rounded-xl border border-appBorder px-4 py-3">
                                         <p className="text-xs text-darkSilver mb-1">Heure de fin</p>
                                         <p className="text-sm font-medium text-fontBlack">{displayData.endTime}</p>
                                     </div>

@@ -11,7 +11,7 @@ export default function VendorUnderReviewBanner() {
     if (isActive || isLoading) return null
 
     return (
-        <div className='bg-[#FFFCF8] py-2 text-center text-fontBlack'>
+        <div className='bg-amber-light py-2 text-center text-fontBlack'>
             Vos documents doivent être vérifiés, vous ne pouvez pas débloquer de prospects pour le moment.
         </div>
     )

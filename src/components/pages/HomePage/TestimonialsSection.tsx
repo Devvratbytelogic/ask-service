@@ -11,14 +11,14 @@ function TestimonialCard({ t, index }: { t: IAllTestimonialsData; index: number 
     const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length]
 
     return (
-        <article className="rounded-[20px] border-[1.5px] border-slate-100 dark:border-white/8 bg-slate-50 dark:bg-appCard p-7 transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(27,79,255,0.1)]">
+        <article className="rounded-[20px] border-[1.5px] border-appBorderSub bg-appCard p-7 transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(27,79,255,0.1)]">
             <div className="mb-4 flex gap-[3px]">
                 {Array.from({ length: rating }).map((_, index) => (
                     <span key={index} className="text-base text-amber-500">★</span>
                 ))}
             </div>
 
-            <p className="mb-5 text-[15px] leading-[1.7] text-slate-700 dark:text-slate-300 italic">
+            <p className="mb-5 text-[15px] leading-[1.7] text-appText italic">
                 &ldquo;{t.message}&rdquo;
             </p>
 
@@ -30,8 +30,8 @@ function TestimonialCard({ t, index }: { t: IAllTestimonialsData; index: number 
                     {t.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                    <div className="text-sm font-bold text-slate-900 dark:text-slate-100">{t.name}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">{role}</div>
+                    <div className="text-sm font-bold text-appText">{t.name}</div>
+                    <div className="text-xs text-appTextSec">{role}</div>
                 </div>
             </div>
         </article>
@@ -45,15 +45,15 @@ export default function TestimonialsSection() {
     if (!isLoading && testimonials.length === 0) return null
 
     return (
-        <section className="bg-white dark:bg-appBg px-[5%] py-[100px]">
+        <section className="bg-appBg px-[5%] py-[100px]">
             <div className="mb-[60px] text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
                     ✦ Témoignages
                 </div>
-                <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-slate-900 dark:text-slate-100">
+                <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-appText">
                     Ce qu&apos;ils en disent
                 </h2>
-                <p className="mx-auto max-w-[560px] text-[17px] leading-[1.65] text-slate-500 dark:text-slate-400">
+                <p className="mx-auto max-w-[560px] text-[17px] leading-[1.65] text-appTextSec">
                     Des clients et des professionnels satisfaits de la plateforme au quotidien.
                 </p>
             </div>
@@ -61,7 +61,7 @@ export default function TestimonialsSection() {
             <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {isLoading
                     ? [1, 2, 3].map((i) => (
-                          <div key={i} className="h-52 animate-pulse rounded-[20px] bg-slate-100 dark:bg-white/5" />
+                          <div key={i} className="h-52 animate-pulse rounded-[20px] bg-appElevated dark:bg-white/5" />
                       ))
                     : testimonials.map((t, index) => <TestimonialCard key={t._id} t={t} index={index} />)}
             </div>

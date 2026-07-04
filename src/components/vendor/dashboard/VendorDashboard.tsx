@@ -146,14 +146,14 @@ export default function VendorDashboard() {
                     <>
                         <div className='space-y-2'>
                             <h1 className='header_text_md'>Tableau de bord <span className='text-darkSilver'>prestataire</span></h1>
-                            <p className='text-sm text-[#4A5565]'>Bon retour • Gérez vos demandes et vos devis</p>
+                            <p className='text-sm text-appTextSec'>Bon retour • Gérez vos demandes et vos devis</p>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <Link
                                 href={getVendorDashboardRoutePath()}
-                                className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActivePurchased ? 'border-[#4CAF50] bg-[#4CAF50]/10' : 'border-borderDark bg-white hover:border-[#4CAF50]/30 hover:bg-[#4CAF50]/5'}`}
+                                className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActivePurchased ? 'border-[#4CAF50] bg-[#4CAF50]/10' : 'border-appBorder bg-appCard hover:border-[#4CAF50]/30 hover:bg-[#4CAF50]/5'}`}
                             >
-                                <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F5E9] mb-3">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-green-light mb-3">
                                     <LockOpenGreenIconSVG className="size-5 text-[#4CAF50]" />
                                 </div>
                                 <p className="text-2xl font-bold text-fontBlack">
@@ -167,9 +167,9 @@ export default function VendorDashboard() {
 
                             <Link
                                 href={getVendorDashboardRoutePath()}
-                                className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveLocked ? 'border-primaryColor bg-primaryColor/10' : 'border-borderDark bg-white hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
+                                className={`block rounded-2xl border p-5 transition-colors cursor-pointer ${isActiveLocked ? 'border-primaryColor bg-primaryColor/10' : 'border-appBorder bg-appCard hover:border-primaryColor/30 hover:bg-primaryColor/5'}`}
                             >
-                                <div className="flex size-10 items-center justify-center rounded-full bg-[#E8F4FD] mb-3">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-blue-light mb-3">
                                     <LockPrimaryColorSVG className="size-5 text-primaryColor" />
                                 </div>
                                 <p className="text-2xl font-bold text-fontBlack">
@@ -181,8 +181,8 @@ export default function VendorDashboard() {
                                 </span>
                             </Link>
 
-                            <Link href={getCreditsRoutePath()} className="block rounded-2xl border border-borderDark p-5 transition-colors hover:border-[#E17100]/30 hover:bg-[#FFF8F0] cursor-pointer">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-[#FFE4CC] mb-3">
+                            <Link href={getCreditsRoutePath()} className="block rounded-2xl border border-appBorder p-5 transition-colors hover:border-[#E17100]/30 hover:bg-amber-light cursor-pointer">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-amber-light mb-3">
                                     <CreditCardIconSVG className="size-5 text-[#E17100]" />
                                 </div>
                                 <p className="text-2xl font-bold text-fontBlack">
@@ -194,8 +194,8 @@ export default function VendorDashboard() {
                                 </span>
                             </Link>
 
-                            <Link href={getVendorAllQuotesRoutePath()} className="block rounded-2xl border border-borderDark bg-white p-5 transition-colors hover:border-[#9C27B0]/30 hover:bg-[#9C27B0]/5 cursor-pointer">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-[#F3E5F5] mb-3">
+                            <Link href={getVendorAllQuotesRoutePath()} className="block rounded-2xl border border-appBorder bg-appCard p-5 transition-colors hover:border-[#9C27B0]/30 hover:bg-[#9C27B0]/5 cursor-pointer">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-appElevated mb-3">
                                     <DocumentArrowIconSVG className="size-5 text-[#9C27B0]" />
                                 </div>
                                 <p className="text-2xl font-bold text-fontBlack">
@@ -214,7 +214,7 @@ export default function VendorDashboard() {
                 {/* Available Leads / My Leads / Quotes Sent Section */}
                 <div className="space-y-4">
                     {activeFilterChips.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-borderDark bg-[#F9FAFB] px-3 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-appBorder bg-appSurface px-3 py-2.5">
                             <span className="text-xs font-semibold uppercase tracking-wide text-darkSilver shrink-0">
                                 Filtres actifs
                             </span>
@@ -263,9 +263,9 @@ export default function VendorDashboard() {
                                         inputWrapper: [
                                             'btn_radius h-10! min-h-10!',
                                             'shadow-none',
-                                            'border border-borderDark bg-white',
-                                            'data-[hover=true]:bg-white',
-                                            'group-data-[focus=true]:bg-white',
+                                            'border border-appBorder bg-appCard',
+                                            'data-[hover=true]:bg-appCard',
+                                            'group-data-[focus=true]:bg-appCard',
                                         ],
                                         input: 'text-sm text-fontBlack',
                                     },
@@ -284,7 +284,7 @@ export default function VendorDashboard() {
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button
-                                        className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-35 shadow-none"
+                                        className="btn_radius capitalize text-sm bg-appCard! border border-appBorder h-10 min-w-35 shadow-none"
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
                                         {serviceCategoryOptions.find((o) => o.key === serviceCategoryFilter)?.label ?? 'Tous les services'}
@@ -306,7 +306,7 @@ export default function VendorDashboard() {
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button
-                                        className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-35 shadow-none"
+                                        className="btn_radius capitalize text-sm bg-appCard! border border-appBorder h-10 min-w-35 shadow-none"
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
                                         {sortOptions.find((o) => o.key === sortFilter)?.label ?? 'Les plus récents'}
@@ -336,7 +336,7 @@ export default function VendorDashboard() {
                     {/* Lead Cards */}
                     <div className="flex flex-col gap-4">
                         {/* {(showPurchasedOnly || showQuotedOnly || showLockedOnly) && leads.length === 0 && (
-                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                            <div className="rounded-2xl border border-appBorder bg-appCard p-8 text-center">
                                 <p className="text-darkSilver">
                                     {showQuotedOnly
                                         ? "Vous n'avez pas encore envoyé de devis. Débloquez des prospects et envoyez des devis pour les voir ici."
@@ -350,7 +350,7 @@ export default function VendorDashboard() {
                             </div>
                         )} */}
                         {allLeads && allLeads?.length > 0 ? allLeads?.map((lead) => (
-                            <div key={lead._id} className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
+                            <div key={lead._id} className="rounded-2xl border border-appBorder bg-appCard p-6 flex flex-col lg:flex-row lg:items-start gap-4">
                                 <Link
                                     href={generateLeadDetailRoutePath(lead?._id, leadsTabForLink ? { from: leadsTabForLink } : undefined)}
                                     className="flex-1 min-w-0 space-y-3 cursor-pointer hover:opacity-90 transition-opacity block"
@@ -360,17 +360,17 @@ export default function VendorDashboard() {
                                             Service de {lead.service_category.title}
                                         </h3>
                                         {lead?.reference_no && (
-                                            <span className="inline-flex items-center rounded-full bg-gray-100 border border-borderDark px-2.5 py-0.5 text-xs font-medium text-darkSilver">
+                                            <span className="inline-flex items-center rounded-full bg-gray-100 border border-appBorder px-2.5 py-0.5 text-xs font-medium text-darkSilver">
                                                 Ref: {lead.reference_no}
                                             </span>
                                         )}
-                                        <span className="inline-flex items-center rounded-full bg-[#E8F4FD] border border-primary px-2.5 py-0.5 text-xs font-medium text-primaryColor">
+                                        <span className="inline-flex items-center rounded-full bg-blue-light border border-primary px-2.5 py-0.5 text-xs font-medium text-primaryColor">
                                             {/* {lead.businessType} */}
                                             {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}
                                         </span>
 
                                         {lead?.unlocked && (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-green-light px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
                                                 <LockUnlockedIconSVG className="size-3.5 text-[#4CAF50]" />
                                                 Débloqué
                                             </span>
@@ -419,7 +419,7 @@ export default function VendorDashboard() {
                                             {lead.dynamic_answers.slice(0, 4).map((a, i) => (
                                                 <span
                                                     key={a._id || i}
-                                                    className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs"
+                                                    className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-appBorder bg-gray-50 px-2.5 py-1 text-xs"
                                                 >
                                                     <span className="text-darkSilver shrink-0">{a.label}:</span>
                                                     <span className={`font-medium text-fontBlack `}>
@@ -428,7 +428,7 @@ export default function VendorDashboard() {
                                                 </span>
                                             ))}
                                             {lead.dynamic_answers.length > 4 && (
-                                                <span className="inline-flex items-center rounded-lg border border-borderDark bg-gray-50 px-2.5 py-1 text-xs text-darkSilver">
+                                                <span className="inline-flex items-center rounded-lg border border-appBorder bg-gray-50 px-2.5 py-1 text-xs text-darkSilver">
                                                     +{lead.dynamic_answers.length - 4} autres
                                                 </span>
                                             )}
@@ -475,7 +475,7 @@ export default function VendorDashboard() {
                                 </div>
                             </div>
                         )) : (
-                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                            <div className="rounded-2xl border border-appBorder bg-appCard p-8 text-center">
                                 <p className="text-darkSilver">Aucun prospect trouvé</p>
                             </div>
                         )}

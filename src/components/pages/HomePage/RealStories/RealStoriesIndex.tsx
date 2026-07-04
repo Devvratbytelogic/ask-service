@@ -3,7 +3,7 @@ import TestimonialCard from "./TestimonialCard"
 import { useGetTestimonialsQuery } from "@/redux/rtkQueries/clientSideGetApis"
 
 const TestimonialCardSkeleton = () => (
-    <div className="bg-white rounded-4xl p-6 xl:p-8 flex flex-col h-fit gap-6 xl:gap-8 testimonial-card-shadow animate-pulse">
+    <div className="bg-appCard rounded-4xl p-6 xl:p-8 flex flex-col h-fit gap-6 xl:gap-8 testimonial-card-shadow animate-pulse">
         <div>
             <div className="w-8 h-6 bg-gray-200 rounded" />
             <div className="mt-4 space-y-2">
@@ -43,7 +43,7 @@ const RealStoriesIndex = () => {
             : []
 
     return (
-        <div className="space_y_header_body container_y_padding bg-[#F9FAFB] rounded-[52px]">
+        <div className="space_y_header_body container_y_padding bg-appSurface rounded-[52px]">
             <div className="space_y_header_paragraph">
                 <h2 className="header_text text-center font-bold w-11/12 md:w-1/3 mx-auto">
                     <span className="text-fontBlack">Des témoignages réels.</span>

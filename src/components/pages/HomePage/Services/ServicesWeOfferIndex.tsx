@@ -44,7 +44,7 @@ const ServicesWeOfferIndex = () => {
                 <button
                     type="button"
                     aria-label="Diapositive précédente"
-                    className="absolute top-1/2 -translate-y-1/2 z-50 cursor-pointer -left-2 sm:-left-4 border border-borderDark rounded-full p-1.5 services-carousel-btn--prev"
+                    className="absolute top-1/2 -translate-y-1/2 z-50 cursor-pointer -left-2 sm:-left-4 border border-appBorder rounded-full p-1.5 services-carousel-btn--prev"
                     onClick={() => swiperRef.current?.slidePrev()}
                     disabled={isBeginning}
                 >
@@ -53,7 +53,7 @@ const ServicesWeOfferIndex = () => {
                 <button
                     type="button"
                     aria-label="Diapositive suivante"
-                    className="absolute top-1/2 -translate-y-1/2 z-50 cursor-pointer -right-2 sm:-right-4 border border-borderDark rounded-full p-1.5 services-carousel-btn--next"
+                    className="absolute top-1/2 -translate-y-1/2 z-50 cursor-pointer -right-2 sm:-right-4 border border-appBorder rounded-full p-1.5 services-carousel-btn--next"
                     onClick={() => swiperRef.current?.slideNext()}
                     disabled={isEnd}
                 >

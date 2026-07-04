@@ -306,7 +306,7 @@ export default function CreditsWallet() {
 
             {/* Verification Loader Overlay */}
             {isVerifying && (
-                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-white/80 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-appCard/80 backdrop-blur-sm">
                     <Spinner size="lg" color="primary" classNames={{ circle1: 'border-b-primaryColor', circle2: 'border-b-primaryColor' }} />
                     <p className="text-sm font-medium text-fontBlack">Vérification de votre paiement, veuillez patienter…</p>
                 </div>
@@ -314,7 +314,7 @@ export default function CreditsWallet() {
 
             {/* Payment Status Banner */}
             {paymentStatus === 'success' && (
-                <div className="flex items-start gap-3 rounded-2xl border border-[#4CAF50] bg-[#E8F5E9] px-5 py-4">
+                <div className="flex items-start gap-3 rounded-2xl border border-[#4CAF50] bg-green-light px-5 py-4">
                     <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4CAF50] text-white">
                         <HiPlus className="size-3" />
                     </span>
@@ -332,7 +332,7 @@ export default function CreditsWallet() {
                 </div>
             )}
             {paymentStatus === 'fail' && (
-                <div className="flex items-start gap-3 rounded-2xl border border-danger bg-[#FFEBEE] px-5 py-4">
+                <div className="flex items-start gap-3 rounded-2xl border border-danger bg-red-light px-5 py-4">
                     <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-danger text-white">
                         <HiMinus className="size-3" />
                     </span>
@@ -416,7 +416,7 @@ export default function CreditsWallet() {
                                             setSelectedPackageId(pkg.id)
                                         }
                                     }}
-                                    className={`relative min-w-0 w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc((100%-3rem)/4)] lg:shrink-0 rounded-2xl border bg-white p-5 cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-primaryColor focus-visible:ring-offset-2 ${isSelected ? 'ring-2 ring-primaryColor border-primaryColor' : ''} ${!isSelected && pkg.popular ? 'border-primaryColor' : ''} ${!isSelected && !pkg.popular ? 'border-borderDark' : ''} flex flex-col justify-between items-center gap-8`}
+                                    className={`relative min-w-0 w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc((100%-3rem)/4)] lg:shrink-0 rounded-2xl border bg-appCard p-5 cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-primaryColor focus-visible:ring-offset-2 ${isSelected ? 'ring-2 ring-primaryColor border-primaryColor' : ''} ${!isSelected && pkg.popular ? 'border-primaryColor' : ''} ${!isSelected && !pkg.popular ? 'border-appBorder' : ''} flex flex-col justify-between items-center gap-8`}
                                 >
                                     <div className='space-y-1 text-center'>
                                         {pkg.popular && (
@@ -434,13 +434,13 @@ export default function CreditsWallet() {
                                         </p>
                                         <p className='text-sm text-darkSilver'>points</p>
                                         {pkg.bonus && (
-                                            <span className="inline-flex mt-1 rounded-full bg-[#E8F5E9] px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
+                                            <span className="inline-flex mt-1 rounded-full bg-green-light px-2.5 py-0.5 text-xs font-medium text-[#4CAF50]">
                                                 +{pkg.bonus} bonus
                                             </span>
                                         )}
                                         <p className="mt-3 font-bold text-xl text-fontBlack">{pkg.totalPrice} €</p>
                                         <p className="text-xs text-darkSilver">{pkg.unitPrice} € par point</p>
-                                        <div className="mt-1.5 space-y-0.5 text-left text-xs text-darkSilver border-t border-borderDark pt-1.5">
+                                        <div className="mt-1.5 space-y-0.5 text-left text-xs text-darkSilver border-t border-appBorder pt-1.5">
                                             <div className="flex justify-between gap-4">
                                                 <span>Prix HT</span>
                                                 <span>{pkg.price} €</span>
@@ -452,7 +452,7 @@ export default function CreditsWallet() {
                                         </div>
                                     </div>
                                     <Button
-                                        className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-[#F3F4F6]'} w-full`}
+                                        className={`btn_radius font-medium ${pkg.popular ? 'btn_bg_blue' : 'bg-appElevated'} w-full`}
                                         isLoading={stripeLoading && selectedPackageId === pkg.id}
                                         isDisabled={stripeLoading}
                                         onPress={() => handlePurchase(pkg)}
@@ -474,7 +474,7 @@ export default function CreditsWallet() {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button
-                                    className="btn_radius capitalize text-sm bg-white! border border-borderDark h-10 min-w-32 shadow-none"
+                                    className="btn_radius capitalize text-sm bg-appCard! border border-appBorder h-10 min-w-32 shadow-none"
                                     startContent={<CalendarSVG />}
                                     endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                 >
@@ -519,11 +519,11 @@ export default function CreditsWallet() {
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-borderDark bg-white overflow-hidden">
+                <div className="rounded-2xl border border-appBorder bg-appCard overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-150">
                             <thead>
-                                <tr className="border-b border-borderDark bg-[#F9FAFB]">
+                                <tr className="border-b border-appBorder bg-appSurface">
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-fontBlack">
                                         Type
                                     </th>
@@ -561,12 +561,12 @@ export default function CreditsWallet() {
                                     transactions.map((txn) => {
                                         const creditsNum = Number(txn.credits)
                                         return (
-                                            <tr key={txn._id} className="border-b border-borderDark last:border-b-0">
+                                            <tr key={txn._id} className="border-b border-appBorder last:border-b-0">
                                                 <td className="px-4 py-4">
                                                     <span
                                                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${txn.type?.toLowerCase() === 'purchase'
-                                                            ? 'bg-[#E8F5E9] text-[#2E7D32]'
-                                                            : 'bg-[#FFEBEE] text-[#C62828]'
+                                                            ? 'bg-green-light text-[#2E7D32]'
+                                                            : 'bg-red-light text-[#C62828]'
                                                             }`}
                                                     >
                                                         <span
@@ -605,7 +605,7 @@ export default function CreditsWallet() {
                                                             isIconOnly
                                                             size="sm"
                                                             variant="flat"
-                                                            className="bg-[#F3F4F6] text-fontBlack hover:bg-[#E5E7EB]"
+                                                            className="bg-appElevated text-fontBlack hover:bg-appElevated"
                                                             isLoading={downloadingInvoiceId === txn._id}
                                                             onPress={() => handleDownloadInvoice(txn._id)}
                                                             aria-label="Télécharger la facture"
@@ -625,7 +625,7 @@ export default function CreditsWallet() {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border-t border-borderDark">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border-t border-appBorder">
                         <p className="text-sm text-darkSilver">
                             {totalItems === 0
                                 ? '0 résultats'
@@ -654,7 +654,7 @@ export default function CreditsWallet() {
                                 }}
                                 className="min-w-24"
                                 classNames={{
-                                    trigger: 'min-h-9 border border-borderDark bg-white',
+                                    trigger: 'min-h-9 border border-appBorder bg-appCard',
                                     value: 'text-sm',
                                 }}
                                 aria-label="Éléments par page"

@@ -69,7 +69,7 @@ const VendorServiceListPage = () => {
                                     `}
                                 >
                                     <div className="flex flex-col gap-5">
-                                        <span className="size-11 shrink-0 flex items-center justify-center overflow-hidden rounded-xl bg-customWhite p-1">
+                                        <span className="size-11 shrink-0 flex items-center justify-center overflow-hidden rounded-xl bg-appSurface p-1">
                                             <ImageComponent
                                                 url={service.image}
                                                 img_title={service.title}
@@ -91,7 +91,7 @@ const VendorServiceListPage = () => {
                                         onValueChange={() => selectService(service._id)}
                                         onPointerDown={(e) => e.preventDefault()}
                                         classNames={{
-                                            wrapper: "shrink-0 before:border-borderDark",
+                                            wrapper: "shrink-0 before:border-appBorder",
                                         }}
                                         aria-label={`Sélectionner ${service.title}`}
                                     />

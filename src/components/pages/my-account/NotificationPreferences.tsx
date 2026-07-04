@@ -207,7 +207,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                             ].map((item) => (
                                 <div
                                     key={item.key}
-                                    className="border border-borderDark rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
+                                    className="border border-appBorder rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
                                 >
                                     <div className="flex-1">
                                         <p className="font-medium text-fontBlack">{item.title}</p>
@@ -233,7 +233,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                             ].map((item) => (
                                 <div
                                     key={item.key}
-                                    className="border border-borderDark rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
+                                    className="border border-appBorder rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
                                 >
                                     <div className="flex-1">
                                         <p className="font-medium text-fontBlack">{item.title}</p>
@@ -252,7 +252,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                     <div>
                         <h3 className="mb-4 font-bold text-fontBlack">Notifications par SMS</h3>
                         <div className="space-y-2">
-                            <div className="border border-borderDark rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4">
+                            <div className="border border-appBorder rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4">
                                 <div className="flex-1">
                                     <p className="font-medium text-fontBlack">Mises à jour importantes</p>
                                     <p className="mt-0.5 text-sm text-darkSilver">SMS pour les activités importantes du compte</p>
@@ -296,7 +296,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                             {section.items.map((item) => (
                                 <div
                                     key={item.key}
-                                    className="border border-borderDark rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
+                                    className="border border-appBorder rounded-xl p-4 flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:py-4"
                                 >
                                     <div className="flex-1">
                                         <p className="font-medium text-fontBlack">{item.title}</p>

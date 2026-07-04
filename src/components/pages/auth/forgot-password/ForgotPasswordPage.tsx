@@ -9,6 +9,7 @@ import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import { getLoginPageRoutePath } from '@/routes/routes'
 import LeftPanel from '@/components/pages/auth/login/LeftPanel'
+import AuthThemeToggle from '@/components/common/AuthThemeToggle'
 import OtpInput from '@/components/library/OtpInput'
 import {
   useForgotPasswordMutation,
@@ -209,20 +210,21 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
     >
       <LeftPanel role="customer" logoUrl={logoUrl} />
 
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-[5%] py-12">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-appSurface px-[5%] py-12">
+        <AuthThemeToggle />
         <div className="w-full" style={{ maxWidth: 440 }}>
           <div className="mb-8 text-center">
             <h3
-              className="mb-1.5 text-slate-900"
+              className="mb-1.5 text-appText"
               style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.5px' }}
             >
               {stepTitle}
             </h3>
-            <p className="text-[14px] text-slate-500">{stepSubtitle}</p>
+            <p className="text-[14px] text-appTextSec">{stepSubtitle}</p>
           </div>
 
           <div
-            className="overflow-hidden rounded-[20px] border border-slate-200 bg-white"
+            className="overflow-hidden rounded-[20px] border border-appBorder bg-appCard"
             style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '32px' }}
           >
             {step === 'enter-email' && (
@@ -234,7 +236,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                 }}
               >
                 <div className="mb-6">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-appText">
                     Adresse email
                   </label>
                   <input
@@ -246,10 +248,10 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                     onChange={emailForm.handleChange}
                     onBlur={emailForm.handleBlur}
                     className={[
-                      'w-full rounded-[10px] border-[1.5px] py-3 px-4 text-[14px] text-slate-900 outline-none transition-all',
+                      'w-full rounded-[10px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all',
                       emailForm.touched.email && emailForm.errors.email
                         ? 'border-red-500 bg-red-light'
-                        : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                        : 'border-appBorder bg-appSurface hover:border-appBorder',
                     ].join(' ')}
                     style={{ fontFamily: 'inherit' }}
                     onFocus={(e) => {
@@ -304,7 +306,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                 <button
                   type="button"
                   onClick={backToEmailStep}
-                  className="mb-5 flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-800"
+                  className="mb-5 flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-appTextSec transition-colors hover:text-appText"
                   style={{ fontFamily: 'inherit', background: 'none', border: 'none', padding: 0 }}
                 >
                   <FiArrowLeft size={14} />
@@ -320,9 +322,9 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                   </div>
                 </div>
 
-                <p className="mb-6 text-center text-[13px] text-slate-500">
+                <p className="mb-6 text-center text-[13px] text-appTextSec">
                   Un code à {OTP_LENGTH} chiffres a été envoyé à{' '}
-                  <span className="font-semibold text-slate-700">{email}</span>
+                  <span className="font-semibold text-appText">{email}</span>
                 </p>
 
                 <div className="mb-2 flex justify-center">
@@ -343,7 +345,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                   <p className="mt-1.5 text-center text-[12px] text-red-500">{otpError}</p>
                 )}
 
-                <p className="mt-4 text-center text-[13px] text-slate-500">
+                <p className="mt-4 text-center text-[13px] text-appTextSec">
                   Vous n&apos;avez pas reçu le code ?{' '}
                   {resendCooldown > 0 ? (
                     <span style={{ color: accentColor }}>Renvoyer dans {resendCooldown}s</span>
@@ -399,7 +401,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                 }}
               >
                 <div className="mb-4">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-appText">
                     Nouveau mot de passe
                   </label>
                   <div className="relative">
@@ -412,17 +414,17 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                       onChange={passwordForm.handleChange}
                       onBlur={passwordForm.handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                         passwordForm.touched.password && passwordForm.errors.password
                           ? 'border-red-500 bg-red-light'
-                          : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                          : 'border-appBorder bg-appSurface hover:border-appBorder',
                       ].join(' ')}
                       style={{ fontFamily: 'inherit' }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
                       aria-label="Afficher/masquer le mot de passe"
                     >
                       {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
@@ -434,7 +436,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                 </div>
 
                 <div className="mb-6">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-appText">
                     Confirmer le mot de passe
                   </label>
                   <div className="relative">
@@ -447,17 +449,17 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                       onChange={passwordForm.handleChange}
                       onBlur={passwordForm.handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                         passwordForm.touched.confirmPassword && passwordForm.errors.confirmPassword
                           ? 'border-red-500 bg-red-light'
-                          : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                          : 'border-appBorder bg-appSurface hover:border-appBorder',
                       ].join(' ')}
                       style={{ fontFamily: 'inherit' }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword((p) => !p)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
                       aria-label="Afficher/masquer le mot de passe"
                     >
                       {showConfirmPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
@@ -498,7 +500,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
             )}
           </div>
 
-          <p className="mt-6 text-center text-[13px] text-slate-500">
+          <p className="mt-6 text-center text-[13px] text-appTextSec">
             Mot de passe retrouvé ?{' '}
             <Link
               href={getLoginPageRoutePath()}

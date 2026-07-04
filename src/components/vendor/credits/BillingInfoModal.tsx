@@ -73,7 +73,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                     top-2 right-2
                     w-9 h-9 flex items-center justify-center
                     rounded-full
-                    bg-[#F3F4F6] shadow-md
+                    bg-appElevated shadow-md
                     active:scale-95 hover:rotate-90
                     transition-all
                     text-fontBlack
@@ -86,7 +86,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
         >
             <ModalContent>
                 {() => (
-                    <ModalBody className="bg-white px-8 py-6 rounded-3xl">
+                    <ModalBody className="bg-appCard px-8 py-6 rounded-3xl">
                         <div className="mb-4">
                             <h2 className="text-xl font-bold text-fontBlack">Informations de facturation requises</h2>
                             <p className="text-sm text-darkSilver mt-1">
@@ -206,7 +206,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                                     type="button"
                                     onPress={handleClose}
                                     isDisabled={isSaving}
-                                    className="btn_radius min-w-25 border border-[#E5E7EB] bg-white text-fontBlack font-medium"
+                                    className="btn_radius min-w-25 border border-appBorder bg-appCard text-fontBlack font-medium"
                                 >
                                     Annuler
                                 </Button>

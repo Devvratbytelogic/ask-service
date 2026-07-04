@@ -87,7 +87,7 @@ export default function UnlockLeadConfirmModal() {
                     type="button"
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="cursor-pointer flex-1 py-3 rounded-[10px] bg-black/5 dark:bg-white/7 text-appTextSec text-[13px] font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/12 hover:text-appText disabled:opacity-60"
+                    className="cursor-pointer flex-1 py-3 rounded-[10px] bg-black/5 dark:bg-white/7 text-appTextSec text-[13px] font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/12 hover:text-appText disabled:opacity-60"
                 >
                     Annuler
                 </button>

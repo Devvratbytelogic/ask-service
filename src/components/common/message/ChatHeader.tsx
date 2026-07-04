@@ -86,7 +86,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
         );
     return (
         <>
-            <div className="flex shrink-0 justify-between items-center gap-3 md:gap-4 border-b border-borderDark bg-white px-4 py-3 md:px-6 md:py-4">
+            <div className="flex shrink-0 justify-between items-center gap-3 md:gap-4 border-b border-appBorder bg-appCard px-4 py-3 md:px-6 md:py-4">
                 <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     {/* Back button - mobile only */}
                     {onBack && (
@@ -115,11 +115,11 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                             <h2 className="font-bold text-fontBlack text-sm md:text-base truncate">{name}</h2>
                             {selectedChat && (
                                 <>
-                                    {isVerified ? <p className="inline-flex items-center gap-1 rounded-full border border-[#BEDBFF] bg-[#EFF6FF] px-2 py-1 text-xs font-medium text-[#1447E6]">
+                                    {isVerified ? <p className="inline-flex items-center gap-1 rounded-full border border-primaryColor/30 bg-blue-light px-2 py-1 text-xs font-medium text-[#1447E6]">
                                         <VerifiedShieldIconSVG />
                                         Vérifié
                                     </p> :
-                                        <p className="inline-flex items-center gap-1 rounded-full border border-[#BEDBFF] bg-[#EFF6FF] px-2 py-1 text-xs font-medium text-[#1447E6]">
+                                        <p className="inline-flex items-center gap-1 rounded-full border border-primaryColor/30 bg-blue-light px-2 py-1 text-xs font-medium text-[#1447E6]">
                                             Non vérifié
                                         </p>}
                                     {(rating != null || reviewCount != null) && (
@@ -163,7 +163,7 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                             <VerticalChatDotsSVG />
                         </button>
                         {dropdownOpen && (
-                            <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border border-borderDark bg-white py-1 shadow-lg">
+                            <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border border-appBorder bg-appCard py-1 shadow-lg">
                                 {vendorProfileHref && (
                                     <button
                                         type="button"

@@ -20,7 +20,7 @@ export default function VendorLinks({ profile }: VendorLinksProps) {
                     href={displayLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className='border border-[#EED] cursor-pointer bg-customWhite p-4 rounded-2xl text-primary block'
+                    className='border border-[#EED] cursor-pointer bg-appSurface p-4 rounded-2xl text-primary block'
                 >
                     <GlobeIconSVG /> &nbsp; {websiteLink}
                 </a>

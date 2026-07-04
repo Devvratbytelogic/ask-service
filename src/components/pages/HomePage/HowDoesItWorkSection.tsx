@@ -76,14 +76,14 @@ function StepItem({
             <div>
                 <h4
                     className={`mb-1 text-[15px] font-bold ${
-                        isClient ? "text-slate-900 dark:text-slate-100" : "text-white"
+                        isClient ? "text-appText" : "text-white"
                     }`}
                 >
                     {step.title}
                 </h4>
                 <p
                     className={`text-sm leading-[1.6] ${
-                        isClient ? "text-slate-500 dark:text-slate-400" : "text-white/55"
+                        isClient ? "text-appTextSec" : "text-white/55"
                     }`}
                 >
                     {step.description}
@@ -116,21 +116,21 @@ export default function HowDoesItWorkSection() {
     }
 
     return (
-        <section id="comment-ca-marche" className="px-[5%] py-[100px] bg-white dark:bg-appBg">
+        <section id="comment-ca-marche" className="px-[5%] py-[100px] bg-appBg">
             <div className="mb-[60px] text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
                     ✦ Fonctionnement
                 </div>
-                <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-slate-900 dark:text-slate-100">
+                <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-appText">
                     Simple pour tout le monde
                 </h2>
-                <p className="mx-auto max-w-[560px] text-[17px] leading-[1.65] text-slate-500 dark:text-slate-400">
+                <p className="mx-auto max-w-[560px] text-[17px] leading-[1.65] text-appTextSec">
                     Que vous soyez client ou professionnel, la plateforme s&apos;adapte à vos besoins en quelques étapes.
                 </p>
             </div>
 
             <div className="mt-[60px] grid grid-cols-1 gap-10 lg:grid-cols-2">
-                <div className="rounded-3xl border-[1.5px] border-slate-100 dark:border-white/8 bg-slate-50 dark:bg-appCard p-10">
+                <div className="rounded-3xl border-[1.5px] border-appBorderSub bg-appCard p-10">
                     <div className="mb-7 inline-flex items-center gap-2 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
                         👤 Pour les clients
                     </div>
@@ -149,7 +149,7 @@ export default function HowDoesItWorkSection() {
                         >
                             Poster ma demande →
                         </button>
-                        <p className="text-[12px] text-slate-400 dark:text-slate-500">
+                        <p className="text-[12px] text-appTextMuted">
                             Déjà un compte ?{' '}
                             <Link
                                 href={getLoginPageRoutePath()}

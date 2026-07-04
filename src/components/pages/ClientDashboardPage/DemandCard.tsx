@@ -278,7 +278,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <button
                                 type="button"
                                 onClick={() => setMenuOpen((prev) => !prev)}
-                                className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/10 hover:text-appText"
+                                className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
                                 aria-label="Options"
                                 aria-haspopup="menu"
                                 aria-expanded={menuOpen}
@@ -298,7 +298,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                                 e.stopPropagation()
                                                 setMenuOpen(false)
                                             }}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
                                         >
                                             Modifier
                                         </Link>
@@ -308,7 +308,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                             type="button"
                                             role="menuitem"
                                             onClick={handleCloseRequest}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
                                         >
                                             Clôturer la demande
                                         </button>

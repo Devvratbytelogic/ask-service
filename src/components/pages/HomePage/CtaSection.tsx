@@ -16,11 +16,11 @@ export default function CtaSection() {
                     ✦ Rejoignez-nous
                 </div>
 
-                <h2 className="mb-4 text-[clamp(32px,4vw,52px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-slate-900 dark:text-slate-100">
+                <h2 className="mb-4 text-[clamp(32px,4vw,52px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText">
                     Prêt à commencer ?
                 </h2>
 
-                <p className="mx-auto mb-10 max-w-[500px] text-[17px] leading-[1.65] text-slate-500 dark:text-slate-400">
+                <p className="mx-auto mb-10 max-w-[500px] text-[17px] leading-[1.65] text-appTextSec">
                     Que vous cherchiez un professionnel ou des clients, Ask-Service est fait pour vous. Inscription gratuite en 2 minutes.
                 </p>
 

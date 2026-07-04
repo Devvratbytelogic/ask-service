@@ -144,7 +144,7 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
                     ${readOnly ? "cursor-default opacity-80" : ""}
                     ${isSelected
                       ? "border-primaryColor bg-primaryColor/10 text-primaryColor"
-                      : "border-borderColor bg-white text-fontBlack hover:border-primaryColor/50"
+                      : "border-borderColor bg-appCard text-fontBlack hover:border-primaryColor/50"
                     }
                   `}
                 >
@@ -176,7 +176,7 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
                 disabled: readOnly,
               }}
               containerClass="!w-full"
-              inputClass="!w-full !rounded-[12px] !border-borderDark"
+              inputClass="!w-full !rounded-[12px] !border-appBorder"
               inputStyle={{ height: "52px" }}
               dropdownClass="!z-[9999]"
               dropdownStyle={{ zIndex: 9999 }}

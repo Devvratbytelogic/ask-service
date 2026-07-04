@@ -53,7 +53,7 @@ export default function ServiceProviderHero() {
                     +1 200 professionnels font confiance à Ask-Service
                 </div>
 
-                <h1 className="mb-5 animate-hero-fade-up text-[clamp(36px,5vw,64px)] leading-[1.05] font-extrabold tracking-[-2px] text-slate-900 dark:text-white [animation-delay:0.1s]">
+                <h1 className="mb-5 animate-hero-fade-up text-[clamp(36px,5vw,64px)] leading-[1.05] font-extrabold tracking-[-2px] text-appText dark:text-white [animation-delay:0.1s]">
                     Trouvez des{" "}
                     <span className="relative inline-block text-amber-500">
                         clients qualifiés
@@ -66,14 +66,14 @@ export default function ServiceProviderHero() {
                     près de chez vous
                 </h1>
 
-                <p className="mx-auto mb-10 max-w-[540px] animate-hero-fade-up text-lg leading-[1.7] text-slate-500 dark:text-white/50 [animation-delay:0.2s]">
+                <p className="mx-auto mb-10 max-w-[540px] animate-hero-fade-up text-lg leading-[1.7] text-appTextSec dark:text-white/50 [animation-delay:0.2s]">
                     Accédez à des demandes locales vérifiées, choisissez celles qui vous intéressent et développez votre activité. Sans abonnement — vous ne payez que les contacts qui vous intéressent.
                 </p>
 
                 <div className="flex animate-hero-fade-up flex-wrap justify-center gap-3 [animation-delay:0.3s]">
                     <Link
                         href={`${getRegistrationPageRoutePath()}?role=vendor`}
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-slate-900 shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-appText shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
                     >
                         Commencer gratuitement
                         <ArrowIcon />
@@ -81,17 +81,17 @@ export default function ServiceProviderHero() {
                     <button
                         type="button"
                         onClick={scrollToHowItWorks}
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border-[1.5px] border-slate-200 bg-white/80 text-slate-600 dark:border-white/12 dark:bg-white/6 dark:text-white/70 px-7 py-4 text-[15px] font-medium transition-all duration-200 hover:border-slate-300 hover:bg-white hover:text-slate-900 dark:hover:border-white/25 dark:hover:bg-white/10 dark:hover:text-white"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border-[1.5px] border-appBorder bg-appCard/80 text-appTextSec dark:border-white/12 dark:bg-white/6 dark:text-white/70 px-7 py-4 text-[15px] font-medium transition-all duration-200 hover:border-appBorder hover:bg-appCard hover:text-appText dark:hover:border-white/25 dark:hover:bg-appOverlay-5 dark:hover:text-white"
                     >
                         <InfoIcon />
                         Comment ça marche
                     </button>
                 </div>
-                <p className="mt-4 animate-hero-fade-up text-[13px] text-slate-400 dark:text-white/35 [animation-delay:0.35s]">
+                <p className="mt-4 animate-hero-fade-up text-[13px] text-appTextMuted dark:text-white/35 [animation-delay:0.35s]">
                     Déjà un compte ?{' '}
                     <Link
                         href={getLoginPageRoutePath()}
-                        className="font-semibold text-slate-500 dark:text-white/55 no-underline transition-colors hover:text-slate-800 dark:hover:text-white/80"
+                        className="font-semibold text-appTextSec dark:text-white/55 no-underline transition-colors hover:text-appText dark:hover:text-white/80"
                     >
                         Se connecter →
                     </Link>
@@ -99,7 +99,7 @@ export default function ServiceProviderHero() {
 
                 <div className="mt-10 flex animate-hero-fade-up flex-wrap justify-center gap-6 [animation-delay:0.4s]">
                     {TRUST_ITEMS.map((item) => (
-                        <div key={item} className="flex items-center gap-1.5 text-[13px] text-slate-500 dark:text-white/45">
+                        <div key={item} className="flex items-center gap-1.5 text-[13px] text-appTextSec dark:text-white/45">
                             <span className="flex size-[18px] shrink-0 items-center justify-center rounded-full border border-trust-green/30 bg-trust-green/15">
                                 <CheckIcon />
                             </span>
@@ -109,17 +109,17 @@ export default function ServiceProviderHero() {
                 </div>
 
                 <div className="relative z-1 mt-16 animate-hero-fade-up [animation-delay:0.5s]">
-                    <div className="mx-auto flex max-w-[580px] flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-[20px] border border-slate-200 dark:border-white/8 bg-white dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
+                    <div className="mx-auto flex max-w-[580px] flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-[20px] border border-appBorder dark:border-white/8 bg-appCard dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
                         {[
                             { value: <>1<span className="text-amber-500">,</span>200<span className="text-amber-500">+</span></>, label: "Pros actifs" },
                             { value: <>8<span className="text-amber-500">k+</span></>, label: "Leads traités" },
                             { value: <>4<span className="text-amber-500">.</span>9<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
                         ].map((stat) => (
                             <div key={stat.label} className="flex-1 px-7 py-6 text-center">
-                                <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-slate-900 dark:text-white">
+                                <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
                                     {stat.value}
                                 </div>
-                                <div className="mt-1 text-xs text-slate-400 dark:text-white/40">{stat.label}</div>
+                                <div className="mt-1 text-xs text-appTextMuted dark:text-white/40">{stat.label}</div>
                             </div>
                         ))}
                     </div>

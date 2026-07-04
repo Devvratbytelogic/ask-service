@@ -290,7 +290,7 @@ const VendorSignupDetails = () => {
                                             "aria-label": "Numéro de téléphone",
                                         }}
                                         containerClass="!w-full"
-                                        inputClass="!w-full !rounded-[12px] !border-borderDark"
+                                        inputClass="!w-full !rounded-[12px] !border-appBorder"
                                         inputStyle={{ height: "52px" }}
                                     />
                                 </div>
@@ -311,7 +311,7 @@ const VendorSignupDetails = () => {
                         onValueChange={(checked) => setFieldValue("agreeToTerms", checked)}
                         onBlur={handleBlur}
                         classNames={{
-                            wrapper: "before:border-borderDark",
+                            wrapper: "before:border-appBorder",
                         }}
                     >
                         <span className="text-fontBlack text-sm">

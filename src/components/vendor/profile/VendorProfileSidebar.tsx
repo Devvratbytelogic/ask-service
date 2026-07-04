@@ -21,7 +21,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
 
     return (
         <>
-            <div className="rounded-2xl border border-borderDark p-6">
+            <div className="rounded-2xl border border-appBorder p-6">
                 {/* Logo */}
                 <div className="mb-4 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FB2C36] m-auto">
                     {profile?.profile_pic ? (
@@ -53,7 +53,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                 </div>
 
                 {/* Services */}
-                <div className="mb-4 w-full border-t border-borderDark pt-4 text-left">
+                <div className="mb-4 w-full border-t border-appBorder pt-4 text-left">
                     <h2 className="mb-2 text-sm font-bold text-fontBlack">Services</h2>
                     <div className="flex flex-wrap gap-2">
                         {serviceTitle ? (
@@ -69,7 +69,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                 </div>
 
                 {/* Report */}
-                <div className='border-t border-borderDark'>
+                <div className='border-t border-appBorder'>
                     <button
                         type="button"
                         onClick={() =>

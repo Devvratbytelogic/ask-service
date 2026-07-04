@@ -24,11 +24,11 @@ function FaqAccordion({ items }: { items: IFaqItem[] }) {
       selectionMode="single"
       showDivider={false}
       itemClasses={{
-        base: 'rounded-xl border border-[#E5E7EB] bg-white mb-3 last:mb-0 overflow-hidden shadow-none',
+        base: 'rounded-xl border border-appBorder bg-appCard mb-3 last:mb-0 overflow-hidden shadow-none',
         title: 'text-sm font-normal text-fontBlack text-left',
         trigger: 'px-4 py-4 min-h-0 cursor-pointer data-[hover=true]:bg-transparent',
         content: 'px-4 pb-4 pt-0 text-darkSilver text-sm',
-        indicator: 'text-fontBlack',
+        indicator: 'text-appText',
       }}
       className="gap-0 p-0"
     >
@@ -38,7 +38,7 @@ function FaqAccordion({ items }: { items: IFaqItem[] }) {
           title={item.question}
           aria-label={item.question}
           indicator={({ isOpen }) => (
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f0f0f0] text-fontBlack">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-appElevated text-appText">
               <HiPlus className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-45' : ''}`} />
             </span>
           )}
@@ -70,7 +70,7 @@ export default function ContactFaq() {
       <div className="w-full md:w-2/4 md:mx-auto py-8 flex justify-center">
         <div className="animate-pulse space-y-3 w-full">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-14 rounded-xl bg-[#E5E7EB]" />
+            <div key={i} className="h-14 rounded-xl bg-appElevated" />
           ))}
         </div>
       </div>
@@ -92,9 +92,9 @@ export default function ContactFaq() {
       variant="light"
       classNames={{
         base: 'w-full md:w-2/4 md:mx-auto flex justify-center items-center',
-        tabList: 'mb-6 gap-0 p-1 rounded-full bg-[#F3F4F6] w-full flex w-full',
+        tabList: 'mb-6 gap-0 p-1 rounded-full bg-appElevated w-full flex w-full',
         tab: 'rounded-full p-6 text-sm font-normal text-darkSilver data-[selected=true]:text-fontBlack',
-        cursor: 'rounded-full bg-white shadow-sm',
+        cursor: 'rounded-full bg-appCard shadow-sm',
       }}
     >
       {FAQ_TAB_TYPES.map((tab) => (

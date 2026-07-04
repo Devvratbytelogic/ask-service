@@ -26,7 +26,7 @@ const menuItemClassName =
 
 function MenuIcon({ children }: { children: React.ReactNode }) {
     return (
-        <span className="size-4 shrink-0 flex items-center justify-center text-darkSilver [&_svg]:size-4">
+        <span className="size-4 shrink-0 flex items-center justify-center text-appTextSec [&_svg]:size-4">
             {children}
         </span>
     )
@@ -74,36 +74,36 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                 aria-label="Account menu"
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen(prev => !prev)}
-                className="flex items-center gap-2 rounded-full pl-1 pr-2.5 py-1 hover:bg-borderDark/40 dark:hover:bg-white/8 transition-colors"
+                className="flex items-center gap-2 rounded-full pl-1 pr-2.5 py-1 hover:bg-appOverlay-5 transition-colors"
             >
                 <span className="w-8 h-8 rounded-full bg-primaryColor/15 text-primaryColor text-[12px] font-bold flex items-center justify-center shrink-0">
                     {initials}
                 </span>
-                <span className="hidden xl:inline text-[13px] font-semibold text-fontBlack dark:text-slate-200 max-w-[120px] truncate">
+                <span className="hidden xl:inline text-[13px] font-semibold text-appText max-w-[120px] truncate">
                     {handle || 'Compte'}
                 </span>
-                <HiChevronDown className={`size-4 text-darkSilver transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
+                <HiChevronDown className={`size-4 text-appTextSec transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {menuOpen && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-                    <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-borderDark dark:border-white/10 z-50 py-2 px-2">
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-appCard rounded-2xl shadow-lg border border-appBorder dark:border-white/10 z-50 py-2 px-2">
                         <div className="px-3 py-2">
-                            <p className="text-sm font-semibold text-fontBlack dark:text-slate-100 truncate">
+                            <p className="text-sm font-semibold text-appText truncate">
                                 {displayName || 'Mon compte'}
                             </p>
                             {email && (
-                                <p className="text-xs text-darkSilver dark:text-slate-400 truncate mt-0.5">{email}</p>
+                                <p className="text-xs text-appTextSec truncate mt-0.5">{email}</p>
                             )}
                         </div>
 
-                        <div className="my-1 border-t border-borderDark/60 dark:border-white/10" />
+                        <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
                         <Link
                             href={profilePath}
                             onClick={() => setMenuOpen(false)}
-                            className={`${menuItemClassName} text-fontBlack dark:text-slate-200 hover:bg-borderDark/50 dark:hover:bg-white/10`}
+                            className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
                         >
                             <MenuIcon><ProfileIconSVG /></MenuIcon>
                             <span>Profil</span>
@@ -111,13 +111,13 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                         <Link
                             href={settingsPath}
                             onClick={() => setMenuOpen(false)}
-                            className={`${menuItemClassName} text-fontBlack dark:text-slate-200 hover:bg-borderDark/50 dark:hover:bg-white/10`}
+                            className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
                         >
                             <MenuIcon><HiOutlineCog6Tooth className="size-4" /></MenuIcon>
                             <span>Paramètres</span>
                         </Link>
 
-                        <div className="my-1 border-t border-borderDark/60 dark:border-white/10" />
+                        <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
                         <button
                             type="button"
@@ -128,7 +128,7 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                             <span>{isVendorView ? 'Passer en compte client' : 'Passer en compte prestataire'}</span>
                         </button>
 
-                        <div className="my-1 border-t border-borderDark/60 dark:border-white/10" />
+                        <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
                         <button
                             type="button"

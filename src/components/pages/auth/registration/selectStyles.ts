@@ -15,12 +15,12 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
         ? 'var(--color-red-500)'
         : state.isFocused
           ? 'var(--color-primaryColor)'
-          : 'var(--color-slate-200)',
+          : 'var(--app-border)',
       backgroundColor: hasError
         ? 'var(--color-red-light)'
         : state.isFocused
-          ? 'white'
-          : 'var(--color-slate-50)',
+          ? 'var(--app-card)'
+          : 'var(--app-surface)',
       boxShadow: hasError
         ? state.isFocused ? '0 0 0 3px rgba(239,68,68,0.1)' : 'none'
         : state.isFocused
@@ -36,12 +36,12 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
           ? 'var(--color-red-500)'
           : state.isFocused
             ? 'var(--color-primaryColor)'
-            : 'var(--color-slate-300)',
+            : 'var(--app-border)',
       },
     }),
     placeholder: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       fontSize: 14,
       fontFamily: 'inherit',
     }),
@@ -49,7 +49,7 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       ...base,
       fontFamily: 'inherit',
       fontSize: 14,
-      color: 'var(--color-slate-900)',
+      color: 'var(--app-text)',
       margin: 0,
       padding: 0,
     }),
@@ -60,17 +60,18 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       padding: '0 12px',
     }),
     indicatorSeparator: (base) => ({
       ...base,
-      backgroundColor: 'var(--color-slate-200)',
+      backgroundColor: 'var(--app-border)',
     }),
     menu: (base) => ({
       ...base,
       borderRadius: 10,
-      border: '1.5px solid var(--color-slate-200)',
+      border: '1.5px solid var(--app-border)',
+      backgroundColor: 'var(--app-card)',
       boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
       zIndex: 20,
       overflow: 'hidden',
@@ -90,12 +91,12 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       fontFamily: 'inherit',
       padding: '8px 10px',
       backgroundColor: state.isFocused ? 'var(--color-primaryColor)' : 'transparent',
-      color: state.isFocused ? '#fff' : 'var(--color-slate-900)',
+      color: state.isFocused ? '#fff' : 'var(--app-text)',
       cursor: 'pointer',
     }),
     groupHeading: (base) => ({
       ...base,
-      color: 'var(--color-slate-400)',
+      color: 'var(--app-text-muted)',
       fontSize: 12,
       fontWeight: 600,
       textTransform: 'none',

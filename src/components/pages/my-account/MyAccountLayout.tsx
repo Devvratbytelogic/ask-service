@@ -15,7 +15,7 @@ export default function MyAccountLayout({ variant = 'default', children }: MyAcc
                 <AccountSidebar navItems={variant === 'vendor' ? vendorNavItems : customerNavItems} />
             </aside>
             <section className="relative flex-1 min-w-0">
-                <div className="rounded-2xl border border-borderDark p-4 bg-white">{children}</div>
+                <div className="rounded-2xl border border-appBorder p-4 bg-appCard">{children}</div>
             </section>
         </>
     )

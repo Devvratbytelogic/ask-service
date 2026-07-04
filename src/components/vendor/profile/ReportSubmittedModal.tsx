@@ -32,18 +32,18 @@ export default function ReportSubmittedModal() {
             <h2 className="mt-5 text-xl font-bold text-fontBlack">Signalement envoyé</h2>
 
             {/* Message */}
-            <p className="mt-3 max-w-sm text-sm font-normal text-[#6B7280]">
+            <p className="mt-3 max-w-sm text-sm font-normal text-appTextSec">
                 Merci pour votre signalement. Notre équipe l&apos;examinera attentivement et prendra les mesures appropriées sous 24 à 48 heures.
             </p>
 
             {/* Reference */}
-            {/* <p className="mt-3 text-sm text-[#6B7280]">
+            {/* <p className="mt-3 text-sm text-appTextSec">
                 Reference:{' '}
                 <span className="font-bold text-primaryColor">{referenceId}</span>
             </p> */}
 
             {/* Email confirmation box */}
-            <div className="mt-5 w-full rounded-xl bg-[#EFF6FF] px-4 py-3">
+            <div className="mt-5 w-full rounded-xl bg-blue-light px-4 py-3">
                 <p className="text-sm text-fontBlack">
                     Nous avons envoyé un e-mail de confirmation à{' '}
                     <span className="font-medium text-primaryColor">{email}</span>

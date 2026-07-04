@@ -13,6 +13,7 @@ import {
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
+import AuthThemeToggle from '@/components/common/AuthThemeToggle'
 import LeftPanel from './LeftPanel'
 import OtpInput from '@/components/library/OtpInput'
 import {
@@ -310,20 +311,21 @@ export default function LoginPage({
       <LeftPanel role={role} logoUrl={activeLogoDarkUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} />
 
       {/* ─── Right panel ─── */}
-      <div className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+      <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
+        <AuthThemeToggle />
         <div className="w-full max-w-[440px]">
           <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Header */}
           <div className="mb-6 text-center min-[901px]:mb-8">
-            <h3 className="mb-1.5 text-[22px] font-extrabold tracking-tight text-slate-900 min-[901px]:text-[26px]">
+            <h3 className="mb-1.5 text-[22px] font-extrabold tracking-tight text-appText min-[901px]:text-[26px]">
               Connexion
             </h3>
-            <p className="text-[13px] text-slate-500 min-[901px]:text-[14px]">{subtitleText}</p>
+            <p className="text-[13px] text-appTextSec min-[901px]:text-[14px]">{subtitleText}</p>
           </div>
 
           {/* Role switcher */}
-          <div className="mb-6 flex gap-1.5 rounded-[12px] bg-slate-100 p-1">
+          <div className="mb-6 flex gap-1.5 rounded-[12px] bg-appElevated p-1">
             {([
               { id: 'customer' as Role, emoji: '🔍', label: 'Client' },
               { id: 'vendor' as Role, emoji: '💼', label: 'Prestataire' },
@@ -350,14 +352,14 @@ export default function LoginPage({
           <form
             noValidate
             onSubmit={(e) => { e.preventDefault(); if (!showEmailVerification) handleSubmit() }}
-            className={`overflow-hidden rounded-[20px] border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] min-[901px]:p-8 ${shake ? 'inscription-shake' : ''}`}
+            className={`overflow-hidden rounded-[20px] border border-appBorder bg-appCard p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] min-[901px]:p-8 ${shake ? 'inscription-shake' : ''}`}
           >
             {showEmailVerification ? (
               <div className="animate-inscription-fade-up">
                 <button
                   type="button"
                   onClick={backToLoginForm}
-                  className="mb-5 flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-800"
+                  className="mb-5 flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-appTextSec transition-colors hover:text-appText"
                   style={{ fontFamily: 'inherit', background: 'none', border: 'none', padding: 0 }}
                 >
                   <FiArrowLeft size={14} />
@@ -373,12 +375,12 @@ export default function LoginPage({
                   </div>
                 </div>
 
-                <h4 className="mb-1.5 text-center text-[18px] font-bold text-slate-900">
+                <h4 className="mb-1.5 text-center text-[18px] font-bold text-appText">
                   Vérification de l&apos;e-mail
                 </h4>
-                <p className="mb-6 text-center text-[13px] text-slate-500">
+                <p className="mb-6 text-center text-[13px] text-appTextSec">
                   Un code à {OTP_LENGTH} chiffres a été envoyé à{' '}
-                  <span className="font-semibold text-slate-700">{verificationEmail}</span>
+                  <span className="font-semibold text-appText">{verificationEmail}</span>
                 </p>
 
                 <div className="mb-2 flex justify-center">
@@ -399,7 +401,7 @@ export default function LoginPage({
                   <p className="mt-1.5 text-center text-[12px] text-red-500">{otpError}</p>
                 )}
 
-                <p className="mt-4 text-center text-[13px] text-slate-500">
+                <p className="mt-4 text-center text-[13px] text-appTextSec">
                   Vous n&apos;avez pas reçu le code ?{' '}
                   {resendCooldown > 0 ? (
                     <span style={{ color: accentColor }}>Renvoyer dans {resendCooldown}s</span>
@@ -459,7 +461,7 @@ export default function LoginPage({
 
                 {/* ─── Email ─── */}
                 <div className="mb-4">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-appText">
                     Adresse email
                   </label>
                   <div className="relative">
@@ -472,10 +474,10 @@ export default function LoginPage({
                       onChange={(e) => { handleChange(e); setServerError('') }}
                       onBlur={handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                         touched.email && errors.email
                           ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                          : `border-slate-200 bg-slate-50 hover:border-slate-400 focus:bg-white focus:shadow-[0_0_0_3px_${accentDim}]`,
+                          : `border-appBorder bg-appSurface hover:border-appBorder focus:bg-appCard focus:shadow-[0_0_0_3px_${accentDim}]`,
                       ].join(' ')}
                       style={{
                         fontFamily: 'inherit',
@@ -492,7 +494,7 @@ export default function LoginPage({
                         }
                       }}
                     />
-                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-appTextMuted">
                       <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <rect x="2" y="4" width="20" height="16" rx="2" />
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -506,7 +508,7 @@ export default function LoginPage({
 
                 {/* ─── Password ─── */}
                 <div className="mb-4">
-                  <label className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-[13px] font-semibold text-appText">
                     Mot de passe
                   </label>
                   <div className="relative">
@@ -519,10 +521,10 @@ export default function LoginPage({
                       onChange={(e) => { handleChange(e); setServerError('') }}
                       onBlur={handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-slate-900 outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
                         touched.password && errors.password
                           ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
-                          : 'border-slate-200 bg-slate-50 hover:border-slate-400',
+                          : 'border-appBorder bg-appSurface hover:border-appBorder',
                       ].join(' ')}
                       style={{ fontFamily: 'inherit' }}
                       onFocus={(e) => {
@@ -541,7 +543,7 @@ export default function LoginPage({
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-700"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-appTextMuted transition-colors hover:text-appText"
                       aria-label="Afficher/masquer le mot de passe"
                     >
                       {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
@@ -577,7 +579,7 @@ export default function LoginPage({
                     >
                       {values.rememberMe && <FiCheck size={10} color={isVendor ? 'var(--color-slate-900)' : 'white'} strokeWidth={3} />}
                     </div>
-                    <span className="text-[13px] text-slate-600">Se souvenir de moi</span>
+                    <span className="text-[13px] text-appTextSec">Se souvenir de moi</span>
                   </div>
 
                   <Link
@@ -618,17 +620,17 @@ export default function LoginPage({
                 </button>
 
                 {/* ─── Divider ─── */}
-                <div className="my-5 flex items-center gap-3 text-[12px] text-slate-400">
-                  <div className="h-px flex-1 bg-slate-200" />
+                <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
+                  <div className="h-px flex-1 bg-appBorder" />
                   ou continuer avec
-                  <div className="h-px flex-1 bg-slate-200" />
+                  <div className="h-px flex-1 bg-appBorder" />
                 </div>
 
                 {/* ─── Google button ─── */}
                 <button
                   type="button"
                   disabled={isGoogleLoading || isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:-translate-y-px hover:border-slate-400 hover:bg-slate-50 hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{ fontFamily: 'inherit' }}
                   onClick={handleGoogleLogin}
                 >
@@ -644,7 +646,7 @@ export default function LoginPage({
           </form>
 
           {/* Bottom link */}
-          <p className="mt-6 text-center text-[13px] text-slate-500">
+          <p className="mt-6 text-center text-[13px] text-appTextSec">
             Pas encore de compte ?{' '}
             <Link
               href={getRegistrationPageRoutePath()}

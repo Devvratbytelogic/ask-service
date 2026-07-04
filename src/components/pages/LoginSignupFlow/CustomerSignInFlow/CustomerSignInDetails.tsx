@@ -285,7 +285,7 @@ const CustomerSignInDetails = () => {
                                                 "aria-label": "Numéro de téléphone",
                                             }}
                                             containerClass="!w-full"
-                                            inputClass="!w-full !rounded-[12px] !border-borderDark"
+                                            inputClass="!w-full !rounded-[12px] !border-appBorder"
                                             inputStyle={{ height: "52px" }}
                                         />
                                     </div>
@@ -329,7 +329,7 @@ const CustomerSignInDetails = () => {
                                     isSelected={values.rememberMe}
                                     onValueChange={(checked) => setFieldValue("rememberMe", checked)}
                                     onBlur={handleBlur}
-                                    classNames={{ wrapper: "before:border-borderDark" }}
+                                    classNames={{ wrapper: "before:border-appBorder" }}
                                 >
                                     <span className="text-fontBlack text-sm">Se souvenir de moi</span>
                                 </Checkbox>

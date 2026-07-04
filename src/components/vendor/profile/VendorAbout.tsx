@@ -28,7 +28,7 @@ export default function VendorAbout({ profile }: VendorAboutProps) {
                     <h2 className="mb-3 text-xl font-bold text-fontBlack">Vue d&apos;ensemble</h2>
                     <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-20">
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-customWhite">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-appSurface">
                                 <CalendarSVG />
                             </div>
                             <div>
@@ -41,7 +41,7 @@ export default function VendorAbout({ profile }: VendorAboutProps) {
                             </div>
                         </div>
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-customWhite">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-appSurface">
                                 <UsersIconSVG />
                             </div>
                             <div>
@@ -54,7 +54,7 @@ export default function VendorAbout({ profile }: VendorAboutProps) {
                             </div>
                         </div>
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-customWhite">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-appSurface">
                                 <TimeIconSVG />
                             </div>
                             <div>
@@ -69,7 +69,7 @@ export default function VendorAbout({ profile }: VendorAboutProps) {
                     </div>
                 </section>
 
-                <section className='border border-[#EED] bg-customWhite p-4 rounded-2xl'>
+                <section className='border border-[#EED] bg-appSurface p-4 rounded-2xl'>
                     <h2 className="mb-4 text-sm font-semibold text-fontBlack">
                         Coordonnées
                     </h2>

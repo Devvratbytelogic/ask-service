@@ -88,7 +88,7 @@ const CommonModal = () => {
                         top-2 right-2 
                         w-9 h-9 flex items-center justify-center
                         rounded-full 
-                        bg-[#F3F4F6] shadow-md
+                        bg-appElevated shadow-md
                         active:scale-95 hover:rotate-90
                         transition-all
                         text-fontBlack
@@ -102,7 +102,7 @@ const CommonModal = () => {
                 <ModalContent>
                     {() => (
                         <>
-                            <ModalBody className={`bg-white ${modalPadding || 'px-8 py-6.5'} rounded-3xl`}>
+                            <ModalBody className={`bg-appCard ${modalPadding || 'px-8 py-6.5'} rounded-3xl`}>
                                 {renderComponent()}
                             </ModalBody>
                         </>

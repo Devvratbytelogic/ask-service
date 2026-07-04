@@ -144,9 +144,9 @@ export default function LeaveReviewModal() {
                         classNames: {
                             inputWrapper: [
                                 'shadow-none rounded-xl',
-                                'border border-borderDark bg-white',
-                                'data-[hover=true]:bg-white',
-                                'group-data-[focus=true]:bg-white',
+                                'border border-appBorder bg-appCard',
+                                'data-[hover=true]:bg-appCard',
+                                'group-data-[focus=true]:bg-appCard',
                             ],
                             input: 'text-fontBlack placeholder:text-[#9CA3AF]',
                         },
@@ -178,7 +178,7 @@ export default function LeaveReviewModal() {
                     onValueChange={setReviewText}
                     minRows={4}
                     classNames={{
-                        inputWrapper: 'custom_input_design rounded-xl border border-borderDark bg-white min-h-[100px]',
+                        inputWrapper: 'custom_input_design rounded-xl border border-appBorder bg-appCard min-h-[100px]',
                         input: 'text-fontBlack placeholder:text-[#9CA3AF]',
                     }}
                 />
@@ -190,13 +190,13 @@ export default function LeaveReviewModal() {
                         <Avatar
                             name="A"
                             size="sm"
-                            className="h-7 w-7 border-2 border-white text-[10px] font-medium bg-[#E0F2FE] text-[#0369A1]"
+                            className="h-7 w-7 border-2 border-white text-[10px] font-medium bg-blue-light text-[#0369A1]"
                             showFallback
                         />
                         <Avatar
                             name="B"
                             size="sm"
-                            className="h-7 w-7 border-2 border-white text-[10px] font-medium bg-[#E0F2FE] text-[#0369A1]"
+                            className="h-7 w-7 border-2 border-white text-[10px] font-medium bg-blue-light text-[#0369A1]"
                             showFallback
                         />
                     </div>
@@ -204,7 +204,7 @@ export default function LeaveReviewModal() {
             </div>
 
             {/* Info banner */}
-            <div className="mt-3 rounded-xl bg-[#EFF6FF] border border-[#BEDBFF] px-4 py-3">
+            <div className="mt-3 rounded-xl bg-blue-light border border-primaryColor/30 px-4 py-3">
                 <p className="text-sm text-fontBlack">
                     Votre avis aide les autres à prendre des décisions éclairées. Soyez honnête et constructif.
                 </p>
@@ -214,7 +214,7 @@ export default function LeaveReviewModal() {
             <div className="mt-3 flex flex-wrap items-center justify-end gap-3">
                 <Button
                     onPress={handleCancel}
-                    className="btn_radius min-w-25 border border-[#E5E7EB] bg-white text-fontBlack font-medium"
+                    className="btn_radius min-w-25 border border-appBorder bg-appCard text-fontBlack font-medium"
                 >
                     Annuler
                 </Button>

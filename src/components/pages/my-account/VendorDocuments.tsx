@@ -80,7 +80,7 @@ function DownloadIconSVG({ className }: { className?: string }) {
 function StatusBadge({ status }: { status: DocStatus }) {
   if (status === 'verified') {
     return (
-      <span className="flex items-center gap-1.5 text-sm font-medium text-[#008236] rounded-full px-3 py-1 bg-[#F0FDF4]">
+      <span className="flex items-center gap-1.5 text-sm font-medium text-[#008236] rounded-full px-3 py-1 bg-green-light">
         <CheckGreenIconSVG />
         Vérifié
       </span>
@@ -88,14 +88,14 @@ function StatusBadge({ status }: { status: DocStatus }) {
   }
   if (status === 'pending') {
     return (
-      <span className="flex items-center gap-1.5 text-sm font-medium text-[#EFB261] rounded-full px-3 py-1 bg-[#FFFBEB]">
+      <span className="flex items-center gap-1.5 text-sm font-medium text-[#EFB261] rounded-full px-3 py-1 bg-amber-light">
         <VerificationPendingIconSVG />
         Vérification en attente
       </span>
     )
   }
   return (
-    <span className="flex items-center gap-1.5 text-sm font-medium text-[#E7000B] rounded-full px-3 py-1 bg-[#FEF2F2]">
+    <span className="flex items-center gap-1.5 text-sm font-medium text-[#E7000B] rounded-full px-3 py-1 bg-red-light">
       <ActionRequiredIconSVG />
       Action requise
     </span>
@@ -170,7 +170,7 @@ export default function VendorDocuments() {
           {documents && documents.length > 0 ? documents.map((doc) => (
             <div
               key={doc.id}
-              className="rounded-2xl border border-borderDark bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-appBorder bg-appCard p-4 sm:p-5"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
@@ -193,9 +193,9 @@ export default function VendorDocuments() {
               </div>
 
               {doc.status !== 'action_required' && doc.fileName && (
-                <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F9FAFB] px-4 py-3">
+                <div className="mt-4 flex items-center justify-between rounded-xl bg-appSurface px-4 py-3">
                   <div className='flex items-center gap-3'>
-                    <span className="p-2 rounded-xl border border-borderDark bg-white [&_svg]:size-6">
+                    <span className="p-2 rounded-xl border border-appBorder bg-appCard text-appTextSec [&_svg]:size-6">
                       <UploadFileIconSVG />
                     </span>
                     <div className="min-w-0 flex-1">

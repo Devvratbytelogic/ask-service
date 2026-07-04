@@ -37,26 +37,26 @@ export default function ServiceProviderCtaSection() {
                     ✦ Rejoignez-nous
                 </div>
 
-                <h2 className="mb-3.5 text-[clamp(30px,4vw,50px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-slate-900 dark:text-white">
+                <h2 className="mb-3.5 text-[clamp(30px,4vw,50px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText dark:text-white">
                     Prêt à trouver vos <span className="text-amber-500">prochains clients</span> ?
                 </h2>
 
-                <p className="mx-auto mb-9 max-w-[460px] text-base leading-[1.65] text-slate-500 dark:text-white/50">
+                <p className="mx-auto mb-9 max-w-[460px] text-base leading-[1.65] text-appTextSec dark:text-white/50">
                     Inscription gratuite en 2 minutes. Votre compte est validé sous 24h et vous accédez immédiatement aux leads de votre secteur.
                 </p>
 
                 <Link
                     href={`${getRegistrationPageRoutePath()}?role=vendor`}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-slate-900 shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-appText shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
                 >
                     Créer mon compte gratuitement
                     <ArrowIcon />
                 </Link>
-                <p className="mt-4 text-[13px] text-slate-400 dark:text-white/35">
+                <p className="mt-4 text-[13px] text-appTextMuted dark:text-white/35">
                     Déjà un compte ?{' '}
                     <Link
                         href={getLoginPageRoutePath()}
-                        className="font-semibold text-slate-500 dark:text-white/55 no-underline transition-colors hover:text-slate-800 dark:hover:text-white/80"
+                        className="font-semibold text-appTextSec dark:text-white/55 no-underline transition-colors hover:text-appText dark:hover:text-white/80"
                     >
                         Se connecter →
                     </Link>

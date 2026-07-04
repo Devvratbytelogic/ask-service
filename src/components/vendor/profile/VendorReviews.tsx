@@ -91,8 +91,8 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
 
 
             {/* Review summary card */}
-            <div className="grid grid-cols-3 rounded-2xl border border-borderDark bg-[#F9FAFB] overflow-hidden">
-                <div className="col-span-full sm:col-span-1 flex flex-col items-center justify-center gap-2 p-6 sm:my-8 sm:min-w-50 border-b sm:border-b-0 sm:border-r border-borderDark">
+            <div className="grid grid-cols-3 rounded-2xl border border-appBorder bg-appSurface overflow-hidden">
+                <div className="col-span-full sm:col-span-1 flex flex-col items-center justify-center gap-2 p-6 sm:my-8 sm:min-w-50 border-b sm:border-b-0 sm:border-r border-appBorder">
                     <span className="text-4xl font-bold text-fontBlack">{averageRating}</span>
                     <div className="flex items-center gap-0.5">
                         {Array.from({ length: fullStars }).map((_, i) => (
@@ -115,7 +115,7 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
                                     <span className="min-w-16 whitespace-nowrap shrink-0 text-sm text-fontBlack">
                                         {stars} étoiles
                                     </span>
-                                    <div className="flex-1 h-2 rounded-full bg-[#E5E7EB] overflow-hidden">
+                                    <div className="flex-1 h-2 rounded-full bg-appElevated overflow-hidden">
                                         <div
                                             className="h-full rounded-full bg-[#FFB900] transition-all"
                                             style={{ width: `${percentage}%` }}
@@ -136,13 +136,13 @@ export default function VendorReviews({ hideLeaveReviewButton = false, review, v
                 {reviews.map((review) => (
                     <article
                         key={review.id}
-                        className="rounded-xl border border-[#E5E7EB] bg-white p-5 "
+                        className="rounded-xl border border-appBorder bg-appCard p-5 "
                     >
                         <div className="flex items-start gap-3">
                             <Avatar
                                 name={review.name}
                                 size="sm"
-                                className="h-10 w-10 shrink-0 bg-[#E0F2FE] text-sm font-semibold text-[#0369A1]"
+                                className="h-10 w-10 shrink-0 bg-blue-light text-sm font-semibold text-[#0369A1]"
                                 showFallback
                             />
                             <div className="min-w-0 flex-1">

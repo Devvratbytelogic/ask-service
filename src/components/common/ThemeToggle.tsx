@@ -21,7 +21,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
         <button
             type="button"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-white/10 ${className}`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-appOverlay-5 ${className}`}
             aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
             title={isDark ? 'Mode clair' : 'Mode sombre'}
         >
@@ -51,7 +51,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     viewBox="0 0 24 24"
-                    className="text-slate-500"
+                    className="text-appTextSec"
                     aria-hidden="true"
                 >
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />

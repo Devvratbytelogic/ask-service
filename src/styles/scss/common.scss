@@ -52,7 +52,7 @@
 }
 
 .custom_border_1px {
-    @apply border border-borderDark;
+    @apply border border-appBorder;
 }
 
 .modal_back_icon {
@@ -60,7 +60,7 @@
 }
 
 .custom_hr {
-    @apply border-borderDark my-7;
+    @apply border-appBorder my-7;
 }
 
 .swiper-slide {

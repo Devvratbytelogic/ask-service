@@ -34,7 +34,7 @@
 //                 <div className="flex items-center gap-3">
 //                     <Button
 //                         isIconOnly
-//                         className="rounded-full bg-white/10 hover:bg-white/20 shrink-0"
+//                         className="rounded-full bg-appOverlay-5 hover:bg-appCard/20 shrink-0"
 //                         onPress={handleClose}
 //                     >
 //                         <BackArrowSVG />
@@ -96,7 +96,7 @@
 //             </div>
 
 //             {/* Right Panel - Light */}
-//             <div className="flex flex-col bg-white p-6 md:w-[55%] rounded-r-2xl relative">
+//             <div className="flex flex-col bg-appCard p-6 md:w-[55%] rounded-r-2xl relative">
 //                 <Button
 //                     isIconOnly
 //                     variant="light"
@@ -123,7 +123,7 @@
 //                         <Radio
 //                             value="card"
 //                             classNames={{
-//                                 base: 'm-0 p-4 rounded-xl border border-borderDark bg-white',
+//                                 base: 'm-0 p-4 rounded-xl border border-appBorder bg-appCard',
 //                                 label: 'flex items-center gap-3 w-full',
 //                             }}
 //                         >
@@ -147,7 +147,7 @@
 //                         <Radio
 //                             value="cashapp"
 //                             classNames={{
-//                                 base: 'm-0 p-4 rounded-xl border border-borderDark bg-white',
+//                                 base: 'm-0 p-4 rounded-xl border border-appBorder bg-appCard',
 //                                 label: 'flex items-center gap-3 w-full',
 //                             }}
 //                         >

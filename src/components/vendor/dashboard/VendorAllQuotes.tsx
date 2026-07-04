@@ -46,12 +46,12 @@ export default function VendorAllQuotes() {
 
                     <div className="flex flex-col gap-4">
                         {isLoading && (
-                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                            <div className="rounded-2xl border border-appBorder bg-appCard p-8 text-center">
                                 <p className="text-darkSilver">Chargement des devis…</p>
                             </div>
                         )}
                         {!isLoading && quotes.length === 0 && (
-                            <div className="rounded-2xl border border-borderDark bg-white p-8 text-center">
+                            <div className="rounded-2xl border border-appBorder bg-appCard p-8 text-center">
                                 <div className="flex justify-center mb-3">
                                     <DocumentArrowIconSVG className="size-12 text-[#9C27B0]/50" />
                                 </div>
@@ -95,7 +95,7 @@ function QuoteCard({ quote }: { quote: IAllQuotes }) {
     const descriptionText = quote.service_description || 'Devis'
     const showDescriptionToggle = descriptionText.length > DESCRIPTION_TOGGLE_MIN_CHARS
     return (
-        <div className="rounded-2xl border border-borderDark bg-white p-6 flex flex-col lg:flex-row lg:items-start gap-4">
+        <div className="rounded-2xl border border-appBorder bg-appCard p-6 flex flex-col lg:flex-row lg:items-start gap-4">
             <div className="flex-1 min-w-0 space-y-3">
                 <div className="flex flex-wrap items-start gap-2">
                     <div className="min-w-0 flex-1">
@@ -114,7 +114,7 @@ function QuoteCard({ quote }: { quote: IAllQuotes }) {
                             </button>
                         )}
                     </div>
-                    <span className="inline-flex items-center rounded-full bg-[#F3E5F5] px-2.5 py-0.5 text-xs font-medium text-[#9C27B0] shrink-0">
+                    <span className="inline-flex items-center rounded-full bg-appElevated px-2.5 py-0.5 text-xs font-medium text-[#9C27B0] shrink-0">
                         {translateStatus(quote.status)}
                     </span>
                 </div>

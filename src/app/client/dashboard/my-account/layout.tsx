@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function ClientMyAccountLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen body_x_axis_padding">
+        <div className="min-h-screen bg-appBg body_x_axis_padding">
             <div className="text-center mb-10 lg:mb-12">
                 <h1 className="text-2xl md:text-5xl font-bold text-fontBlack mb-2">
                     Paramètres du compte

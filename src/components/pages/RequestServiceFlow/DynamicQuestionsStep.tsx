@@ -107,7 +107,7 @@ const DynamicQuestionsStep = ({ questions, formik, setStepCount }: DynamicQuesti
                             key={opt._id}
                             className={`
                               flex items-center gap-3 p-4 rounded-xl border cursor-pointer
-                              bg-white border-borderColor hover:border-primaryColor/50
+                              bg-appCard border-borderColor hover:border-primaryColor/50
                               transition-colors
                               ${isSelected ? "border-primaryColor bg-primaryColor/5" : ""}
                             `}

@@ -329,7 +329,7 @@ export default function VendorProfileInfo() {
                     <button
                         type="button"
                         onClick={() => profilePicInputRef.current?.click()}
-                        className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-[#E5E7EB] text-darkSilver shadow-sm"
+                        className="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full border border-white bg-appElevated text-darkSilver shadow-sm"
                         aria-label="Changer la photo de profil"
                     >
                         <CameraIconSVG />

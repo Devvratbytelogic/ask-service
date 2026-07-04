@@ -95,7 +95,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                         key={lead?._id}
                         type="button"
                         onClick={() => handleSelect(lead?._id)}
-                        className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-white/4 ${selectedId === lead?._id
+                        className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-appCard/4 ${selectedId === lead?._id
                             ? 'bg-amber/8 border-l-[3px] border-l-amber'
                             : 'border-l-[3px] border-l-transparent'
                             }`}

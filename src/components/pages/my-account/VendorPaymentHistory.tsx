@@ -81,7 +81,7 @@ function RefundIconSVG({ className }: { className?: string }) {
 function StatusBadge({ status }: { status: PaymentStatus }) {
     if (status === 'completed') {
         return (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-3 py-1 text-sm font-medium text-[#00A63E]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-light px-3 py-1 text-sm font-medium text-[#00A63E]">
                 <CheckGreenIconSVG />
                 Payé
             </span>
@@ -180,7 +180,7 @@ export default function VendorPaymentHistory() {
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button
-                                        className="min-w-36 justify-between bg-white px-4 shadow-none border border-borderDark h-10"
+                                        className="min-w-36 justify-between bg-appCard px-4 shadow-none border border-appBorder h-10"
                                         startContent={<CalendarSVG />}
                                         endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
                                     >
@@ -211,7 +211,7 @@ export default function VendorPaymentHistory() {
                                 }}
                                 className="min-w-36"
                                 classNames={{
-                                    trigger: 'min-h-10 border border-borderDark shadow-none bg-white',
+                                    trigger: 'min-h-10 border border-appBorder shadow-none bg-appCard',
                                     value: 'text-sm',
                                 }}
                                 aria-label="Filtrer par statut"
@@ -247,14 +247,14 @@ export default function VendorPaymentHistory() {
                 </div>
             </div>
 
-            <div className="rounded-2xl border border-borderDark bg-white overflow-hidden">
+            <div className="rounded-2xl border border-appBorder bg-appCard overflow-hidden">
                 {isLoading ? (
                     <div className="p-8 text-center text-sm text-darkSilver">Chargement de l'historique des paiements...</div>
                 ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-200">
                         <thead>
-                            <tr className="border-b border-borderDark bg-[#F9FAFB]">
+                            <tr className="border-b border-appBorder bg-appSurface">
                                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
                                     ID de transaction
                                 </th>
@@ -280,7 +280,7 @@ export default function VendorPaymentHistory() {
                         </thead>
                         <tbody>
                             {paginatedPayments.map((row) => (
-                                <tr key={row.id} className="border-b border-borderDark last:border-b-0 hover:bg-[#F9FAFB]/50">
+                                <tr key={row.id} className="border-b border-appBorder last:border-b-0 hover:bg-appSurface/50">
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm font-medium text-fontBlack">
@@ -327,7 +327,7 @@ export default function VendorPaymentHistory() {
                 </div>
                 )}
 
-                <div className="flex flex-col gap-4 border-t border-borderDark p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4 border-t border-appBorder p-4 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-darkSilver">
                         {totalItems === 0
                             ? '0 résultats'
@@ -355,7 +355,7 @@ export default function VendorPaymentHistory() {
                                 }}
                                 className="min-w-20"
                                 classNames={{
-                                    trigger: 'min-h-9 border border-borderDark shadow-none bg-white',
+                                    trigger: 'min-h-9 border border-appBorder shadow-none bg-appCard',
                                     value: 'text-sm',
                                 }}
                                 aria-label="Éléments par page"

@@ -58,7 +58,6 @@ export default async function RootLayout({
   const isVendor = userRole?.toLowerCase() === "vendor";
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
-  console.log('globalSettings', globalSettings);
   const logoUrl = globalSettings?.data?.logo;
   const logoDarkUrl = globalSettings?.data?.footer_logo;
   const vendorLogoUrl = globalSettings?.data?.vendor_logo;
@@ -73,7 +72,7 @@ export default async function RootLayout({
         className={`${bricolageGrotesque.variable} font-sans antialiased`}
       >
         <AppProviders>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col bg-appBg text-appText">
             <ConditionalChrome>
               <Header logoUrl={logoUrl || ""} logoDarkUrl={logoDarkUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} vendorLogoDarkUrl={vendorLogoDarkUrl || ""} isVendor={isVendor} isAuthenticated={initialIsAuthenticated} />
             </ConditionalChrome>

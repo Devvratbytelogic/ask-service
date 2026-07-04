@@ -130,7 +130,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
     const mediaUrl = getMediaUrl(msg);
     const bubbleClass = isYou
         ? 'rounded-2xl rounded-tr-md bg-primaryColor text-white'
-        : 'rounded-2xl rounded-tl-md bg-[#F3F4F6] text-fontBlack';
+        : 'rounded-2xl rounded-tl-md bg-appElevated text-fontBlack';
 
     // Image: type "image" or "media" with image URL — show thumbnail + optional caption
     const showAsImage =
@@ -402,7 +402,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                             type="button"
                             onClick={handleLoadMore}
                             disabled={isFetchingPageN}
-                            className="rounded-full cursor-pointer bg-[#E5E7EB] px-4 py-2 text-sm font-medium text-fontBlack hover:bg-[#D1D5DB] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="rounded-full cursor-pointer bg-appElevated px-4 py-2 text-sm font-medium text-fontBlack hover:bg-appBorder disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Charger plus
                         </button>
@@ -412,7 +412,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
             {grouped.map(({ dateLabel, messages: groupMsgs }) => (
                 <div key={dateLabel}>
                     <div className="flex justify-center my-3">
-                        <span className="rounded-full bg-[#E5E7EB] px-3 py-1 text-xs text-fontBlack">
+                        <span className="rounded-full bg-appElevated px-3 py-1 text-xs text-fontBlack">
                             {dateLabel}
                         </span>
                     </div>

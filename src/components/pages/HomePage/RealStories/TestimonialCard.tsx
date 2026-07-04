@@ -15,7 +15,7 @@ const TestimonialCard = ({ quote, authorName, authorRole, authorImage, rating = 
     const initials = authorName.split(' ').map(n => n[0]).join('').slice(0, 2)
 
     return (
-        <div className="bg-white rounded-[32px] p-6 xl:p-8 flex flex-col h-fit gap-6 xl:gap-8 testimonial-card-shadow">
+        <div className="bg-appCard rounded-[32px] p-6 xl:p-8 flex flex-col h-fit gap-6 xl:gap-8 testimonial-card-shadow">
             <div>
                 {/* Decorative quote mark */}
                 <span className="select-none">

@@ -149,7 +149,7 @@ export default function QuoteCard({ onAccept, onIgnore, onViewDetails, quoteData
                         <button
                             type="button"
                             onClick={onViewDetails}
-                            className="w-full py-2 rounded-lg border border-appBorder bg-appCard text-appText text-xs font-semibold cursor-pointer transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/5"
+                            className="w-full py-2 rounded-lg border border-appBorder bg-appCard text-appText text-xs font-semibold cursor-pointer transition-all duration-200 hover:bg-black/5 dark:hover:bg-appCard/5"
                         >
                             Voir les détails
                         </button>
@@ -173,7 +173,7 @@ export default function QuoteCard({ onAccept, onIgnore, onViewDetails, quoteData
                             type="button"
                             onClick={onIgnore}
                             disabled={isActionLoading}
-                            className="px-2.5 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-white/8 hover:text-appText disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="px-2.5 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec text-xs font-medium cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/8 hover:text-appText disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             {isIgnoring ? '…' : 'Ignorer'}
                         </button>

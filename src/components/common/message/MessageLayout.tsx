@@ -41,9 +41,9 @@ function AttachedFilePreview({
   }, [file, isImage]);
 
   return (
-    <div className="mb-2 flex items-center gap-3 rounded-lg border border-borderDark bg-[#F9FAFB] px-3 py-2">
+    <div className="mb-2 flex items-center gap-3 rounded-lg border border-appBorder bg-appSurface px-3 py-2">
       {isImage && preview ? (
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#E5E7EB]">
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-appElevated">
           <img
             src={preview}
             alt=""
@@ -51,7 +51,7 @@ function AttachedFilePreview({
           />
         </div>
       ) : (
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#E5E7EB] text-[#6B7280]">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-appElevated text-appTextSec">
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
@@ -214,11 +214,11 @@ export default function MessageLayout() {
 
   return (
     <>
-      <div className="relative flex h-full min-h-0 overflow-hidden bg-white">
+      <div className="relative flex h-full min-h-0 overflow-hidden bg-appCard">
         {/* Left sidebar - Messages list: full width on mobile when active, fixed width on lg+ */}
         <aside
           className={`
-            flex flex-col min-h-0 border-r border-borderColor bg-white
+            flex flex-col min-h-0 border-r border-borderColor bg-appCard
             absolute lg:relative inset-0 z-10 lg:z-auto
             w-full lg:w-[320px] lg:shrink-0
             ${mobileView === 'list' ? 'flex' : 'hidden lg:flex'}
@@ -233,7 +233,7 @@ export default function MessageLayout() {
         {/* Main chat area */}
         <main
           className={`
-            flex min-h-0 flex-1 flex-col min-w-0 bg-customWhite
+            flex min-h-0 flex-1 flex-col min-w-0 bg-appSurface
             absolute lg:relative inset-0 z-10 lg:z-auto
             ${mobileView === 'chat' ? 'flex' : 'hidden lg:flex'}
           `}
@@ -263,7 +263,7 @@ export default function MessageLayout() {
               </header>
 
               {/* Discussion context bar — hidden while fetch-chats is refetching to avoid stale data flash */}
-              {!isChatsFetching && selectedChat?.quote_id && <div className="shrink-0 bg-[#EFF6FF] px-4 py-3 md:px-6 md:py-3">
+              {!isChatsFetching && selectedChat?.quote_id && <div className="shrink-0 bg-blue-light px-4 py-3 md:px-6 md:py-3">
                 <DiscussionContextBar selectedChat={selectedChat} />
               </div>}
 
@@ -277,7 +277,7 @@ export default function MessageLayout() {
               </div>
 
               {/* Message input - WhatsApp-style: text, images & documents (no video) */}
-              <div className="shrink-0 border-t border-borderColor bg-white px-4 py-3 md:px-6 md:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <div className="shrink-0 border-t border-borderColor bg-appCard px-4 py-3 md:px-6 md:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                 <input
                   ref={imageInputRef}
                   type="file"
@@ -317,7 +317,7 @@ export default function MessageLayout() {
                   >
                     <PhotographIconSVG />
                   </Button>
-                  <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 rounded-full border border-borderDark bg-[#F9FAFB] px-3 py-2 sm:px-4 sm:py-2.5">
+                  <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 rounded-full border border-appBorder bg-appSurface px-3 py-2 sm:px-4 sm:py-2.5">
                     <input
                       type="text"
                       placeholder="Tapez votre message…"

@@ -256,7 +256,7 @@ export default function OtpVerificationScreen({
       <button
         type="button"
         onClick={onBack}
-        className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+        className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
         style={{ fontFamily: 'inherit' }}
       >
         <FiArrowLeft size={14} strokeWidth={2.5} />

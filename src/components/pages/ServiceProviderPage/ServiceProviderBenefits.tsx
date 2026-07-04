@@ -45,15 +45,15 @@ const BENEFITS: Benefit[] = [
 
 function BenefitItem({ benefit }: { benefit: Benefit }) {
     return (
-        <div className="flex items-start gap-3.5 rounded-2xl border border-slate-100 dark:border-white/7 bg-slate-50 dark:bg-white/4 p-5 transition-all duration-200 hover:border-amber-500/40 dark:hover:border-amber-500/20 hover:bg-white dark:hover:bg-white/7">
+        <div className="flex items-start gap-3.5 rounded-2xl border border-appBorderSub dark:border-white/7 bg-appSurface dark:bg-white/4 p-5 transition-all duration-200 hover:border-amber-500/40 dark:hover:border-amber-500/20 hover:bg-appCard dark:hover:bg-appCard/7">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/12 text-xl">
                 {benefit.icon}
             </div>
             <div>
-                <strong className="mb-1 block text-sm font-bold text-slate-900 dark:text-white">
+                <strong className="mb-1 block text-sm font-bold text-appText dark:text-white">
                     {benefit.title}
                 </strong>
-                <span className="text-[13px] leading-[1.6] text-slate-500 dark:text-white/45">
+                <span className="text-[13px] leading-[1.6] text-appTextSec dark:text-white/45">
                     {benefit.description}
                 </span>
             </div>
@@ -63,7 +63,7 @@ function BenefitItem({ benefit }: { benefit: Benefit }) {
 
 export default function ServiceProviderBenefits() {
     return (
-        <section className="relative overflow-hidden bg-slate-50 dark:bg-slate-900 px-[5%] py-[100px]">
+        <section className="relative overflow-hidden bg-appSurface dark:bg-slate-900 px-[5%] py-[100px]">
             <div
                 aria-hidden
                 className="pointer-events-none absolute -top-[200px] -right-[100px] size-[600px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.06)_0%,transparent_65%)] dark:bg-[radial-gradient(circle,rgba(245,158,11,0.08)_0%,transparent_65%)]"
@@ -73,7 +73,7 @@ export default function ServiceProviderBenefits() {
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-3.5 py-1.5 text-[11px] font-bold tracking-[1.2px] text-amber-500 uppercase">
                     ✦ Pourquoi Ask-Service
                 </div>
-                <h2 className="text-[clamp(28px,3.5vw,42px)] leading-[1.12] font-extrabold tracking-[-0.8px] text-slate-900 dark:text-white">
+                <h2 className="text-[clamp(28px,3.5vw,42px)] leading-[1.12] font-extrabold tracking-[-0.8px] text-appText dark:text-white">
                     Tout ce dont vous avez besoin
                     <br />
                     pour développer votre activité

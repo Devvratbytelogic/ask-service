@@ -55,12 +55,12 @@ function ServiceCarouselCard({
             aria-hidden={duplicate || undefined}
             tabIndex={duplicate ? -1 : 0}
             onClick={onClick}
-            className="group flex shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border-[1.5px] border-slate-100 dark:border-white/8 bg-slate-50 dark:bg-appCard px-[18px] py-[11px] whitespace-nowrap text-slate-700 dark:text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor/25 hover:bg-blue-light dark:hover:bg-primaryColor/10 hover:text-primaryColor hover:shadow-[0_4px_12px_rgba(27,79,255,0.1)]"
+            className="group flex shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border-[1.5px] border-appBorderSub bg-appCard px-[18px] py-[11px] whitespace-nowrap text-appText transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor/25 hover:bg-blue-light dark:hover:bg-primaryColor/10 hover:text-primaryColor hover:shadow-[0_4px_12px_rgba(27,79,255,0.1)]"
         >
             <span className="text-xl">{item.emoji}</span>
             <span className="text-left">
                 <span className="block text-sm font-semibold">{item.name}</span>
-                <span className="block text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-primaryColor/70">
+                <span className="block text-[11px] text-appTextMuted group-hover:text-primaryColor/70">
                     {item.count}
                 </span>
             </span>
@@ -97,8 +97,8 @@ export default function ServicesCarouselSection() {
     }
 
     return (
-        <section className="overflow-hidden border-y border-slate-100 dark:border-white/6 bg-white dark:bg-appSurface py-8">
-            <p className="mb-[18px] text-center text-[11px] font-bold tracking-[1.5px] text-slate-300 dark:text-slate-600 uppercase">
+        <section className="overflow-hidden border-y border-appBorderSub dark:border-white/6 bg-appCard dark:bg-appSurface py-8">
+            <p className="mb-[18px] text-center text-[11px] font-bold tracking-[1.5px] text-slate-300 dark:text-appTextSec uppercase">
                 Nos domaines d&apos;intervention
             </p>
 

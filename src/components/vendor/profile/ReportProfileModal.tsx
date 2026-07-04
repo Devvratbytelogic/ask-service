@@ -75,7 +75,7 @@ export default function ReportProfileModal() {
                         setReason(key ?? null)
                     }}
                     classNames={{
-                        trigger: 'border border-borderDark bg-white shadow-none',
+                        trigger: 'border border-appBorder bg-appCard shadow-none',
                         value: 'text-placeHolderText data-[placeholder=true]:text-[#9CA3AF]',
                         label: 'hidden',
                     }}
@@ -98,7 +98,7 @@ export default function ReportProfileModal() {
                     onValueChange={setDetails}
                     minRows={4}
                     classNames={{
-                        inputWrapper: 'custom_input_design rounded-xl border border-[#E5E7EB] bg-white min-h-[100px]',
+                        inputWrapper: 'custom_input_design rounded-xl border border-appBorder bg-appCard min-h-[100px]',
                         input: 'text-fontBlack placeholder:text-[#9CA3AF]',
                     }}
                 />
@@ -108,7 +108,7 @@ export default function ReportProfileModal() {
             </div>
 
             {/* Important warning */}
-            <div className="mt-5 rounded-xl border border-[#E5C231] bg-[#FEF9E7] px-4 py-3">
+            <div className="mt-5 rounded-xl border border-amber/40 bg-amber-light px-4 py-3">
                 <p className="text-sm font-bold text-fontBlack">Important</p>
                 <p className="mt-1 text-sm text-fontBlack">
                     Les faux signalements peuvent entraîner des mesures à l&apos;encontre de votre compte. Ne signalez que des problèmes réels.
@@ -119,7 +119,7 @@ export default function ReportProfileModal() {
             <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
                 <Button
                     onPress={handleCancel}
-                    className="btn_radius min-w-25 border border-[#E5E7EB] bg-white text-fontBlack font-medium"
+                    className="btn_radius min-w-25 border border-appBorder bg-appCard text-fontBlack font-medium"
                 >
                     Annuler
                 </Button>

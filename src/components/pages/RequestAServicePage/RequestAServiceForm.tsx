@@ -631,7 +631,7 @@ export default function RequestAServiceForm({
                     ? 'w-2 bg-trust-green'
                     : i + 1 === uiStep
                       ? 'w-5 bg-primaryColor'
-                      : 'w-2 bg-slate-200 dark:bg-slate-700'
+                      : 'w-2 bg-appBorder dark:bg-slate-700'
                     }`}
                 />
               ))}
@@ -801,7 +801,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -927,7 +927,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-[22px] py-[13px] text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-[22px] py-[13px] text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -1077,7 +1077,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={goPrev}
                 disabled={isSubmitting}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
