@@ -8,6 +8,17 @@ import { getAndClearResetTokenForNextRequest, isUnauthorizedError, logoutAndRedi
 
 const mutex = new Mutex();
 
+const PROFILE_API_PATHS = ['/user/get-profile', '/vendor/get-profile'] as const;
+
+function getRequestUrl(args: string | FetchArgs): string {
+    return typeof args === 'string' ? args : (args.url ?? '');
+}
+
+function isProfileApiRequest(args: string | FetchArgs): boolean {
+    const url = getRequestUrl(args);
+    return PROFILE_API_PATHS.some((path) => url === path || url.endsWith(path));
+}
+
 interface IAPIResponse<T = unknown> {
     http_status_code: number;
     status: boolean;
@@ -60,7 +71,9 @@ const baseQueryWithAuth: BaseQueryFn<
                 return { data: responseData as IAPIResponse };
             }
             if (typeof window !== 'undefined' && isUnauthorizedError(message, status)) {
-                logoutAndRedirectToHome();
+                if (isProfileApiRequest(args)) {
+                    logoutAndRedirectToHome();
+                }
                 return {
                     error: {
                         status: "CUSTOM_ERROR",
