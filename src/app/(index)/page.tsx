@@ -9,7 +9,6 @@ import { getGlobalSettings } from '@/utils/getGlobalSettings'
 
 export default async function HomePage() {
   const globalSettings = await getGlobalSettings();
-  console.log('globalSettings', globalSettings);
 
   const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
   const activeRequestsCount = globalSettings?.data?.total_service_requests ?? 0
