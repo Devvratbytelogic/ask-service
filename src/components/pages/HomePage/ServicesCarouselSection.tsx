@@ -23,7 +23,7 @@ function ServiceCarouselCard({
             onClick={onClick}
             className="group flex shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border-[1.5px] border-appBorderSub bg-appCard px-[18px] py-[11px] whitespace-nowrap text-appText transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor/25 hover:bg-blue-light dark:hover:bg-primaryColor/10 hover:text-primaryColor hover:shadow-[0_4px_12px_rgba(27,79,255,0.1)]"
         >
-            <span className="border-1 border-appBorderSub size-10 shrink-0 overflow-hidden rounded-full">
+            <span className="border-1 border-appBorderSub size-10 p-1 shrink-0 overflow-hidden rounded-full">
                 <ImageComponent url={service.image} img_title={service.title} object_contain />
             </span>
             <span className="text-left">
