@@ -4,6 +4,7 @@ import ImageComponent from "@/components/library/ImageComponent"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import type { IAllServiceCategoriesDataEntity } from "@/types/services"
+import { useMemo } from "react"
 import { useDispatch } from "react-redux"
 
 function ServiceCarouselCard({
@@ -38,17 +39,24 @@ function ServiceCarouselCard({
     )
 }
 
-const MIN_SCROLL_ITEMS = 4
+const MIN_ITEMS_PER_HALF = 8
 
 export default function ServicesCarouselSection() {
     const dispatch = useDispatch()
     const { data } = useGetServiceCategoriesQuery()
     const services = data?.data ?? []
 
-    const shouldScroll = services.length >= MIN_SCROLL_ITEMS
-    const carouselItems = shouldScroll
-        ? [...services, ...services]
-        : services
+    const carouselItems = useMemo(() => {
+        if (services.length === 0) return []
+
+        const repeats = Math.max(1, Math.ceil(MIN_ITEMS_PER_HALF / services.length))
+        const half = Array.from({ length: repeats }, () => services).flat()
+
+        return [...half, ...half]
+    }, [services])
+
+    const shouldScroll = carouselItems.length > 0
+    const halfLength = carouselItems.length / 2
 
     const openRequestFlow = (service: IAllServiceCategoriesDataEntity) => {
         dispatch(openModal({
@@ -85,15 +93,15 @@ export default function ServicesCarouselSection() {
                 <div
                     className={
                         shouldScroll
-                            ? "flex w-max animate-services-scroll gap-2.5 px-2.5 py-1 hover:[animation-play-state:paused]"
-                            : "flex flex-wrap justify-center gap-2.5 px-2.5 py-1"
+                            ? "flex w-max animate-services-scroll gap-2.5 px-2.5 py-1 motion-reduce:animate-none hover:[animation-play-state:paused]"
+                            : undefined
                     }
                 >
                     {carouselItems.map((service, index) => (
                         <ServiceCarouselCard
                             key={`${service._id}-${index}`}
                             service={service}
-                            duplicate={shouldScroll && index >= services.length}
+                            duplicate={index >= halfLength}
                             onClick={() => openRequestFlow(service)}
                         />
                     ))}
