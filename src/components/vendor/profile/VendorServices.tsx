@@ -13,7 +13,11 @@ interface VendorServicesProps {
 
 export default function VendorServices({ profile }: VendorServicesProps) {
     const services = profile?.service
-        ? [{ key: profile.service.id, title: profile.service.title, description: profile.service.description || '' }]
+        ? (Array.isArray(profile.service) ? profile.service : [profile.service]).map((service) => ({
+            key: service.id ?? service._id,
+            title: service.title,
+            description: service.description || '',
+        }))
         : [];
     return (
         <div className="space-y-6">

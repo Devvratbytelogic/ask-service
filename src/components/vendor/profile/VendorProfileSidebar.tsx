@@ -17,7 +17,11 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
     const totalReviews = review?.totalReviews ?? 0
     const businessName = profile?.business_name || 'Securatim Security Services'
     const displayAddress = profile?.address || (profile?.city ? [profile.city, profile.postal_code].filter(Boolean).join(', ') : null) || '9-11 Avenue Michelet, Saint-Ouen-sur-Seine'
-    const serviceTitle = profile?.service?.title
+    const serviceTitles = profile?.service
+        ? (Array.isArray(profile.service) ? profile.service : [profile.service])
+            .map((service) => service.title)
+            .filter(Boolean)
+        : []
 
     return (
         <>
@@ -56,10 +60,12 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                 <div className="mb-4 w-full border-t border-appBorder pt-4 text-left">
                     <h2 className="mb-2 text-sm font-bold text-fontBlack">Services</h2>
                     <div className="flex flex-wrap gap-2">
-                        {serviceTitle ? (
-                            <Button className='btn_radius btn_bg_white'>
-                                {serviceTitle}
-                            </Button>
+                        {serviceTitles.length > 0 ? (
+                            serviceTitles.map((title) => (
+                                <Button key={title} className='btn_radius btn_bg_white'>
+                                    {title} df
+                                </Button>
+                            ))
                         ) : (
                             <Button className='btn_radius btn_bg_white'>
                                 Services de sécurité

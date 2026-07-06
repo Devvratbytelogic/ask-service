@@ -29,7 +29,7 @@ export interface IVendorDetailsAPIResponse {
     createdAt: string;
     updatedAt: string;
     __v: number;
-    service: Service;
+    service: Service | Service[];
     about_company: string;
     address: string;
     business_name: string;
