@@ -232,6 +232,10 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
     const isButtonDisabled = !canPurchaseLeads
     const leadDetailPath = generateLeadDetailRoutePath(lead._id)
+    const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+    const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+    const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
 
     const handleCardClick = () => {
         router.push(leadDetailPath)
@@ -333,12 +337,11 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             <div className="flex items-center gap-3.5 flex-wrap mb-3">
                 <MetaItem>
                     <LocationIconSVG />
-                    {resolvePostalOption(lead?.cityOrPostalCode ?? '')?.label ?? lead?.cityOrPostalCode ?? '—'}
+                    {postalCodeRaw ?? '—'}
                 </MetaItem>
                 <MetaItem>
                     <CalendarIconSVG />
-                    {lead?.desiredDate ? moment(lead.desiredDate).locale('fr').format('DD MMM YYYY') : '—'}
-                    {lead?.timeSlot ? ` · ${lead.timeSlot}` : ''}
+                    {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
                 </MetaItem>
             </div>
 

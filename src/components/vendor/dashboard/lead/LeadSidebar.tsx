@@ -110,6 +110,12 @@ export default function LeadSidebar({ selectedId }: Props) {
                             </span>
                         </div>
                         <div className="flex flex-col gap-[2px]">
+                            {lead?.reference_no && (
+                                <div className="flex items-center gap-1 text-[11px] text-appTextSec min-w-0">
+                                    <span className="text-appTextMuted shrink-0">Réf.:</span>
+                                    <span className="font-semibold text-appText truncate">{lead.reference_no}</span>
+                                </div>
+                            )}
                             <span className="text-[11px] font-medium text-appTextMuted">
                                 {lead?.additionalDetails ?? ''}
                             </span>
