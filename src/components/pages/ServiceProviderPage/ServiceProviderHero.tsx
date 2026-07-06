@@ -1,6 +1,8 @@
 "use client"
 import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
+import { getGlobalSettings } from "@/utils/getGlobalSettings"
 import Link from "next/link"
+import { formatVerifiedProfessionalsLabel } from "../HomePage/HeroSection"
 
 const TRUST_ITEMS = [
     "Sans abonnement",
@@ -27,7 +29,7 @@ const InfoIcon = () => (
     </svg>
 )
 
-export default function ServiceProviderHero() {
+export default async function ServiceProviderHero({ activeVendorsCount, activeRequestsCount, averageRating, averageResponseTime }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number, averageResponseTime: number }) {
     const scrollToHowItWorks = () => {
         document.getElementById("comment-ca-marche")?.scrollIntoView({ behavior: "smooth" })
     }
@@ -50,7 +52,7 @@ export default function ServiceProviderHero() {
             <div className="relative z-1 max-w-[760px]">
                 <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/12 px-4 py-1.5 text-xs font-semibold text-amber-500">
                     <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-amber-500" />
-                    +1 200 professionnels font confiance à Ask-Service
+                    {formatVerifiedProfessionalsLabel(activeVendorsCount)}
                 </div>
 
                 <h1 className="mb-5 animate-hero-fade-up text-[clamp(36px,5vw,64px)] leading-[1.05] font-extrabold tracking-[-2px] text-appText dark:text-white [animation-delay:0.1s]">
@@ -111,9 +113,9 @@ export default function ServiceProviderHero() {
                 <div className="relative z-1 mt-16 animate-hero-fade-up [animation-delay:0.5s]">
                     <div className="mx-auto flex max-w-[580px] flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-[20px] border border-appBorder dark:border-white/8 bg-appCard dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
                         {[
-                            { value: <>1<span className="text-amber-500">,</span>200<span className="text-amber-500">+</span></>, label: "Pros actifs" },
-                            { value: <>8<span className="text-amber-500">k+</span></>, label: "Leads traités" },
-                            { value: <>4<span className="text-amber-500">.</span>9<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
+                            { value: <>{activeVendorsCount}<span className="text-amber-500">+</span></>, label: "Pros actifs" },
+                            { value: <>{activeRequestsCount}<span className="text-amber-500">+</span></>, label: "Leads traités" },
+                            { value: <>{averageRating}<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
                         ].map((stat) => (
                             <div key={stat.label} className="flex-1 px-7 py-6 text-center">
                                 <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">

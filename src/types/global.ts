@@ -43,5 +43,6 @@ export interface IGlobalSettingsAPIResponseData {
   home_youtube_link?: string;
   total_active_vendors?: number;
   total_service_requests?: number;
-  satisfaction?: number;
+  average_customer_satisfaction_score?: number;
+  average_time_to_receive_a_quote?: number;
 }

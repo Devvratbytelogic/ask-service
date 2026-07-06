@@ -14,16 +14,13 @@ const TRUST_ITEMS = [
     "Pros vérifiés",
 ] as const
 
-function formatVerifiedProfessionalsLabel(count: number): string {
+export function formatVerifiedProfessionalsLabel(count: number): string {
     if (count <= 0) return "Professionnels vérifiés"
     const formatted = new Intl.NumberFormat("fr-FR").format(count)
     return `+${formatted} professionnels vérifiés`
 }
 
-export default async function HeroSection() {
-    const globalSettings = await getGlobalSettings()
-    const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
-
+export default async function HeroSection({ activeVendorsCount }: { activeVendorsCount: number }) {
     return (
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#FAFBFF] via-[#F0F4FF] to-[#FFF8ED] dark:from-slate-900 dark:via-[#0f172a] dark:to-slate-900 px-[4%] py-8 text-center sm:px-[5%] sm:py-12">
             <div

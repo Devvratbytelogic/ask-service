@@ -5,69 +5,71 @@ type Stat = {
     description: ReactNode
 }
 
-const STATS: Stat[] = [
-    {
-        value: (
-            <>
-                1<span className="text-primaryColor">,</span>200
-                <span className="text-primaryColor">+</span>
-            </>
-        ),
-        description: (
-            <>
-                Professionnels actifs
-                <br />
-                sur la plateforme
-            </>
-        ),
-    },
-    {
-        value: (
-            <>
-                8<span className="text-primaryColor">,</span>400
-                <span className="text-primaryColor">+</span>
-            </>
-        ),
-        description: (
-            <>
-                Demandes traitées
-                <br />
-                avec succès
-            </>
-        ),
-    },
-    {
-        value: (
-            <>
-                4<span className="text-primaryColor">.</span>9
-                <span className="text-primaryColor">/5</span>
-            </>
-        ),
-        description: (
-            <>
-                Note de satisfaction
-                <br />
-                client moyenne
-            </>
-        ),
-    },
-    {
-        value: (
-            <>
-                &lt;<span className="text-primaryColor">24</span>h
-            </>
-        ),
-        description: (
-            <>
-                Délai moyen pour
-                <br />
-                recevoir un devis
-            </>
-        ),
-    },
-]
 
-export default function StatsSection() {
+
+export default function StatsSection({ activeVendorsCount, activeRequestsCount, averageRating, averageResponseTime }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number, averageResponseTime: number }) {
+    const STATS: Stat[] = [
+        {
+            value: (
+                <>
+                    {activeVendorsCount}
+                    <span className="text-primaryColor">+</span>
+                </>
+            ),
+            description: (
+                <>
+                    Professionnels actifs
+                    <br />
+                    sur la plateforme
+                </>
+            ),
+        },
+        {
+            value: (
+                <>
+                    {activeRequestsCount}
+                    <span className="text-primaryColor">+</span>
+                </>
+            ),
+            description: (
+                <>
+                    Demandes traitées
+                    <br />
+                    avec succès
+                </>
+            ),
+        },
+        {
+            value: (
+                <>
+                    {averageRating}
+                    <span className="text-primaryColor">/5</span>
+                </>
+            ),
+            description: (
+                <>
+                    Note de satisfaction
+                    <br />
+                    client moyenne
+                </>
+            ),
+        },
+        {
+            value: (
+                <>
+                    {averageResponseTime}
+                    <span className="text-primaryColor">h</span>
+                </>
+            ),
+            description: (
+                <>
+                    Délai moyen pour
+                    <br />
+                    recevoir un devis
+                </>
+            ),
+        },
+    ]
     return (
         <section className="relative overflow-hidden bg-slate-900 px-[5%] py-20">
             <div

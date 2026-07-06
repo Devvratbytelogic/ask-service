@@ -5,14 +5,22 @@ import HowDoesItWorkSection from '@/components/pages/HomePage/HowDoesItWorkSecti
 import ServicesCarouselSection from '@/components/pages/HomePage/ServicesCarouselSection'
 import StatsSection from '@/components/pages/HomePage/StatsSection'
 import TestimonialsSection from '@/components/pages/HomePage/TestimonialsSection'
+import { getGlobalSettings } from '@/utils/getGlobalSettings'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const globalSettings = await getGlobalSettings();
+  console.log('globalSettings', globalSettings);
+
+  const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
+  const activeRequestsCount = globalSettings?.data?.total_service_requests ?? 0
+  const averageRating = globalSettings?.data?.average_customer_satisfaction_score ?? 0
+  const averageResponseTime = globalSettings?.data?.average_time_to_receive_a_quote ?? 0
   return (
     <>
-      <HeroSection />
+      <HeroSection activeVendorsCount={activeVendorsCount} />
       <ServicesCarouselSection />
       <HowDoesItWorkSection />
-      <StatsSection />
+      <StatsSection activeVendorsCount={activeVendorsCount} activeRequestsCount={activeRequestsCount} averageRating={averageRating} averageResponseTime={averageResponseTime} />
       <TestimonialsSection />
       <CtaSection />
     </>
