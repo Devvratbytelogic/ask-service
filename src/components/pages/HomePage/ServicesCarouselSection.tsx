@@ -1,51 +1,17 @@
 "use client"
 
+import ImageComponent from "@/components/library/ImageComponent"
 import { openModal } from "@/redux/slices/allModalSlice"
 import { useGetServiceCategoriesQuery } from "@/redux/rtkQueries/clientSideGetApis"
 import type { IAllServiceCategoriesDataEntity } from "@/types/services"
 import { useDispatch } from "react-redux"
 
-type ServiceItem = {
-    slug: string
-    emoji: string
-    name: string
-    count: string
-}
-
-const SERVICE_ITEMS: ServiceItem[] = [
-    { slug: "nettoyage", emoji: "🧹", name: "Nettoyage", count: "486 pros" },
-    { slug: "securite", emoji: "🔒", name: "Sécurité", count: "312 pros" },
-    { slug: "jardinage", emoji: "🌿", name: "Jardinage", count: "241 pros" },
-    { slug: "demenagement", emoji: "📦", name: "Déménagement", count: "178 pros" },
-    { slug: "plomberie", emoji: "🔧", name: "Plomberie", count: "203 pros" },
-    { slug: "electricite", emoji: "⚡", name: "Électricité", count: "156 pros" },
-    { slug: "peinture", emoji: "🎨", name: "Peinture", count: "134 pros" },
-    { slug: "informatique", emoji: "💻", name: "Informatique", count: "97 pros" },
-    { slug: "menuiserie", emoji: "🪵", name: "Menuiserie", count: "88 pros" },
-    { slug: "climatisation", emoji: "❄️", name: "Climatisation", count: "72 pros" },
-]
-
-const normalizeTitle = (value: string) =>
-    value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-
-const findMatchingService = (
-    services: IAllServiceCategoriesDataEntity[],
-    item: ServiceItem,
-) =>
-    services.find((service) => {
-        const title = normalizeTitle(service.title)
-        const slug = normalizeTitle(item.slug)
-        const name = normalizeTitle(item.name)
-
-        return title.includes(slug) || title.includes(name) || name.includes(title)
-    })
-
 function ServiceCarouselCard({
-    item,
+    service,
     duplicate = false,
     onClick,
 }: {
-    item: ServiceItem
+    service: IAllServiceCategoriesDataEntity
     duplicate?: boolean
     onClick: () => void
 }) {
@@ -57,41 +23,41 @@ function ServiceCarouselCard({
             onClick={onClick}
             className="group flex shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border-[1.5px] border-appBorderSub bg-appCard px-[18px] py-[11px] whitespace-nowrap text-appText transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor/25 hover:bg-blue-light dark:hover:bg-primaryColor/10 hover:text-primaryColor hover:shadow-[0_4px_12px_rgba(27,79,255,0.1)]"
         >
-            <span className="text-xl">{item.emoji}</span>
+            <span className="border-1 border-appBorderSub size-10 shrink-0 overflow-hidden rounded-full">
+                <ImageComponent url={service.image} img_title={service.title} object_contain />
+            </span>
             <span className="text-left">
-                <span className="block text-sm font-semibold">{item.name}</span>
-                <span className="block text-[11px] text-appTextMuted group-hover:text-primaryColor/70">
-                    {item.count}
-                </span>
+                <span className="block text-sm font-semibold">{service.title}</span>
+                {service.description && (
+                    <span className="block max-w-[180px] truncate text-[11px] text-appTextMuted group-hover:text-primaryColor/70">
+                        {service.description}
+                    </span>
+                )}
             </span>
         </button>
     )
 }
 
-const MIN_SCROLL_ITEMS = 5
+const MIN_SCROLL_ITEMS = 4
 
 export default function ServicesCarouselSection() {
     const dispatch = useDispatch()
     const { data } = useGetServiceCategoriesQuery()
     const services = data?.data ?? []
 
-    const shouldScroll = SERVICE_ITEMS.length >= MIN_SCROLL_ITEMS
+    const shouldScroll = services.length >= MIN_SCROLL_ITEMS
     const carouselItems = shouldScroll
-        ? [...SERVICE_ITEMS, ...SERVICE_ITEMS]
-        : SERVICE_ITEMS
+        ? [...services, ...services]
+        : services
 
-    const openRequestFlow = (item: ServiceItem) => {
-        const matchedService = findMatchingService(services, item)
-
+    const openRequestFlow = (service: IAllServiceCategoriesDataEntity) => {
         dispatch(openModal({
             componentName: "RequestServiceFlowIndex",
-            data: matchedService
-                ? {
-                    grandParentServiceId: matchedService._id ?? "",
-                    grandParentServiceName: matchedService.title ?? "",
-                    child_services: matchedService.child_categories ?? [],
-                }
-                : {},
+            data: {
+                grandParentServiceId: service._id ?? "",
+                grandParentServiceName: service.title ?? "",
+                child_services: service.child_categories ?? [],
+            },
             modalSize: "lg",
         }))
     }
@@ -123,12 +89,12 @@ export default function ServicesCarouselSection() {
                             : "flex flex-wrap justify-center gap-2.5 px-2.5 py-1"
                     }
                 >
-                    {carouselItems.map((item, index) => (
+                    {carouselItems.map((service, index) => (
                         <ServiceCarouselCard
-                            key={`${item.slug}-${index}`}
-                            item={item}
-                            duplicate={shouldScroll && index >= SERVICE_ITEMS.length}
-                            onClick={() => openRequestFlow(item)}
+                            key={`${service._id}-${index}`}
+                            service={service}
+                            duplicate={shouldScroll && index >= services.length}
+                            onClick={() => openRequestFlow(service)}
                         />
                     ))}
                 </div>
