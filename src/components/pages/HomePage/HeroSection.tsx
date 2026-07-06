@@ -1,5 +1,5 @@
-
 import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
+import { getGlobalSettings } from "@/utils/getGlobalSettings"
 import Link from "next/link"
 
 const CheckIcon = () => (
@@ -14,7 +14,16 @@ const TRUST_ITEMS = [
     "Pros vérifiés",
 ] as const
 
-export default function HeroSection() {
+function formatVerifiedProfessionalsLabel(count: number): string {
+    if (count <= 0) return "Professionnels vérifiés"
+    const formatted = new Intl.NumberFormat("fr-FR").format(count)
+    return `+${formatted} professionnels vérifiés`
+}
+
+export default async function HeroSection() {
+    const globalSettings = await getGlobalSettings()
+    const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
+
     return (
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#FAFBFF] via-[#F0F4FF] to-[#FFF8ED] dark:from-slate-900 dark:via-[#0f172a] dark:to-slate-900 px-[4%] py-8 text-center sm:px-[5%] sm:py-12">
             <div
@@ -29,7 +38,7 @@ export default function HeroSection() {
             <div className="relative z-1 w-full max-w-[720px]">
                 <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-full border-[1.5px] border-blue-light dark:border-primaryColor/30 bg-appCard px-3.5 py-1.5 text-[13px] font-semibold text-primaryColor shadow-[0_2px_8px_rgba(27,79,255,0.1)]">
                     <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-trust-green" />
-                    +1 200 professionnels vérifiés
+                    {formatVerifiedProfessionalsLabel(activeVendorsCount)}
                 </div>
 
                 <h1 className="mb-5 animate-hero-fade-up text-[clamp(38px,4.5vw,56px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText [animation-delay:0.1s]">
