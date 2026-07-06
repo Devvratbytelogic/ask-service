@@ -6,6 +6,10 @@ export function resolveImageSrc(url?: string | null): string {
 
   const trimmed = url.trim()
 
+  if (/^(blob:|data:)/i.test(trimmed)) {
+    return trimmed
+  }
+
   if (/^https?:\/\//i.test(trimmed)) {
     return trimmed
   }

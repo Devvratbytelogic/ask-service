@@ -27,7 +27,7 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
         <>
             <div className="rounded-2xl border border-appBorder p-6">
                 {/* Logo */}
-                <div className="mb-4 p-2 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full m-auto">
+                <div className="border border-gray-200 mb-4 p-2 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full m-auto">
                     {profile?.profile_pic ? (
                         <ImageComponent url={profile.profile_pic} img_title="profile_pic" object_cover={true} />
                     ) : (

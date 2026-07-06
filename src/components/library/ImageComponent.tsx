@@ -15,6 +15,7 @@ interface ImageComponentProps {
 export default function ImageComponent({ url, img_title, object_cover = true, object_contain = false }: ImageComponentProps) {
   const [hasError, setHasError] = useState(false);
   const resolvedUrl = useMemo(() => resolveImageSrc(url), [url]);
+  const isLocalPreview = /^blob:|^data:/i.test(resolvedUrl);
 
   useEffect(() => {
     setHasError(false);
@@ -46,7 +47,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
       height={1000}
       alt={img_title || 'title not found'}
       className={`w-full h-full ${objectFitClass}`}
-      // unoptimized={false}
+      unoptimized={isLocalPreview}
       onError={() => setHasError(true)}
     />
   );
