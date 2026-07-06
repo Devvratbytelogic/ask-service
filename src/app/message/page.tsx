@@ -7,8 +7,8 @@ export default function MessagePage() {
             <div
                 className="min-h-75 min-w-0 overflow-hidden"
                 style={{
-                    height: 'calc(100dvh - 6rem)',
-                    maxHeight: 'calc(100dvh - 6rem)',
+                    height: 'calc(100dvh - 4rem)',
+                    maxHeight: 'calc(100dvh - 4rem)',
                 }}
             >
                 <Suspense>

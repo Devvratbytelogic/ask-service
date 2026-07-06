@@ -8,6 +8,7 @@ import ImageComponent from '@/components/library/ImageComponent';
 interface MessagesChatBoxProps {
     selectedChatId: string | null;
     otherUserId?: string;
+    currentUserId?: string;
     onMessageSeen?: (messageId: string, chatId: string) => void;
 }
 
@@ -193,7 +194,7 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
         mediaUrl &&
         ((type === 'file' || type === 'document') || (type === 'media' && !isImageUrl(mediaUrl) && !isVideoUrl(mediaUrl)));
     if (showAsFile) {
-        const fileName = getFileNameFromUrl(mediaUrl, 'Document');  
+        const fileName = getFileNameFromUrl(mediaUrl, 'Document');
         return (
             <div className={`overflow-hidden ${bubbleClass}`}>
                 <a
@@ -225,10 +226,10 @@ function MessageContent({ msg, isYou }: { msg: ChatMessageRow; isYou: boolean })
     );
 }
 
-export default function MessagesChatBox({ selectedChatId, otherUserId, onMessageSeen }: MessagesChatBoxProps) {
+export default function MessagesChatBox({ selectedChatId, otherUserId, currentUserId: currentUserIdProp, onMessageSeen }: MessagesChatBoxProps) {
     const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
-    const currentUserId = getUserId();
+    const currentUserId = currentUserIdProp ?? getUserId();
     const scrollBottomRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const loadMoreScrollRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
@@ -349,7 +350,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                 onMessageSeen(msg._id, selectedChatId);
             }
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChatId, page1Messages.length]);
 
     if (!selectedChatId) {
@@ -417,6 +418,7 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                         </span>
                     </div>
                     {groupMsgs.map((msg) => {
+                        console.log('msg', msg);
                         const senderId = typeof msg.sender === 'object' && msg.sender?._id != null
                             ? String((msg.sender as { _id?: string })._id)
                             : null;
@@ -425,9 +427,9 @@ export default function MessagesChatBox({ selectedChatId, otherUserId, onMessage
                         const initial = getInitial(senderName);
                         const senderImage = typeof msg.sender === 'object' ? msg.sender?.profile_image : undefined;
                         const time = formatTime(msg.createdAt);
+                        console.log('isYou', isYou);
 
                         const isReadByOther = Boolean(otherUserId && isReadByUser(msg.readBy, otherUserId));
-
                         return isYou ? (
                             <div
                                 key={msg._id ?? Math.random()}

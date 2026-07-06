@@ -31,16 +31,18 @@ function getChatIdFromMessage(msg: SocketMessage): string | null {
   return typeof chat === 'string' ? chat : chat._id ?? null;
 }
 
-function normalizeToMessagesEntity(msg: SocketMessage, currentUserId: string | undefined): MessagesEntity {
-  const sender = msg.sender ?? {};
-  const senderId = sender._id ?? '';
+function normalizeToMessagesEntity(msg: SocketMessage, currentUserId?: string): MessagesEntity {
+  const sender = msg.sender;
+  const senderId = typeof sender === 'string'
+    ? sender
+    : (sender?._id ?? (sender as { id?: string })?.id ?? currentUserId ?? '');
   return {
     _id: msg._id ?? `socket-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     sender: {
       _id: senderId,
-      first_name: sender.first_name ?? '',
-      last_name: sender.last_name ?? '',
-      profile_pic: sender.profile_pic ?? undefined,
+      first_name: (typeof sender === 'object' && sender ? sender.first_name : '') ?? '',
+      last_name: (typeof sender === 'object' && sender ? sender.last_name : '') ?? '',
+      profile_pic: (typeof sender === 'object' && sender ? sender.profile_pic : undefined) ?? undefined,
       id: senderId,
     },
     content: msg.content ?? '',
@@ -256,7 +258,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
       const chatId = getChatIdFromMessage(message);
       if (!chatId) return;
 
-      const normalized = normalizeToMessagesEntity(message, userId);
+      const normalized = normalizeToMessagesEntity(message);
       const latest = normalizeToLatestMessage(message);
 
       if (isVendor) {

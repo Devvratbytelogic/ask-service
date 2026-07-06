@@ -86,19 +86,21 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const accentBorder = isVendor ? 'rgba(245,158,11,0.2)' : 'rgba(27,79,255,0.2)'
   const roleIconBg = isVendor ? 'var(--color-amber-icon-bg)' : 'var(--color-primary-icon-bg)'
 
+  const panelBackground =
+    'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)'
+
   return (
     <div
-      className="relative flex h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[900px]:hidden"
+      className="relative h-full min-h-screen max-[900px]:hidden"
       style={{
-        // Gradient uses slate-900 CSS var for the first stop; mid and dark stops are
-        // decorative-only values kept inline.
-        background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)',
-        position: 'sticky',
-        top: 0,
         width: 420,
         flexShrink: 0,
+        background: panelBackground,
       }}
     >
+      <div
+        className="sticky top-0 flex h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
       {/* Decorative radial blobs — subtle overlays, kept as inline rgba */}
       <div
         className="pointer-events-none absolute"
@@ -269,6 +271,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
           <br />
           <span className="mt-2 block">© 2026 Ask-Service</span>
         </p>
+      </div>
       </div>
     </div>
   )

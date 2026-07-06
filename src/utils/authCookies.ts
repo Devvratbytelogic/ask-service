@@ -9,6 +9,7 @@ export interface AuthResponseData {
     token?: string
     access_token?: string
     user?: { _id?: string; id?: string; [key: string]: unknown }
+    userData?: { _id?: string; id?: string; role?: string | { name?: string; id?: string; _id?: string }; [key: string]: unknown }
     /** Role can be a string (e.g. "Vendor") or object with name/id/_id */
     role?: string | { _id?: string; id?: string; name?: string; [key: string]: unknown }
 }
@@ -16,7 +17,6 @@ export interface AuthResponseData {
 /**
  * Store auth token, user id and role in cookies after successful login/verify.
  * Uses session cookies so the user is logged out when the browser is closed.
- * Handles common API shapes: token or access_token; user._id or user.id; role.id, role.name.
  */
 export function setAuthCookies(data: AuthResponseData): void {
     const token = data.token ?? data.access_token
@@ -24,12 +24,14 @@ export function setAuthCookies(data: AuthResponseData): void {
         Cookies.set('auth_token', token, SESSION_COOKIE_OPTIONS)
     }
 
-    const userId = data.user?._id ?? data.user?.id
+    // Registration returns userData; login returns user
+    const user = data.user ?? data.userData
+    const userId = user?._id ?? user?.id
     if (userId) {
         Cookies.set('userID', String(userId), SESSION_COOKIE_OPTIONS)
     }
 
-    const role = data.role
+    const role = data.role ?? data.userData?.role
     if (role != null && role !== '') {
         const roleValue = typeof role === 'string' ? role : (role.name ?? role.id ?? role._id)
         if (roleValue) {
