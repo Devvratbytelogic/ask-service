@@ -15,7 +15,7 @@ export default async function LoginRoute() {
   const vendorLogoDarkUrl = globalSettings?.data?.vendor_dark_logo ?? null
   const activeVendorsCount = globalSettings?.data?.total_active_vendors ?? 0
   const activeClientsCount = globalSettings?.data?.total_service_requests ?? 0
-  const averageRating = globalSettings?.data?.satisfaction ?? 0
+  const averageRating = globalSettings?.data?.average_customer_satisfaction_score ?? 0
 
   return (
     <LoginPage
