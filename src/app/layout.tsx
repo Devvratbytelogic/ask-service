@@ -9,6 +9,7 @@ import { API_BASE_URL } from "@/utils/config";
 import { IGlobalSettingsAPIResponse } from "@/types/global";
 import ConditionalChrome from "@/components/common/ConditionalChrome";
 import Header from "@/components/common/Header/Header";
+import Script from "next/script";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -67,10 +68,35 @@ export default async function RootLayout({
   const marketplaceName = globalSettings?.data?.marketplace_name;
 
   return (
-    <html lang="fr" suppressHydrationWarning translate="no">
+    <html lang="fr" suppressHydrationWarning>
       <body
         className={`${bricolageGrotesque.variable} font-sans antialiased`}
       >
+         <Script
+          id="google-translate-dom-patch"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                if (typeof Node === 'undefined' || !Node.prototype) return;
+
+                var removeChild = Node.prototype.removeChild;
+                Node.prototype.removeChild = function (child) {
+                  if (child.parentNode !== this) return child;
+                  return removeChild.apply(this, arguments);
+                };
+
+                var insertBefore = Node.prototype.insertBefore;
+                Node.prototype.insertBefore = function (newNode, referenceNode) {
+                  if (referenceNode && referenceNode.parentNode !== this) {
+                    return this.appendChild(newNode);
+                  }
+                  return insertBefore.apply(this, arguments);
+                };
+              })();
+            `,
+          }}
+        />
         <AppProviders>
           <div className="flex min-h-screen flex-col bg-appBg text-appText">
             <ConditionalChrome>
