@@ -20,7 +20,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
 async function getGlobalSettings(): Promise<IGlobalSettingsAPIResponse | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/user/get-global`, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
     if (!res.ok) return null;
     return res.json();
