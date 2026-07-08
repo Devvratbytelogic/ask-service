@@ -113,8 +113,8 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
             }}
           >
             {[
-              { val: activeVendorsCount, sup: 'k+', label: 'Pros actifs' },
-              { val: activeClientsCount, sup: 'k+', label: 'Demandes' },
+              { val: activeVendorsCount, sup: '+', label: 'Pros actifs' },
+              { val: activeClientsCount, sup: '+', label: 'Demandes' },
               { val: averageRating, sup: '', label: 'Satisfaction' },
             ].map((s, i) => (
               <div
