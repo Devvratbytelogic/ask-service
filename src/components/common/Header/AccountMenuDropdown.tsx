@@ -53,6 +53,7 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
     const initials = profile
         ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase() || '?'
         : '?'
+    const showSwitchToVendor = profile?.is_vendor === true;    
 
     const profilePath = isVendorView ? getVendorAccountRoutePath('profile') : getMyAccountRoutePath('profile')
     const settingsPath = isVendorView ? getVendorAccountRoutePath('security') : getMyAccountRoutePath('security')
@@ -116,17 +117,19 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                             <MenuIcon><HiOutlineCog6Tooth className="size-4" /></MenuIcon>
                             <span>Paramètres</span>
                         </Link>
+                        {showSwitchToVendor &&
+                            <>
+                                <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
-                        <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
-
-                        <button
-                            type="button"
-                            onClick={handleSwitchAccount}
-                            className={`${menuItemClassName} text-primaryColor hover:bg-primaryColor/10`}
-                        >
-                            <MenuIcon><DocumentIconSVG className="size-4" /></MenuIcon>
-                            <span>{isVendorView ? 'Passer en compte client' : 'Passer en compte prestataire'}</span>
-                        </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSwitchAccount}
+                                    className={`${menuItemClassName} text-primaryColor hover:bg-primaryColor/10`}
+                                >
+                                    <MenuIcon><DocumentIconSVG className="size-4" /></MenuIcon>
+                                    <span>{isVendorView ? 'Passer en compte client' : 'Passer en compte prestataire'}</span>
+                                </button>
+                            </>}
 
                         <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
