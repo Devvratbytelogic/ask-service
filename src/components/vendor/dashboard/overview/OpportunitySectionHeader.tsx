@@ -50,20 +50,11 @@ export default function OpportunitySectionHeader({
                 <p className="text-[18px] font-extrabold text-appText tracking-[-0.3px]">
                     Mes opportunités actives
                 </p>
-                <div className="flex gap-1.5 flex-wrap">
+                {/* <div className="flex gap-1.5 flex-wrap">
                     <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#FDBA74] bg-orange-500/10 border-orange-500/20">
-                        <LightningBoltIconSVG size={10} />
-                        {totalOpportunities} opportunités actives
+                        <LightningBoltIconSVG size={10} /> {totalOpportunities} opportunités actives
                     </span>
-                    {/* <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#93C5FD] bg-primaryColor/10 border-primaryColor/20">
-                        <ArrowSendIconSVG size={10} />
-                        6 devis envoyés
-                    </span>
-                    <span className="flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-1 rounded-full border text-[#6EE7B7] bg-trust-green/10 border-trust-green/20">
-                        <CheckmarkIconSVG />
-                        3 clients gagnés
-                    </span> */}
-                </div>
+                </div> */}
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
