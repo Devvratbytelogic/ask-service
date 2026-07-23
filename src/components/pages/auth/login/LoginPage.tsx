@@ -19,6 +19,7 @@ import OtpInput from '@/components/library/OtpInput'
 import {
   useLoginMutation,
   useResendEmailVerificationMutation,
+  useVendorLoginMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
 import { useRouter } from 'next/navigation'
@@ -115,10 +116,12 @@ export default function LoginPage({
   const [otpError, setOtpError] = useState('')
   const [resendCooldown, setResendCooldown] = useState(0)
   const [login, { isLoading }] = useLoginMutation()
+  const [vendorLogin, { isLoading: isVendorLoggingIn }] = useVendorLoginMutation()
   const [verifyEmail, { isLoading: isVerifyingOtp }] = useVerifyEmailMutation()
   const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
 
   const isVendor = role === 'vendor'
+  const isLoginLoading = isVendor ? isVendorLoggingIn : isLoading
   const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
@@ -225,11 +228,16 @@ export default function LoginPage({
     onSubmit: async (values) => {
       setServerError('')
       try {
-        const response = await login({
+        const payload = {
           identifier: values.email,
           password: values.password,
           ...(fcmToken && { fcm_token: fcmToken }),
-        }).unwrap() as LoginApiResponse
+        }
+        const response = (
+          isVendor
+            ? await vendorLogin(payload).unwrap()
+            : await login(payload).unwrap()
+        ) as LoginApiResponse
 
         if (isEmailVerificationRequired(response)) {
           startEmailVerificationFlow(values.email, response.message)
@@ -278,11 +286,11 @@ export default function LoginPage({
   }
 
   async function handleGoogleLogin() {
+    if (isVendor) return
     setIsGoogleLoading(true)
     setServerError('')
     try {
-      const roleType = isVendor ? 'Vendor' : 'User'
-      const res = await loginWithGoogle(roleType)
+      const res = await loginWithGoogle('User')
       const responseData = res?.data as AuthResponseData | undefined
       if (responseData?.token ?? responseData?.access_token) {
         setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
@@ -313,7 +321,7 @@ export default function LoginPage({
       {/* ─── Right panel ─── */}
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />
-        <div className="w-full max-w-[440px]">
+        <div className="w-full max-w-110">
           <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Header */}
@@ -325,10 +333,10 @@ export default function LoginPage({
           </div>
 
           {/* Role switcher */}
-          <div className="mb-6 flex gap-1.5 rounded-[12px] bg-appElevated p-1">
+          <div className="mb-6 flex gap-1.5 rounded-xl bg-appElevated p-1">
             {([
-              { id: 'customer' as Role, emoji: '🔍', label: 'Client' },
-              { id: 'vendor' as Role, emoji: '💼', label: 'Prestataire' },
+              { id: 'customer' as Role, label: 'Client' },
+              { id: 'vendor' as Role, label: 'Prestataire' },
             ] as const).map((tab) => (
               <button
                 key={tab.id}
@@ -343,7 +351,7 @@ export default function LoginPage({
                   boxShadow: role === tab.id ? '0 1px 4px rgba(0,0,0,0.08)' : undefined,
                 }}
               >
-                {tab.emoji} {tab.label}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -430,20 +438,10 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isVerifyingOtp ? (
-                    <>
-                      <span
-                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-                        style={{ opacity: 0.6 }}
-                      />
-                      Vérification…
-                    </>
-                  ) : (
-                    <>
-                      Vérifier et se connecter
-                      <FiArrowRight size={15} />
-                    </>
-                  )}
+                  {isVerifyingOtp ? 'Vérification…' : <>
+                    Vérifier et se connecter
+                    <FiArrowRight size={15} />
+                  </>}
                 </button>
               </div>
             ) : (
@@ -571,7 +569,7 @@ export default function LoginPage({
                   >
                     <div
                       aria-hidden
-                      className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
+                      className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
                       style={{
                         borderColor: values.rememberMe ? accentColor : 'var(--color-slate-300)',
                         background: values.rememberMe ? accentColor : 'transparent',
@@ -594,7 +592,7 @@ export default function LoginPage({
                 {/* ─── Submit button ─── */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoginLoading}
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background: accentColor,
@@ -603,44 +601,38 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-                        style={{ opacity: 0.6 }}
-                      />
-                      Connexion…
-                    </>
-                  ) : (
-                    <>
-                      Se connecter
-                      <FiArrowRight size={15} />
-                    </>
-                  )}
+                  {isLoginLoading ? 'Connexion…' : <>
+                    Se connecter
+                    <FiArrowRight size={15} />
+                  </>}
                 </button>
 
-                {/* ─── Divider ─── */}
-                <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
-                  <div className="h-px flex-1 bg-appBorder" />
-                  ou continuer avec
-                  <div className="h-px flex-1 bg-appBorder" />
-                </div>
+                {!isVendor && (
+                  <>
+                    {/* ─── Divider ─── */}
+                    <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
+                      <div className="h-px flex-1 bg-appBorder" />
+                      ou continuer avec
+                      <div className="h-px flex-1 bg-appBorder" />
+                    </div>
 
-                {/* ─── Google button ─── */}
-                <button
-                  type="button"
-                  disabled={isGoogleLoading || isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{ fontFamily: 'inherit' }}
-                  onClick={handleGoogleLogin}
-                >
-                  {isGoogleLoading ? (
-                    <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
-                  ) : (
-                    <GoogleIcon />
-                  )}
-                  {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
-                </button>
+                    {/* ─── Google button (customer only) ─── */}
+                    <button
+                      type="button"
+                      disabled={isGoogleLoading || isLoginLoading}
+                      className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ fontFamily: 'inherit' }}
+                      onClick={handleGoogleLogin}
+                    >
+                      {isGoogleLoading ? (
+                        <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
+                      ) : (
+                        <GoogleIcon />
+                      )}
+                      {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
+                    </button>
+                  </>
+                )}
               </>
             )}
           </form>

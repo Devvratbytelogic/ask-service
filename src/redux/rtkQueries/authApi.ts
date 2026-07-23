@@ -18,6 +18,13 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
                 body: formData,
             }),
         }),
+        vendorLogin: builder.mutation({
+            query: (formData) => ({
+                url: `/vendor/login`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
 
         loginPhoneEmail: builder.mutation({
             query: (formData) => ({
@@ -137,6 +144,7 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
 
 export const {
     useLoginMutation,
+    useVendorLoginMutation,
     useLoginPhoneEmailMutation,
     useVerifyPhoneMutation,
     useVerifyEmailMutation,

@@ -460,7 +460,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
 
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />
-        <div className="w-full max-w-[480px]">
+        <div className="w-full max-w-120">
           <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
 
           {/* Already have account */}
@@ -494,7 +494,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                 {isSuccess && (
                   <div className="animate-inscription-fade-up py-2 text-center">
                     <div
-                      className="mx-auto mb-[18px] flex animate-inscription-pop-in items-center justify-center rounded-full text-[28px]"
+                      className="mx-auto mb-4.5 flex animate-inscription-pop-in items-center justify-center rounded-full text-[28px]"
                       style={{
                         width: 64,
                         height: 64,
@@ -753,7 +753,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                             <input
                               ref={tagsInputRef}
                               type="text"
-                              className="min-w-[100px] flex-1 border-none bg-transparent text-[13px] text-appText outline-none placeholder:text-appTextMuted"
+                              className="min-w-25 flex-1 border-none bg-transparent text-[13px] text-appText outline-none placeholder:text-appTextMuted"
                               placeholder={values.zones.length === 0 ? 'Ex : Paris, Lyon…' : 'Ajouter une ville…'}
                               value={zoneInput}
                               onChange={(e) => setZoneInput(e.target.value)}
@@ -846,7 +846,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         </button>
                       </div>
                       <div className="mt-1.5">
-                        <div className="mb-1 h-[3px] overflow-hidden rounded-sm bg-appBorder">
+                        <div className="mb-1 h-0.75 overflow-hidden rounded-sm bg-appBorder">
                           <div
                             className="h-full rounded-sm transition-all duration-300"
                             style={{ width: pwdStrength.width, background: pwdStrength.color }}
@@ -911,7 +911,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       >
                         <div
                           aria-hidden
-                          className="mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
+                          className="mt-px flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all"
                           style={{
                             borderColor: values.termsAccepted ? 'var(--color-primaryColor)' : 'var(--color-slate-300)',
                             background: values.termsAccepted ? 'var(--color-primaryColor)' : 'transparent',
