@@ -1,7 +1,7 @@
 "use client"
 
 import { openModal } from "@/redux/slices/allModalSlice"
-import { getLoginPageRoutePath, getRegistrationPageRoutePath, getRequestAServiceRoutePath } from "@/routes/routes"
+import { getLoginPageRoutePath, getRequestAServiceRoutePath } from "@/routes/routes"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
 
@@ -151,7 +151,7 @@ export default function HowDoesItWorkSection() {
                         <p className="text-[12px] text-appTextMuted">
                             Déjà un compte ?{' '}
                             <Link
-                                href={getLoginPageRoutePath()}
+                                href={getLoginPageRoutePath({ role: 'customer' })}
                                 className="font-semibold text-primaryColor no-underline hover:underline"
                             >
                                 Se connecter →
@@ -173,7 +173,7 @@ export default function HowDoesItWorkSection() {
 
                     <div className="mt-8 flex flex-col gap-2">
                         <Link
-                            href={getLoginPageRoutePath()}
+                            href={getLoginPageRoutePath({ role: 'vendor' })}
                             className="inline-flex w-fit cursor-pointer items-center rounded-2xl bg-amber-500 px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(245,158,11,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)] no-underline"
                         >
                             Voir les demandes →
@@ -181,7 +181,7 @@ export default function HowDoesItWorkSection() {
                         <p className="text-[12px] text-white/40">
                             Déjà un compte ?{' '}
                             <Link
-                                href={getLoginPageRoutePath()}
+                                href={getLoginPageRoutePath({ role: 'vendor' })}
                                 className="font-semibold text-white/60 no-underline transition-colors hover:text-white/90"
                             >
                                 Se connecter →

@@ -46,7 +46,7 @@ export default function ServiceProviderCtaSection() {
                 </p>
 
                 <Link
-                    href={`${getRegistrationPageRoutePath()}?role=vendor`}
+                    href={getRegistrationPageRoutePath({ role: 'vendor' })}
                     className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-9 py-4 text-base font-bold text-appText shadow-[0_4px_20px_rgba(245,158,11,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_28px_rgba(245,158,11,0.4)] no-underline"
                 >
                     Créer mon compte gratuitement
@@ -55,7 +55,7 @@ export default function ServiceProviderCtaSection() {
                 <p className="mt-4 text-[13px] text-appTextMuted dark:text-white/35">
                     Déjà un compte ?{' '}
                     <Link
-                        href={getLoginPageRoutePath()}
+                        href={getLoginPageRoutePath({ role: 'vendor' })}
                         className="font-semibold text-appTextSec dark:text-white/55 no-underline transition-colors hover:text-appText dark:hover:text-white/80"
                     >
                         Se connecter →

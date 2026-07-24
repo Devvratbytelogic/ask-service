@@ -98,7 +98,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                             startContent={<ArrowRightIconSVG />}
                             className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-[38px] min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
                             as={Link}
-                            href={getRegistrationPageRoutePath()}
+                            href={getRegistrationPageRoutePath({ role: 'vendor' })}
                         >
                             Devenir Prestataire
                         </Button>}
@@ -202,7 +202,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                     </Link>
                                     {!isServiceProviderPage && (
                                         <Link
-                                            href={getRegistrationPageRoutePath()}
+                                            href={getRegistrationPageRoutePath({ role: 'vendor' })}
                                             onClick={closeMenu}
                                             className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-primaryColor hover:bg-primaryColor/10"
                                         >

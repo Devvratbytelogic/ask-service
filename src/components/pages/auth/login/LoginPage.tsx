@@ -10,6 +10,7 @@ import { yupRequiredEmail } from '@/utils/validation'
 import {
   getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
+  getLoginPageRoutePath,
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
@@ -22,7 +23,7 @@ import {
   useVendorLoginMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData } from '@/utils/authCookies'
 import { useDispatch } from 'react-redux'
@@ -103,6 +104,7 @@ export default function LoginPage({
   averageRating,
 }: LoginPageProps = {}) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const fcmToken = getFcmTokenFromCookie()
   const [role, setRole] = useState<Role>('customer')
@@ -129,6 +131,14 @@ export default function LoginPage({
   const accentDim = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
   const accentBorder = isVendor ? 'rgba(245,158,11,0.25)' : 'rgba(27,79,255,0.25)'
   const activeLogoDarkUrl = isVendor ? vendorLogoDarkUrl : logoDarkUrl
+
+  // ── Auto-select role from URL query param ─────────────────────────────────
+  useEffect(() => {
+    const roleParam = searchParams.get('role')
+    if (roleParam === 'vendor' || roleParam === 'customer') {
+      setRole(roleParam)
+    }
+  }, [searchParams])
 
   function triggerShake() {
     setShake(true)
@@ -283,6 +293,7 @@ export default function LoginPage({
     setServerError('')
     formik.setErrors({})
     backToLoginForm()
+    router.replace(getLoginPageRoutePath({ role: r }), { scroll: false })
   }
 
   async function handleGoogleLogin() {
@@ -641,7 +652,7 @@ export default function LoginPage({
           <p className="mt-6 text-center text-[13px] text-appTextSec">
             Pas encore de compte ?{' '}
             <Link
-              href={getRegistrationPageRoutePath()}
+              href={getRegistrationPageRoutePath({ role })}
               className="font-semibold no-underline hover:underline"
               style={{ color: accentColor }}
             >

@@ -35,7 +35,7 @@ export function CategoryOptionImage({ label, image }: { label: string; image: st
     )
 }
 
-export function CategorySelectOption(props: OptionProps<CategoryOption, true, CategoryGroup>) {
+export function CategorySelectOption(props: OptionProps<CategoryOption, boolean, CategoryGroup>) {
     const { data, isSelected, isFocused } = props
 
     return (

@@ -65,6 +65,11 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   const router = useRouter()
   const fcmToken = getFcmTokenFromCookie()
 
+  const roleParam = searchParams.get('role')
+  const lockedRole =
+    roleParam === 'vendor' || roleParam === 'customer' ? roleParam : null
+  const isRoleLocked = lockedRole !== null
+
   const {
     data: servicesGroupedResponse,
     isLoading: isServicesLoading,
@@ -101,7 +106,8 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   const [uploadVendorDocuments, { isLoading: isUploadingDocs }] = useUploadVendorDocumentsMutation()
 
   // ── UI-only state ─────────────────────────────────────────────────────────
-  const [step, setStep] = useState<Step>(1)
+  // Skip profile choice when role is provided via URL (e.g. "Devenir Prestataire")
+  const [step, setStep] = useState<Step>(isRoleLocked ? 2 : 1)
   const [isSuccess, setIsSuccess] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
   const [shakeStep, setShakeStep] = useState<Step | null>(null)
@@ -122,7 +128,10 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
 
   // ── Formik ────────────────────────────────────────────────────────────────
   const formik = useFormik({
-    initialValues: registrationInitialValues,
+    initialValues: {
+      ...registrationInitialValues,
+      role: (lockedRole ?? '') as 'customer' | 'vendor' | '',
+    },
     validationSchema: registrationSchema,
     validateOnChange: true,
     validateOnBlur: true,
@@ -148,14 +157,6 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
     { skip: !isVendor || step < 5 }
   )
   const docFields = Array.isArray(docsResponse?.data?.documents) ? docsResponse.data.documents : []
-
-  // ── Auto-select role from URL query param ─────────────────────────────────
-  useEffect(() => {
-    const roleParam = searchParams.get('role')
-    if (roleParam === 'vendor' || roleParam === 'customer') {
-      setFieldValue('role', roleParam)
-    }
-  }, [])
 
   // ── Resend countdown ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -456,7 +457,10 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={values.role || null} logoUrl={activeLogoDarkUrl} />
+      <LeftPanel
+        role={values.role === 'vendor' || values.role === 'customer' ? values.role : null}
+        logoUrl={activeLogoDarkUrl}
+      />
 
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />
@@ -466,7 +470,14 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
           {/* Already have account */}
           <div className="mb-5 text-center text-[13px] text-appTextSec min-[901px]:mb-7">
             Déjà un compte ?{' '}
-            <Link href={getLoginPageRoutePath()} className="font-semibold text-primaryColor no-underline hover:underline">
+            <Link
+              href={getLoginPageRoutePath(
+                values.role === 'vendor' || values.role === 'customer'
+                  ? { role: values.role }
+                  : undefined,
+              )}
+              className="font-semibold text-primaryColor no-underline hover:underline"
+            >
               Se connecter
             </Link>
           </div>
@@ -678,27 +689,29 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         </Field>
 
                         <Field
-                          label="Catégorie de service"
+                          label="Domaine d'activité"
                           required
                           requiredColor="var(--color-amber)"
                           errorMessage={touched.serviceCategory && typeof errors.serviceCategory === 'string' && errors.serviceCategory}
                         >
-                          <ReactSelect<CategoryOption, true, CategoryGroup>
-                            isMulti
+                          <ReactSelect<CategoryOption, false, CategoryGroup>
                             instanceId="serviceCategory"
                             name="serviceCategory"
                             options={serviceOptionGroups}
-                            value={serviceOptions.filter((opt) =>
-                              values.serviceCategory.includes(opt.value)
-                            )}
+                            value={
+                              serviceOptions.find((opt) =>
+                                values.serviceCategory.includes(opt.value),
+                              ) ?? null
+                            }
                             onChange={(selected) => {
                               setFieldValue(
                                 'serviceCategory',
-                                selected ? selected.map((opt) => opt.value) : [],
+                                selected ? [selected.value] : [],
                               )
                             }}
                             onBlur={() => setFieldTouched('serviceCategory', true)}
-                            placeholder="— Choisir des catégories —"
+                            placeholder="— Choisir une catégorie —"
+                            isClearable
                             isLoading={isServicesLoading}
                             loadingMessage={() => 'Chargement…'}
                             noOptionsMessage={() => isServicesError ? 'Erreur de chargement' : 'Aucune option'}
@@ -783,15 +796,17 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     )}
 
                     <div className="mt-6 flex gap-2.5">
-                      <button
-                        type="button"
-                        onClick={() => goStep(1)}
-                        className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5"
-                        style={{ fontFamily: 'inherit' }}
-                      >
-                        <FiArrowLeft size={13} strokeWidth={2.5} />
-                        Retour
-                      </button>
+                      {!isRoleLocked && (
+                        <button
+                          type="button"
+                          onClick={() => goStep(1)}
+                          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard px-3 py-3 text-[14px] font-medium text-appText transition-all hover:border-appBorder hover:bg-appSurface min-[901px]:px-5"
+                          style={{ fontFamily: 'inherit' }}
+                        >
+                          <FiArrowLeft size={13} strokeWidth={2.5} />
+                          Retour
+                        </button>
+                      )}
                       <button
                         type="submit"
                         className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3 text-[14px] font-semibold transition-all hover:-translate-y-px"

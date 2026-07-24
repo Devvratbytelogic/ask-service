@@ -105,12 +105,14 @@ export function getCookiesRoutePath() {
     return `/cookies`;
 }
 
-export function getRegistrationPageRoutePath() {
-    return `/auth/registration`;
+export function getRegistrationPageRoutePath(params?: { role?: 'vendor' | 'customer' }) {
+    const role = params?.role
+    return role ? `/auth/registration?role=${role}` : `/auth/registration`;
 }
 
-export function getLoginPageRoutePath() {
-    return `/auth/login`;
+export function getLoginPageRoutePath(params?: { role?: 'vendor' | 'customer' }) {
+    const role = params?.role
+    return role ? `/auth/login?role=${role}` : `/auth/login`;
 }
 
 export function getForgotPasswordRoutePath() {

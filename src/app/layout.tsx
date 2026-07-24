@@ -5,11 +5,10 @@ import "../styles/globals.css";
 import Footer from "@/components/common/Footer/Footer";
 import CookieBanner from "@/components/common/CookieBanner/CookieBanner";
 import AppProviders from "@/providers/AppProvider";
-import { API_BASE_URL } from "@/utils/config";
-import { IGlobalSettingsAPIResponse } from "@/types/global";
 import ConditionalChrome from "@/components/common/ConditionalChrome";
 import Header from "@/components/common/Header/Header";
 import Script from "next/script";
+import { getGlobalSettings } from "@/utils/getGlobalSettings";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -17,17 +16,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
   variable: "--font-sans",
 });
 
-async function getGlobalSettings(): Promise<IGlobalSettingsAPIResponse | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/user/get-global`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const globalSettings = await getGlobalSettings();
@@ -68,30 +57,57 @@ export default async function RootLayout({
   const marketplaceName = globalSettings?.data?.marketplace_name;
 
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" translate="no" suppressHydrationWarning>
       <body
         className={`${bricolageGrotesque.variable} font-sans antialiased`}
       >
-         <Script
+        {/*
+          Google Translate / Chrome Translate mutates text nodes and breaks React DOM ops.
+          Patch before hydration so removeChild/insertBefore/replaceChild don't crash the app.
+        */}
+        <Script
           id="google-translate-dom-patch"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function () {
                 if (typeof Node === 'undefined' || !Node.prototype) return;
+                if (Node.prototype.__askServiceTranslatePatched) return;
+                Node.prototype.__askServiceTranslatePatched = true;
 
                 var removeChild = Node.prototype.removeChild;
                 Node.prototype.removeChild = function (child) {
-                  if (child.parentNode !== this) return child;
+                  if (child.parentNode !== this) {
+                    if (child.parentNode) {
+                      try { return removeChild.call(child.parentNode, child); } catch (e) {}
+                    }
+                    return child;
+                  }
                   return removeChild.apply(this, arguments);
                 };
 
                 var insertBefore = Node.prototype.insertBefore;
                 Node.prototype.insertBefore = function (newNode, referenceNode) {
                   if (referenceNode && referenceNode.parentNode !== this) {
+                    if (referenceNode.parentNode) {
+                      try {
+                        return insertBefore.call(referenceNode.parentNode, newNode, referenceNode);
+                      } catch (e) {}
+                    }
                     return this.appendChild(newNode);
                   }
                   return insertBefore.apply(this, arguments);
+                };
+
+                var replaceChild = Node.prototype.replaceChild;
+                Node.prototype.replaceChild = function (newChild, oldChild) {
+                  if (oldChild.parentNode !== this) {
+                    if (oldChild.parentNode) {
+                      try { return replaceChild.call(oldChild.parentNode, newChild, oldChild); } catch (e) {}
+                    }
+                    return oldChild;
+                  }
+                  return replaceChild.apply(this, arguments);
                 };
               })();
             `,
@@ -108,7 +124,7 @@ export default async function RootLayout({
             </ConditionalChrome>
             <CookieBanner />
           </div>
-        </AppProviders >
+        </AppProviders>
       </body>
     </html>
   );

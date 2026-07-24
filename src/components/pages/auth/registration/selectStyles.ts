@@ -4,7 +4,7 @@ export type CategoryOption = { value: string; label: string; image: string | nul
 
 export type CategoryGroup = GroupBase<CategoryOption>
 
-export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOption, true, CategoryGroup> {
+export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOption, boolean, CategoryGroup> {
   return {
     control: (base, state) => ({
       ...base,

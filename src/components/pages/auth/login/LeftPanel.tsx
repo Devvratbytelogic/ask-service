@@ -136,7 +136,7 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', lineHeight: 1.6 }}>
           Pas encore de compte ?{' '}
           <Link
-            href={getRegistrationPageRoutePath()}
+            href={getRegistrationPageRoutePath({ role })}
             style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
           >
             Créer un compte gratuitement →

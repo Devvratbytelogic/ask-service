@@ -10,7 +10,7 @@ import { IGlobalSettingsAPIResponse } from '@/types/global'
 export async function getGlobalSettings(): Promise<IGlobalSettingsAPIResponse | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/user/get-global`, {
-      cache: 'no-store',
+      next: { revalidate: 30 },
     })
     if (!res.ok) return null
     return res.json()

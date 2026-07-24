@@ -95,7 +95,7 @@ export const registrationSchema = Yup.object({
     siret: Yup.string().notRequired(),
     serviceCategory: Yup.array().when('role', {
         is: 'vendor',
-        then: (s) => s.min(1, 'Veuillez choisir au moins une catégorie'),
+        then: (s) => s.min(1, 'Veuillez choisir un domaine d\'activité'),
         otherwise: (s) => s.notRequired(),
     }),
     zones: Yup.array().when('role', {

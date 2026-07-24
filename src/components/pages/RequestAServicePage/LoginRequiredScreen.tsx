@@ -38,7 +38,7 @@ export default function LoginRequiredScreen({ loginType, onBack }: LoginRequired
       </p>
 
       <Link
-        href={getLoginPageRoutePath()}
+        href={getLoginPageRoutePath({ role: 'customer' })}
         className="mb-3 flex w-full items-center justify-center gap-2 rounded-[12px] py-3.5 text-[15px] font-semibold text-white no-underline transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)]"
         style={{ background: 'var(--color-primaryColor)' }}
       >
