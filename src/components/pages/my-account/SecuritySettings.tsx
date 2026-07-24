@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { addToast, Button, Input, Modal, ModalBody, ModalContent } from '@heroui/react'
+import { addToast, Button, Input, Modal, ModalBody, ModalContent, Textarea, toast } from '@heroui/react'
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
 import { DeleteIconSVG, LockPrimaryColorSVG } from '@/components/library/AllSVG'
 import { useFormik } from 'formik'
@@ -42,21 +42,42 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
     const isChanging = variant === 'vendor' ? isChangingVendor : isChangingUser
     const isDeleting = variant === 'vendor' ? isDeletingVendor : isDeletingUser
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [deleteReason, setDeleteReason] = useState('')
+    const [deleteReasonError, setDeleteReasonError] = useState<string | null>(null)
 
-    const handleDeleteAccountClick = () => setShowDeleteConfirm(true)
+    const handleDeleteAccountClick = () => {
+        setDeleteReason('')
+        setDeleteReasonError(null)
+        setShowDeleteConfirm(true)
+    }
+
+    const handleDeleteModalOpenChange = (open: boolean) => {
+        setShowDeleteConfirm(open)
+        if (!open) {
+            setDeleteReason('')
+            setDeleteReasonError(null)
+        }
+    }
 
     const handleDeleteAccountConfirm = async () => {
-        setShowDeleteConfirm(false)
+        const reason = deleteReason.trim()
+        if (!reason) {
+            setDeleteReasonError('Ce champ est obligatoire')
+            return
+        }
+
         try {
+            const payload = { reason }
             if (variant === 'vendor') {
-                await deleteVendorAccount({}).unwrap()
+                await deleteVendorAccount(payload).unwrap()
             } else {
-                await deleteUserAccount({}).unwrap()
+                await deleteUserAccount(payload).unwrap()
             }
+            setShowDeleteConfirm(false)
             addToast({ title: 'Compte supprimé avec succès', color: 'success', timeout: 2000 })
             clearAllCookiesAndReload(getHomeRoutePath())
-        } catch {
-            // Error is handled by RTK Query / toast
+        } catch(error) {
+           addToast({ title: (error as { data?: { message?: string } })?.data?.message ?? 'Une erreur est survenue', color: 'danger', timeout: 2000 })
         }
     }
 
@@ -223,7 +244,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 <div className="rounded-xl border border-appBorder p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-start gap-4">
-                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15">
+                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15 text-danger">
                                 <DeleteIconSVG />
                             </div>
                             <div>
@@ -248,7 +269,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
             {/* Delete account confirmation modal */}
             <Modal
                 isOpen={showDeleteConfirm}
-                onOpenChange={setShowDeleteConfirm}
+                onOpenChange={handleDeleteModalOpenChange}
                 placement="center"
                 size="md"
                 classNames={{ base: 'rounded-3xl' }}
@@ -256,7 +277,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                 <ModalContent>
                     <ModalBody className="bg-appCard px-6 py-6 rounded-3xl">
                         <div className="flex items-start gap-4">
-                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15">
+                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/15 text-danger">
                                 <DeleteIconSVG />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -264,14 +285,40 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                     Supprimer le compte ?
                                 </h3>
                                 <p className="mt-2 text-sm text-darkSilver">
-                                    Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et toutes vos données seront perdues.
+                                    Votre compte sera temporairement désactivé pendant 15 jours. Vous pourrez le réactiver à tout moment durant cette période.
+                                </p>
+                                <p className="mt-2 text-sm text-darkSilver">
+                                    Après 15 jours sans connexion ni activité, votre compte sera définitivement supprimé.
                                 </p>
                             </div>
                         </div>
+
+                        <div className="mt-5">
+                            <label htmlFor="delete-reason" className="mb-1.5 block text-sm font-medium text-fontBlack">
+                                Motif <span className="text-danger">*</span>
+                            </label>
+                            <Textarea
+                                id="delete-reason"
+                                name="deleteReason"
+                                value={deleteReason}
+                                onChange={(e) => {
+                                    setDeleteReason(e.target.value)
+                                    if (deleteReasonError) setDeleteReasonError(null)
+                                }}
+                                placeholder="Indiquez la raison de la suppression de votre compte"
+                                minRows={3}
+                                isInvalid={!!deleteReasonError}
+                                errorMessage={deleteReasonError}
+                                classNames={{
+                                    inputWrapper: 'account_input_design',
+                                }}
+                            />
+                        </div>
+
                         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
                             <Button
                                 className="btn_radius btn_bg_white"
-                                onPress={() => setShowDeleteConfirm(false)}
+                                onPress={() => handleDeleteModalOpenChange(false)}
                                 isDisabled={isDeleting}
                             >
                                 Annuler
@@ -281,7 +328,7 @@ export default function SecuritySettings({ variant = 'default' }: SecuritySettin
                                 onPress={handleDeleteAccountConfirm}
                                 isLoading={isDeleting}
                                 isDisabled={isDeleting}
-                                startContent={!isDeleting ? <span className="inline-flex text-white"><DeleteIconSVG /></span> : null}
+                                startContent={!isDeleting ? <DeleteIconSVG className="text-white" /> : null}
                             >
                                 Supprimer définitivement
                             </Button>

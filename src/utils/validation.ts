@@ -79,6 +79,18 @@ export const contactFormValidationSchema = Yup.object({
 })
 
 
+/** Yup field for required phone: digits and common phone punctuation only. */
+export const yupRequiredPhone = (requiredMessage = 'Ce champ est obligatoire') =>
+    Yup.string()
+        .trim()
+        .required(requiredMessage)
+        .matches(/^[+\d][\d\s\-().]*$/, 'Numéro de téléphone invalide')
+        .test(
+            'phone-min-digits',
+            'Numéro de téléphone invalide',
+            (value) => ((value ?? '').replace(/\D/g, '').length >= 8),
+        )
+
 export const registrationSchema = Yup.object({
     role: Yup.string()
         .oneOf(['customer', 'vendor'], 'Veuillez choisir votre profil')
@@ -86,7 +98,7 @@ export const registrationSchema = Yup.object({
     prenom: Yup.string().trim().required('Ce champ est obligatoire'),
     nom: Yup.string().trim().required('Ce champ est obligatoire'),
     email: yupRequiredEmail('Ce champ est obligatoire'),
-    telephone: Yup.string().trim().required('Ce champ est obligatoire'),
+    telephone: yupRequiredPhone(),
     nomEntreprise: Yup.string().when('role', {
         is: 'vendor',
         then: (s) => s.trim().required('Ce champ est obligatoire'),
@@ -117,10 +129,7 @@ export const registrationSchema = Yup.object({
 export const serviceRequestContactSchema = Yup.object({
     firstName: Yup.string().trim().required('Ce champ est obligatoire'),
     lastName:  Yup.string().trim().required('Ce champ est obligatoire'),
-    phone: Yup.string()
-        .trim()
-        .required('Ce champ est obligatoire')
-        .matches(/^[+\d][\d\s\-().]{4,}$/, 'Numéro de téléphone invalide'),
+    phone: yupRequiredPhone(),
     email: yupRequiredEmail('Ce champ est obligatoire'),
     notes: Yup.string(),
 })

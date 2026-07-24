@@ -6,6 +6,7 @@ import ReactSelect from 'react-select'
 import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
+import PhoneUnverifiedAlert from './PhoneUnverifiedAlert'
 import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { buildDashboardFilterSelectStyles, type FilterOption } from './selectStyles'
 
@@ -105,15 +106,18 @@ export default function ClientDashboard() {
     const [page, setPage] = useState(1)
     const [sortFilter, setSortFilter] = useState<string>('')
 
-    const { data, isLoading, isError } = useGetCreatedServicesQuery({
-        ...(searchQuery && { search: searchQuery }),
-        ...(activeTab !== 'all' && { status: activeTab === 'open' ? 'ACTIVE' : activeTab === 'devis' ? 'QUOTED' : 'CLOSED' }),
-        ...(serviceFilter !== 'all' && { service: serviceFilter }),
-        ...(cityFilter !== 'all' && { city: cityFilter }),
-        ...(sortFilter !== '' && { sort: sortFilter }),
-        page,
-        limit: 5,
-    })
+    const { data, isLoading, isError } = useGetCreatedServicesQuery(
+        {
+            ...(searchQuery && { search: searchQuery }),
+            ...(activeTab !== 'all' && { status: activeTab === 'open' ? 'ACTIVE' : activeTab === 'devis' ? 'QUOTED' : 'CLOSED' }),
+            ...(serviceFilter !== 'all' && { service: serviceFilter }),
+            ...(cityFilter !== 'all' && { city: cityFilter }),
+            ...(sortFilter !== '' && { sort: sortFilter }),
+            page,
+            limit: 5,
+        },
+        { pollingInterval: 15000 },
+    )
     const apiData = data?.data
     const requests = apiData?.data ?? []
     const summary = apiData?.summary
@@ -186,6 +190,8 @@ export default function ClientDashboard() {
 
     return (
         <div className="body_x_axis_padding">
+            <PhoneUnverifiedAlert />
+
             {/* Page header */}
             <div className="flex items-start justify-between mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
                 <div>

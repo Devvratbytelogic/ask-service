@@ -547,14 +547,14 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       {isVendor ? "Retour à l'accueil" : 'Accéder à mon espace'}
                       <FiArrowRight size={15} />
                     </Link>
-                    {!isVendor && (
+                    {/* {!isVendor && (
                       <Link
                         href="/"
                         className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-appElevated py-3.5 text-[14px] font-semibold text-appText no-underline transition-all hover:bg-appBorder"
                       >
                         Retour à l&apos;accueil
                       </Link>
-                    )}
+                    )} */}
                   </div>
                 )}
 
@@ -659,8 +659,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
 
                     <Field label="Téléphone" required errorMessage={touched.telephone && errors.telephone}>
                       <StyledInput
-                        name="telephone" type="tel" placeholder="+33 6 12 34 56 78"
-                        value={values.telephone} onChange={handleChange} onBlur={handleBlur}
+                        name="telephone" type="tel" inputMode="tel" placeholder="+33 6 12 34 56 78"
+                        value={values.telephone}
+                        onChange={(e) => {
+                          const sanitized = e.target.value.replace(/[^\d+\s\-().]/g, '')
+                          setFieldValue('telephone', sanitized)
+                        }}
+                        onBlur={handleBlur}
                         error={!!(touched.telephone && errors.telephone)} icon={<FiPhone size={16} />}
                       />
                     </Field>

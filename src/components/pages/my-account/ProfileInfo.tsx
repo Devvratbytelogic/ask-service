@@ -99,16 +99,11 @@ export default function ProfileInfo() {
     const handleVerifyPhone = () => {
         dispatch(
             openModal({
-                componentName: 'MobileOtpVerification',
-                data: {
-                    phoneNumber: profileData?.phone ?? values.phone ?? '',
-                    otpType: 'VERIFY_PHONE',
-                    stayOnPage: true,
-                    readonlyPhone: true,
-                },
-                modalSize: 'md',
-            })
-        )
+              componentName: 'VerifyPhoneOtpModal',
+              data: {phoneNumber: profileData?.phone ?? values.phone ?? '',},
+              modalSize: 'md',
+            }),
+          )
     }
 
     const handleVerifyEmail = async () => {
