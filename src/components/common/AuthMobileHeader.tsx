@@ -1,5 +1,6 @@
 'use client'
 
+import AuthCloseButton from '@/components/common/AuthCloseButton'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import ThemeToggle from '@/components/common/ThemeToggle'
 
@@ -14,7 +15,7 @@ export default function AuthMobileHeader({
 }: AuthMobileHeaderProps) {
   return (
     <div className="mb-6 hidden w-full items-center justify-between max-[900px]:flex">
-      <div className="w-8 shrink-0" aria-hidden />
+      <AuthCloseButton />
       <AuthPanelLogo logoUrl={logoUrl} accentColor={accentColor} theme="light" compact />
       <ThemeToggle />
     </div>

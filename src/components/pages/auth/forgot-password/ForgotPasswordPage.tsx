@@ -9,6 +9,7 @@ import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import { getLoginPageRoutePath } from '@/routes/routes'
 import LeftPanel from '@/components/pages/auth/login/LeftPanel'
+import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import AuthThemeToggle from '@/components/common/AuthThemeToggle'
 import OtpInput from '@/components/library/OtpInput'
 import {
@@ -210,9 +211,10 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
     >
       <LeftPanel role="customer" logoUrl={logoUrl} />
 
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-appSurface px-[5%] py-12">
+      <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />
         <div className="w-full" style={{ maxWidth: 440 }}>
+          <AuthMobileHeader logoUrl={logoUrl} />
           <div className="mb-8 text-center">
             <h3
               className="mb-1.5 text-appText"
