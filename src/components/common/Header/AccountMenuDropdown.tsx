@@ -3,7 +3,6 @@
 import { DocumentIconSVG, ProfileIconSVG, SignOutIconSVG } from '@/components/library/AllSVG'
 import { clientSideGetApis } from '@/redux/rtkQueries/clientSideGetApis'
 import { useGetUserProfileInfoQuery, useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { setUserRole } from '@/redux/slices/authSlice'
 import {
     getClientDashboardPageRoutePath,
     getHomeRoutePath,
@@ -11,7 +10,7 @@ import {
     getVendorAccountRoutePath,
     getVendorDashboardPageRoutePath,
 } from '@/routes/routes'
-import { clearAllCookiesAndReload, setUserRoleCookie } from '@/utils/authCookies'
+import { clearAllCookiesAndReload, setIsClientCookie } from '@/utils/authCookies'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { HiChevronDown, HiOutlineCog6Tooth } from 'react-icons/hi2'
@@ -53,19 +52,20 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
     const initials = profile
         ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase() || '?'
         : '?'
-    const showSwitchToVendor = profile?.is_vendor === true;    
+    const showAccountSwitch = profile?.is_vendor === true
 
     const profilePath = isVendorView ? getVendorAccountRoutePath('profile') : getMyAccountRoutePath('profile')
     const settingsPath = isVendorView ? getVendorAccountRoutePath('security') : getMyAccountRoutePath('security')
 
     function handleSwitchAccount() {
         setMenuOpen(false)
-        const newRole = isVendorView ? 'User' : 'Vendor'
-        setUserRoleCookie(newRole)
-        dispatch(setUserRole(newRole))
+        // Keep user_role as Vendor; toggle is_client to switch between client and prestataire views
+        const switchToClient = isVendorView
+        setIsClientCookie(switchToClient)
         dispatch(clientSideGetApis.util.invalidateTags(['UserProfile', 'VendorProfile']))
-        window.location.href =
-            newRole === 'Vendor' ? getVendorDashboardPageRoutePath() : getClientDashboardPageRoutePath()
+        window.location.href = switchToClient
+            ? getClientDashboardPageRoutePath()
+            : getVendorDashboardPageRoutePath()
     }
 
     return (
@@ -117,7 +117,7 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
                             <MenuIcon><HiOutlineCog6Tooth className="size-4" /></MenuIcon>
                             <span>Paramètres</span>
                         </Link>
-                        {showSwitchToVendor &&
+                        {showAccountSwitch &&
                             <>
                                 <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 

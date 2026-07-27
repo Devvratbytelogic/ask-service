@@ -31,17 +31,19 @@ export async function proxy(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
     const authToken = request.cookies.get('auth_token')?.value?.trim();
     const userRole = request.cookies.get('user_role')?.value?.trim();
+    const isClient = request.cookies.get('is_client')?.value?.trim() === 'true';
 
     const isHomePage = pathname === '/' || pathname === '';
     const isLoggedIn = !!authToken;
-    const isVendor = userRole?.toLowerCase() === 'vendor';
+    // Vendors keep role=Vendor; is_client toggles client vs prestataire view
+    const isVendor = userRole?.toLowerCase() === 'vendor' && !isClient;
 
     // Block protected routes when there is no auth token
     if (!isLoggedIn && isProtectedPath(pathname)) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Role-based access: users cannot access vendor routes; vendors cannot access user routes
+    // View-based access: client view cannot access vendor routes; vendor view cannot access user routes
     if (isLoggedIn) {
         if (isVendor && matchesPathPrefix(pathname, USER_PATH_PREFIXES)) {
             return NextResponse.redirect(new URL(VENDOR_DASHBOARD_PATH, request.url));

@@ -8,9 +8,9 @@ import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle, FiArrowLeft } fr
 import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
+  getClientDashboardPageRoutePath,
   getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
-  getLoginPageRoutePath,
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
@@ -20,12 +20,11 @@ import OtpInput from '@/components/library/OtpInput'
 import {
   useLoginMutation,
   useResendEmailVerificationMutation,
-  useVendorLoginMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
-import { AuthResponseData } from '@/utils/authCookies'
+import { AuthResponseData, getIsClientFromAuthData } from '@/utils/authCookies'
 import { useDispatch } from 'react-redux'
 import { loginWithGoogle } from '@/firebase/GoogleLogin'
 import { getFcmTokenFromCookie } from '@/firebase/getFcmTokenn'
@@ -104,7 +103,6 @@ export default function LoginPage({
   averageRating,
 }: LoginPageProps = {}) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const fcmToken = getFcmTokenFromCookie()
   const [role, setRole] = useState<Role>('customer')
@@ -118,12 +116,10 @@ export default function LoginPage({
   const [otpError, setOtpError] = useState('')
   const [resendCooldown, setResendCooldown] = useState(0)
   const [login, { isLoading }] = useLoginMutation()
-  const [vendorLogin, { isLoading: isVendorLoggingIn }] = useVendorLoginMutation()
   const [verifyEmail, { isLoading: isVerifyingOtp }] = useVerifyEmailMutation()
   const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
 
   const isVendor = role === 'vendor'
-  const isLoginLoading = isVendor ? isVendorLoggingIn : isLoading
   const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
@@ -131,14 +127,6 @@ export default function LoginPage({
   const accentDim = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
   const accentBorder = isVendor ? 'rgba(245,158,11,0.25)' : 'rgba(27,79,255,0.25)'
   const activeLogoDarkUrl = isVendor ? vendorLogoDarkUrl : logoDarkUrl
-
-  // ── Auto-select role from URL query param ─────────────────────────────────
-  useEffect(() => {
-    const roleParam = searchParams.get('role')
-    if (roleParam === 'vendor' || roleParam === 'customer') {
-      setRole(roleParam)
-    }
-  }, [searchParams])
 
   function triggerShake() {
     setShake(true)
@@ -166,12 +154,22 @@ export default function LoginPage({
     })
   }
 
+  function getPostLoginDashboardPath(data: AuthResponseData, fromCustomerTab: boolean): string {
+    // Customer tab + is_client → client dashboard (even when role is still Vendor)
+    if (fromCustomerTab && getIsClientFromAuthData(data)) {
+      return getClientDashboardPageRoutePath()
+    }
+    return getDashboardPageRoutePathForRole(data.role)
+  }
+
   function handleLoginSuccess(response: LoginApiResponse) {
     const responseData = response?.data
     if (responseData?.token ?? responseData?.access_token) {
-      setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+      const fromCustomerTab = !isVendor
+      const authData = responseData as AuthResponseData
+      setAuthAndRefetchProfile(authData, dispatch, { preferClientView: fromCustomerTab })
       router.refresh()
-      router.push(getDashboardPageRoutePathForRole(responseData?.role as string))
+      router.push(getPostLoginDashboardPath(authData, fromCustomerTab))
       addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
     }
   }
@@ -188,15 +186,17 @@ export default function LoginPage({
       }).unwrap()
       const responseData = (res as LoginApiResponse)?.data
       if (responseData && typeof responseData === 'object') {
-        setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+        const fromCustomerTab = !isVendor
+        const authData = responseData as AuthResponseData
+        setAuthAndRefetchProfile(authData, dispatch, { preferClientView: fromCustomerTab })
         router.refresh()
-        router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+        router.push(getPostLoginDashboardPath(authData, fromCustomerTab))
       }
       addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
     } catch {
       setOtpError('Code incorrect ou expiré. Veuillez réessayer.')
     }
-  }, [otpValue, verificationEmail, verifyEmail, fcmToken, dispatch, router])
+  }, [otpValue, verificationEmail, verifyEmail, fcmToken, dispatch, router, isVendor])
 
   const handleResendOtp = useCallback(async () => {
     if (resendCooldown > 0 || !verificationEmail) return
@@ -238,16 +238,12 @@ export default function LoginPage({
     onSubmit: async (values) => {
       setServerError('')
       try {
-        const payload = {
+        const response = await login({
           identifier: values.email,
           password: values.password,
+          type: isVendor ? 'Vendor' : 'User',
           ...(fcmToken && { fcm_token: fcmToken }),
-        }
-        const response = (
-          isVendor
-            ? await vendorLogin(payload).unwrap()
-            : await login(payload).unwrap()
-        ) as LoginApiResponse
+        }).unwrap() as LoginApiResponse
 
         if (isEmailVerificationRequired(response)) {
           startEmailVerificationFlow(values.email, response.message)
@@ -293,20 +289,20 @@ export default function LoginPage({
     setServerError('')
     formik.setErrors({})
     backToLoginForm()
-    router.replace(getLoginPageRoutePath({ role: r }), { scroll: false })
   }
 
   async function handleGoogleLogin() {
-    if (isVendor) return
     setIsGoogleLoading(true)
     setServerError('')
     try {
-      const res = await loginWithGoogle('User')
+      const roleType = isVendor ? 'Vendor' : 'User'
+      const fromCustomerTab = !isVendor
+      const res = await loginWithGoogle(roleType)
       const responseData = res?.data as AuthResponseData | undefined
       if (responseData?.token ?? responseData?.access_token) {
-        setAuthAndRefetchProfile(responseData as AuthResponseData, dispatch)
+        setAuthAndRefetchProfile(responseData, dispatch, { preferClientView: fromCustomerTab })
         router.refresh()
-        router.push(getDashboardPageRoutePathForRole((responseData as AuthResponseData).role as string))
+        router.push(getPostLoginDashboardPath(responseData, fromCustomerTab))
         addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
         return
       }
@@ -449,10 +445,20 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isVerifyingOtp ? 'Vérification…' : <>
-                    Vérifier et se connecter
-                    <FiArrowRight size={15} />
-                  </>}
+                  {isVerifyingOtp ? (
+                    <>
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                        style={{ opacity: 0.6 }}
+                      />
+                      Vérification…
+                    </>
+                  ) : (
+                    <>
+                      Vérifier et se connecter
+                      <FiArrowRight size={15} />
+                    </>
+                  )}
                 </button>
               </div>
             ) : (
@@ -603,7 +609,7 @@ export default function LoginPage({
                 {/* ─── Submit button ─── */}
                 <button
                   type="submit"
-                  disabled={isLoginLoading}
+                  disabled={isLoading}
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background: accentColor,
@@ -612,38 +618,44 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isLoginLoading ? 'Connexion…' : <>
-                    Se connecter
-                    <FiArrowRight size={15} />
-                  </>}
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                        style={{ opacity: 0.6 }}
+                      />
+                      Connexion…
+                    </>
+                  ) : (
+                    <>
+                      Se connecter
+                      <FiArrowRight size={15} />
+                    </>
+                  )}
                 </button>
 
-                {!isVendor && (
-                  <>
-                    {/* ─── Divider ─── */}
-                    <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
-                      <div className="h-px flex-1 bg-appBorder" />
-                      ou continuer avec
-                      <div className="h-px flex-1 bg-appBorder" />
-                    </div>
+                {/* ─── Divider ─── */}
+                <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
+                  <div className="h-px flex-1 bg-appBorder" />
+                  ou continuer avec
+                  <div className="h-px flex-1 bg-appBorder" />
+                </div>
 
-                    {/* ─── Google button (customer only) ─── */}
-                    <button
-                      type="button"
-                      disabled={isGoogleLoading || isLoginLoading}
-                      className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
-                      style={{ fontFamily: 'inherit' }}
-                      onClick={handleGoogleLogin}
-                    >
-                      {isGoogleLoading ? (
-                        <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
-                      ) : (
-                        <GoogleIcon />
-                      )}
-                      {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
-                    </button>
-                  </>
-                )}
+                {/* ─── Google button ─── */}
+                <button
+                  type="button"
+                  disabled={isGoogleLoading || isLoading}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ fontFamily: 'inherit' }}
+                  onClick={handleGoogleLogin}
+                >
+                  {isGoogleLoading ? (
+                    <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
+                  ) : (
+                    <GoogleIcon />
+                  )}
+                  {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
+                </button>
               </>
             )}
           </form>
@@ -652,7 +664,7 @@ export default function LoginPage({
           <p className="mt-6 text-center text-[13px] text-appTextSec">
             Pas encore de compte ?{' '}
             <Link
-              href={getRegistrationPageRoutePath({ role })}
+              href={getRegistrationPageRoutePath()}
               className="font-semibold no-underline hover:underline"
               style={{ color: accentColor }}
             >

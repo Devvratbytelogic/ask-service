@@ -8,17 +8,23 @@ const SESSION_COOKIE_OPTIONS = { ...COOKIE_OPTIONS }
 export interface AuthResponseData {
     token?: string
     access_token?: string
-    user?: { _id?: string; id?: string; [key: string]: unknown }
-    userData?: { _id?: string; id?: string; role?: string | { name?: string; id?: string; _id?: string }; [key: string]: unknown }
+    user?: { _id?: string; id?: string; is_client?: boolean; [key: string]: unknown }
+    userData?: { _id?: string; id?: string; is_client?: boolean; role?: string | { name?: string; id?: string; _id?: string }; [key: string]: unknown }
     /** Role can be a string (e.g. "Vendor") or object with name/id/_id */
     role?: string | { _id?: string; id?: string; name?: string; [key: string]: unknown }
+    is_client?: boolean
+}
+
+export type SetAuthCookiesOptions = {
+    /** When true (e.g. login from Client tab), keep is_client=true so vendor dual-accounts open the client view. */
+    preferClientView?: boolean
 }
 
 /**
- * Store auth token, user id and role in cookies after successful login/verify.
+ * Store auth token, user id, role and is_client in cookies after successful login/verify.
  * Uses session cookies so the user is logged out when the browser is closed.
  */
-export function setAuthCookies(data: AuthResponseData): void {
+export function setAuthCookies(data: AuthResponseData, options?: SetAuthCookiesOptions): void {
     const token = data.token ?? data.access_token
     if (token) {
         Cookies.set('auth_token', token, SESSION_COOKIE_OPTIONS)
@@ -32,12 +38,29 @@ export function setAuthCookies(data: AuthResponseData): void {
     }
 
     const role = data.role ?? data.userData?.role
+    let roleValue: string | undefined
     if (role != null && role !== '') {
-        const roleValue = typeof role === 'string' ? role : (role.name ?? role.id ?? role._id)
+        roleValue = typeof role === 'string' ? role : (role.name ?? role.id ?? role._id)
         if (roleValue) {
             Cookies.set('user_role', String(roleValue), SESSION_COOKIE_OPTIONS)
         }
     }
+
+    // is_client drives client vs prestataire view for Vendors (role stays Vendor).
+    const isClientFromApi = data.is_client ?? user?.is_client
+    const isVendorRole = !!roleValue && String(roleValue).toLowerCase() === 'vendor'
+    if (options?.preferClientView && isClientFromApi === true) {
+        Cookies.set('is_client', 'true', SESSION_COOKIE_OPTIONS)
+    } else if (isVendorRole) {
+        Cookies.set('is_client', 'false', SESSION_COOKIE_OPTIONS)
+    } else if (typeof isClientFromApi === 'boolean') {
+        Cookies.set('is_client', String(isClientFromApi), SESSION_COOKIE_OPTIONS)
+    }
+}
+
+/** True when login response says the account can open the client view. */
+export function getIsClientFromAuthData(data: AuthResponseData): boolean {
+    return data.is_client === true || data.user?.is_client === true || data.userData?.is_client === true
 }
 
 export function getAuthToken(): string | undefined {
@@ -52,12 +75,26 @@ export function getUserId(): string | undefined {
     return Cookies.get('userID')
 }
 
+export function getIsClient(): boolean | undefined {
+    const value = Cookies.get('is_client')
+    if (value === undefined) return undefined
+    return value === 'true'
+}
+
 /**
  * Update only the user_role cookie (e.g. when switching from Vendor to User account).
  * Keeps auth token and userID unchanged.
  */
 export function setUserRoleCookie(role: string): void {
     Cookies.set('user_role', role, SESSION_COOKIE_OPTIONS)
+}
+
+/**
+ * Update only the is_client cookie (e.g. when a Vendor switches between client and prestataire view).
+ * Keeps auth token, userID and user_role unchanged.
+ */
+export function setIsClientCookie(isClient: boolean): void {
+    Cookies.set('is_client', String(isClient), SESSION_COOKIE_OPTIONS)
 }
 
 /**
@@ -82,6 +119,7 @@ export function clearAuthCookies(): void {
     Cookies.remove('auth_token', { path: '/' })
     Cookies.remove('userID', { path: '/' })
     Cookies.remove('user_role', { path: '/' })
+    Cookies.remove('is_client', { path: '/' })
 }
 
 /** Cookie name for FCM token; preserved on logout so push can be re-associated after next login. */

@@ -1,5 +1,10 @@
 import type { Dispatch } from 'redux';
-import { setAuthCookies, type AuthResponseData } from '@/utils/authCookies';
+import {
+    getIsClientFromAuthData,
+    setAuthCookies,
+    type AuthResponseData,
+    type SetAuthCookiesOptions,
+} from '@/utils/authCookies';
 import { clientSideGetApis } from '@/redux/rtkQueries/clientSideGetApis';
 import { setUserRole, setClientAuthenticated } from '@/redux/slices/authSlice';
 
@@ -8,14 +13,20 @@ import { setUserRole, setClientAuthenticated } from '@/redux/slices/authSlice';
  * Stores auth cookies, updates Redux role and client auth flag (so Header re-renders and fetches the correct profile),
  * and invalidates the profile cache for the user's role.
  */
-export function setAuthAndRefetchProfile(data: AuthResponseData, dispatch: Dispatch): void {
-    setAuthCookies(data);
+export function setAuthAndRefetchProfile(
+    data: AuthResponseData,
+    dispatch: Dispatch,
+    options?: SetAuthCookiesOptions,
+): void {
+    setAuthCookies(data, options);
     const role = data.role != null && data.role !== ''
         ? (typeof data.role === 'string' ? data.role : (data.role.name ?? data.role.id ?? data.role._id))
         : null;
     const roleStr = role != null ? String(role) : null;
     dispatch(setClientAuthenticated(true));
     dispatch(setUserRole(roleStr));
-    const tag = roleStr?.toLowerCase() === 'vendor' ? 'VendorProfile' : 'UserProfile';
+    const openClientView = options?.preferClientView && getIsClientFromAuthData(data);
+    const tag =
+        roleStr?.toLowerCase() === 'vendor' && !openClientView ? 'VendorProfile' : 'UserProfile';
     dispatch(clientSideGetApis.util.invalidateTags([tag]));
 }

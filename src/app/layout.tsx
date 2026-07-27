@@ -45,7 +45,9 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const authToken = cookieStore.get("auth_token")?.value;
   const userRole = cookieStore.get("user_role")?.value;
-  const isVendor = userRole?.toLowerCase() === "vendor";
+  const isClient = cookieStore.get("is_client")?.value === "true";
+  // Vendors keep role=Vendor; is_client toggles client vs prestataire view
+  const isVendor = userRole?.toLowerCase() === "vendor" && !isClient;
   const initialIsAuthenticated = !!authToken;
   const globalSettings = await getGlobalSettings();
   const logoUrl = globalSettings?.data?.logo;

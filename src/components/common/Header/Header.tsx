@@ -21,6 +21,7 @@ import CustomerActions from "./CustomerActions"
 import VendorActions from "./VendorActions"
 import ThemeToggle from "@/components/common/ThemeToggle"
 import type { RootState } from "@/redux/appStore"
+import { getIsClient } from "@/utils/authCookies"
 
 export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogoDarkUrl, isVendor, isAuthenticated }: { logoUrl: string, logoDarkUrl: string, vendorLogoUrl: string, vendorLogoDarkUrl: string, isVendor: boolean, isAuthenticated: boolean }) {
     const [scrolled, setScrolled] = useState(false)
@@ -31,7 +32,11 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
     const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
     const clientUserRole = useSelector((state: RootState) => state.auth.userRole)
     const isAuth = isAuthenticated || isClientAuthenticated
-    const isVendorUser = isVendor || clientUserRole?.toLowerCase() === 'vendor'
+    // Role may stay Vendor while is_client toggles client vs prestataire view
+    const isVendorUser =
+        getIsClient() === true
+            ? false
+            : isVendor || clientUserRole?.toLowerCase() === 'vendor'
     const showVendorLogo = isServiceProviderPage || isVendorUser
 
     const lightLogo = showVendorLogo ? vendorLogoUrl : logoUrl

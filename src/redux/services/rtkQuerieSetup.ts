@@ -42,9 +42,11 @@ const baseQuery = fetchBaseQuery({
         const deviceId = Cookies.get("device") || ''
         const userId = Cookies.get("userID") || ''
         const userRole = Cookies.get("user_role") || ''
+        const isClient = Cookies.get("is_client")
         headers.set('device', deviceId);
         headers.set('userID', userId);
         if (userRole) headers.set('user_role', userRole);
+        if (isClient !== undefined) headers.set('is_client', isClient);
         headers.set('Authorization', `Bearer ${token}`);
         return headers;
     },
