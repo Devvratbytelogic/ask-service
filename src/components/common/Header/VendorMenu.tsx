@@ -1,17 +1,33 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
     getVendorDashboardRoutePath,
     getVendorMessageRoutePath,
 } from '@/routes/routes'
 
+const DASHBOARD_PATH = getVendorDashboardRoutePath()
+
 export const VENDOR_NAV_LINKS = [
-    { label: 'Tableau de bord', shortLabel: 'Tableau', href: getVendorDashboardRoutePath() },
+    { label: 'Tableau de bord', shortLabel: 'Tableau', href: DASHBOARD_PATH },
     { label: 'Trouver des prospects', shortLabel: 'Prospects', href: getVendorDashboardRoutePath({ leads: 'locked' }) },
     { label: 'Mes messages', shortLabel: 'Messages', href: getVendorMessageRoutePath() },
 ] as const
+
+function isNavLinkActive(href: string, pathname: string, leads: string | null) {
+    const [hrefPath, hrefQuery] = href.split('?')
+    const hrefLeads = new URLSearchParams(hrefQuery).get('leads')
+    const pathMatches = pathname === hrefPath || pathname.startsWith(`${hrefPath}/`)
+
+    if (!pathMatches) return false
+
+    if (hrefPath === DASHBOARD_PATH) {
+        return hrefLeads === 'locked' ? leads === 'locked' : leads !== 'locked'
+    }
+
+    return true
+}
 
 interface VendorMenuProps {
     onNavigate?: () => void
@@ -20,11 +36,13 @@ interface VendorMenuProps {
 
 export default function VendorMenu({ onNavigate, className = '' }: VendorMenuProps) {
     const pathname = usePathname()
+    const searchParams = useSearchParams()
+    const leads = searchParams.get('leads')
 
     return (
         <nav className={`flex min-w-0 items-center gap-0.5 ${className}`}>
             {VENDOR_NAV_LINKS.map(({ label, shortLabel, href }) => {
-                const isActive = pathname === href || pathname.startsWith(href + '/')
+                const isActive = isNavLinkActive(href, pathname, leads)
                 return (
                     <Link
                         key={href}

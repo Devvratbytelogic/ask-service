@@ -58,7 +58,7 @@ function LeadStatusRibbon({ status, label }: { status: string; label: string }) 
     return (
         <div className="absolute top-0 right-0 size-24 overflow-hidden pointer-events-none z-10" aria-hidden>
             <span
-                className={`absolute top-[14px] -right-[30px] w-[120px] rotate-45 py-[3px] text-center text-[9px] font-extrabold uppercase tracking-[0.6px] shadow-[0_2px_6px_rgba(15,23,42,0.15)] ${ribbonClass}`}
+                className={`absolute top-3.5 -right-7.5 w-30 rotate-45 py-0.75 text-center text-[9px] font-extrabold uppercase tracking-[0.6px] shadow-[0_2px_6px_rgba(15,23,42,0.15)] ${ribbonClass}`}
             >
                 {displayLabel}
             </span>
@@ -130,10 +130,10 @@ function ClientBlock({ client }: { client: IAvailableLeadByCategoryContactDetail
     const avatarColor = getAvatarColor(client?.email || client?.phone || clientName || 'client')
 
     return (
-        <div className="px-3 py-2.5 bg-black/3 dark:bg-white/3 border border-appBorder rounded-[10px] mb-3.5 space-y-[5px]">
+        <div className="px-3 py-2.5 bg-black/3 dark:bg-white/3 border border-appBorder rounded-md mb-1.25 space-y-1.25">
             <div className="flex items-center gap-2 text-[13px] text-appText">
                 <div
-                    className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+                    className="w-6.5 h-6.5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
                     style={{ backgroundColor: avatarColor }}
                 >
                     {clientInitial}
@@ -154,7 +154,7 @@ function ClientBlock({ client }: { client: IAvailableLeadByCategoryContactDetail
 
 function MetaItem({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-[5px] text-[12px] text-appTextSec capitalize">{children}</div>
+        <div className="flex items-center gap-1.25 text-[12px] text-appTextSec capitalize">{children}</div>
     )
 }
 
@@ -184,10 +184,30 @@ function PrimaryButton({ label, variant, action, disabled, onClick, }: {
             type="button"
             disabled={disabled}
             onClick={onClick}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-[9px] rounded-[9px] text-[13px] font-bold text-white transition-all duration-200 hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${variantClasses[variant]}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.25 rounded-md text-[13px] font-bold text-white transition-all duration-200 hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${variantClasses[variant]}`}
         >
             {iconMap[action]}
             {label}
+        </button>
+    )
+}
+
+function DirectContactButton({ phone, disabled, onClick }: {
+    phone?: string | null
+    disabled?: boolean
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+}) {
+    const isDisabled = disabled || !phone
+
+    return (
+        <button
+            type="button"
+            disabled={isDisabled}
+            onClick={onClick}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.25 rounded-md text-[13px] font-bold text-appText bg-transparent border border-appBorder transition-all duration-200 hover:-translate-y-px hover:bg-black/3 dark:hover:bg-white/3 hover:border-primaryColor/30 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+        >
+            <PhoneOutlineIconSVG size={13} />
+            Contact
         </button>
     )
 }
@@ -202,7 +222,7 @@ function HiddenAnswersTooltip({ answers }: { answers: IAvailableLeadByCategoryDy
                 content: 'p-0 bg-transparent border-0 shadow-none overflow-visible',
             }}
             content={
-                <div className="w-[268px] px-3 py-2.5 bg-appElevated border border-appBorder rounded-[10px] shadow-[0_4px_16px_rgba(15,23,42,0.08)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
+                <div className="w-67 px-3 py-2.5 bg-appElevated border border-appBorder rounded-md shadow-[0_4px_16px_rgba(15,23,42,0.08)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
                     <div className="flex flex-col gap-2.5">
                         {answers.map((answer) => (
                             <div key={answer._id} className="space-y-0.5">
@@ -214,7 +234,7 @@ function HiddenAnswersTooltip({ answers }: { answers: IAvailableLeadByCategoryDy
                 </div>
             }
         >
-            <span className="inline-flex items-center w-fit mt-0.5 px-2 py-[3px] rounded-[6px] text-[11px] font-semibold text-primaryColor/80 bg-primaryColor/6 border border-primaryColor/15 cursor-help transition-colors duration-200 hover:bg-primaryColor/10 hover:border-primaryColor/25">
+            <span className="inline-flex items-center w-fit mt-0.5 px-2 py-0.75 rounded-md text-[11px] font-semibold text-primaryColor/80 bg-primaryColor/6 border border-primaryColor/15 cursor-help transition-colors duration-200 hover:bg-primaryColor/10 hover:border-primaryColor/25">
                 +{answers.length} autre{answers.length > 1 ? 's' : ''}
             </span>
         </Tooltip>
@@ -229,6 +249,10 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
     const router = useRouter()
     const [vendorAccessChat, { isLoading: isAccessingChat }] = useVendorAccessChatMutation()
     const action = getLeadActionConfig(lead)
+    const leadStatus = resolveLeadStatus(lead.lead_status)
+    const isLockedLead = leadStatus === 'new'
+    // const showDirectContact = !isLockedLead
+    const clientPhone = lead?.contact_details?.phone ?? ''
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
     const isButtonDisabled = !canPurchaseLeads
     const leadDetailPath = generateLeadDetailRoutePath(lead._id)
@@ -282,9 +306,16 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
         }
     }
 
+    const handleDirectContact = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (!clientPhone) return
+        window.open(`tel:${clientPhone.replace(/\s/g, '')}`, '_self')
+    }
+
     return (
         <div
-            className="relative overflow-hidden p-[18px] bg-appCard hover:bg-appElevated transition-colors duration-200 h-full cursor-pointer"
+            className="relative overflow-hidden p-4.5 bg-appCard hover:bg-appElevated transition-colors duration-200 h-full cursor-pointer"
             onClick={handleCardClick}
             onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -302,7 +333,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2 text-[15px] font-extrabold text-appText pr-10">
                     <div
-                        className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center text-[14px] shrink-0"
+                        className="w-7.5 h-7.5 rounded-md flex items-center justify-center text-[14px] shrink-0"
                         style={{ background: 'rgba(16,185,129,0.12)' }}
                     >
                         {lead?.service_category?.image ? (
@@ -346,7 +377,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             </div>
 
             {lead.dynamic_answers && lead.dynamic_answers.length > 0 && (
-                <div className="flex flex-col gap-[5px] mb-3">
+                <div className="flex flex-col gap-1.25 mb-3">
                     {lead?.dynamic_answers?.slice(0, 3).map((answer) => (
                         <div key={answer._id} className="flex items-center gap-1.5 text-[12px] text-appTextSec">
                             <span className="text-appTextMuted shrink-0">{answer.label}:</span>
@@ -363,13 +394,6 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
 
             {action && (
                 <div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
-                    {/* <PrimaryButton
-                        label={action.label}
-                        variant={action.variant}
-                        action={action.action}
-                        disabled={isButtonDisabled}
-                        onClick={handlePrimaryAction}
-                    /> */}
                     <PrimaryButton
                         label={isAccessingChat && action.action === 'contact' ? 'Ouverture…' : action.label}
                         variant={action.variant}
@@ -377,6 +401,13 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                         disabled={isButtonDisabled || (action.action === 'contact' && isAccessingChat)}
                         onClick={handlePrimaryAction}
                     />
+                    {!isLockedLead && (
+                        <DirectContactButton
+                            phone={clientPhone}
+                            disabled={isButtonDisabled}
+                            onClick={handleDirectContact}
+                        />
+                    )}
                 </div>
             )}
         </div>

@@ -46,7 +46,7 @@ function OppGroupStatusBadge({ status, label }: { status: string | null | undefi
     const { wrapperClass, icon } = GROUP_STATUS_VARIANTS[resolveGroupStatus(status)]
 
     return (
-        <span className={`flex items-center gap-[5px] text-[11px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1 rounded-[5px] ${wrapperClass}`}>
+        <span className={`flex items-center gap-1.25 text-[11px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1 rounded-[5px] ${wrapperClass}`}>
             {icon}
             {label ?? status ?? ''}
         </span>
@@ -76,11 +76,11 @@ export default function OpportunityGroup({
     const totalPages = item?.pagination?.totalPages ?? 0
     return (
         <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
-            <div className="px-[18px] py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
+            <div className="px-4.5 py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
                 <OppGroupStatusBadge status={item?.status} label={item?.status_label} />
                 <span className="text-[16px] font-extrabold text-appText">{item?.parent_service_category?.title}</span>
                 {item?.leads_count > 0 && (
-                    <span className="text-[12px] text-appTextMuted bg-black/2 dark:bg-white/3 border border-appBorderSub px-2 py-[3px] rounded-[6px]">
+                    <span className="text-[12px] text-appTextMuted bg-black/2 dark:bg-white/3 border border-appBorderSub px-2 py-0.75 rounded-md">
                         {item?.leads_count} prospect{item?.leads_count && item?.leads_count > 1 ? 's' : ''}
                     </span>
                 )}
@@ -92,14 +92,14 @@ export default function OpportunityGroup({
                         <OpportunityCard key={index} lead={lead} canPurchaseLeads={canPurchaseLeads} />
                     ))
                 ) : (
-                    <div className="col-span-full px-[18px] py-10 text-center">
+                    <div className="col-span-full px-4.5` py-10 text-center">
                         <p className="text-[14px] text-appTextSec">Aucun prospect pour cette catégorie.</p>
                     </div>
                 )}
             </div>
 
             {hasLeads && totalPages > 0 && (
-                <div className="px-[18px] py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
+                <div className="px-4.5 py-3 border-t border-appBorderSub flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 bg-black/1 dark:bg-white/1">
                     <Pagination
                         total={totalPages}
                         page={currentPage}
@@ -130,7 +130,7 @@ export default function OpportunityGroup({
                                     setPaginateServiceCategory(categoryId)
                                 }
                             }}
-                            className="min-w-[72px]"
+                            className="min-w-18"
                             size="sm"
                             classNames={{
                                 trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none',

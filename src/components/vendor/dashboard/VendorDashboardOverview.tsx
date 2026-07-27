@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import {
+    FiClipboard,
+    FiCreditCard,
+    FiSearch,
+    FiUnlock,
+} from 'react-icons/fi'
 import DashboardStatCard from './overview/DashboardStatCard'
 import OpportunityGroup from './overview/OpportunityGroup'
 import OpportunitySectionHeader from './overview/OpportunitySectionHeader'
@@ -50,7 +56,7 @@ export default function VendorDashboardOverview() {
     }
 
     return (
-        <div className="max-w-[1400px] mx-auto px-7 py-7">
+        <div className="max-w-350 mx-auto px-7 py-7">
             {/* Page header */}
             <div className="mb-7 animate-hero-fade-up">
                 <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
@@ -65,10 +71,10 @@ export default function VendorDashboardOverview() {
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-                <DashboardStatCard icon="🔓" iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath()} highlight={isUnlocked} />
-                <DashboardStatCard icon="🔍" iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} highlight={!isUnlocked} highlightColor="blue" />
-                <DashboardStatCard icon="🪙" iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
-                <DashboardStatCard icon="📋" iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
+                <DashboardStatCard icon={<FiUnlock className="text-trust-green" />} iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath()} highlight={isUnlocked} />
+                <DashboardStatCard icon={<FiSearch className="text-primaryColor" />} iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} highlight={!isUnlocked} highlightColor="blue" />
+                <DashboardStatCard icon={<FiCreditCard className="text-amber" />} iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
+                <DashboardStatCard icon={<FiClipboard className="text-[#8B5CF6]" />} iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
             </div>
 
             {/* Section header + filters */}

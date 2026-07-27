@@ -58,7 +58,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
     return (
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 flex h-[68px] items-center gap-2 sm:gap-3 px-4 sm:px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
+            className={`sticky top-0 left-0 right-0 z-50 flex h-17 items-center gap-2 sm:gap-3 px-4 sm:px-[5%] backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0 min-w-0">
                 {lightLogo || darkLogo ? (
@@ -101,7 +101,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
                         {!isServiceProviderPage && <Button
                             startContent={<ArrowRightIconSVG />}
-                            className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-[38px] min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
+                            className={`text-sm font-semibold ${isServiceProviderPage ? 'bg-amber ' : 'bg-primaryColor text-white'} rounded-[10px] px-5 h-9.5 min-w-0 hover:${isServiceProviderPage ? 'bg-amber-dark' : 'bg-primaryColor/90'} hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(64,124,233,0.35)] transition-all`}
                             as={Link}
                             href={getRegistrationPageRoutePath({ role: 'vendor' })}
                         >

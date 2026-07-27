@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRightIconSVG } from '@/components/library/AllSVG'
 
@@ -17,7 +18,7 @@ export default function DashboardStatCard({
     highlight,
     highlightColor = 'green',
 }: {
-    icon: string,
+    icon: ReactNode,
     iconBg: string,
     value: number,
     label: string,
@@ -36,7 +37,7 @@ export default function DashboardStatCard({
                 }`}
         >
             <div
-                className="w-[38px] h-[38px] rounded-[11px] flex items-center justify-center text-[18px] mb-3.5"
+                className="w-9.5 h-9.5 rounded-[11px] flex items-center justify-center text-[18px] mb-3.5 [&_svg]:size-4.5"
                 style={{ background: iconBg }}
             >
                 {icon}
