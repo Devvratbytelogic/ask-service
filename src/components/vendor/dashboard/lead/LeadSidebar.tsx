@@ -8,9 +8,24 @@ import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery } from '@
 import { useRouter } from 'nextjs-toploader/app'
 import { generateLeadDetailRoutePath } from '@/routes/routes'
 import moment from 'moment'
-import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 import LeadStatusBadge from './LeadStatusBadge'
 import LeadSidebarSkeleton from './LeadSidebarSkeleton'
+
+function formatShortRelative(date: string): string {
+    const created = moment(date)
+    if (!created.isValid()) return ''
+
+    const seconds = moment().diff(created, 'seconds')
+    if (seconds < 60) return `il y a ${Math.max(seconds, 0)}s`
+
+    const minutes = moment().diff(created, 'minutes')
+    if (minutes < 60) return `il y a ${minutes}m`
+
+    const hours = moment().diff(created, 'hours')
+    if (hours < 24) return `il y a ${hours}h`
+
+    return `il y a ${moment().diff(created, 'days')}j`
+}
 
 interface Props {
     selectedId: string
@@ -62,7 +77,7 @@ export default function LeadSidebar({ selectedId }: Props) {
     }
 
     return (
-        <aside className="bg-appSurface border-r border-appBorder overflow-y-auto sticky top-[58px] h-[calc(100vh-58px)]">
+        <aside className="bg-appSurface border-r border-appBorder overflow-y-auto sticky top-14.5 h-[calc(100vh-58px)]">
             <div className="p-4 pb-2.5">
                 <div className="text-[12px] font-bold uppercase tracking-[1px] text-appTextMuted mb-2.5">
                     Prospects disponibles
@@ -81,7 +96,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                 </div>
             </div>
 
-            <div className="text-[11px] font-semibold text-appTextMuted px-[14px] mb-1.5">
+            <div className="text-[11px] font-semibold text-appTextMuted px-3.5 mb-1.5">
                 {leads?.length} prospects disponibles
             </div>
 
@@ -90,30 +105,33 @@ export default function LeadSidebar({ selectedId }: Props) {
                 const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
                 const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
                 const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+                const isNewToday = Boolean(lead?.createdAt && moment(lead.createdAt).isSame(moment(), 'day'))
                 return (
                     <button
                         key={lead?._id}
                         type="button"
                         onClick={() => handleSelect(lead?._id)}
-                        className={`w-full text-left px-[14px] py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-appCard/4 ${selectedId === lead?._id
+                        className={`w-full text-left px-3.5 py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-appCard/4 ${selectedId === lead?._id
                             ? 'bg-amber/8 border-l-[3px] border-l-amber'
                             : 'border-l-[3px] border-l-transparent'
                             }`}
                     >
-                        <div className="flex items-center justify-between mb-[5px] gap-2">
-                            <div className="text-[13px] font-bold text-appText flex items-center gap-[5px] min-w-0">
-                                <LeadStatusBadge status={lead?.lead_status} label={lead?.lead_status_label} />
+                        <div className="flex items-center justify-between mb-1.25 gap-2">
+                            <div className="text-[13px] font-bold text-appText flex items-center gap-1.25 min-w-0">
+                                {isNewToday && <LeadStatusBadge status="new" label="NEW" />}
                                 <span className="truncate">{lead?.service_category?.title}</span>
                             </div>
-                            <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-[7px] py-[2px] rounded-full whitespace-nowrap shrink-0">
+                            <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-1.75 py-0.5 rounded-full whitespace-nowrap shrink-0">
                                 {lead?.creditsToUnlock} pts
                             </span>
                         </div>
-                        <div className="flex flex-col gap-[2px]">
-                            {lead?.reference_no && (
+                        <div className="flex flex-col gap-0.5">
+                            {lead?.createdAt && (
                                 <div className="flex items-center gap-1 text-[11px] text-appTextSec min-w-0">
-                                    <span className="text-appTextMuted shrink-0">Réf.:</span>
-                                    <span className="font-semibold text-appText truncate">{lead.reference_no}</span>
+                                    <span className="text-appTextMuted shrink-0">Créé :</span>
+                                    <span className="font-semibold text-appText truncate">
+                                        {formatShortRelative(lead.createdAt)}
+                                    </span>
                                 </div>
                             )}
                             <span className="text-[11px] font-medium text-appTextMuted">
@@ -132,7 +150,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                                 {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
                             </div>
                         </div>
-                        <div className={`mt-[7px] px-2 py-[5px] rounded-[6px] text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
+                        <div className={`mt-1.75 px-2 py-1.25 rounded-md text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
                             {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
                             {lead?.lead_status_message ?? '—'}
                         </div>

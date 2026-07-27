@@ -57,7 +57,7 @@ export default function LeadDetailView({ leadId }: Props) {
             </div>
 
             <section className="bg-appBg overflow-y-auto p-5">
-                <div className="flex items-center gap-[7px] text-[12px] text-appTextMuted mb-[18px]">
+                <div className="flex items-center gap-1.75 text-[12px] text-appTextMuted mb-4.5">
                     <Link
                         href={getVendorDashboardRoutePath()}
                         className="text-appTextMuted hover:text-appTextSec transition-colors flex items-center"
