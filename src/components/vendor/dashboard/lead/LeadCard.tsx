@@ -35,31 +35,28 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
     const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
     const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+    const isNewToday = Boolean(lead?.createdAt && moment(lead.createdAt).isSame(moment(), 'day'))
     return (
         <div className="bg-appCard border border-appBorder rounded-2xl overflow-hidden mb-3.5 animate-hero-fade-up">
             {/* Card Header */}
-            <div className="px-[22px] py-5 border-b border-appBorderSub">
+            <div className="px-5.5 py-5 border-b border-appBorderSub">
                 <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                        <div className={`flex items-center gap-1.5 px-3 py-[5px] rounded-full text-[12px] font-bold border bg-primaryColor/12 border-primaryColor/25 text-[#93C5FD]`}>
+                        <div className={`flex items-center gap-1.5 px-3 py-1.25 rounded-full text-[12px] font-bold border bg-primaryColor/12 border-primaryColor/25 text-[#93C5FD]`}>
                             {lead?.parent_service_category?.title ?? '—'}
                         </div>
 
-                        <LeadStatusBadge
-                            status={lead?.lead_status}
-                            label={lead?.lead_status_label}
-                            size="md"
-                        />
+                        {isNewToday && <LeadStatusBadge status="new" label="NEW" size="md" />}
 
-                        <span className="text-[9px] font-bold bg-trust-green/15 text-[#6EE7B7] border border-trust-green/25 px-[7px] py-[3px] rounded-[4px]">
+                        <span className="text-[9px] font-bold bg-trust-green/15 text-[#6EE7B7] border border-trust-green/25 px-1.75 py-0.75 rounded-full">
                             {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'}
                         </span>
                     </div>
                 </div>
 
-                <div className="text-[24px] font-extrabold tracking-[-0.5px] text-appText mb-2.5 flex items-center gap-[7px]">
+                <div className="text-2xl font-extrabold tracking-[-0.5px] text-appText mb-2.5 flex items-center gap-1.75">
                     <div
-                        className="border border-appBorder w-[32px] h-[32px] rounded-[9px] overflow-hidden flex items-center justify-center shrink-0 bg-primaryColor/12"
+                        className="border border-appBorder w-8 h-8 rounded-2xl overflow-hidden flex items-center justify-center shrink-0 bg-primaryColor/12"
                     >
                         {lead?.service_category?.image ? (
                             <ImageComponent
@@ -68,7 +65,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                                 object_cover={true}
                             />
                         ) : (
-                            <span className="text-[16px]">
+                            <span className="text-base">
                                 {lead?.service_category?.title?.charAt(0) ?? '—'}
                             </span>
                         )}
@@ -105,11 +102,11 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             </div>
 
             {/* Quality Bar */}
-            <div className="px-[22px] py-3 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
+            <div className="px-5.5 py-1.25 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                    <span className="text-[14px]">⭐</span>
-                    <span className="text-[12px] text-appTextSec">Qualité du prospect :</span>
-                    <div className="flex items-center gap-1.5 text-[12px] font-bold text-amber">
+                    <span className="text-base">⭐</span>
+                    <span className="text-sm text-appTextSec">Qualité du prospect :</span>
+                    <div className="flex items-center gap-1.5 text-sm font-bold text-amber">
                         {lead?.lead_stars_label}
                         <div className="flex items-center gap-1 ml-1">
                             {Array.from({ length: 5 }, (_, i) => (
@@ -122,15 +119,15 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         </div>
                     </div>
                 </div>
-                <span className="text-[13px] font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap">
+                <span className="text-sm font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap">
                     🪙 {lead?.creditsToUnlock} crédits
                 </span>
             </div>
 
             {/* Needs Block */}
-            <div className="px-[22px] py-[18px] border-b border-appBorderSub">
-                <div className="flex items-center gap-2 text-[14px] font-extrabold text-appText mb-3.5">
-                    <div className="w-[26px] h-[26px] rounded-[8px] bg-primaryColor/15 flex items-center justify-center text-[13px] shrink-0">
+            <div className="px-5.5 py-4.5 border-b border-appBorderSub">
+                <div className="flex items-center gap-2 text-base font-extrabold text-appText mb-3.5">
+                    <div className="w-6.5 h-6.5 rounded-2xl bg-primaryColor/15 flex items-center justify-center text-base shrink-0">
                         ✅
                     </div>
                     Besoins du client
@@ -180,16 +177,16 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             </div>
 
             {/* Client Info Block */}
-            <div className="px-[22px] py-[18px]">
-                <div className="flex items-center gap-2 text-[14px] font-extrabold text-appText mb-3.5">
-                    <div className="w-[26px] h-[26px] rounded-[8px] bg-trust-green/12 flex items-center justify-center text-[13px] shrink-0">
+            <div className="px-5.5 py-4.5">
+                <div className="flex items-center gap-2 text-base font-extrabold text-appText mb-3.5">
+                    <div className="w-6.5 h-6.5 rounded-2xl bg-trust-green/12 flex items-center justify-center text-base shrink-0">
                         🔵
                     </div>
                     Client vérifié
                 </div>
                 <div className="flex flex-col gap-2.5">
                     {/* Name */}
-                    <div className="flex items-center gap-2.5 text-[14px]">
+                    <div className="flex items-center gap-2.5 text-base">
                         <span className="text-appTextMuted flex shrink-0">
                             <UserOutlineIconSVG size={14} />
                         </span>
@@ -205,7 +202,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     </div>
 
                     {/* Phone */}
-                    <div className="flex items-center gap-2.5 text-[14px]">
+                    <div className="flex items-center gap-2.5 text-base">
                         <span className="text-appTextMuted flex shrink-0">
                             <PhoneOutlineIconSVG size={14} />
                         </span><div className="relative inline-flex items-center">
@@ -216,7 +213,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                     </div>
 
                     {/* Email */}
-                    <div className="flex items-center gap-2.5 text-[14px]">
+                    <div className="flex items-center gap-2.5 text-base">
                         <span className="text-appTextMuted flex shrink-0">
                             <MailOutlineIconSVG size={14} />
                         </span>
@@ -229,11 +226,11 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
 
                     {/* Verified chips */}
                     <div className="flex gap-2 mt-2 flex-wrap">
-                        <div className="flex items-center gap-[5px] text-[11px] font-semibold text-[#6EE7B7] bg-trust-green/10 border border-trust-green/20 px-2.5 py-1 rounded-full">
+                        <div className="flex items-center gap-1.25 text-xs font-semibold text-[#6EE7B7] bg-trust-green/10 border border-trust-green/20 px-2.5 py-1 rounded-full">
                             <CheckmarkIconSVG size={9} />
                             Email vérifié
                         </div>
-                        <div className="flex items-center gap-[5px] text-[11px] font-semibold text-[#6EE7B7] bg-trust-green/10 border border-trust-green/20 px-2.5 py-1 rounded-full">
+                        <div className="flex items-center gap-1.25 text-xs font-semibold text-[#6EE7B7] bg-trust-green/10 border border-trust-green/20 px-2.5 py-1 rounded-full">
                             <CheckmarkIconSVG size={9} />
                             Numéro actif
                         </div>

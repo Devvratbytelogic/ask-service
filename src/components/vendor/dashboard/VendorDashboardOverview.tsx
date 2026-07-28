@@ -28,14 +28,14 @@ export default function VendorDashboardOverview() {
     const [leadsLimit, setLeadsLimit] = useState(6)
     const [paginateServiceCategory, setPaginateServiceCategory] = useState('')
 
-    const { data: response, isLoading, isFetching } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+    const { data: response, isLoading } = useGetVendorAvailableLeadsByServiceCategoryQuery({
         service: serviceFilter || undefined,
         city: cityFilter || undefined,
         page: leadsPage || undefined,
         limit: leadsLimit || undefined,
         paginate_service: paginateServiceCategory || undefined,
         unlocked: isUnlocked,
-    })
+    }, { pollingInterval: 15000 })
     const data = response?.data?.data;
     const stats = response?.data?.summary;
 
@@ -51,7 +51,7 @@ export default function VendorDashboardOverview() {
     const displayedOpportunities = data?.length ?? 0
     const canPurchaseLeads = stats?.canPurchaseLeads ?? false;
 
-    if (isLoading || isFetching) {
+    if (isLoading) {
         return <VendorDashboardOverviewSkeleton />
     }
 
