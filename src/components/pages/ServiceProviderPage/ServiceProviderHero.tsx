@@ -1,6 +1,5 @@
 "use client"
 import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
-import { getGlobalSettings } from "@/utils/getGlobalSettings"
 import Link from "next/link"
 import { formatVerifiedProfessionalsLabel } from "../HomePage/HeroSection"
 
@@ -29,46 +28,46 @@ const InfoIcon = () => (
     </svg>
 )
 
-export default async function ServiceProviderHero({ activeVendorsCount, activeRequestsCount, averageRating, averageResponseTime }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number, averageResponseTime: number }) {
+export default function ServiceProviderHero({ activeVendorsCount, activeRequestsCount, averageRating }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number }) {
     const scrollToHowItWorks = () => {
         document.getElementById("comment-ca-marche")?.scrollIntoView({ behavior: "smooth" })
     }
 
     return (
-        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-amber-light via-[#FFF8ED] to-[#FAFBFF] dark:from-slate-900 dark:via-[#1B2040] dark:to-[#1A1000] px-[5%] pt-[120px] pb-20 text-center -mt-16">
+        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-amber-light via-[#FFF8ED] to-[#FAFBFF] dark:from-slate-900 dark:via-[#1B2040] dark:to-[#1A1000] px-[5%] pt-30 pb-20 text-center -mt-16">
             <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[48px_48px]"
             />
             <div
                 aria-hidden
-                className="pointer-events-none absolute -top-20 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(245,158,11,0.08)_0%,transparent_65%)] dark:bg-[radial-gradient(ellipse,rgba(245,158,11,0.1)_0%,transparent_65%)]"
+                className="pointer-events-none absolute -top-20 left-1/2 h-125 w-225 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(245,158,11,0.08)_0%,transparent_65%)] dark:bg-[radial-gradient(ellipse,rgba(245,158,11,0.1)_0%,transparent_65%)]"
             />
             <div
                 aria-hidden
-                className="pointer-events-none absolute -right-[100px] -bottom-[100px] size-[500px] rounded-full bg-[radial-gradient(circle,rgba(27,79,255,0.05)_0%,transparent_65%)] dark:bg-[radial-gradient(circle,rgba(27,79,255,0.08)_0%,transparent_65%)]"
+                className="pointer-events-none absolute -right-25 -bottom-25 size-125 rounded-full bg-[radial-gradient(circle,rgba(27,79,255,0.05)_0%,transparent_65%)] dark:bg-[radial-gradient(circle,rgba(27,79,255,0.08)_0%,transparent_65%)]"
             />
 
-            <div className="relative z-1 max-w-[760px]">
-                <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/12 px-4 py-1.5 text-xs font-semibold text-amber-500">
+            <div className="relative z-1 max-w-200">
+                <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-3xl border border-amber-500/25 bg-amber-500/12 px-4 py-1.5 text-xs font-semibold text-amber-500">
                     <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-amber-500" />
                     {formatVerifiedProfessionalsLabel(activeVendorsCount)}
                 </div>
 
-                <h1 className="mb-5 animate-hero-fade-up text-[clamp(36px,5vw,64px)] leading-[1.05] font-extrabold tracking-[-2px] text-appText dark:text-white [animation-delay:0.1s]">
+                <h1 className="mb-5 animate-hero-fade-up text-5xl leading-[1.05] font-extrabold tracking-[-2px] text-appText dark:text-white [animation-delay:0.1s]">
                     Trouvez des{" "}
                     <span className="relative inline-block text-amber-500">
                         clients qualifiés
                         <span
                             aria-hidden
-                            className="absolute right-0 bottom-[3px] left-0 h-[3px] origin-left animate-hero-underline rounded-sm bg-amber-500/40"
+                            className="absolute right-0 bottom-0.5 left-0 h-0.5 origin-left animate-hero-underline rounded-0.5 bg-amber-500/40"
                         />
                     </span>
                     <br />
                     près de chez vous
                 </h1>
 
-                <p className="mx-auto mb-10 max-w-[540px] animate-hero-fade-up text-lg leading-[1.7] text-appTextSec dark:text-white/50 [animation-delay:0.2s]">
+                <p className="mx-auto mb-10 max-w-135 animate-hero-fade-up text-lg leading-[1.7] text-appTextSec dark:text-white/50 [animation-delay:0.2s]">
                     Accédez à des demandes locales vérifiées, choisissez celles qui vous intéressent et développez votre activité. Sans abonnement — vous ne payez que les contacts qui vous intéressent.
                 </p>
 
@@ -102,7 +101,7 @@ export default async function ServiceProviderHero({ activeVendorsCount, activeRe
                 <div className="mt-10 flex animate-hero-fade-up flex-wrap justify-center gap-6 [animation-delay:0.4s]">
                     {TRUST_ITEMS.map((item) => (
                         <div key={item} className="flex items-center gap-1.5 text-[13px] text-appTextSec dark:text-white/45">
-                            <span className="flex size-[18px] shrink-0 items-center justify-center rounded-full border border-trust-green/30 bg-trust-green/15">
+                            <span className="flex size-4.5 shrink-0 items-center justify-center rounded-full border border-trust-green/30 bg-trust-green/15">
                                 <CheckIcon />
                             </span>
                             {item}
@@ -111,14 +110,14 @@ export default async function ServiceProviderHero({ activeVendorsCount, activeRe
                 </div>
 
                 <div className="relative z-1 mt-16 animate-hero-fade-up [animation-delay:0.5s]">
-                    <div className="mx-auto flex max-w-[580px] flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-[20px] border border-appBorder dark:border-white/8 bg-appCard dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
+                    <div className="mx-auto flex max-w-145 flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-3xl border border-appBorder dark:border-white/8 bg-appCard dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
                         {[
                             { value: <>{activeVendorsCount}<span className="text-amber-500">+</span></>, label: "Pros actifs" },
                             { value: <>{activeRequestsCount}<span className="text-amber-500">+</span></>, label: "Leads traités" },
                             { value: <>{averageRating}<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
                         ].map((stat) => (
                             <div key={stat.label} className="flex-1 px-7 py-6 text-center">
-                                <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
+                                <div className="text-8xl leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
                                     {stat.value}
                                 </div>
                                 <div className="mt-1 text-xs text-appTextMuted dark:text-white/40">{stat.label}</div>
