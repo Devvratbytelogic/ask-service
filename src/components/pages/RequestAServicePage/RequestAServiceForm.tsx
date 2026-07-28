@@ -600,14 +600,14 @@ export default function RequestAServiceForm({
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      className="w-full max-w-[620px] overflow-hidden rounded-[24px] border border-appBorder bg-appCard"
+      className="w-full max-w-155 overflow-hidden rounded-3xl border border-appBorder bg-appCard"
       style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
     >
       {/* Progress bar */}
       {!isSuccess && !flowScreen && (
         <div className="h-1 bg-appElevated">
           <div
-            className="h-full rounded-r-[2px] transition-[width] duration-500 ease-in-out"
+            className="h-full rounded-r-0.5 transition-[width] duration-500 ease-in-out"
             style={{
               width: `${progress}%`,
               background: 'linear-gradient(90deg, var(--color-primaryColor), #6B8FFF)',
@@ -619,7 +619,7 @@ export default function RequestAServiceForm({
       {/* Step header */}
       {!isSuccess && !flowScreen && (
         <div className="flex items-center gap-3.5 px-8 pt-7">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[15px] font-extrabold text-primaryColor">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-3xl bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[15px] font-extrabold text-primaryColor">
             {uiStep}
           </div>
           <div>
@@ -636,10 +636,10 @@ export default function RequestAServiceForm({
                 />
               ))}
             </div>
-            <h3 className="text-[18px] font-extrabold tracking-[-0.3px] text-appText">
+            <h3 className="text-2xl font-extrabold tracking-[-0.3px] text-appText">
               {getStepTitle()}
             </h3>
-            <p className="mt-0.5 text-[13px] text-appTextSec">{getStepDesc()}</p>
+            <p className="mt-0.5 text-sm text-appTextSec">{getStepDesc()}</p>
           </div>
         </div>
       )}
@@ -708,7 +708,7 @@ export default function RequestAServiceForm({
                       key={value}
                       type="button"
                       onClick={() => setClientType(value)}
-                      className="cursor-pointer rounded-[12px] border-2 px-4 py-3.5 text-center transition-all duration-200 hover:-translate-y-px"
+                      className="cursor-pointer rounded-3xl border-2 px-4 py-3.5 text-center transition-all duration-200 hover:-translate-y-px"
                       style={{
                         borderColor: isSelected
                           ? 'var(--color-primaryColor)'
@@ -724,15 +724,15 @@ export default function RequestAServiceForm({
                         fontFamily: 'inherit',
                       }}
                     >
-                      <div className="mb-1.5 text-[22px]">{emoji}</div>
-                      <div className="text-[13px] font-bold text-appText">{label}</div>
-                      <div className="mt-0.5 text-[11px] text-appTextSec">{desc}</div>
+                      <div className="mb-1.5 text-5xl">{emoji}</div>
+                      <div className="text-sm font-bold text-appText">{label}</div>
+                      <div className="mt-0.5 text-xs text-appTextSec">{desc}</div>
                     </button>
                   )
                 })}
               </div>
               {clientTypeTouched && !clientType && (
-                <p className="mt-1.5 text-[11px] text-red-500">Veuillez choisir votre profil</p>
+                <p className="mt-1.5 text-xs text-red-500">Veuillez choisir votre profil</p>
               )}
             </div>
 
@@ -740,7 +740,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -757,7 +757,7 @@ export default function RequestAServiceForm({
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
           >
             {isQuestionsLoading ? (
-              <div className="flex items-center justify-center gap-3 py-12 text-[14px] text-appTextSec">
+              <div className="flex items-center justify-center gap-3 py-12 text-sm text-appTextSec">
                 <svg
                   className="h-5 w-5 animate-spin"
                   fill="none"
@@ -781,7 +781,7 @@ export default function RequestAServiceForm({
                 Chargement des questions…
               </div>
             ) : currentQuestions.length === 0 ? (
-              <p className="py-6 text-center text-[14px] text-appTextSec">
+              <p className="py-6 text-center text-sm text-appTextSec">
                 Aucune question pour cette étape.
               </p>
             ) : (
@@ -801,7 +801,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -811,7 +811,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={goNext}
                 disabled={isQuestionsLoading}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -927,7 +927,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-[22px] py-[13px] text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5.5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -936,7 +936,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-[13px] text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Vérifier ma demande
@@ -952,7 +952,7 @@ export default function RequestAServiceForm({
             key={`summary-${shakeKey}`}
             className="animate-inscription-fade-up"
           >
-            <div className="mb-5 overflow-hidden rounded-[12px] border border-appBorderSub bg-appSurface">
+            <div className="mb-5 overflow-hidden rounded-3xl border border-appBorderSub bg-appSurface">
               <SummaryRow
                 icon={
                   <svg
@@ -1052,7 +1052,7 @@ export default function RequestAServiceForm({
             </div>
 
             <div
-              className="mb-5 flex gap-3 rounded-[12px] border-[1.5px] border-primary-icon-bg dark:border-[rgba(27,79,255,0.25)] bg-blue-light dark:bg-primary-dim p-4 text-primaryColor"
+              className="mb-5 flex gap-3 rounded-3xl border-[1.5px] border-primary-icon-bg dark:border-[rgba(27,79,255,0.25)] bg-blue-light dark:bg-primary-dim p-4 text-primaryColor"
             >
               <FiInfo size={16} className="mt-0.5 shrink-0" aria-hidden />
               <p className="text-[13px] leading-[1.6]">
@@ -1062,7 +1062,7 @@ export default function RequestAServiceForm({
             </div>
 
             {submitError && (
-              <div className="mb-4 flex items-start gap-2.5 rounded-[12px] border border-red-200 bg-red-light px-4 py-3 text-[13px] text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
+              <div className="mb-4 flex items-start gap-2.5 rounded-3xl border border-red-200 bg-red-light px-4 py-3 text-sm text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
                 <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="mt-0.5 shrink-0" aria-hidden>
                   <circle cx="12" cy="12" r="10" />
                   <line x1="12" y1="8" x2="12" y2="12" />
@@ -1077,7 +1077,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={goPrev}
                 disabled={isSubmitting}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -1087,12 +1087,12 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70"
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 {isSubmitting ? (
                   <>
-                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
+                    <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
