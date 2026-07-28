@@ -1,7 +1,6 @@
 'use client'
 
 import moment from 'moment'
-import 'moment/locale/fr'
 import { CheckmarkIconSVG } from '@/components/library/AllSVG'
 import { useUnlockLeadMutation } from '@/redux/rtkQueries/allPostApi'
 import { RootState } from '@/redux/appStore'
@@ -9,7 +8,6 @@ import { closeModal } from '@/redux/slices/allModalSlice'
 import { useGetSingleLeadQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { addToast, Spinner } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
-import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 
 export default function UnlockLeadConfirmModal() {
     const dispatch = useDispatch()
@@ -27,8 +25,8 @@ export default function UnlockLeadConfirmModal() {
     const creditsToUnlock = modalData?.creditsToUnlock ?? lead?.creditsToUnlock ?? 0
     const walletBalance = dashboardData?.data?.creditBalance ?? 0
     const serviceLabel = lead?.service_category?.title ?? '—'
-    const location = resolvePostalOption(lead?.cityOrPostalCode ?? '')?.label ?? '—'
-   
+    const location = lead?.cityOrPostalCode || lead?.city || '—'
+
     const dateInfo = lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—' + ' · ' + (lead?.timeSlot ?? '—')
 
     const handleCancel = () => dispatch(closeModal())
@@ -57,7 +55,7 @@ export default function UnlockLeadConfirmModal() {
                 {creditsToUnlock} crédits seront déduits de votre wallet.
             </p>
 
-            <div className="bg-black/3 dark:bg-white/4 border border-appBorder rounded-[12px] p-3.5 mb-4 flex flex-col gap-2">
+            <div className="bg-black/3 dark:bg-white/4 border border-appBorder rounded-3xl p-3.5 mb-4 flex flex-col gap-2">
                 <div className="flex justify-between items-center text-[13px]">
                     <span className="text-appTextSec">Service</span>
                     <span className="font-semibold text-appText">{serviceLabel}</span>
@@ -87,7 +85,7 @@ export default function UnlockLeadConfirmModal() {
                     type="button"
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="cursor-pointer flex-1 py-3 rounded-[10px] bg-black/5 dark:bg-white/7 text-appTextSec text-[13px] font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/12 hover:text-appText disabled:opacity-60"
+                    className="cursor-pointer flex-1 py-3 rounded-2.5 bg-black/5 dark:bg-white/7 text-appTextSec text-sm font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/12 hover:text-appText disabled:opacity-60"
                 >
                     Annuler
                 </button>
@@ -95,7 +93,7 @@ export default function UnlockLeadConfirmModal() {
                     type="button"
                     onClick={handleConfirm}
                     disabled={!leadId || isLoading}
-                    className="cursor-pointer flex-2 py-3 rounded-[10px] bg-linear-to-br from-primaryColor to-[#4F46E5] text-white text-[14px] font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(27,79,255,0.35)] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(27,79,255,0.45)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    className="cursor-pointer flex-2 py-3 rounded-2.5 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white text-base font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(27,79,255,0.35)] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(27,79,255,0.45)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 >
                     {isLoading ? (
                         <Spinner size="sm" color="white" />

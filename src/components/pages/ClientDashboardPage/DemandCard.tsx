@@ -10,10 +10,8 @@ import { LocationIconSVG, CalendarIconSVG, FileIconSVG, ClockCircleOutlineIconSV
 import moment from 'moment'
 import { getEditRequestRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
-import { useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useAcceptQuoteMutation, useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
 import ImageComponent from '@/components/library/ImageComponent'
-import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 
 type DemandCardProps = {
     demand: IAllRequestsDataEntity
@@ -58,7 +56,7 @@ const STATUS_CONFIG: Record<string, { classes: string; icon: React.ReactNode }> 
 }
 
 const MetaItem = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center gap-[5px] text-xs text-appTextSec capitalize">{children}</div>
+    <div className="flex items-center gap-1.25 text-xs text-appTextSec capitalize">{children}</div>
 )
 
 export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardProps) {
@@ -69,7 +67,6 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
     const menuRef = useRef<HTMLDivElement>(null)
     const [acceptQuote] = useAcceptQuoteMutation()
     const [ignoreQuote] = useIgnoreQuoteMutation()
-    console.log('demand', demand);
 
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
     const postalCodeRaw = demand?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
@@ -195,18 +192,18 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         >
                             {demand?.service_category?.title}
                         </span>
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2 py-[3px] rounded-[5px] ${statusCfg?.classes}`}>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-1.5 ${statusCfg?.classes}`}>
                             {statusCfg?.icon}
                             {demand?.quotes_status_label}
                         </span>
                         {demand?.reference_no && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2 py-[3px] rounded-[5px]">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2.5 py-1.5 rounded-1.5">
                                 <span className="text-appTextMuted">Réf.</span>
                                 <span className="font-bold text-appText">{demand.reference_no}</span>
                             </span>
                         )}
                         {demand?.new_quotes_count && demand?.new_quotes_count > 0 ? (
-                            <span className="text-[10px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-[7px] py-[2px] rounded-[4px] uppercase tracking-[0.5px]">
+                            <span className="text-[10px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-1.75 py-0.5 rounded-1.5 uppercase tracking-[0.5px]">
                                 {demand?.new_quotes_count} nouveaux
                             </span>
                         ) : null}
@@ -238,23 +235,23 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     >
                         {totalQuotesCount}
                     </p>
-                    <p className="text-[10px] text-appTextMuted mt-[2px]">devis reçus</p>
+                    <p className="text-[10px] text-appTextMuted mt-0.5">devis reçus</p>
                     {demand?.new_quotes_count && demand?.new_quotes_count > 0 ? (
-                        <p className="flex items-center gap-[3px] text-[10px] font-bold text-[#6EE7B7] mt-[3px]">
+                        <p className="flex items-center gap-0.75 text-[10px] font-bold text-[#6EE7B7] mt-0.5">
                             <svg width="8" height="8" fill="currentColor" viewBox="0 0 8 8">
                                 <circle cx="4" cy="4" r="4" />
                             </svg>
                             {demand.new_quotes_count} nouveaux
                         </p>
                     ) : isAccepted ? (
-                        <p className="flex items-center gap-[3px] text-[10px] font-bold text-[#6EE7B7] mt-[3px]">
+                        <p className="flex items-center gap-0.75 text-[10px] font-bold text-[#6EE7B7] mt-0.5">
                             <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <polyline points="20,6 9,17 4,12" />
                             </svg>
                             {demand.accepted_quotes_count ?? 1} accepté{(demand.accepted_quotes_count ?? 1) > 1 ? 's' : ''}
                         </p>
                     ) : totalQuotesCount === 0 ? (
-                        <p className="text-[10px] text-appTextMuted mt-[3px]">Bientôt…</p>
+                        <p className="text-[10px] text-appTextMuted mt-0.5">Bientôt…</p>
                     ) : null}
                 </div>
 
@@ -266,7 +263,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <button
                         type="button"
                         onClick={onToggle}
-                        className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-xs font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-2.5 border text-xs font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
                     >
                         {viewBtnLabel}
                         <span className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
@@ -278,7 +275,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <button
                                 type="button"
                                 onClick={() => setMenuOpen((prev) => !prev)}
-                                className="w-8 h-8 rounded-[8px] bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-[14px] cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
+                                className="w-8 h-8 rounded-2 bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
                                 aria-label="Options"
                                 aria-haspopup="menu"
                                 aria-expanded={menuOpen}
@@ -288,7 +285,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             {menuOpen && (
                                 <div
                                     role="menu"
-                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-[190px] rounded-[10px] border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-47.5 rounded-2.5 border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
                                 >
                                     {canEdit && (
                                         <Link
@@ -298,7 +295,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                                 e.stopPropagation()
                                                 setMenuOpen(false)
                                             }}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
+                                            className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
                                         >
                                             Modifier
                                         </Link>
@@ -308,7 +305,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                             type="button"
                                             role="menuitem"
                                             onClick={handleCloseRequest}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
+                                            className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
                                         >
                                             Clôturer la demande
                                         </button>
@@ -328,17 +325,17 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         const acceptedQuote = demand?.quotes?.find((q) => q?.status?.toLowerCase() === 'accepted')
                         if (!acceptedQuote) return null
                         return (
-                            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-[10px] mb-3">
-                                <div className="w-7 h-7 rounded-[8px] bg-trust-green/15 flex items-center justify-center shrink-0">
+                            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-2.5 mb-3">
+                                <div className="w-7 h-7 rounded-2 bg-trust-green/15 flex items-center justify-center shrink-0">
                                     <svg width="14" height="14" fill="none" stroke="#6EE7B7" strokeWidth="2.5" viewBox="0 0 24 24">
                                         <polyline points="20,6 9,17 4,12" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-[13px] font-bold text-[#6EE7B7] leading-none mb-0.5">
+                                    <p className="text-sm font-bold text-[#6EE7B7] leading-none mb-0.5">
                                         Devis de {acceptedQuote.provider_name} accepté · {acceptedQuote.price_display}
                                     </p>
-                                    <p className="text-[11px] text-appTextSec">Mission confirmée · Contact transmis</p>
+                                    <p className="text-xs text-appTextSec">Mission confirmée · Contact transmis</p>
                                 </div>
                             </div>
                         )
@@ -347,12 +344,12 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     {/* Panel header */}
                     {totalQuotesCount > 0 && (
                         <div className="flex items-center justify-between mb-3.5">
-                            <p className="text-[13px] font-bold text-appText">
+                            <p className="text-sm font-bold text-appText">
                                 {totalQuotesCount} devis reçus
                                 {!isAccepted && ' · choisissez le meilleur professionnel'}
                             </p>
                             {!isAccepted && (
-                                <p className="text-xs text-appTextMuted">
+                                <p className="text-sm text-appTextMuted">
                                     Comparez et acceptez le devis qui vous convient
                                 </p>
                             )}
@@ -361,7 +358,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
 
                     {/* Quotes grid */}
                     {totalQuotesCount > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-1.25">
                             {(demand.quotes ?? []).filter((q): q is NonNullable<typeof q> => q != null).map((quote) => {
                                 const quoteId = quote._id ?? quote.quote_id
                                 if (!quoteId) return null
@@ -379,7 +376,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             })}
                         </div>
                     ) :
-                        <div className="text-center py-6 text-appTextMuted text-[13px]">
+                        <div className="text-center py-6 text-appTextMuted text-sm">
                             <div className="text-2xl mb-2">⏳</div>
                             Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.
                         </div>

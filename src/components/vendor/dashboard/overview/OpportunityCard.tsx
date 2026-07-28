@@ -10,7 +10,6 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'nextjs-toploader/app';
 import ImageComponent from '@/components/library/ImageComponent'
 import moment from 'moment'
-import { resolvePostalOption } from '@/components/pages/RequestAServicePage/PostalCitySelect'
 
 type ButtonVariant = 'green' | 'blue' | 'amber' | 'gray'
 type LeadActionType = 'unlock' | 'send-quote' | 'view-quote' | 'contact' | 'ignored'
