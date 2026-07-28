@@ -26,7 +26,7 @@ export default function VendorMenu({ onNavigate, className = '', layout = 'row' 
     // Same query as the "Prospects disponibles" dashboard card
     const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery({
         page: 1,
-        limit: 6,
+        limit: 20,
         unlocked: false,
     })
 

@@ -39,6 +39,13 @@ export default function VendorDashboardOverview() {
     const data = response?.data?.data;
     const stats = response?.data?.summary;
 
+    // Same query as VendorMenu: first locked lead for "Prospects disponibles"
+    const { data: lockedLeadsResponse } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+        page: 1,
+        limit: 20,
+        unlocked: false,
+    })
+
     useEffect(() => {
         setCityFilter('')
         setServiceFilter('')
@@ -54,7 +61,7 @@ export default function VendorDashboardOverview() {
     if (isLoading) {
         return <VendorDashboardOverviewSkeleton />
     }
-    const firstLeadId = data
+    const firstLeadId = lockedLeadsResponse?.data?.data
         ?.flatMap((group) => group.leads ?? [])
         .find((lead) => lead._id)?._id
 
