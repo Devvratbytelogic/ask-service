@@ -16,7 +16,7 @@ import {
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
 import { usePathname } from "next/navigation"
 import CustomerMenu, { CUSTOMER_NAV_LINKS } from "./CustomerMenu"
-import VendorMenu, { VENDOR_NAV_LINKS } from "./VendorMenu"
+import VendorMenu from "./VendorMenu"
 import CustomerActions from "./CustomerActions"
 import VendorActions from "./VendorActions"
 import ThemeToggle from "@/components/common/ThemeToggle"
@@ -41,7 +41,6 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
     const lightLogo = showVendorLogo ? vendorLogoUrl : logoUrl
     const darkLogo = showVendorLogo ? vendorLogoDarkUrl : logoDarkUrl
-    const navLinks = isVendorUser ? VENDOR_NAV_LINKS : CUSTOMER_NAV_LINKS
     const mobileMenuBreakpoint = isAuth ? 'lg' : 'sm'
 
     useEffect(() => {
@@ -137,25 +136,26 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                     <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-appTextSec">
                                         Navigation
                                     </p>
-                                    {navLinks.map(({ label, href }) => {
-                                        const isActive = pathname === href || pathname.startsWith(href + '/')
-                                        const activeClass = isVendorUser
-                                            ? 'text-amber bg-amber/10'
-                                            : 'text-primaryColor bg-primaryColor/10'
-                                        return (
-                                            <Link
-                                                key={href}
-                                                href={href}
-                                                onClick={closeMenu}
-                                                className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
-                                                    ? activeClass
-                                                    : 'text-appText hover:bg-appOverlay-5'
-                                                    }`}
-                                            >
-                                                {label}
-                                            </Link>
-                                        )
-                                    })}
+                                    {isVendorUser ? (
+                                        <VendorMenu onNavigate={closeMenu} layout="stack" />
+                                    ) : (
+                                        CUSTOMER_NAV_LINKS.map(({ label, href }) => {
+                                            const isActive = pathname === href || pathname.startsWith(href + '/')
+                                            return (
+                                                <Link
+                                                    key={href}
+                                                    href={href}
+                                                    onClick={closeMenu}
+                                                    className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
+                                                        ? 'text-primaryColor bg-primaryColor/10'
+                                                        : 'text-appText hover:bg-appOverlay-5'
+                                                        }`}
+                                                >
+                                                    {label}
+                                                </Link>
+                                            )
+                                        })
+                                    )}
                                 </div>
 
                                 {isVendorUser && (

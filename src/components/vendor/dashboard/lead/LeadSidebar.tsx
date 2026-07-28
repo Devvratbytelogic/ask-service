@@ -34,7 +34,7 @@ interface Props {
 export default function LeadSidebar({ selectedId }: Props) {
     const router = useRouter()
     const [serviceFilter, setServiceFilter] = useState('')
-    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
+    // const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
         service: serviceFilter || undefined,
         sort: 'newest',
@@ -44,27 +44,27 @@ export default function LeadSidebar({ selectedId }: Props) {
 
     const leads = leadsData?.data?.items ?? []
 
-    const serviceOptions = [
-        { value: '', label: '🔍 Tous les services' },
-        ...(serviceCategoriesData?.data ?? []).map((cat) => ({
-            value: cat._id,
-            label: cat.title,
-        })),
-    ]
+    // const serviceOptions = [
+    //     { value: '', label: '🔍 Tous les services' },
+    //     ...(serviceCategoriesData?.data ?? []).map((cat) => ({
+    //         value: cat._id,
+    //         label: cat.title,
+    //     })),
+    // ]
 
-    const selectedServiceOption = serviceOptions.find((o) => o.value === serviceFilter) ?? serviceOptions[0]
+    // const selectedServiceOption = serviceOptions.find((o) => o.value === serviceFilter) ?? serviceOptions[0]
 
-    const sidebarSelectStyles = useMemo((): StylesConfig<FilterOption, false> => {
-        const baseStyles = buildDashboardFilterSelectStyles()
-        return {
-            ...baseStyles,
-            control: (base, state) => ({
-                ...(typeof baseStyles.control === 'function' ? baseStyles.control(base, state) : base),
-                width: '100%',
-                minWidth: 'unset',
-            }),
-        }
-    }, [])
+    // const sidebarSelectStyles = useMemo((): StylesConfig<FilterOption, false> => {
+    //     const baseStyles = buildDashboardFilterSelectStyles()
+    //     return {
+    //         ...baseStyles,
+    //         control: (base, state) => ({
+    //             ...(typeof baseStyles.control === 'function' ? baseStyles.control(base, state) : base),
+    //             width: '100%',
+    //             minWidth: 'unset',
+    //         }),
+    //     }
+    // }, [])
 
     const handleSelect = (id: string) => {
         if (id === selectedId) return
@@ -82,7 +82,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                 <div className="text-[12px] font-bold uppercase tracking-[1px] text-appTextMuted mb-2.5">
                     Prospects disponibles
                 </div>
-                <div className="relative mb-2">
+                {/* <div className="relative mb-2">
                     <ReactSelect
                         instanceId="lead-sidebar-service-filter"
                         options={serviceOptions}
@@ -93,7 +93,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                         menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                         menuPosition="fixed"
                     />
-                </div>
+                </div> */}
             </div>
 
             <div className="text-[11px] font-semibold text-appTextMuted px-3.5 mb-1.5">

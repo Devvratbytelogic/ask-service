@@ -14,7 +14,7 @@ import FindLeadsCTA from './overview/FindLeadsCTA'
 import VendorKycStatusAlert from './VendorKycStatusAlert'
 import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
 import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
+import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { useSearchParams } from 'next/navigation'
 
 export default function VendorDashboardOverview() {
@@ -54,6 +54,9 @@ export default function VendorDashboardOverview() {
     if (isLoading) {
         return <VendorDashboardOverviewSkeleton />
     }
+    const firstLeadId = data
+        ?.flatMap((group) => group.leads ?? [])
+        .find((lead) => lead._id)?._id
 
     return (
         <div className="max-w-350 mx-auto px-7 py-7">
@@ -72,7 +75,7 @@ export default function VendorDashboardOverview() {
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
                 <DashboardStatCard icon={<FiUnlock className="text-trust-green" />} iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath()} highlight={isUnlocked} />
-                <DashboardStatCard icon={<FiSearch className="text-primaryColor" />} iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={getVendorDashboardRoutePath({ leads: 'locked' })} highlight={!isUnlocked} highlightColor="blue" />
+                <DashboardStatCard icon={<FiSearch className="text-primaryColor" />} iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={generateLeadDetailRoutePath(firstLeadId || '')} highlight={!isUnlocked} highlightColor="blue" />
                 <DashboardStatCard icon={<FiCreditCard className="text-amber" />} iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
                 <DashboardStatCard icon={<FiClipboard className="text-[#8B5CF6]" />} iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
             </div>

@@ -51,9 +51,11 @@ function getProfileServiceIds(
     if (!service) return []
 
     const services = Array.isArray(service) ? service : [service]
-    return services
+    const firstId = services
         .map((item) => item._id ?? item.id)
-        .filter((id): id is string => Boolean(id))
+        .find((id): id is string => Boolean(id))
+
+    return firstId ? [firstId] : []
 }
 
 export default function VendorProfileInfo() {
@@ -130,6 +132,7 @@ export default function VendorProfileInfo() {
         onSubmit: async (formValues) => {
             const [firstName, ...lastNameParts] = (formValues.ownerName || '').trim().split(/\s+/)
             const lastName = lastNameParts.join(' ') || ''
+            console.log('formValues', formValues);
 
             const formData = new FormData()
             formData.append('first_name', firstName)
@@ -392,22 +395,24 @@ export default function VendorProfileInfo() {
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Catégorie de service
                         </label>
-                        <ReactSelect<CategoryOption, true, CategoryGroup>
-                            isMulti
+                        <ReactSelect<CategoryOption, false, CategoryGroup>
                             instanceId="vendorProfileServiceCategory"
                             name="serviceCategory"
                             options={serviceOptionGroups}
-                            value={serviceOptions.filter((opt) =>
-                                values.serviceCategory.includes(opt.value)
-                            )}
+                            value={
+                                serviceOptions.find((opt) =>
+                                    values.serviceCategory.includes(opt.value),
+                                ) ?? null
+                            }
                             onChange={(selected) => {
                                 setFieldValue(
                                     'serviceCategory',
-                                    selected ? selected.map((opt) => opt.value) : [],
+                                    selected ? [selected.value] : [],
                                 )
                             }}
                             onBlur={() => setFieldTouched('serviceCategory', true)}
-                            placeholder="— Choisir des catégories —"
+                            placeholder="— Choisir une catégorie —"
+                            isClearable
                             isLoading={isServicesLoading}
                             loadingMessage={() => 'Chargement…'}
                             noOptionsMessage={() => isServicesError ? 'Erreur de chargement' : 'Aucune option'}

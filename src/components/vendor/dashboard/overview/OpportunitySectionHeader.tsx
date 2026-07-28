@@ -45,9 +45,9 @@ export default function OpportunitySectionHeader({
     const selectedCityOption = cityOptions.find((o) => o.value === cityFilter) ?? cityOptions[0]
 
     return (
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-[18px] animate-hero-fade-up">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4.5 animate-hero-fade-up">
             <div className="flex items-center gap-2.5 flex-wrap">
-                <p className="text-[18px] font-extrabold text-appText tracking-[-0.3px]">
+                <p className="text-2xl font-extrabold text-appText tracking-[-0.3px]">
                     Mes opportunités actives
                 </p>
                 {/* <div className="flex gap-1.5 flex-wrap">
