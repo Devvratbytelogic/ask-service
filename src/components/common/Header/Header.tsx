@@ -28,6 +28,9 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
     const [menuOpen, setMenuOpen] = useState(false)
     const pathname = usePathname()
     const isServiceProviderPage = pathname === getServiceProviderRoutePath()
+    const loginHref = getLoginPageRoutePath(
+        isServiceProviderPage ? { role: 'vendor' } : undefined,
+    )
 
     const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
     const clientUserRole = useSelector((state: RootState) => state.auth.userRole)
@@ -93,7 +96,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                         <Button
                             className={isServiceProviderPage ? "outline_btn_vendor" : "outline_btn"}
                             as={Link}
-                            href={getLoginPageRoutePath()}
+                            href={loginHref}
                         >
                             Connexion / Inscription
                         </Button>
@@ -199,7 +202,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
                                 <div className="flex flex-col gap-1 px-2 py-1">
                                     <Link
-                                        href={getLoginPageRoutePath()}
+                                        href={loginHref}
                                         onClick={closeMenu}
                                         className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-appText hover:bg-appOverlay-5"
                                     >
