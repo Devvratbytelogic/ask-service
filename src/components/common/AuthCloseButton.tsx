@@ -8,9 +8,15 @@ function isSameSite(url: string): boolean {
   return url.startsWith(window.location.origin)
 }
 
+/** Subset of the Navigation API (not in all TS DOM libs yet). */
+type AppNavigation = {
+  currentEntry?: { index: number }
+  entries: () => Array<{ url?: string | null }>
+}
+
 /** True if the previous page was on this site (not Google / blank / direct open). */
 function canGoBackInApp(): boolean {
-  const nav = window.navigation
+  const nav = (window as Window & { navigation?: AppNavigation }).navigation
   if (nav?.currentEntry) {
     const previous = nav.entries()[nav.currentEntry.index - 1]
     return Boolean(previous?.url && isSameSite(previous.url))

@@ -338,6 +338,7 @@ export const {
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
     useGetVendorAvailableLeadsByServiceCategoryQuery,
+    useLazyGetVendorAvailableLeadsByServiceCategoryQuery,
     useGetVendorAllQuotesQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,

@@ -8,6 +8,7 @@ import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle, FiArrowLeft } fr
 import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
+  generateLeadDetailRoutePath,
   getClientDashboardPageRoutePath,
   getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
@@ -23,6 +24,7 @@ import {
   useResendEmailVerificationMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
+import { useLazyGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData, getIsClientFromAuthData } from '@/utils/authCookies'
@@ -113,6 +115,7 @@ export default function LoginPage({
   const [shake, setShake] = useState(false)
   const [serverError, setServerError] = useState('')
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const [showEmailVerification, setShowEmailVerification] = useState(false)
   const [verificationEmail, setVerificationEmail] = useState('')
   const [otpValue, setOtpValue] = useState('')
@@ -121,8 +124,12 @@ export default function LoginPage({
   const [login, { isLoading }] = useLoginMutation()
   const [verifyEmail, { isLoading: isVerifyingOtp }] = useVerifyEmailMutation()
   const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
+  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsByServiceCategoryQuery()
 
   const isVendor = role === 'vendor'
+  const isLoginBusy = isLoading || isRedirecting
+  const isOtpBusy = isVerifyingOtp || isRedirecting
+  const isGoogleBusy = isGoogleLoading || isRedirecting
   const activeLogoUrl = isVendor ? vendorLogoUrl : logoUrl
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentTextColor = isVendor ? 'var(--color-slate-900)' : 'white'
@@ -157,22 +164,60 @@ export default function LoginPage({
     })
   }
 
-  function getPostLoginDashboardPath(data: AuthResponseData, fromCustomerTab: boolean): string {
-    // Customer tab + is_client → client dashboard (even when role is still Vendor)
+  const getPostLoginDashboardPath = useCallback(async (
+    data: AuthResponseData,
+    fromCustomerTab: boolean,
+  ): Promise<string> => {
     if (fromCustomerTab && getIsClientFromAuthData(data)) {
       return getClientDashboardPageRoutePath()
     }
-    return getDashboardPageRoutePathForRole(data.role)
-  }
 
-  function handleLoginSuccess(response: LoginApiResponse) {
+    const roleValue = typeof data.role === 'string' ? data.role : data.role?.name
+    const isVendorRole = String(roleValue ?? '').toLowerCase() === 'vendor'
+
+    if (!fromCustomerTab && isVendorRole) {
+      try {
+        const response = await fetchAvailableLeads({
+          page: 1,
+          limit: 20,
+          unlocked: false,
+        }).unwrap()
+        const firstLeadId = response?.data?.data
+          ?.flatMap((group) => group.leads ?? [])
+          .find((lead) => lead._id)?._id
+        if (firstLeadId) {
+          return generateLeadDetailRoutePath(firstLeadId)
+        }
+      } catch (error) {
+        console.error('Error fetching available leads', error)
+      }
+    }
+
+    return getDashboardPageRoutePathForRole(data.role)
+  }, [fetchAvailableLeads])
+
+  const redirectAfterLogin = useCallback(async (
+    data: AuthResponseData,
+    fromCustomerTab: boolean,
+  ) => {
+    setIsRedirecting(true)
+    try {
+      const path = await getPostLoginDashboardPath(data, fromCustomerTab)
+      router.replace(path)
+    } catch {
+      router.replace(getDashboardPageRoutePathForRole(data.role))
+      setIsRedirecting(false)
+    }
+  }, [getPostLoginDashboardPath, router])
+
+  async function handleLoginSuccess(response: LoginApiResponse) {
     const responseData = response?.data
     if (responseData?.token ?? responseData?.access_token) {
       const fromCustomerTab = !isVendor
       const authData = responseData as AuthResponseData
       setAuthAndRefetchProfile(authData, dispatch, { preferClientView: fromCustomerTab })
       router.refresh()
-      router.push(getPostLoginDashboardPath(authData, fromCustomerTab))
+      await redirectAfterLogin(authData, fromCustomerTab)
       addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
     }
   }
@@ -193,13 +238,14 @@ export default function LoginPage({
         const authData = responseData as AuthResponseData
         setAuthAndRefetchProfile(authData, dispatch, { preferClientView: fromCustomerTab })
         router.refresh()
-        router.push(getPostLoginDashboardPath(authData, fromCustomerTab))
+        await redirectAfterLogin(authData, fromCustomerTab)
       }
       addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
     } catch {
       setOtpError('Code incorrect ou expiré. Veuillez réessayer.')
+      setIsRedirecting(false)
     }
-  }, [otpValue, verificationEmail, verifyEmail, fcmToken, dispatch, router, isVendor])
+  }, [otpValue, verificationEmail, verifyEmail, fcmToken, dispatch, router, isVendor, redirectAfterLogin])
 
   const handleResendOtp = useCallback(async () => {
     if (resendCooldown > 0 || !verificationEmail) return
@@ -258,7 +304,7 @@ export default function LoginPage({
           response?.data?.token ||
           response?.data?.access_token
         ) {
-          handleLoginSuccess(response)
+          await handleLoginSuccess(response)
         }
       } catch (error: unknown) {
         const err = error as { data?: { flow?: string; message?: string } }
@@ -268,6 +314,7 @@ export default function LoginPage({
         }
         const message = getRtkErrorMessage(error)
         setServerError(message)
+        setIsRedirecting(false)
         // addToast({ title: message, color: 'danger', timeout: 3000 })
       }
     },
@@ -305,7 +352,7 @@ export default function LoginPage({
       if (responseData?.token ?? responseData?.access_token) {
         setAuthAndRefetchProfile(responseData, dispatch, { preferClientView: fromCustomerTab })
         router.refresh()
-        router.push(getPostLoginDashboardPath(responseData, fromCustomerTab))
+        await redirectAfterLogin(responseData, fromCustomerTab)
         addToast({ title: 'Connexion réussie', color: 'success', timeout: 2000 })
         return
       }
@@ -315,6 +362,7 @@ export default function LoginPage({
         ?? (err as Error)?.message
         ?? 'Échec de la connexion Google'
       addToast({ title: message, color: 'danger', timeout: 3000 })
+      setIsRedirecting(false)
     } finally {
       setIsGoogleLoading(false)
     }
@@ -439,7 +487,7 @@ export default function LoginPage({
                 <button
                   type="button"
                   onClick={() => handleVerifyOtp()}
-                  disabled={otpValue.length !== OTP_LENGTH || isVerifyingOtp}
+                  disabled={otpValue.length !== OTP_LENGTH || isOtpBusy}
                   className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background: accentColor,
@@ -448,7 +496,7 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isVerifyingOtp ? (
+                  {isOtpBusy ? (
                     <>
                       <span
                         className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
@@ -612,7 +660,7 @@ export default function LoginPage({
                 {/* ─── Submit button ─── */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoginBusy}
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background: accentColor,
@@ -621,7 +669,7 @@ export default function LoginPage({
                     fontFamily: 'inherit',
                   }}
                 >
-                  {isLoading ? (
+                  {isLoginBusy ? (
                     <>
                       <span
                         className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
@@ -649,17 +697,17 @@ export default function LoginPage({
                     {/* ─── Google button ─── */}
                     <button
                       type="button"
-                      disabled={isGoogleLoading || isLoading}
+                      disabled={isGoogleBusy || isLoginBusy}
                       className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
                       style={{ fontFamily: 'inherit' }}
                       onClick={handleGoogleLogin}
                     >
-                      {isGoogleLoading ? (
+                      {isGoogleBusy ? (
                         <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
                       ) : (
                         <GoogleIcon />
                       )}
-                      {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
+                      {isGoogleBusy ? 'Connexion…' : 'Continuer avec Google'}
                     </button>
                   </>
                 )}
