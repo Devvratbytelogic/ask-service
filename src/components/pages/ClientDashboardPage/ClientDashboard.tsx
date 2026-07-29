@@ -7,7 +7,7 @@ import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
 import PhoneUnverifiedAlert from './PhoneUnverifiedAlert'
-import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { buildDashboardFilterSelectStyles, type FilterOption } from './selectStyles'
 import EmailUnverifiedAlert from './EmailUnverifiedAlert'
 
@@ -75,8 +75,10 @@ function StatCard({
 export default function ClientDashboard() {
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
-    const { data: globalSettings } = useGetGlobalSettingsQuery()
-    const quoteExpired = globalSettings?.data?.quote_expired ?? 7
+    const { data: userProfileInfoData } = useGetUserProfileInfoQuery()
+    const profile = userProfileInfoData?.data
+    const showWelcomeMessage = Boolean(profile?.show_welcome_msg)
+    const userName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ')
 
     const serviceCategoryOptions = useMemo<FilterOption[]>(
         () => [
@@ -193,6 +195,16 @@ export default function ClientDashboard() {
         <div className="body_x_axis_padding">
             <PhoneUnverifiedAlert />
             <EmailUnverifiedAlert />
+            {showWelcomeMessage && (
+                <div className="mb-6 rounded-2xl border border-primaryColor/20 bg-primaryColor/5 px-5 py-4 animate-hero-fade-up">
+                    <p className="text-[17px] font-extrabold tracking-[-0.3px] text-appText">
+                        Welcome back{userName ? `, ${userName}` : ''}!
+                    </p>
+                    <p className="mt-0.5 text-sm text-appTextSec">
+                        We&apos;re glad to see you again.
+                    </p>
+                </div>
+            )}
             {/* Page header */}
             <div className="flex items-start justify-between mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
                 <div>
@@ -374,8 +386,8 @@ export default function ClientDashboard() {
                                             type="button"
                                             onClick={() => setPage(p as number)}
                                             className={`w-8 h-8 rounded-[8px] text-[13px] font-semibold transition-all duration-200 ${page === p
-                                                    ? 'bg-primaryColor text-white shadow-[0_2px_8px_rgba(27,79,255,0.3)]'
-                                                    : 'bg-appCard border border-appBorder text-appTextSec hover:border-primaryColor/40 hover:text-primaryColor'
+                                                ? 'bg-primaryColor text-white shadow-[0_2px_8px_rgba(27,79,255,0.3)]'
+                                                : 'bg-appCard border border-appBorder text-appTextSec hover:border-primaryColor/40 hover:text-primaryColor'
                                                 }`}
                                         >
                                             {p}
