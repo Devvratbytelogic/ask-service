@@ -30,6 +30,7 @@ import type {
   IDynamicAnswerPayload,
 } from '@/types/serviceQuestions'
 import DynamicQuestionField, { FieldLabel, inputCls } from './DynamicQuestionField'
+import PostalCitySelect from './PostalCitySelect'
 import OtpVerificationScreen from './OtpVerificationScreen'
 import LoginRequiredScreen from './LoginRequiredScreen'
 import RequestSentScreen from './RequestSentScreen'
@@ -264,6 +265,11 @@ export default function RequestAServiceForm({
   )
   const [clientTypeTouched, setClientTypeTouched] = useState(false)
 
+  // ── Pincode + city (first field on dynamic step 1)
+  const [pincode, setPincode] = useState(() => data?.pincode ?? '')
+  const [city, setCity] = useState(() => data?.city ?? '')
+  const [pincodeTouched, setPincodeTouched] = useState(false)
+
   // ── Dynamic answers (prefilled by API key, e.g. time_slot, start_date)
   const [answers, setAnswers] = useState<Record<string, string | string[]>>(() => {
     if (!data?.dynamic_answers?.length) return {}
@@ -382,11 +388,16 @@ export default function RequestAServiceForm({
       }
       navTo(uiStep + 1)
     } else if (currentApiStep != null) {
-      const hasErr = currentQuestions.some((q) => {
-        if (!q.is_required) return false
-        const val = answers[q.key]
-        return !val || (Array.isArray(val) ? val.length === 0 : val === '')
-      })
+      const isFirstDynStep = currentApiStepIdx === 0
+      if (isFirstDynStep) setPincodeTouched(true)
+
+      const hasErr =
+        (isFirstDynStep && !pincode) ||
+        currentQuestions.some((q) => {
+          if (!q.is_required) return false
+          const val = answers[q.key]
+          return !val || (Array.isArray(val) ? val.length === 0 : val === '')
+        })
       setTouchedFields((prev) => {
         const next = new Set(prev)
         currentQuestions.forEach((q) => next.add(q.key))
@@ -444,11 +455,10 @@ export default function RequestAServiceForm({
         phone: contactFormik.values.phone,
         email: contactFormik.values.email,
       },
-      // city: '',
+      pincode,
+      city,
       // state: '',
       // address_1: '',
-      // pincode: '',
-      // country: '',
     }
 
     try {
@@ -785,21 +795,47 @@ export default function RequestAServiceForm({
                 </svg>
                 Chargement des questions…
               </div>
-            ) : currentQuestions.length === 0 ? (
-              <p className="py-6 text-center text-sm text-appTextSec">
-                Aucune question pour cette étape.
-              </p>
             ) : (
-              currentQuestions.map((q) => (
-                <DynamicQuestionField
-                  key={q._id}
-                  question={q}
-                  value={answers[q.key] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
-                  error={getFieldError(q)}
-                  onChange={(val) => handleAnswer(q.key, val)}
-                  onBlur={() => touchField(q.key)}
-                />
-              ))
+              <>
+                {currentApiStepIdx === 0 && (
+                  <div className="mb-5">
+                    <FieldLabel required>Ville ou code postal</FieldLabel>
+                    <PostalCitySelect
+                      value={pincode}
+                      city={city}
+                      onChange={(nextPincode, nextCity) => {
+                        setPincode(nextPincode)
+                        setCity(nextCity)
+                      }}
+                      onBlur={() => setPincodeTouched(true)}
+                      hasError={pincodeTouched && !pincode}
+                      placeholder="Ex. Paris, 75001"
+                    />
+                    {pincodeTouched && !pincode && (
+                      <p className="mt-1 text-[11px] text-red-500">Ce champ est obligatoire</p>
+                    )}
+                  </div>
+                )}
+
+                {currentQuestions.length === 0 ? (
+                  currentApiStepIdx !== 0 && (
+                    <p className="py-6 text-center text-sm text-appTextSec">
+                      Aucune question pour cette étape.
+                    </p>
+                  )
+                ) : (
+                  currentQuestions.map((q) => (
+                    <DynamicQuestionField
+                      key={q._id}
+                      question={q}
+                      value={answers[q.key] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
+                      error={getFieldError(q)}
+                      onChange={(val) => handleAnswer(q.key, val)}
+                      onBlur={() => touchField(q.key)}
+                    />
+                  ))
+                )}
+              </>
             )}
 
             <div className="mt-6 flex gap-2.5">
@@ -993,6 +1029,13 @@ export default function RequestAServiceForm({
                 label="Profil"
                 value={sumType}
               />
+              {(pincode || city) && (
+                <SummaryRow
+                  icon={IconInfo}
+                  label="Ville ou code postal"
+                  value={[pincode, city].filter(Boolean).join(' ')}
+                />
+              )}
               {questionsList.map((q) => {
                 const val = answers[q.key]
                 if (!val || (Array.isArray(val) && val.length === 0)) return null

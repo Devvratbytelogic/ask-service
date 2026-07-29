@@ -11,6 +11,7 @@ import {
   getClientDashboardPageRoutePath,
   getDashboardPageRoutePathForRole,
   getForgotPasswordRoutePath,
+  getLoginPageRoutePath,
   getRegistrationPageRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
@@ -22,7 +23,7 @@ import {
   useResendEmailVerificationMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData, getIsClientFromAuthData } from '@/utils/authCookies'
 import { useDispatch } from 'react-redux'
@@ -103,9 +104,11 @@ export default function LoginPage({
   averageRating,
 }: LoginPageProps = {}) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const fcmToken = getFcmTokenFromCookie()
-  const [role, setRole] = useState<Role>('customer')
+  const roleParam = searchParams.get('role')
+  const role: Role = roleParam === 'vendor' ? 'vendor' : 'customer'
   const [showPassword, setShowPassword] = useState(false)
   const [shake, setShake] = useState(false)
   const [serverError, setServerError] = useState('')
@@ -285,7 +288,7 @@ export default function LoginPage({
   }
 
   function switchRole(r: Role) {
-    setRole(r)
+    router.replace(getLoginPageRoutePath({ role: r }), { scroll: false })
     setServerError('')
     formik.setErrors({})
     backToLoginForm()
@@ -634,28 +637,32 @@ export default function LoginPage({
                   )}
                 </button>
 
-                {/* ─── Divider ─── */}
-                <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
-                  <div className="h-px flex-1 bg-appBorder" />
-                  ou continuer avec
-                  <div className="h-px flex-1 bg-appBorder" />
-                </div>
+                {!isVendor && (
+                  <>
+                    {/* ─── Divider ─── */}
+                    <div className="my-5 flex items-center gap-3 text-[12px] text-appTextMuted">
+                      <div className="h-px flex-1 bg-appBorder" />
+                      ou continuer avec
+                      <div className="h-px flex-1 bg-appBorder" />
+                    </div>
 
-                {/* ─── Google button ─── */}
-                <button
-                  type="button"
-                  disabled={isGoogleLoading || isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{ fontFamily: 'inherit' }}
-                  onClick={handleGoogleLogin}
-                >
-                  {isGoogleLoading ? (
-                    <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
-                  ) : (
-                    <GoogleIcon />
-                  )}
-                  {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
-                </button>
+                    {/* ─── Google button ─── */}
+                    <button
+                      type="button"
+                      disabled={isGoogleLoading || isLoading}
+                      className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appText transition-all hover:-translate-y-px hover:border-appBorder hover:bg-appSurface hover:shadow-[0_3px_10px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ fontFamily: 'inherit' }}
+                      onClick={handleGoogleLogin}
+                    >
+                      {isGoogleLoading ? (
+                        <span className="h-4 w-4 rounded-full border-2 border-slate-400 border-t-transparent animate-spin" />
+                      ) : (
+                        <GoogleIcon />
+                      )}
+                      {isGoogleLoading ? 'Connexion…' : 'Continuer avec Google'}
+                    </button>
+                  </>
+                )}
               </>
             )}
           </form>
@@ -664,7 +671,7 @@ export default function LoginPage({
           <p className="mt-6 text-center text-[13px] text-appTextSec">
             Pas encore de compte ?{' '}
             <Link
-              href={getRegistrationPageRoutePath()}
+              href={getRegistrationPageRoutePath({ role })}
               className="font-semibold no-underline hover:underline"
               style={{ color: accentColor }}
             >

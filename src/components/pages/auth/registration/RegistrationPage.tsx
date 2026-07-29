@@ -377,13 +377,19 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
       triggerShake(5)
       return
     }
+
+    const filesToUpload = docFields.flatMap((f) => {
+      const file = documents[f._id]
+      return file ? [{ id: f._id, file }] : []
+    })
+
     try {
-      const formData = new FormData()
-      docFields.forEach((f) => {
-        const file = documents[f._id]
-        if (file) formData.append(f._id, file)
-      })
-      await uploadVendorDocuments(formData).unwrap()
+      // Skip upload when there are no documents/files to send
+      if (filesToUpload.length > 0) {
+        const formData = new FormData()
+        filesToUpload.forEach(({ id, file }) => formData.append(id, file))
+        await uploadVendorDocuments(formData).unwrap()
+      }
     } catch {
       // Upload failed – docs can be submitted later from vendor dashboard
     }
@@ -1097,6 +1103,11 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     )}
                     {isDocsError && (
                       <p className="mb-4 text-center text-[13px] text-red-500">Impossible de charger les documents. Veuillez réessayer.</p>
+                    )}
+                    {!isDocsLoading && !isDocsError && docFields.length === 0 && (
+                      <p className="mb-4 text-center text-[13px] text-appTextSec">
+                        Aucun document requis pour le moment. Vous pourrez les ajouter plus tard depuis votre espace prestataire.
+                      </p>
                     )}
                     {docFields.map((doc) => (
                       <DocUploadZone

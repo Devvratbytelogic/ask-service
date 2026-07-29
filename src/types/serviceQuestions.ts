@@ -54,7 +54,8 @@ export interface ICreateServiceRequestPayload {
     phone: string;
     email: string;
   };
-  cityOrPostalCode?: string;
+  pincode?: string;
+  city?: string;
   desiredDate?: string;
   timeSlot?: string;
   additionalDetails?: string;

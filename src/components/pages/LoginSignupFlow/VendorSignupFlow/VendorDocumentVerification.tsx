@@ -45,13 +45,15 @@ const VendorDocumentVerification = () => {
     const allRequiredUploaded = requiredIds.every((id) => files[id] != null)
 
     const handleSubmit = async () => {
-        const formData = new FormData()
-        Object.entries(files).forEach(([docId, file]) => {
-            if (file) formData.append(docId, file)
-        })
+        const filesToUpload = Object.entries(files).filter((entry): entry is [string, File] => entry[1] != null)
 
         try {
-            await uploadVendorDocuments(formData).unwrap()
+            // Skip upload when there are no documents/files to send
+            if (filesToUpload.length > 0) {
+                const formData = new FormData()
+                filesToUpload.forEach(([docId, file]) => formData.append(docId, file))
+                await uploadVendorDocuments(formData).unwrap()
+            }
             dispatch(
                 openModal({
                     componentName: "LoginSignupIndex",
@@ -119,6 +121,11 @@ const VendorDocumentVerification = () => {
             )}
             {isError && (
                 <p className="text-red-500 text-sm">Impossible de charger les documents requis. Veuillez réessayer.</p>
+            )}
+            {!isLoading && !isError && documents.length === 0 && (
+                <p className="text-darkSilver text-sm text-center">
+                    Aucun document requis pour le moment. Vous pourrez les ajouter plus tard depuis votre espace prestataire.
+                </p>
             )}
             {!isLoading && !isError && documents.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">

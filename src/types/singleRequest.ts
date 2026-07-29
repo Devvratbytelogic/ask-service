@@ -22,7 +22,8 @@ export interface ISingleRequestAPIResponse {
     end_date?: null;
     end_time?: null;
     note: string;
-    pincode?: null;
+    pincode?: string | null;
+    city?: string | null;
     cityOrPostalCode?: string;
     desiredDate?: string;
     timeSlot?: string;

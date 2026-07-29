@@ -47,7 +47,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         method: 'PUT',
         body: formData,
       }),
-      invalidatesTags: ['VendorProfile'],
+      invalidatesTags: ['VendorProfile', 'VendorAvailableLeads', 'VendorDashboard'],
     }),
     updateUserProfileInfo: builder.mutation({
       query: (formData) => ({

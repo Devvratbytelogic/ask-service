@@ -193,43 +193,40 @@ export default function VendorDocuments() {
               </div>
 
               {doc.status !== 'action_required' && doc.fileName && (
-                <div className="mt-4 flex items-center justify-between rounded-xl bg-appSurface px-4 py-3">
-                  <div className='flex items-center gap-3'>
-                    <span className="p-2 rounded-xl border border-appBorder bg-appCard text-appTextSec [&_svg]:size-6">
-                      <UploadFileIconSVG />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">
-                        {doc.fileName}
+                <div className="mt-4 flex min-w-0 items-center gap-3 rounded-xl bg-appSurface px-3 py-3 sm:px-4">
+                  <span className="shrink-0 rounded-xl border border-appBorder bg-appCard p-2 text-appTextSec [&_svg]:size-5">
+                    <UploadFileIconSVG />
+                  </span>
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="truncate text-sm font-medium text-fontBlack" title={doc.fileName}>
+                      {doc.fileName}
+                    </p>
+                    {doc.fileSizeBytes != null && (
+                      <p className="text-xs text-darkSilver">
+                        {formatFileSize(doc.fileSizeBytes)}
                       </p>
-                      {doc.fileSizeBytes != null && (
-                        <p className="text-xs text-darkSilver">
-                          {formatFileSize(doc.fileSizeBytes)}
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
-                  <div className="flex shrink-0 items-center gap-3 sm:flex-row-reverse">
-                    <Button
-                      className="btn_bg_white border-none"
-                      startContent={<DownloadIconSVG />}
-                      onPress={() => {
-                        if (doc.downloadUrl) {
-                          const link = document.createElement('a')
-                          link.href = doc.downloadUrl
-                          link.download = doc.fileName ?? doc.title
-                          link.target = '_blank'
-                          link.rel = 'noopener noreferrer'
-                          document.body.appendChild(link)
-                          link.click()
-                          document.body.removeChild(link)
-                        }
-                      }}
-                      isDisabled={!doc.downloadUrl}
-                    >
-                      Télécharger
-                    </Button>
-                  </div>
+                  <Button
+                    className="btn_bg_white shrink-0 border-none"
+                    startContent={<DownloadIconSVG />}
+                    onPress={() => {
+                      if (doc.downloadUrl) {
+                        const link = document.createElement('a')
+                        link.href = doc.downloadUrl
+                        link.download = doc.fileName ?? doc.title
+                        link.target = '_blank'
+                        link.rel = 'noopener noreferrer'
+                        document.body.appendChild(link)
+                        link.click()
+                        document.body.removeChild(link)
+                      }
+                    }}
+                    isDisabled={!doc.downloadUrl}
+                    aria-label={`Télécharger ${doc.fileName}`}
+                  >
+                    Télécharger
+                  </Button>
                 </div>
               )}
 
@@ -258,7 +255,7 @@ export default function VendorDocuments() {
                 isLoading={isUploading}
                 isDisabled={isUploading}
               >
-                Télécharger les documents
+                Envoyer les documents
               </Button>
             </div>
           )}
