@@ -193,7 +193,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         >
                             {demand?.service_category?.title}
                         </span>
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-sm ${statusCfg?.classes}`}>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-md ${statusCfg?.classes}`}>
                             {statusCfg?.icon}
                             {demand?.quotes_status_label}
                         </span>
