@@ -85,7 +85,7 @@ export default function UnlockLeadConfirmModal() {
                     type="button"
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="cursor-pointer flex-1 py-3 rounded-2.5 bg-black/5 dark:bg-white/7 text-appTextSec text-sm font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/12 hover:text-appText disabled:opacity-60"
+                    className="cursor-pointer flex-1 py-3 rounded-lg bg-black/5 dark:bg-white/7 text-appTextSec text-sm font-semibold transition-all duration-200 hover:bg-black/8 dark:hover:bg-appCard/12 hover:text-appText disabled:opacity-60"
                 >
                     Annuler
                 </button>
@@ -93,7 +93,7 @@ export default function UnlockLeadConfirmModal() {
                     type="button"
                     onClick={handleConfirm}
                     disabled={!leadId || isLoading}
-                    className="cursor-pointer flex-2 py-3 rounded-2.5 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white text-base font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(27,79,255,0.35)] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(27,79,255,0.45)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    className="cursor-pointer flex-2 py-3 rounded-lg bg-linear-to-br from-primaryColor to-[#4F46E5] text-white text-base font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(27,79,255,0.35)] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(27,79,255,0.45)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 >
                     {isLoading ? (
                         <Spinner size="sm" color="white" />
