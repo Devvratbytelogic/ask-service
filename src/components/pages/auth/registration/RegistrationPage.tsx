@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, KeyboardEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
@@ -10,12 +10,23 @@ import ReactSelect from 'react-select'
 import { CategoryOptionImage, CategorySelectOption } from './categorySelectShared'
 import { buildSelectStyles, type CategoryGroup, type CategoryOption } from './selectStyles'
 import { registrationSchema } from '@/utils/validation'
-import { getLoginPageRoutePath, getClientDashboardPageRoutePath, getPrivacyRoutePath, getTermsRoutePath } from '@/routes/routes'
+import {
+  generateLeadDetailRoutePath,
+  getLoginPageRoutePath,
+  getClientDashboardPageRoutePath,
+  getDashboardPageRoutePathForRole,
+  getPrivacyRoutePath,
+  getTermsRoutePath,
+} from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import AuthThemeToggle from '@/components/common/AuthThemeToggle'
 import LeftPanel from './LeftPanel'
 import { addToast } from '@heroui/react'
-import { useGetAllServicesGroupedByParentCategoryQuery, useGetAllServicesDocumentsRequiredQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import {
+  useGetAllServicesGroupedByParentCategoryQuery,
+  useGetAllServicesDocumentsRequiredQuery,
+  useLazyGetVendorAvailableLeadsByServiceCategoryQuery,
+} from '@/redux/rtkQueries/clientSideGetApis'
 import {
   useSignupMutation,
   useVendorRegisterMutation,
@@ -104,11 +115,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
   const [vendorResendOtp, { isLoading: isResendingVendorOtp }] = useVendorResendOtpMutation()
   const [uploadVendorDocuments, { isLoading: isUploadingDocs }] = useUploadVendorDocumentsMutation()
+  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsByServiceCategoryQuery()
 
   // ── UI-only state ─────────────────────────────────────────────────────────
   // Skip profile choice when role is provided via URL (e.g. "Devenir Prestataire")
   const [step, setStep] = useState<Step>(isRoleLocked ? 2 : 1)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
   const [shakeStep, setShakeStep] = useState<Step | null>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -157,6 +170,41 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
     { skip: !isVendor || step < 5 }
   )
   const docFields = Array.isArray(docsResponse?.data?.documents) ? docsResponse.data.documents : []
+
+  const getVendorPostRegistrationPath = useCallback(async (): Promise<string> => {
+    try {
+      const response = await fetchAvailableLeads({
+        page: 1,
+        limit: 20,
+        unlocked: false,
+      }).unwrap()
+      const firstLeadId = response?.data?.data
+        ?.flatMap((group) => group.leads ?? [])
+        .find((lead) => lead._id)?._id
+      if (firstLeadId) {
+        return generateLeadDetailRoutePath(firstLeadId)
+      }
+    } catch (error) {
+      console.error('Error fetching available leads', error)
+    }
+    return getDashboardPageRoutePathForRole('vendor')
+  }, [fetchAvailableLeads])
+
+  const handleSuccessCta = useCallback(async () => {
+    if (isRedirecting) return
+    setIsRedirecting(true)
+    if (!isVendor) {
+      router.push(getClientDashboardPageRoutePath())
+      return
+    }
+    try {
+      const path = await getVendorPostRegistrationPath()
+      router.replace(path)
+    } catch {
+      router.replace(getDashboardPageRoutePathForRole('vendor'))
+      setIsRedirecting(false)
+    }
+  }, [getVendorPostRegistrationPath, isRedirecting, isVendor, router])
 
   // ── Resend countdown ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -539,20 +587,35 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         ⏳ Compte en attente de validation
                       </div>
                     )}
-                    <Link
-                      href={isVendor ? '/' : getClientDashboardPageRoutePath()}
-                      className="flex w-full items-center justify-center gap-2 rounded-[10px] py-3.5 text-[14px] font-semibold no-underline transition-all hover:-translate-y-px"
+                    <button
+                      type="button"
+                      onClick={handleSuccessCta}
+                      disabled={isRedirecting}
+                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none py-3.5 text-[14px] font-semibold transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
                       style={{
                         background: accentColor,
                         color: accentTextColor,
                         boxShadow: isVendor
                           ? '0 5px 16px rgba(245,158,11,0.3)'
                           : '0 5px 16px rgba(27,79,255,0.28)',
+                        fontFamily: 'inherit',
                       }}
                     >
-                      {isVendor ? "Retour à l'accueil" : 'Accéder à mon espace'}
-                      <FiArrowRight size={15} />
-                    </Link>
+                      {isRedirecting ? (
+                        <>
+                          <span
+                            className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
+                            style={{ opacity: 0.6 }}
+                          />
+                          Redirection…
+                        </>
+                      ) : (
+                        <>
+                          {isVendor ? "Retour à l'accueil" : 'Accéder à mon espace'}
+                          <FiArrowRight size={15} />
+                        </>
+                      )}
+                    </button>
                     {/* {!isVendor && (
                       <Link
                         href="/"
