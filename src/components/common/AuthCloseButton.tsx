@@ -4,33 +4,31 @@ import { useRouter } from 'next/navigation'
 import { FiX } from 'react-icons/fi'
 import { getHomeRoutePath } from '@/routes/routes'
 
-function isAuthPath(pathname: string): boolean {
-  return pathname === '/auth' || pathname.startsWith('/auth/')
+function isSameSite(url: string): boolean {
+  return url.startsWith(window.location.origin)
 }
 
-/** Prefer the non-auth page the user came from; never land on another auth page. */
-function getCloseDestination(): string {
-  const home = getHomeRoutePath()
-  if (typeof window === 'undefined') return home
-
-  const referrer = document.referrer
-  if (!referrer) return home
-
-  try {
-    const url = new URL(referrer)
-    if (url.origin !== window.location.origin) return home
-    if (isAuthPath(url.pathname)) return home
-    return `${url.pathname}${url.search}${url.hash}` || home
-  } catch {
-    return home
+/** True if the previous page was on this site (not Google / blank / direct open). */
+function canGoBackInApp(): boolean {
+  const nav = window.navigation
+  if (nav?.currentEntry) {
+    const previous = nav.entries()[nav.currentEntry.index - 1]
+    return Boolean(previous?.url && isSameSite(previous.url))
   }
+
+  if (document.referrer) return isSameSite(document.referrer)
+  return window.history.length > 1
 }
 
 export default function AuthCloseButton({ className = '' }: { className?: string }) {
   const router = useRouter()
 
   function handleClose() {
-    router.push(getCloseDestination())
+    if (canGoBackInApp()) {
+      router.back()
+    } else {
+      router.push(getHomeRoutePath())
+    }
   }
 
   return (

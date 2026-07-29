@@ -15,9 +15,9 @@ export default function AuthMobileHeader({
 }: AuthMobileHeaderProps) {
   return (
     <div className="mb-6 hidden w-full items-center justify-between max-[900px]:flex">
-      <AuthCloseButton />
-      <AuthPanelLogo logoUrl={logoUrl} accentColor={accentColor} theme="light" compact />
       <ThemeToggle />
+      <AuthPanelLogo logoUrl={logoUrl} accentColor={accentColor} theme="light" compact />
+      <AuthCloseButton />
     </div>
   )
 }
