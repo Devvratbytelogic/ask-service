@@ -265,9 +265,12 @@ export default function RequestAServiceForm({
   )
   const [clientTypeTouched, setClientTypeTouched] = useState(false)
 
-  // ── Pincode + city (first field on dynamic step 1)
+  // ── Location (first field on dynamic step 1)
   const [pincode, setPincode] = useState(() => data?.pincode ?? '')
   const [city, setCity] = useState(() => data?.city ?? '')
+  const [address, setAddress] = useState('')
+  const [locationState, setLocationState] = useState('')
+  const [country, setCountry] = useState('')
   const [pincodeTouched, setPincodeTouched] = useState(false)
 
   // ── Dynamic answers (prefilled by API key, e.g. time_slot, start_date)
@@ -457,8 +460,9 @@ export default function RequestAServiceForm({
       },
       pincode,
       city,
-      // state: '',
-      // address_1: '',
+      state: locationState,
+      country,
+      address_1: address,
     }
 
     try {
@@ -799,17 +803,23 @@ export default function RequestAServiceForm({
               <>
                 {currentApiStepIdx === 0 && (
                   <div className="mb-5">
-                    <FieldLabel required>Ville ou code postal</FieldLabel>
+                    <FieldLabel required>Adresse, ville ou code postal</FieldLabel>
                     <PostalCitySelect
                       value={pincode}
                       city={city}
-                      onChange={(nextPincode, nextCity) => {
-                        setPincode(nextPincode)
-                        setCity(nextCity)
+                      address={address}
+                      state={locationState}
+                      country={country}
+                      onChange={(location) => {
+                        setPincode(location.pincode)
+                        setCity(location.city)
+                        setAddress(location.address)
+                        setLocationState(location.state)
+                        setCountry(location.country)
                       }}
                       onBlur={() => setPincodeTouched(true)}
                       hasError={pincodeTouched && !pincode}
-                      placeholder="Ex. Paris, 75001"
+                      placeholder="Ex. Paris, 75001, 10 rue de Rivoli"
                     />
                     {pincodeTouched && !pincode && (
                       <p className="mt-1 text-[11px] text-red-500">Ce champ est obligatoire</p>
@@ -1029,11 +1039,19 @@ export default function RequestAServiceForm({
                 label="Profil"
                 value={sumType}
               />
-              {(pincode || city) && (
+              {(pincode || city || address || locationState || country) && (
                 <SummaryRow
                   icon={IconInfo}
-                  label="Ville ou code postal"
-                  value={[pincode, city].filter(Boolean).join(' ')}
+                  label="Adresse"
+                  value={
+                    [
+                      address || [pincode, city].filter(Boolean).join(' '),
+                      locationState,
+                      country,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')
+                  }
                 />
               )}
               {questionsList.map((q) => {
