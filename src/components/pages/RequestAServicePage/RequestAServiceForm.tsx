@@ -723,7 +723,7 @@ export default function RequestAServiceForm({
                       key={value}
                       type="button"
                       onClick={() => setClientType(value)}
-                      className="cursor-pointer rounded-3xl border-2 px-4 py-3.5 text-center transition-all duration-200 hover:-translate-y-px"
+                      className="cursor-pointer rounded-2xl border-2 px-4 py-3.5 text-center transition-all duration-200 hover:-translate-y-px"
                       style={{
                         borderColor: isSelected
                           ? 'var(--color-primaryColor)'
