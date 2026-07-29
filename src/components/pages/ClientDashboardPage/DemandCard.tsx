@@ -69,7 +69,8 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
     const [ignoreQuote] = useIgnoreQuoteMutation()
 
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
-    const postalCodeRaw = demand?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    // const postalCodeRaw = demand?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    const cityAndPostalCode = demand?.city && demand?.pincode ? `${demand.city} - ${demand.pincode}` : ''
     const desiredDateRaw = demand?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
     const timeSlotRaw = demand?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
@@ -192,18 +193,18 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         >
                             {demand?.service_category?.title}
                         </span>
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-1.5 ${statusCfg?.classes}`}>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-sm ${statusCfg?.classes}`}>
                             {statusCfg?.icon}
                             {demand?.quotes_status_label}
                         </span>
                         {demand?.reference_no && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2.5 py-1.5 rounded-1.5">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2.5 py-1.5 rounded-md">
                                 <span className="text-appTextMuted">Réf.</span>
                                 <span className="font-bold text-appText">{demand.reference_no}</span>
                             </span>
                         )}
                         {demand?.new_quotes_count && demand?.new_quotes_count > 0 ? (
-                            <span className="text-[10px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-1.75 py-0.5 rounded-1.5 uppercase tracking-[0.5px]">
+                            <span className="text-[10px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-1.75 py-0.5 rounded-sm uppercase tracking-[0.5px]">
                                 {demand?.new_quotes_count} nouveaux
                             </span>
                         ) : null}
@@ -211,7 +212,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <div className="flex items-center gap-3.5 flex-wrap">
                         <MetaItem>
                             <LocationIconSVG />
-                            {postalCodeRaw || '—'}
+                            {cityAndPostalCode || '—'}
                         </MetaItem>
                         <MetaItem>
                             <CalendarIconSVG />
@@ -263,7 +264,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     <button
                         type="button"
                         onClick={onToggle}
-                        className={`flex items-center gap-1.5 px-4 py-2 rounded-2.5 border text-xs font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-md border text-xs font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
                     >
                         {viewBtnLabel}
                         <span className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
@@ -275,7 +276,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <button
                                 type="button"
                                 onClick={() => setMenuOpen((prev) => !prev)}
-                                className="w-8 h-8 rounded-2 bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
+                                className="w-8 h-8 rounded-md bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
                                 aria-label="Options"
                                 aria-haspopup="menu"
                                 aria-expanded={menuOpen}
@@ -285,7 +286,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             {menuOpen && (
                                 <div
                                     role="menu"
-                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-47.5 rounded-2.5 border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-47.5 rounded-md border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
                                 >
                                     {canEdit && (
                                         <Link
@@ -325,8 +326,8 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         const acceptedQuote = demand?.quotes?.find((q) => q?.status?.toLowerCase() === 'accepted')
                         if (!acceptedQuote) return null
                         return (
-                            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-2.5 mb-3">
-                                <div className="w-7 h-7 rounded-2 bg-trust-green/15 flex items-center justify-center shrink-0">
+                            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-trust-green/8 border border-trust-green/20 rounded-md mb-3">
+                                <div className="w-7 h-7 rounded-md bg-trust-green/15 flex items-center justify-center shrink-0">
                                     <svg width="14" height="14" fill="none" stroke="#6EE7B7" strokeWidth="2.5" viewBox="0 0 24 24">
                                         <polyline points="20,6 9,17 4,12" />
                                     </svg>

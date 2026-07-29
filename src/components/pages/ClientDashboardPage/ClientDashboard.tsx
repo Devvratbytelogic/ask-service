@@ -9,6 +9,7 @@ import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
 import PhoneUnverifiedAlert from './PhoneUnverifiedAlert'
 import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { buildDashboardFilterSelectStyles, type FilterOption } from './selectStyles'
+import EmailUnverifiedAlert from './EmailUnverifiedAlert'
 
 
 type StatConfig = {
@@ -191,7 +192,7 @@ export default function ClientDashboard() {
     return (
         <div className="body_x_axis_padding">
             <PhoneUnverifiedAlert />
-
+            <EmailUnverifiedAlert />
             {/* Page header */}
             <div className="flex items-start justify-between mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
                 <div>
@@ -372,11 +373,10 @@ export default function ClientDashboard() {
                                             key={p}
                                             type="button"
                                             onClick={() => setPage(p as number)}
-                                            className={`w-8 h-8 rounded-[8px] text-[13px] font-semibold transition-all duration-200 ${
-                                                page === p
+                                            className={`w-8 h-8 rounded-[8px] text-[13px] font-semibold transition-all duration-200 ${page === p
                                                     ? 'bg-primaryColor text-white shadow-[0_2px_8px_rgba(27,79,255,0.3)]'
                                                     : 'bg-appCard border border-appBorder text-appTextSec hover:border-primaryColor/40 hover:text-primaryColor'
-                                            }`}
+                                                }`}
                                         >
                                             {p}
                                         </button>

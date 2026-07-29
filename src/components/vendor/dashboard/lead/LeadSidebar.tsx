@@ -101,7 +101,9 @@ export default function LeadSidebar({ selectedId }: Props) {
             </div>
 
             {leads?.length > 0 && leads?.map((lead) => {
-                const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+                // const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+                const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
+
                 const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
                 const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
                 const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
@@ -141,7 +143,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                                 <span className="text-appTextMuted flex shrink-0">
                                     <LocationPinIconSVG size={11} />
                                 </span>
-                                {postalCodeRaw ?? '—'}
+                                {cityAndPostalCode ?? '—'}
                             </div>
                             <div className="flex items-center gap-1 text-[11px] text-appTextSec">
                                 <span className="text-appTextMuted flex shrink-0">

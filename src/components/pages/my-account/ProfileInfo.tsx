@@ -33,7 +33,7 @@ export default function ProfileInfo() {
     const profilePicInputRef = useRef<HTMLInputElement>(null)
     const { data, isLoading } = useGetUserProfileInfoQuery()
     const [updateUserProfileInfo, { isLoading: isUpdating }] = useUpdateUserProfileInfoMutation()
-    const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
+    const [resendEmailVerification] = useResendEmailVerificationMutation()
 
     const profileData = data?.data
     const initialValues = {
@@ -106,10 +106,18 @@ export default function ProfileInfo() {
           )
     }
 
+    const [isVerifyingEmailFlow, setIsVerifyingEmailFlow] = useState(false)
+
     const handleVerifyEmail = async () => {
-        const email = profileData?.email ?? values.email ?? ''
+        const email = (values.email ?? '').trim()
         if (!email) return
+        const savedEmail = (profileData?.email ?? '').trim()
+        setIsVerifyingEmailFlow(true)
         try {
+            // If the user edited the unverified email, update profile first
+            if (email !== savedEmail) {
+                await updateUserProfileInfo({ email }).unwrap()
+            }
             await resendEmailVerification({ email }).unwrap()
             addToast({ title: 'Code de vérification envoyé', description: 'Vérifiez votre e-mail.', color: 'success', timeout: 2000 })
             dispatch(
@@ -121,6 +129,8 @@ export default function ProfileInfo() {
             )
         } catch {
             // Error toast from rtkQuerieSetup
+        } finally {
+            setIsVerifyingEmailFlow(false)
         }
     }
 
@@ -295,6 +305,7 @@ export default function ProfileInfo() {
                             <div className="flex-1 min-w-0">
                                 <Input
                                     name="email"
+                                    type="email"
                                     value={values.email}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -304,16 +315,17 @@ export default function ProfileInfo() {
                                     classNames={{
                                         inputWrapper: 'account_input_design',
                                     }}
-                                    readOnly
+                                    readOnly={profileData?.is_email_verified !== false}
                                 />
                             </div>
-                            {!hasPendingChanges && profileData?.is_email_verified === false && (profileData?.email ?? values.email) && (
+                            {profileData?.is_email_verified === false && values.email.trim() && (
                                 <Button
                                     size="sm"
+                                    type='button'
                                     className="btn_radius btn_outline_blue shrink-0"
                                     onPress={handleVerifyEmail}
-                                    isLoading={isResendingEmail}
-                                    isDisabled={isResendingEmail}
+                                    isLoading={isVerifyingEmailFlow}
+                                    isDisabled={isVerifyingEmailFlow || !!(touched.email && errors.email)}
                                 >
                                     Vérifier
                                 </Button>

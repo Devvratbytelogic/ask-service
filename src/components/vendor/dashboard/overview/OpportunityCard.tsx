@@ -255,7 +255,8 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
     const hiddenAnswers = lead.dynamic_answers?.slice(3) ?? []
     const isButtonDisabled = !canPurchaseLeads
     const leadDetailPath = generateLeadDetailRoutePath(lead._id)
-    const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    // const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+    const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
     const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
     const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
@@ -367,7 +368,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             <div className="flex items-center gap-3.5 flex-wrap mb-3">
                 <MetaItem>
                     <LocationIconSVG />
-                    {postalCodeRaw ?? '—'}
+                    {cityAndPostalCode ?? '—'}
                 </MetaItem>
                 <MetaItem>
                     <CalendarIconSVG />

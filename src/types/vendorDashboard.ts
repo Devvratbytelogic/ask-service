@@ -36,6 +36,7 @@ export interface IVendorAvailableLeadsData {
 }
 export interface IVendorAvailableLeadsItemsEntity {
   city: string;
+  pincode: string;
   _id: string;
   reference_no: string;
   user: string;

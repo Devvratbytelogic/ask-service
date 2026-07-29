@@ -157,7 +157,7 @@ export default function OtpVerificationScreen({
   return (
     <div className="animate-inscription-fade-up py-2 text-center">
       <div
-        className="mx-auto mb-4 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full text-[28px]"
+        className="mx-auto mb-4 flex size-17 animate-inscription-pop-in items-center justify-center rounded-full text-[28px]"
         style={{ background: accentBg }}
       >
         {icon}
@@ -214,54 +214,56 @@ export default function OtpVerificationScreen({
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={handleVerify}
-        disabled={isVerifying || !otpFull}
-        className="mb-3 mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
-        style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
-      >
-        {isVerifying ? (
-          <>
-            <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            Vérification…
-          </>
-        ) : (
-          'Confirmer le code'
-        )}
-      </button>
+      <div className="mx-auto mt-4 w-full max-w-70">
+        <div className="mb-2 flex items-center justify-center text-[13px] text-appTextSec">
+          {countdown > 0 ? (
+            <span>
+              Renvoyer le code dans{' '}
+              <span className="font-semibold text-appText">{countdown}s</span>
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={isResending}
+              className="font-semibold text-primaryColor underline-offset-2 hover:underline disabled:opacity-60"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              {isResending ? 'Envoi en cours…' : 'Renvoyer le code'}
+            </button>
+          )}
+        </div>
 
-      <div className="mb-4 flex items-center justify-center text-[13px] text-appTextSec">
-        {countdown > 0 ? (
-          <span>
-            Renvoyer le code dans{' '}
-            <span className="font-semibold text-appText">{countdown}s</span>
-          </span>
-        ) : (
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={isResending}
-            className="font-semibold text-primaryColor underline-offset-2 hover:underline disabled:opacity-60"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-          >
-            {isResending ? 'Envoi en cours…' : 'Renvoyer le code'}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleVerify}
+          disabled={isVerifying || !otpFull}
+          className="mb-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
+          style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
+        >
+          {isVerifying ? (
+            <>
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Vérification…
+            </>
+          ) : (
+            'Confirmer le code'
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+          style={{ fontFamily: 'inherit' }}
+        >
+          <FiArrowLeft size={14} strokeWidth={2.5} />
+          Retour à la demande
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={onBack}
-        className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[12px] border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
-        style={{ fontFamily: 'inherit' }}
-      >
-        <FiArrowLeft size={14} strokeWidth={2.5} />
-        Retour à la demande
-      </button>
     </div>
   )
 }
