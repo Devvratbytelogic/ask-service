@@ -139,9 +139,14 @@ export default function MessageLayout() {
     }, 2000);
   }, [selectedChatId, emitTyping, emitStopTyping]);
 
-  const [userSendMessage, { isLoading: isUserSending }] = useUserSendMessageMutation();
-  const [vendorSendMessage, { isLoading: isVendorSending }] = useVendorSendMessageMutation();
-  const isSending = isUserSending || isVendorSending;
+  const [userSendMessage] = useUserSendMessageMutation();
+  const [vendorSendMessage] = useVendorSendMessageMutation();
+
+  // Keep a sync copy so rapid Enter presses can snapshot/clear before React re-renders.
+  const messageInputRef = useRef(messageInput);
+  messageInputRef.current = messageInput;
+  const attachedFileRef = useRef(attachedFile);
+  attachedFileRef.current = attachedFile;
 
   const handleSelectConversation = (chat: IAllChatListData) => {
     setSelectedChatId(chat._id);
@@ -149,17 +154,34 @@ export default function MessageLayout() {
     router.replace(`?chatId=${chat._id}`, { scroll: false });
   };
 
-  const canSend = Boolean(selectedChatId && (messageInput.trim() || attachedFile) && !isSending);
+  const canSend = Boolean(selectedChatId && (messageInput.trim() || attachedFile));
 
   const handleSendMessage = async () => {
-    if (!selectedChatId || !canSend) return;
-    const content = messageInput.trim();
+    if (!selectedChatId) return;
+
+    const content = messageInputRef.current.trim();
+    const file = attachedFileRef.current;
+    if (!content && !file) return;
+
+    const chatId = selectedChatId;
+
+    // Clear immediately so the next message can be typed/sent while this request is in flight.
+    // Deferred clear + isSending lock was dropping rapid consecutive Enter sends.
+    messageInputRef.current = '';
+    attachedFileRef.current = null;
+    setMessageInput('');
+    setAttachedFile(null);
+
+    if (typingDebounceRef.current) clearTimeout(typingDebounceRef.current);
+    isTypingRef.current = false;
+    emitStopTyping(chatId);
+
     try {
-      if (attachedFile) {
+      if (file) {
         const formData = new FormData();
-        formData.append('chatId', selectedChatId);
+        formData.append('chatId', chatId);
         formData.append('content', content);
-        formData.append('media', attachedFile);
+        formData.append('media', file);
         const result = isVendor
           ? await vendorSendMessage(formData).unwrap()
           : await userSendMessage(formData).unwrap();
@@ -167,12 +189,10 @@ export default function MessageLayout() {
         if (payload && typeof payload === 'object') {
           const p = payload as NewMessagePayload;
           emitNewMessage(p);
-          addSentMessageToCache(p, selectedChatId);
+          addSentMessageToCache(p, chatId);
         }
-        setAttachedFile(null);
-        setMessageInput('');
       } else {
-        const body = { chatId: selectedChatId, content, media: '' };
+        const body = { chatId, content, media: '' };
         const result = isVendor
           ? await vendorSendMessage(body).unwrap()
           : await userSendMessage(body).unwrap();
@@ -180,18 +200,22 @@ export default function MessageLayout() {
         if (payload && typeof payload === 'object') {
           const p = payload as NewMessagePayload;
           emitNewMessage(p);
-          addSentMessageToCache(p, selectedChatId);
+          addSentMessageToCache(p, chatId);
         }
-        setMessageInput('');
       }
     } catch {
-      // Error can be handled via toast or inline UI if needed
-    } finally {
-      // Always stop typing indicator when message is sent or errored
-      if (selectedChatId) {
-        if (typingDebounceRef.current) clearTimeout(typingDebounceRef.current);
-        isTypingRef.current = false;
-        emitStopTyping(selectedChatId);
+      // Restore only if the user hasn't already started typing the next message.
+      setMessageInput((prev) => {
+        if (prev) return prev;
+        messageInputRef.current = content;
+        return content;
+      });
+      if (file) {
+        setAttachedFile((prev) => {
+          if (prev) return prev;
+          attachedFileRef.current = file;
+          return file;
+        });
       }
     }
   };
@@ -324,7 +348,11 @@ export default function MessageLayout() {
                       placeholder="Tapez votre message…"
                       value={messageInput}
                       onChange={(e) => handleInputChange(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'Enter' || e.shiftKey) return;
+                        e.preventDefault();
+                        void handleSendMessage();
+                      }}
                       className="min-w-0 flex-1 bg-transparent text-sm text-fontBlack placeholder:text-placeHolderText focus:outline-none"
                     />
                   </div>

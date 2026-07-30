@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { EditIconSVG, HeartIconSVG, SearchIconSVG } from '@/components/library/AllSVG';
-import { Input } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
 import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
 import ImageComponent from '@/components/library/ImageComponent';
 import { getUserRole } from '@/utils/authCookies';
+
+const LOADING_TIMEOUT_MS = 10_000;
 
 function getOtherUser(chat: IAllChatListData): UsersEntity | undefined {
     return chat.users?.find((u) => !u.itsMe);
@@ -66,22 +68,53 @@ export default function MessagesList({
     selectedChatId = null,
 }: MessagesListProps) {
     const [search, setSearch] = useState('');
+    const [timedOut, setTimedOut] = useState(false);
+    const [loadAttempt, setLoadAttempt] = useState(0);
     const role = getUserRole();
     const isVendor = (role ?? '').toLowerCase() === 'vendor';
 
-    const { data: userData, isLoading: userLoading, isError: userError } = useGetUserChatsQuery(
-        undefined,
-        { skip: isVendor }
-    );
-    const { data: vendorData, isLoading: vendorLoading, isError: vendorError } = useGetVendorChatsQuery(
-        undefined,
-        { skip: !isVendor }
-    );
+    const {
+        data: userData,
+        isLoading: userLoading,
+        isFetching: userFetching,
+        isError: userError,
+        refetch: refetchUserChats,
+    } = useGetUserChatsQuery(undefined, { skip: isVendor });
+    const {
+        data: vendorData,
+        isLoading: vendorLoading,
+        isFetching: vendorFetching,
+        isError: vendorError,
+        refetch: refetchVendorChats,
+    } = useGetVendorChatsQuery(undefined, { skip: !isVendor });
 
     const rawChats = isVendor ? vendorData?.data : userData?.data ?? null;
     const chats = Array.isArray(rawChats) ? rawChats : [];
     const isLoading = isVendor ? vendorLoading : userLoading;
+    const isFetching = isVendor ? vendorFetching : userFetching;
     const isError = isVendor ? vendorError : userError;
+    const refetch = isVendor ? refetchVendorChats : refetchUserChats;
+
+    // Treat prolonged in-flight requests (e.g. hung 503) as a failure so the spinner cannot spin forever.
+    const waitingForChats = (isLoading || isFetching) && chats.length === 0 && !isError;
+    useEffect(() => {
+        if (!waitingForChats) {
+            setTimedOut(false);
+            return;
+        }
+        setTimedOut(false);
+        const timer = window.setTimeout(() => setTimedOut(true), LOADING_TIMEOUT_MS);
+        return () => window.clearTimeout(timer);
+    }, [waitingForChats, loadAttempt]);
+
+    const showError = isError || timedOut;
+    const showLoading = waitingForChats && !timedOut;
+
+    const handleRetry = () => {
+        setTimedOut(false);
+        setLoadAttempt((n) => n + 1);
+        void refetch();
+    };
 
     const filtered = useMemo(() => {
         if (!search.trim()) return chats;
@@ -134,22 +167,36 @@ export default function MessagesList({
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto">
-                {isLoading && (
+                {showLoading && (
                     <div className="flex items-center justify-center py-8 text-sm text-darkSilver">
                         Chargement des conversations...
                     </div>
                 )}
-                {isError && (
-                    <div className="px-4 py-6 text-sm text-red-600">
-                        Impossible de charger les conversations.
+                {showError && (
+                    <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
+                        <p className="text-sm text-red-600">
+                            Impossible de charger les conversations.
+                        </p>
+                        <p className="text-xs text-darkSilver">
+                            Vérifiez votre connexion ou réessayez dans un instant.
+                        </p>
+                        <Button
+                            size="sm"
+                            color="primary"
+                            variant="flat"
+                            onPress={handleRetry}
+                            isLoading={isFetching && !timedOut}
+                        >
+                            Réessayer
+                        </Button>
                     </div>
                 )}
-                {!isLoading && !isError && filtered.length === 0 && (
+                {!showLoading && !showError && filtered.length === 0 && (
                     <div className="px-4 py-8 text-center text-sm text-darkSilver">
-                        Aucune conversation pour l'instant.
+                        Aucune conversation pour l&apos;instant.
                     </div>
                 )}
-                {!isLoading && !isError &&
+                {!showLoading && !showError &&
                     filtered.map((chat) => {
                         const name = getDisplayName(chat);
                         const profilePic = getOtherUser(chat)?.profile_pic ?? null;
