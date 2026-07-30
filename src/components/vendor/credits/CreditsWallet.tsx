@@ -45,13 +45,6 @@ function mapPackageToDisplay(entity: IAllCreditsDataEntity): CreditPackageDispla
     }
 }
 
-function translateTxnDescription(description: string): string {
-    if (!description) return description
-    // "Unlocked Lead {service} in {city}" → "Demande débloquée ({service} – {city})"
-    const match = description.match(/^Unlocked Lead (.+?) in (.+)$/i)
-    if (match) return `Demande débloquée (${match[1]} – ${match[2]})`
-    return description
-}
 
 function formatCreditsTransactionDate(iso: string | undefined | null): string {
     if (!iso) return '—'
@@ -584,7 +577,7 @@ export default function CreditsWallet() {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-fontBlack">
-                                                    {translateTxnDescription(txn.description)}
+                                                    {txn.description}
                                                 </td>
                                                 <td
                                                     className={`px-4 py-4 text-sm font-medium ${creditsNum > 0 ? 'text-[#4CAF50]' : 'text-danger'

@@ -11,6 +11,7 @@ import {
     useLazyGetTransactionHistoryExportPDFQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllTransactionHistoryTransactionsEntity } from '@/types/allTransactionHistory'
+import moment from 'moment'
 
 type PaymentStatus = 'completed' | 'failed' | 'refunded'
 
@@ -259,80 +260,82 @@ export default function VendorPaymentHistory() {
                 {isLoading ? (
                     <div className="p-8 text-center text-sm text-darkSilver">Chargement de l'historique des paiements...</div>
                 ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-200">
-                        <thead>
-                            <tr className="border-b border-appBorder bg-appSurface">
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    ID de transaction
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Date et heure
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Méthode de paiement
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Montant payé
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Crédits ajoutés
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Statut
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                    Reçu
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedPayments.map((row) => (
-                                <tr key={row.id} className="border-b border-appBorder last:border-b-0 hover:bg-appSurface/50">
-                                    <td className="px-4 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-medium text-fontBlack">
-                                                {row.transactionId}
-                                            </span>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-200">
+                            <thead>
+                                <tr className="border-b border-appBorder bg-appSurface">
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        ID de transaction
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Date et heure
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Méthode de paiement
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Montant payé
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Crédits ajoutés
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Statut
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
+                                        Reçu
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {paginatedPayments.map((row) => (
+                                    <tr key={row.id} className="border-b border-appBorder last:border-b-0 hover:bg-appSurface/50">
+                                        <td className="px-4 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium text-fontBlack">
+                                                    {row.transactionId}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleCopyId(row.transactionId)}
+                                                    className="text-darkSilver hover:text-fontBlack transition-colors"
+                                                    aria-label="Copier l'identifiant de transaction"
+                                                >
+                                                    <FiCopy className="size-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-4 text-sm text-fontBlack">
+                                            {row.dateTime}
+                                            {/* {moment(row.dateTime).locale('fr').fromNow()} ({moment(row.dateTime).locale('fr').format('DD MMMM YYYY, h:mm A')}) */}
+
+                                        </td>
+                                        <td className="px-4 py-4 text-sm text-fontBlack">
+                                            {row.paymentMethod}
+                                        </td>
+                                        <td className="px-4 py-4 text-sm font-medium text-fontBlack">
+                                            {row.amountPaid}
+                                        </td>
+                                        <td className="px-4 py-4 text-sm text-fontBlack">
+                                            {row.creditAdded ?? '—'}
+                                        </td>
+                                        <td className="px-4 py-4">
+                                            <StatusBadge status={row.status} />
+                                        </td>
+                                        <td className="px-4 py-4">
                                             <button
                                                 type="button"
-                                                onClick={() => handleCopyId(row.transactionId)}
-                                                className="text-darkSilver hover:text-fontBlack transition-colors"
-                                                aria-label="Copier l'identifiant de transaction"
+                                                className="text-darkSilver hover:text-primaryColor transition-colors p-1"
+                                                aria-label="Télécharger le reçu"
                                             >
-                                                <FiCopy className="size-4" />
+                                                <DownloadIconSVG />
                                             </button>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-4 text-sm text-fontBlack">
-                                        {row.dateTime}
-                                    </td>
-                                    <td className="px-4 py-4 text-sm text-fontBlack">
-                                        {row.paymentMethod}
-                                    </td>
-                                    <td className="px-4 py-4 text-sm font-medium text-fontBlack">
-                                        {row.amountPaid}
-                                    </td>
-                                    <td className="px-4 py-4 text-sm text-fontBlack">
-                                        {row.creditAdded ?? '—'}
-                                    </td>
-                                    <td className="px-4 py-4">
-                                        <StatusBadge status={row.status} />
-                                    </td>
-                                    <td className="px-4 py-4">
-                                        <button
-                                            type="button"
-                                            className="text-darkSilver hover:text-primaryColor transition-colors p-1"
-                                            aria-label="Télécharger le reçu"
-                                        >
-                                            <DownloadIconSVG />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
                 <div className="flex flex-col gap-4 border-t border-appBorder p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -351,31 +354,31 @@ export default function VendorPaymentHistory() {
                         classNames={{ cursor: 'bg-primaryColor text-white' }}
                     />
                     {/* <div className="flex flex-wrap items-center gap-4"> */}
-                        <div className="flex w-max min-w-max items-center gap-2">
-                            <Select
-                                selectedKeys={[itemsPerPage]}
-                                onSelectionChange={(keys) => {
-                                    const key = Array.from(keys as Set<string>)[0]
-                                    if (key) {
-                                        setItemsPerPage(key)
-                                        setPage(1)
-                                    }
-                                }}
-                                className="min-w-20"
-                                classNames={{
-                                    trigger: 'min-h-9 border border-appBorder shadow-none bg-appCard',
-                                    value: 'text-sm',
-                                }}
-                                aria-label="Éléments par page"
-                            >
-                                {ITEMS_PER_PAGE_OPTIONS.map((n) => (
-                                    <SelectItem key={n}>{n}</SelectItem>
-                                ))}
-                            </Select>
-                            <span className="text-sm text-fontBlack whitespace-nowrap">
-                                Résultats par page
-                            </span>
-                        </div>
+                    <div className="flex w-max min-w-max items-center gap-2">
+                        <Select
+                            selectedKeys={[itemsPerPage]}
+                            onSelectionChange={(keys) => {
+                                const key = Array.from(keys as Set<string>)[0]
+                                if (key) {
+                                    setItemsPerPage(key)
+                                    setPage(1)
+                                }
+                            }}
+                            className="min-w-20"
+                            classNames={{
+                                trigger: 'min-h-9 border border-appBorder shadow-none bg-appCard',
+                                value: 'text-sm',
+                            }}
+                            aria-label="Éléments par page"
+                        >
+                            {ITEMS_PER_PAGE_OPTIONS.map((n) => (
+                                <SelectItem key={n}>{n}</SelectItem>
+                            ))}
+                        </Select>
+                        <span className="text-sm text-fontBlack whitespace-nowrap">
+                            Résultats par page
+                        </span>
+                    </div>
                     {/* </div> */}
                 </div>
             </div>

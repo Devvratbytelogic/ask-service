@@ -86,14 +86,14 @@ export default function ClientDashboard() {
     const profile = userProfileInfoData?.data
     const showWelcomeMessage = Boolean(profile?.show_welcome_msg)
     const userName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ')
-
+    
     const serviceCategoryOptions = useMemo<FilterOption[]>(
         () => [
             { value: 'all', label: 'Tous les services' },
-            ...(serviceCategoriesData?.data ?? []).map((cat) => ({
-                value: cat._id,
-                label: cat.title,
-            })),
+            ...(serviceCategoriesData?.data ?? [])?.flatMap((cat) => cat?.child_categories ?? []).map((cat) => ({
+                    value: cat?._id,
+                    label: cat?.title,
+                })),
         ],
         [serviceCategoriesData],
     )
