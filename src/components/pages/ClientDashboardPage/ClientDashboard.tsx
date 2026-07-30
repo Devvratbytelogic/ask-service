@@ -7,7 +7,7 @@ import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
 import PhoneUnverifiedAlert from './PhoneUnverifiedAlert'
-import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetGlobalSettingsQuery, useGetServiceCategoriesQuery, useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetCreatedServicesQuery, useGetAllServiceRequestCitiesQuery, useGetServiceCategoriesQuery, useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { buildDashboardFilterSelectStyles, type FilterOption } from './selectStyles'
 import EmailUnverifiedAlert from './EmailUnverifiedAlert'
 
