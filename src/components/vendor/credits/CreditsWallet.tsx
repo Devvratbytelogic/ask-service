@@ -12,7 +12,6 @@ import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import BillingInfoModal from './BillingInfoModal'
 import moment from 'moment'
-import 'moment/locale/fr'
 
 type CreditPackageDisplay = {
     id: string

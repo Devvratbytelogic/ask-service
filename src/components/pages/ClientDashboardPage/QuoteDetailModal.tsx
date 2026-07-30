@@ -1,16 +1,15 @@
 'use client'
 
-import { BackArrowSVG, FileUploadIconSVG, StarRatingIconSVG } from '@/components/library/AllSVG'
+import { FileUploadIconSVG, StarRatingIconSVG } from '@/components/library/AllSVG'
 import { RootState } from '@/redux/appStore'
 import { useGetServiceRequestQuotesDetailQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { useAcceptQuoteMutation, useIgnoreQuoteMutation, useUserAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
-import { closeModal, openModal } from '@/redux/slices/allModalSlice'
+import { useAcceptQuoteMutation, useIgnoreQuoteMutation } from '@/redux/rtkQueries/allPostApi'
+import { closeModal } from '@/redux/slices/allModalSlice'
 import { addToast, Button, Spinner } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { HiOutlineArrowDownTray } from 'react-icons/hi2'
 import { FiX } from 'react-icons/fi'
 import moment from 'moment'
-import 'moment/locale/fr'
 import { useRouter } from 'next/navigation'
 import { getVendorProfileRoutePath } from '@/routes/routes'
 
@@ -48,7 +47,6 @@ export default function QuoteDetailModal() {
         if (!requestId || !vendor._id) return addToast({ title: 'Erreur', description: 'Veuillez réessayer plus tard', color: 'danger' })
         try {
             const response = await acceptQuote({ requestId, quoteId }).unwrap()
-            console.log('response accepting quote', response);
             if (response.success) {
                 dispatch(closeModal())
             }

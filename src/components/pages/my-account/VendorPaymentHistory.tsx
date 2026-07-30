@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem } from '@heroui/react'
+import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem } from '@heroui/react'
 import { CalendarSVG, CheckGreenIconSVG, CircleXmarkIconSVG } from '@/components/library/AllSVG'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { FiCopy } from 'react-icons/fi'
@@ -48,7 +48,7 @@ function mapApiStatusToPaymentStatus(status: string): PaymentStatus {
 function mapTransactionToRecord(entity: IAllTransactionHistoryTransactionsEntity): PaymentRecord {
     const rawAmount = (entity as { amount_paid?: number | string | null }).amount_paid
     const amount = rawAmount != null ? (typeof rawAmount === 'number' ? rawAmount.toFixed(2) : String(rawAmount)) : '—'
-    const amountPaid = `${amount} points`
+    const amountPaid = `${amount} €`
     const paymentMethod = (entity as { payment_method?: string | null }).payment_method
     return {
         id: entity._id,
@@ -145,7 +145,12 @@ export default function VendorPaymentHistory() {
             a.click()
             URL.revokeObjectURL(url)
         } catch {
-            // Error already surfaced by RTK Query / toast
+            addToast({
+                title: 'Erreur lors du téléchargement',
+                description: 'Veuillez réessayer plus tard.',
+                color: 'danger',
+                timeout: 5000,
+            })
         }
     }
 
@@ -174,17 +179,19 @@ export default function VendorPaymentHistory() {
 
                 </div>
 
-                <div className="mt-4 flex flex-nowrap items-center justify-between gap-3">
-                    <div className='flex flex-nowrap items-center gap-3'>
-                        <div className="shrink-0">
-                            <Dropdown>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-center grow min-w-0">
+                        <div className="min-w-0 grow min-[420px]:grow-0 sm:min-w-36">
+                            <Dropdown className="w-full">
                                 <DropdownTrigger>
                                     <Button
-                                        className="min-w-36 justify-between bg-appCard px-4 shadow-none border border-appBorder h-10"
+                                        className="w-full min-w-0 justify-between bg-appCard px-4 shadow-none border border-appBorder h-10"
                                         startContent={<CalendarSVG />}
-                                        endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack" />}
+                                        endContent={<MdKeyboardArrowDown className="text-lg text-fontBlack shrink-0" />}
                                     >
-                                        {DATE_RANGE_OPTIONS.find((o) => o.key === dateRange)?.label ?? '30 derniers jours'}
+                                        <span className="truncate">
+                                            {DATE_RANGE_OPTIONS.find((o) => o.key === dateRange)?.label ?? '30 derniers jours'}
+                                        </span>
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -202,17 +209,18 @@ export default function VendorPaymentHistory() {
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
-                        <div className="shrink-0">
+                        <div className="min-w-0 grow min-[420px]:grow-0 sm:min-w-36">
                             <Select
                                 selectedKeys={[statusFilter]}
                                 onSelectionChange={(keys) => {
                                     const key = Array.from(keys as Set<string>)[0]
                                     if (key) setStatusFilter(key)
                                 }}
-                                className="min-w-36"
+                                className="w-full min-w-0"
                                 classNames={{
                                     trigger: 'min-h-10 border border-appBorder shadow-none bg-appCard',
-                                    value: 'text-sm',
+                                    value: 'text-sm truncate',
+                                    innerWrapper: 'w-full',
                                 }}
                                 aria-label="Filtrer par statut"
                                 placeholder="Tous les statuts"
@@ -223,11 +231,11 @@ export default function VendorPaymentHistory() {
                             </Select>
                         </div>
                     </div>
-                    <div className="shrink-0">
-                        <Dropdown>
+                    <div className="w-full sm:w-auto shrink-0">
+                        <Dropdown className="w-full">
                             <DropdownTrigger>
                                 <Button
-                                    className="btn_radius btn_bg_blue gap-2 px-4"
+                                    className="btn_radius btn_bg_blue gap-2 px-4 w-full sm:w-auto"
                                     startContent={<DownloadIconSVG className="text-white" />}
                                     endContent={<MdKeyboardArrowDown className="text-lg text-white" />}
                                 >

@@ -22,7 +22,14 @@ type StatConfig = {
     linkColor: string
 }
 
-type TabKey = 'all' | 'open' | 'devis' | 'closed'
+type TabKey = 'all' | 'open' | 'devis' | 'accepted' | 'closed'
+
+const TAB_STATUS: Record<Exclude<TabKey, 'all'>, string> = {
+    open: 'ACTIVE',
+    devis: 'QUOTED',
+    accepted: 'ACCEPTED',
+    closed: 'CLOSED',
+}
 
 const SORT_OPTIONS: FilterOption[] = [
     { value: '', label: 'Trier par date' },
@@ -33,13 +40,13 @@ const SORT_OPTIONS: FilterOption[] = [
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function ArrowIcon() {
-    return (
-        <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
-    )
-}
+// function ArrowIcon() {
+//     return (
+//         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+//             <path d="M5 12h14M12 5l7 7-7 7" />
+//         </svg>
+//     )
+// }
 
 function StatCard({
     icon,
@@ -51,7 +58,7 @@ function StatCard({
     linkColor,
 }: StatConfig) {
     return (
-        <div className="bg-appCard border border-appBorder rounded-2xl px-5 py-[18px] cursor-pointer transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+        <div className="bg-appCard border border-appBorder rounded-2xl px-5 py-4.5 transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
             <div
                 className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[17px] mb-3"
                 style={{ background: iconBg }}
@@ -62,10 +69,10 @@ function StatCard({
                 {value}
             </p>
             <p className="text-xs text-appTextSec mb-2.5">{label}</p>
-            <span className={`text-[11px] font-semibold flex items-center gap-[3px] ${linkColor}`}>
+            {/* <span className={`text-[11px] font-semibold flex items-center gap-[3px] ${linkColor}`}>
                 {linkText}
                 <ArrowIcon />
-            </span>
+            </span> */}
         </div>
     )
 }
@@ -112,7 +119,7 @@ export default function ClientDashboard() {
     const { data, isLoading, isError } = useGetCreatedServicesQuery(
         {
             ...(searchQuery && { search: searchQuery }),
-            ...(activeTab !== 'all' && { status: activeTab === 'open' ? 'ACTIVE' : activeTab === 'devis' ? 'QUOTED' : 'CLOSED' }),
+            ...(activeTab !== 'all' && { status: TAB_STATUS[activeTab] }),
             ...(serviceFilter !== 'all' && { service: serviceFilter }),
             ...(cityFilter !== 'all' && { city: cityFilter }),
             ...(sortFilter !== '' && { sort: sortFilter }),
@@ -131,6 +138,7 @@ export default function ClientDashboard() {
         all: totalCount,
         open: summary?.active_requests_count ?? 0,
         devis: summary?.quotes_received_count ?? 0,
+        accepted: summary?.quotes_accepted_count ?? 0,
         closed: summary?.applications_closed_count ?? 0,
     }
 
@@ -184,6 +192,7 @@ export default function ClientDashboard() {
         { key: 'all', label: 'Toutes' },
         { key: 'open', label: 'Ouvertes' },
         { key: 'devis', label: 'Devis reçus' },
+        { key: 'accepted', label: 'Devis acceptés' },
         { key: 'closed', label: 'Fermées' },
     ]
 
@@ -229,13 +238,13 @@ export default function ClientDashboard() {
                 <p className="text-[17px] font-extrabold text-appText tracking-[-0.3px]">
                     Toutes mes demandes
                 </p>
-                <div className="flex gap-0.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px] p-[3px]">
+                <div className="flex gap-0.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px] p-0.75">
                     {TABS.map(({ key, label }) => (
                         <button
                             key={key}
                             type="button"
                             onClick={() => { setActiveTab(key); resetPage() }}
-                            className={`flex items-center gap-1.5 px-4 py-[7px] rounded-[8px] text-[13px] font-semibold cursor-pointer transition-all duration-200 ${activeTab === key
+                            className={`flex items-center gap-1.5 px-4 py-1.75 rounded-lg text-[13px] font-semibold cursor-pointer transition-all duration-200 ${activeTab === key
                                 ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
                                 : 'text-appTextSec hover:text-appText border border-transparent'
                                 }`}
@@ -259,9 +268,9 @@ export default function ClientDashboard() {
             {/* Filter bar */}
             <div className="flex gap-2 items-center flex-wrap mb-4 animate-hero-fade-up">
                 {/* Search */}
-                <div className="relative flex-1 min-w-[200px]">
+                <div className="relative flex-1 min-w-50">
                     <svg
-                        className="absolute left-[11px] top-1/2 -translate-y-1/2 text-appTextMuted pointer-events-none"
+                        className="absolute left-2.75 top-1/2 -translate-y-1/2 text-appTextMuted pointer-events-none"
                         width="14"
                         height="14"
                         fill="none"
@@ -277,7 +286,7 @@ export default function ClientDashboard() {
                         placeholder="Rechercher une demande…"
                         value={searchQuery}
                         onChange={(e) => { setSearchQuery(e.target.value); resetPage() }}
-                        className="w-full pl-9 pr-3.5 py-[9px] bg-appCard border border-appBorder rounded-[8px] text-[13px] text-appText placeholder-appTextMuted outline-none transition-all duration-200 focus:border-primaryColor/40 focus:bg-primaryColor/5"
+                        className="w-full pl-9 pr-3.5 py-2.25 bg-appCard border border-appBorder rounded-lg text-[13px] text-appText placeholder-appTextMuted outline-none transition-all duration-200 focus:border-primaryColor/40 focus:bg-primaryColor/5"
                     />
                 </div>
 
@@ -361,7 +370,7 @@ export default function ClientDashboard() {
                             type="button"
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page === 1}
-                            className="flex items-center gap-1 px-3 py-[7px] rounded-[8px] border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                            className="flex items-center gap-1 px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
                         >
                             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <path d="M15 18l-6-6 6-6" />
@@ -385,7 +394,7 @@ export default function ClientDashboard() {
                                             key={p}
                                             type="button"
                                             onClick={() => setPage(p as number)}
-                                            className={`w-8 h-8 rounded-[8px] text-[13px] font-semibold transition-all duration-200 ${page === p
+                                            className={`w-8 h-8 rounded-lg text-[13px] font-semibold transition-all duration-200 ${page === p
                                                 ? 'bg-primaryColor text-white shadow-[0_2px_8px_rgba(27,79,255,0.3)]'
                                                 : 'bg-appCard border border-appBorder text-appTextSec hover:border-primaryColor/40 hover:text-primaryColor'
                                                 }`}
@@ -400,7 +409,7 @@ export default function ClientDashboard() {
                             type="button"
                             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages}
-                            className="flex items-center gap-1 px-3 py-[7px] rounded-[8px] border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                            className="flex items-center gap-1 px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
                         >
                             Suivant
                             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -416,7 +425,7 @@ export default function ClientDashboard() {
                 <h4 className="text-[15px] font-bold text-appText mb-1.5">
                     Besoin d&apos;un autre professionnel ?
                 </h4>
-                <p className="text-[13px] text-appTextSec mb-[18px]">
+                <p className="text-[13px] text-appTextSec mb-4.5">
                     Postez une nouvelle demande gratuitement et recevez des devis en moins de 24h.
                 </p>
                 <Link

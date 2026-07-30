@@ -32,7 +32,7 @@ export function getVendorMessageRoutePath() {
     return `/vendor/message`;
 }
 export function getMessageRoutePath() {
-    return `/message`;
+    return `/client/message`;
 }
 export function getVendorProfileRoutePath(vendorId: string) {
     return `/vendor-profile?vendorId=${vendorId}`;

@@ -58,7 +58,7 @@ export default function OpportunitySectionHeader({
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-                <ReactSelect
+                {/* <ReactSelect
                     instanceId="vendor-overview-service-filter"
                     options={serviceOptions}
                     value={selectedServiceOption}
@@ -67,7 +67,7 @@ export default function OpportunitySectionHeader({
                     styles={buildDashboardFilterSelectStyles()}
                     menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                     menuPosition="fixed"
-                />
+                /> */}
 
                 <ReactSelect
                     instanceId="vendor-overview-city-filter"
