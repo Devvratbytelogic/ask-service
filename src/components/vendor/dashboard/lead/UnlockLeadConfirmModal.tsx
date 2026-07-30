@@ -25,9 +25,14 @@ export default function UnlockLeadConfirmModal() {
     const creditsToUnlock = modalData?.creditsToUnlock ?? lead?.creditsToUnlock ?? 0
     const walletBalance = dashboardData?.data?.creditBalance ?? 0
     const serviceLabel = lead?.service_category?.title ?? '—'
-    const location = lead?.cityOrPostalCode || lead?.city || '—'
+    
+    console.log('lead', lead);
+    
+    const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : '—'
 
-    const dateInfo = lead?.desiredDate ? moment(lead?.desiredDate).locale('fr').format('DD MMM YYYY') : '—' + ' · ' + (lead?.timeSlot ?? '—')
+    const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+    const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+    const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
 
     const handleCancel = () => dispatch(closeModal())
 
@@ -62,11 +67,11 @@ export default function UnlockLeadConfirmModal() {
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                     <span className="text-appTextSec">Localisation</span>
-                    <span className="font-semibold text-appText">{location}</span>
+                    <span className="font-semibold text-appText">{cityAndPostalCode}</span>
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                     <span className="text-appTextSec">Date</span>
-                    <span className="font-semibold text-appText">{dateInfo}</span>
+                    <span className="font-semibold text-appText">{desiredDate} · {timeSlotRaw}</span>
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                     <span className="text-appTextSec">Votre solde</span>

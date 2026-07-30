@@ -12,6 +12,7 @@ import LeadSidebarSkeleton from './LeadSidebarSkeleton'
 import LeadCard from './LeadCard'
 import UnlockPanel from './UnlockPanel'
 import LeadDetailViewSkeleton from './LeadDetailViewSkeleton'
+import LeadNotFound from './LeadNotFound'
 import SubmitQuoteForm from './SubmitQuoteForm'
 
 interface Props {
@@ -46,6 +47,17 @@ export default function LeadDetailView({ leadId }: Props) {
                 </div>
 
                 <LeadDetailViewSkeleton />
+            </div>
+        )
+    }
+    if (!data) {
+        return (
+            <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
+                <div className="hidden lg:block">
+                    <LeadSidebar selectedId={leadId} />
+                </div>
+
+                <LeadNotFound />
             </div>
         )
     }
