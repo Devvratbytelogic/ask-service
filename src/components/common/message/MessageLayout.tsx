@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { Button } from '@heroui/react';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import MessagesList from './MessagesList';
 import ChatHeader from './ChatHeader';
 import DiscussionContextBar from './DiscussionContextBar';
@@ -18,6 +18,22 @@ import type { IAllChatListData } from '@/types/allChatList';
 // Images and documents only — no video
 const IMAGE_ACCEPT = 'image/*';
 const DOCUMENT_ACCEPT = '.pdf,.doc,.docx';
+const MESSAGE_IMAGE_INPUT_ID = 'message-compose-image';
+const MESSAGE_DOCUMENT_INPUT_ID = 'message-compose-document';
+
+const attachButtonClassName =
+  'btn_radius btn_bg_white inline-flex size-10 shrink-0 cursor-pointer items-center justify-center';
+
+const MESSAGE_EMOJIS = [
+  '😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊',
+  '😇', '🙂', '😉', '😍', '🥰', '😘', '😗', '😋',
+  '😜', '🤗', '🤔', '🤨', '😐', '😏', '😣', '😥',
+  '😮', '😯', '😰', '😱', '😢', '😭', '😤', '😠',
+  '👍', '👎', '👏', '🙌', '🤝', '🙏', '💪', '✌️',
+  '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍',
+  '🔥', '⭐', '✨', '🎉', '🎊', '💯', '✅', '❌',
+  '🏠', '🔧', '🛠️', '📦', '📞', '💬', '📍', '⏰',
+] as const;
 
 function isImageFile(file: File): boolean {
   return file.type.startsWith('image/');
@@ -74,11 +90,11 @@ function AttachedFilePreview({
 export default function MessageLayout() {
   const [messageInput, setMessageInput] = useState('');
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const documentInputRef = useRef<HTMLInputElement>(null);
+  const [emojiOpen, setEmojiOpen] = useState(false);
   // On mobile: show list or chat. On lg+: always show both
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const messageTextInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -123,8 +139,15 @@ export default function MessageLayout() {
   const typingDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingRef = useRef(false);
 
+  // Keep a sync copy so rapid Enter presses can snapshot/clear before React re-renders.
+  const messageInputRef = useRef(messageInput);
+  messageInputRef.current = messageInput;
+  const attachedFileRef = useRef(attachedFile);
+  attachedFileRef.current = attachedFile;
+
   const handleInputChange = useCallback((value: string) => {
     setMessageInput(value);
+    messageInputRef.current = value;
     if (!selectedChatId) return;
 
     if (!isTypingRef.current) {
@@ -139,14 +162,24 @@ export default function MessageLayout() {
     }, 2000);
   }, [selectedChatId, emitTyping, emitStopTyping]);
 
+  const insertEmoji = useCallback((emoji: string) => {
+    const inputEl = messageTextInputRef.current;
+    const current = messageInputRef.current ?? '';
+    const start = inputEl?.selectionStart ?? current.length;
+    const end = inputEl?.selectionEnd ?? current.length;
+    const next = `${current.slice(0, start)}${emoji}${current.slice(end)}`;
+    const caret = start + emoji.length;
+
+    handleInputChange(next);
+
+    requestAnimationFrame(() => {
+      inputEl?.focus();
+      inputEl?.setSelectionRange(caret, caret);
+    });
+  }, [handleInputChange]);
+
   const [userSendMessage] = useUserSendMessageMutation();
   const [vendorSendMessage] = useVendorSendMessageMutation();
-
-  // Keep a sync copy so rapid Enter presses can snapshot/clear before React re-renders.
-  const messageInputRef = useRef(messageInput);
-  messageInputRef.current = messageInput;
-  const attachedFileRef = useRef(attachedFile);
-  attachedFileRef.current = attachedFile;
 
   const handleSelectConversation = (chat: IAllChatListData) => {
     setSelectedChatId(chat._id);
@@ -303,47 +336,52 @@ export default function MessageLayout() {
 
               {/* Message input - WhatsApp-style: text, images & documents (no video) */}
               <div className="shrink-0 border-t border-borderColor bg-appCard px-4 py-3 md:px-6 md:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                {/* Native labels open the OS file picker reliably; HeroUI onPress + input.click() is often blocked. */}
                 <input
-                  ref={imageInputRef}
+                  id={MESSAGE_IMAGE_INPUT_ID}
                   type="file"
                   accept={IMAGE_ACCEPT}
                   onChange={handleImageChange}
-                  className="hidden"
-                  aria-label="Téléverser une image"
+                  className="sr-only"
+                  tabIndex={-1}
                 />
                 <input
-                  ref={documentInputRef}
+                  id={MESSAGE_DOCUMENT_INPUT_ID}
                   type="file"
                   accept={DOCUMENT_ACCEPT}
                   onChange={handleDocumentChange}
-                  className="hidden"
-                  aria-label="Téléverser un document"
+                  className="sr-only"
+                  tabIndex={-1}
                 />
                 {attachedFile && (
                   <AttachedFilePreview
                     file={attachedFile}
-                    onRemove={() => setAttachedFile(null)}
+                    onRemove={() => {
+                      setAttachedFile(null);
+                      attachedFileRef.current = null;
+                    }}
                   />
                 )}
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <Button
-                    isIconOnly
+                  <label
+                    htmlFor={MESSAGE_DOCUMENT_INPUT_ID}
                     aria-label="Joindre un document"
-                    className="btn_radius btn_bg_white hidden sm:flex"
-                    onPress={() => documentInputRef.current?.click()}
+                    className={attachButtonClassName}
+                    title="Joindre un document"
                   >
                     <PaperClipIconSVG />
-                  </Button>
-                  <Button
-                    isIconOnly
+                  </label>
+                  <label
+                    htmlFor={MESSAGE_IMAGE_INPUT_ID}
                     aria-label="Envoyer une image"
-                    className="btn_radius btn_bg_white hidden sm:flex"
-                    onPress={() => imageInputRef.current?.click()}
+                    className={attachButtonClassName}
+                    title="Envoyer une image"
                   >
                     <PhotographIconSVG />
-                  </Button>
+                  </label>
                   <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 rounded-full border border-appBorder bg-appSurface px-3 py-2 sm:px-4 sm:py-2.5">
                     <input
+                      ref={messageTextInputRef}
                       type="text"
                       placeholder="Tapez votre message…"
                       value={messageInput}
@@ -356,13 +394,42 @@ export default function MessageLayout() {
                       className="min-w-0 flex-1 bg-transparent text-sm text-fontBlack placeholder:text-placeHolderText focus:outline-none"
                     />
                   </div>
-                  <Button
-                    isIconOnly
-                    aria-label="Émoji"
-                    className="btn_radius btn_bg_white hidden sm:flex"
+                  <Popover
+                    placement="top-end"
+                    isOpen={emojiOpen}
+                    onOpenChange={setEmojiOpen}
                   >
-                    <EmojiIconSVG />
-                  </Button>
+                    <PopoverTrigger>
+                      <Button
+                        isIconOnly
+                        aria-label="Émoji"
+                        className={attachButtonClassName}
+                        title="Émoji"
+                      >
+                        <EmojiIconSVG />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-2">
+                      <div
+                        className="grid max-h-52 w-66 grid-cols-8 gap-0.5 overflow-y-auto"
+                        role="listbox"
+                        aria-label="Choisir un émoji"
+                      >
+                        {MESSAGE_EMOJIS.map((emoji) => (
+                          <button
+                            key={emoji}
+                            type="button"
+                            role="option"
+                            className="flex size-8 items-center justify-center rounded-lg text-xl transition-colors hover:bg-appOverlay-5"
+                            onClick={() => insertEmoji(emoji)}
+                            aria-label={`Insérer ${emoji}`}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   <Button
                     variant="solid"
                     color="primary"

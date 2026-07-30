@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { EditIconSVG, HeartIconSVG, SearchIconSVG } from '@/components/library/AllSVG';
+import { SearchIconSVG } from '@/components/library/AllSVG';
 import { Button, Input } from '@heroui/react';
 import { useGetUserChatsQuery, useGetVendorChatsQuery } from '@/redux/rtkQueries/clientSideGetApis';
 import type { IAllChatListData, UsersEntity } from '@/types/allChatList';
@@ -129,24 +129,8 @@ export default function MessagesList({
     return (
         <>
             <div className="border-b border-borderColor p-3 md:p-4">
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4">
                     <h1 className="font-bold text-fontBlack">Messages</h1>
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            className="rounded p-1.5 text-darkSilver hover:bg-borderDark hover:text-fontBlack"
-                            aria-label="Nouveau message"
-                        >
-                            <EditIconSVG />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded p-1.5 text-darkSilver hover:bg-borderDark hover:text-fontBlack"
-                            aria-label="Favoris"
-                        >
-                            <HeartIconSVG />
-                        </button>
-                    </div>
                 </div>
                 <div className="relative">
                     <Input
