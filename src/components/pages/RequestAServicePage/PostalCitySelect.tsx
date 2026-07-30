@@ -78,7 +78,7 @@ export default function PostalCitySelect({
     const timer = setTimeout(async () => {
       setIsLoading(true)
       try {
-        const predictions = await fetchPlacePredictions(search)
+        const predictions = await fetchPlacePredictions(search, { country: 'fr' })
         if (cancelled) return
         setOptions(
           predictions.map((prediction) => ({

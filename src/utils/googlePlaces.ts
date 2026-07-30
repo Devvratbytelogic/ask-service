@@ -150,21 +150,39 @@ export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails> 
   })
 }
 
-export async function fetchPlacePredictions(input: string): Promise<PlacePredictionOption[]> {
+export async function fetchPlacePredictions(
+  input: string,
+  options?: { country?: string },
+): Promise<PlacePredictionOption[]> {
   await loadGooglePlaces()
 
   const service = new google.maps.places.AutocompleteService()
+  const country = options?.country?.toLowerCase()
 
   const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>(
     (resolve) => {
       // No `types` filter → countries, cities, states, streets, full addresses
-      service.getPlacePredictions({ input }, (results, status) => {
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
-          resolve([])
-          return
-        }
-        resolve(results)
-      })
+      // for complete world predictions
+      // service.getPlacePredictions({ input }, (results, status) => {
+      //   if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+      //     resolve([])
+      //     return
+      //   }
+      //   resolve(results)
+      // })
+      service.getPlacePredictions(
+        {
+          input,
+          ...(country ? { componentRestrictions: { country } } : {}),
+        },
+        (results, status) => {
+          if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+            resolve([])
+            return
+          }
+          resolve(results)
+        },
+      )
     },
   )
 
