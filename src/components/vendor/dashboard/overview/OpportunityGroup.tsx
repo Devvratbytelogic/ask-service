@@ -10,22 +10,26 @@ const LEADS_LIMIT_OPTIONS = ['3', '6', '9'] as const
 
 type GroupStatus = 'new' | 'pending' | 'accepted' | 'ignored'
 
-const GROUP_STATUS_VARIANTS: Record<GroupStatus, { wrapperClass: string; icon: React.ReactNode }> = {
+const GROUP_STATUS_VARIANTS: Record<GroupStatus, { wrapperClass: string; icon: React.ReactNode; label: string }> = {
     new: {
         wrapperClass: 'bg-trust-green/15 text-[#6EE7B7] border border-trust-green/20',
         icon: <CheckmarkIconSVG />,
+        label: 'Nouveau',
     },
     pending: {
         wrapperClass: 'bg-primaryColor/12 text-[#93C5FD] border border-primaryColor/20',
         icon: <ArrowSendIconSVG size={10} />,
+        label: 'En attente',
     },
     accepted: {
         wrapperClass: 'bg-trust-green/15 text-[#6EE7B7] border border-trust-green/20',
         icon: <CheckmarkIconSVG />,
+        label: 'Accepté',
     },
     ignored: {
         wrapperClass: 'bg-black/5 dark:bg-white/5 text-appTextMuted border border-appBorderSub',
         icon: <ClockCircleIconSVG size={10} />,
+        label: 'Ignoré',
     },
 }
 
@@ -46,12 +50,13 @@ function resolveGroupStatus(status: string | null | undefined): GroupStatus {
 function OppGroupStatusBadge({ status, label }: { status: string | null | undefined; label: string | null | undefined }) {
     if (!status && !label) return null
 
-    const { wrapperClass, icon } = GROUP_STATUS_VARIANTS[resolveGroupStatus(status)]
+    const resolved = resolveGroupStatus(status || label)
+    const { wrapperClass, icon, label: frenchLabel } = GROUP_STATUS_VARIANTS[resolved]
 
     return (
         <span className={`flex items-center gap-1.25 text-[11px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1 rounded-[5px] ${wrapperClass}`}>
             {icon}
-            {label ?? status ?? ''}
+            {frenchLabel}
         </span>
     )
 }

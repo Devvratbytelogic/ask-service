@@ -31,6 +31,15 @@ const VARIANT_RIBBON_CLASS: Record<ButtonVariant, string> = {
     gray: 'bg-[#64748B] text-white',
 }
 
+const LEAD_STATUS_RIBBON_LABEL: Record<LeadStatus, string> = {
+    new: 'Verrouillé',
+    unlocked: 'Débloqué',
+    pending: 'En attente',
+    accepted: 'Accepté',
+    ignored: 'Ignoré',
+    withdrawn: 'Retiré',
+}
+
 function resolveLeadStatus(status: string | null | undefined): LeadStatus {
     switch ((status ?? '').toLowerCase()) {
         case 'unlocked':
@@ -49,10 +58,15 @@ function resolveLeadStatus(status: string | null | undefined): LeadStatus {
     }
 }
 
-function LeadStatusRibbon({ status, label }: { status: string; label: string }) {
-    const resolvedStatus = resolveLeadStatus(status)
+function getLeadStatusRibbonLabel(status: string | null | undefined, label?: string | null): string {
+    const resolved = resolveLeadStatus(status || label)
+    return LEAD_STATUS_RIBBON_LABEL[resolved]
+}
+
+function LeadStatusRibbon({ status, label }: { status: string; label?: string | null }) {
+    const resolvedStatus = resolveLeadStatus(status || label)
     const ribbonClass = VARIANT_RIBBON_CLASS[LEAD_STATUS_VARIANT[resolvedStatus]]
-    const displayLabel = label || status
+    const displayLabel = getLeadStatusRibbonLabel(status, label)
 
     return (
         <div className="absolute top-0 right-0 size-24 overflow-hidden pointer-events-none z-10" aria-hidden>
@@ -327,7 +341,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             tabIndex={0}
         >
             {(lead.lead_status || lead.lead_status_label) && (
-                <LeadStatusRibbon status={lead?.lead_status} label={lead?.lead_status_label === 'NEW' ? 'Locked' : lead?.lead_status_label ?? ''} />
+                <LeadStatusRibbon status={lead?.lead_status} label={lead?.lead_status_label} />
             )}
 
             <div className="flex items-center justify-between mb-2.5">
