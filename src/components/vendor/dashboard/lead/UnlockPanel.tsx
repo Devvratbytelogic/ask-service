@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'nextjs-toploader/app'
 import { Spinner } from '@heroui/react'
-import { ArrowSendIconSVG, CheckmarkIconSVG, ChatOutlineIconSVG, ClockCircleIconSVG, LockPrimaryColorSVG, } from '@/components/library/AllSVG'
+import { ArrowSendIconSVG, CheckmarkIconSVG, ChatOutlineIconSVG, ClockCircleIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, } from '@/components/library/AllSVG'
 import { getCreditsRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
@@ -29,8 +29,8 @@ function resolveLeadStatus(status: string | null | undefined) {
 
 function VerifiedListItem({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-[7px] text-[12px] text-appTextSec">
-            <div className="w-[17px] h-[17px] rounded-full bg-trust-green/15 flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-1.75 text-[12px] text-appTextSec">
+            <div className="w-4.25 h-4.25 rounded-full bg-trust-green/15 flex items-center justify-center shrink-0">
                 <span className="text-trust-green flex">
                     <CheckmarkIconSVG size={9} />
                 </span>
@@ -94,21 +94,38 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
     if (isLoading || !lead) {
         return (
-            <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] flex items-center justify-center">
+            <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] flex items-center justify-center">
                 <Spinner size="lg" color="primary" />
             </aside>
         )
     }
 
     return (
-        <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-[58px] h-[calc(100vh-58px)] overflow-y-auto space-y-3">
+        <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] overflow-y-auto space-y-3">
             <div className="bg-appCard border border-appBorder rounded-2xl overflow-hidden">
-                <div className="px-[18px] py-3.5 bg-linear-to-r from-primaryColor/15 to-amber/8 border-b border-appBorderSub flex items-center justify-between">
-                    <div className="flex items-center gap-[7px] text-[13px] font-bold text-appText">
-                        <span className="text-appTextSec flex">
-                            <LockPrimaryColorSVG className="w-[14px] h-[14px]" />
-                        </span>
-                        Déblocage sécurisé
+                <div className="px-4.5 py-3.5 bg-linear-to-r from-primaryColor/15 to-amber/8 border-b border-appBorderSub flex items-center justify-between">
+                    <div className="flex items-center gap-1.75 text-[13px] font-bold text-appText">
+                        {isUnlocked ? (
+                            <>
+                                <span className="text-trust-green flex shrink-0">
+                                    <LockOpenGreenIconSVG className="w-3.5 h-3.5" />
+                                </span>
+                                {isIgnored
+                                    ? 'Devis ignoré'
+                                    : isAccepted
+                                        ? 'Devis accepté'
+                                        : isQuoteSent
+                                            ? 'Devis envoyé'
+                                            : 'Prospect débloqué'}
+                            </>
+                        ) : (
+                            <>
+                                <span className="text-appTextSec flex shrink-0">
+                                    <LockPrimaryColorSVG className="w-3.5 h-3.5" />
+                                </span>
+                                Déblocage sécurisé
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -151,7 +168,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                         </div>
                         <Link
                             href={getCreditsRoutePath()}
-                            className="text-[12px] font-semibold text-primaryColor bg-blue-light dark:bg-primaryColor/15 px-2.5 py-1.5 rounded-[8px] transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
+                            className="text-[12px] font-semibold text-primaryColor bg-blue-light dark:bg-primaryColor/15 px-2.5 py-1.5 rounded-lg transition-all duration-200 hover:bg-primaryColor hover:text-white shrink-0 whitespace-nowrap"
                         >
                             + Recharger
                         </Link>
@@ -176,12 +193,12 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
                     {isUnlocked ? (
                         isIgnored ? (
-                            <div className="w-full py-[15px] bg-linear-to-br from-slate-500 to-[#475569] text-white rounded-[12px] text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(100,116,139,0.25)] flex items-center justify-center gap-2 opacity-80 cursor-not-allowed">
+                            <div className="w-full py-3.75 bg-linear-to-br from-slate-500 to-[#475569] text-white rounded-xl text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(100,116,139,0.25)] flex items-center justify-center gap-2 opacity-80 cursor-not-allowed">
                                 Devis ignoré
                             </div>
                         ) : isQuoteSent || isAccepted ? (
                             <div className="flex flex-col gap-3">
-                                <div className="w-full py-[15px] bg-linear-to-br from-trust-green to-[#059669] text-white rounded-[12px] text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2">
+                                <div className="w-full py-3.75 bg-linear-to-br from-trust-green to-[#059669] text-white rounded-xl text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2">
                                     <CheckmarkIconSVG size={15} />
                                     {isAccepted ? 'Devis accepté' : 'Devis envoyé'}
                                 </div>
@@ -199,7 +216,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                                         type="button"
                                         onClick={handleContactClient}
                                         disabled={isAccessingChat}
-                                        className="w-full py-[13px] bg-appCard border border-appBorder text-appText rounded-[12px] text-[14px] font-bold cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-black/3 dark:hover:bg-appCard/4 hover:border-primaryColor/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="w-full py-3.25 bg-appCard border border-appBorder text-appText rounded-xl text-[14px] font-bold cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-black/3 dark:hover:bg-appCard/4 hover:border-primaryColor/30 disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         <ChatOutlineIconSVG size={15} />
                                         {isAccessingChat ? 'Ouverture…' : 'Contacter le client'}
@@ -210,13 +227,13 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             <button
                                 type="button"
                                 onClick={onSendQuoteClick}
-                                className="w-full py-[15px] bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-[12px] text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0"
+                                className="w-full py-3.75 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0"
                             >
                                 <ArrowSendIconSVG size={15} />
                                 Envoyer un devis
                             </button>
                         ) : (
-                            <div className="w-full py-[15px] bg-linear-to-br from-trust-green to-[#059669] text-white rounded-[12px] text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2">
+                            <div className="w-full py-3.75 bg-linear-to-br from-trust-green to-[#059669] text-white rounded-xl text-[15px] font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2">
                                 <CheckmarkIconSVG size={15} />
                                 Prospect débloqué !
                             </div>
@@ -226,10 +243,10 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             type="button"
                             onClick={handleUnlockClick}
                             disabled={!canPurchaseLeads}
-                            className="w-full py-[15px] bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-[12px] text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                            className="w-full py-3.75 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                         >
                             <span className="flex">
-                                <LockPrimaryColorSVG className="w-[15px] h-[15px]" />
+                                <LockPrimaryColorSVG className="w-3.75 h-3.75" />
                             </span>
                             Débloquer ce prospect
                         </button>

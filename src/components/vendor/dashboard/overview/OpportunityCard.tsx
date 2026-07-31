@@ -381,7 +381,7 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
                     {lead?.dynamic_answers?.slice(0, 3).map((answer) => (
                         <div key={answer._id} className="flex items-center gap-1.5 text-[12px] text-appTextSec">
                             <span className="text-appTextMuted shrink-0">{answer.label}:</span>
-                            <span className="truncate">{answer.value || '—'}</span>
+                            <span className="truncate">{answer.type === 'date' ? moment(answer.value).locale('fr').format('DD MMM YYYY') : answer.value || '—'}</span>
                         </div>
                     ))}
                     {lead?.dynamic_answers?.length > 3 ? (

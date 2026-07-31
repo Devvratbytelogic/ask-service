@@ -104,6 +104,7 @@ export interface IAvailableLeadByCategoryAPIResponse {
     key: string;
     label: string;
     value: string;
+    type: string;
     _id: string;
   }
   

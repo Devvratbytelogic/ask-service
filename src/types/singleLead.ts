@@ -76,6 +76,7 @@ export interface DynamicAnswersEntity {
   question_id: string;
   key: string;
   label: string;
+  type: string;
   value: string;
   _id: string;
 }

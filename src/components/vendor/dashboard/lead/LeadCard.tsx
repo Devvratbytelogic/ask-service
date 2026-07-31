@@ -12,12 +12,12 @@ interface Props {
     onUnlock: () => void
 }
 
-function formatDynamicAnswerValue(value: string | undefined): string {
+function formatDynamicAnswerValue(value: string | undefined, type: string | undefined): string {
     const raw = value?.trim() ?? ''
     if (!raw) return '—'
 
     const formatSingle = (val: string) => {
-        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        if (type && type === 'date') {
             return moment(val).locale('fr').format('DD MMM YYYY')
         }
         return val
@@ -144,7 +144,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                                     {answer.label ?? '—'}
                                 </p>
                                 <p className="text-[13px] font-medium text-appText leading-snug wrap-break-word">
-                                    {formatDynamicAnswerValue(answer.value)}
+                                    {formatDynamicAnswerValue(answer.value, answer.type)}
                                 </p>
                             </div>
                         ))

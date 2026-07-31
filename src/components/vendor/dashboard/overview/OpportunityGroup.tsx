@@ -1,3 +1,6 @@
+'use client'
+
+import { useRef } from 'react'
 import { ArrowSendIconSVG, CheckmarkIconSVG, ClockCircleIconSVG, } from '@/components/library/AllSVG'
 import OpportunityCard from './OpportunityCard'
 import { IAvailableLeadByCategoryDataEntity } from '@/types/availableLeadByCategory'
@@ -68,14 +71,25 @@ export default function OpportunityGroup({
     setPaginateServiceCategory: (serviceCategory: string) => void
     canPurchaseLeads: boolean
 }) {
+    const groupRef = useRef<HTMLDivElement>(null)
     const leads = item?.leads ?? []
     const hasLeads = leads?.length > 0
     const categoryId = item?.service_category?._id ?? ''
     const currentPage = item?.pagination?.page ?? 1
     const currentLimit = item?.pagination?.limit ?? 6
     const totalPages = item?.pagination?.totalPages ?? 0
+
+    const scrollGroupToStart = () => {
+        requestAnimationFrame(() => {
+            groupRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+    }
+
     return (
-        <div className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4">
+        <div
+            ref={groupRef}
+            className="bg-appSurface border border-appBorder rounded-2xl overflow-hidden mb-4 scroll-mt-20"
+        >
             <div className="px-4.5 py-3 bg-black/2 dark:bg-white/2 border-b border-appBorderSub flex items-center gap-2.5 flex-wrap">
                 <OppGroupStatusBadge status={item?.status} label={item?.status_label} />
                 <span className="text-[16px] font-extrabold text-appText">{item?.parent_service_category?.title}</span>
@@ -92,7 +106,7 @@ export default function OpportunityGroup({
                         <OpportunityCard key={index} lead={lead} canPurchaseLeads={canPurchaseLeads} />
                     ))
                 ) : (
-                    <div className="col-span-full px-4.5` py-10 text-center">
+                    <div className="col-span-full px-4.5 py-10 text-center">
                         <p className="text-[14px] text-appTextSec">Aucun prospect pour cette catégorie.</p>
                     </div>
                 )}
@@ -106,6 +120,7 @@ export default function OpportunityGroup({
                         onChange={(page) => {
                             setLeadsPage(page)
                             setPaginateServiceCategory(categoryId)
+                            scrollGroupToStart()
                         }}
                         showControls
                         color="primary"
@@ -128,6 +143,7 @@ export default function OpportunityGroup({
                                     setLeadsLimit(Number(key))
                                     setLeadsPage(1)
                                     setPaginateServiceCategory(categoryId)
+                                    scrollGroupToStart()
                                 }
                             }}
                             className="min-w-18"
