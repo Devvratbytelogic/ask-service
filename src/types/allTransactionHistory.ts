@@ -22,7 +22,7 @@ export interface IAllTransactionHistoryAPIResponse {
     currency: string;
     credit_added?: string | null;
     status: string;
-    receipt_url?: null;
+    receipt_url?: string | null;
     description: string;
   }
   

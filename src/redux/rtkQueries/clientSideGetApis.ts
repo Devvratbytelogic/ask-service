@@ -137,6 +137,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
         }),
+        getVendorTransactionReceipt: builder.query<Blob, { transactionId: string }>({
+            query: ({ transactionId }) => ({
+                url: `/vendor/transactions/${transactionId}/receipt`,
+                method: 'GET',
+                responseHandler: (response) => response.blob(),
+            }),
+        }),
         getVendorDashboardData: builder.query<IVendorDashboardDataAPIResponse, void>({
             query: () => ({
                 url: `/vendor/dashboard`,
@@ -335,6 +342,7 @@ export const {
     useGetTransactionHistoryExportPDFQuery,
     useLazyGetTransactionHistoryExportCSVQuery,
     useLazyGetTransactionHistoryExportPDFQuery,
+    useLazyGetVendorTransactionReceiptQuery,
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
     useGetVendorAvailableLeadsByServiceCategoryQuery,

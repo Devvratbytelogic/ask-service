@@ -9,6 +9,7 @@ import {
     useGetAllTransactionHistoryQuery,
     useLazyGetTransactionHistoryExportCSVQuery,
     useLazyGetTransactionHistoryExportPDFQuery,
+    useLazyGetVendorTransactionReceiptQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllTransactionHistoryTransactionsEntity } from '@/types/allTransactionHistory'
 import moment from 'moment'
@@ -121,6 +122,8 @@ export default function VendorPaymentHistory() {
 
     const [fetchCSV] = useLazyGetTransactionHistoryExportCSVQuery()
     const [fetchPDF] = useLazyGetTransactionHistoryExportPDFQuery()
+    const [fetchReceipt] = useLazyGetVendorTransactionReceiptQuery()
+    const [downloadingReceiptId, setDownloadingReceiptId] = useState<string | null>(null)
 
     const getExportParams = () => {
         const days = Number(dateRange) || 30
@@ -165,6 +168,34 @@ export default function VendorPaymentHistory() {
 
     const handleCopyId = (text: string) => {
         void navigator.clipboard.writeText(text)
+    }
+
+    const handleDownloadReceipt = async (transactionId: string) => {
+        try {
+            setDownloadingReceiptId(transactionId)
+            const result = await fetchReceipt({ transactionId }).unwrap()
+            const blob = result as Blob
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `receipt-${transactionId}.pdf`
+            a.click()
+            URL.revokeObjectURL(url)
+            addToast({
+                title: 'Reçu téléchargé',
+                color: 'success',
+                timeout: 2000,
+            })
+        } catch {
+            addToast({
+                title: 'Erreur lors du téléchargement',
+                description: 'Impossible de télécharger le reçu. Veuillez réessayer.',
+                color: 'danger',
+                timeout: 5000,
+            })
+        } finally {
+            setDownloadingReceiptId(null)
+        }
     }
 
     return (
@@ -325,10 +356,13 @@ export default function VendorPaymentHistory() {
                                         <td className="px-4 py-4">
                                             <button
                                                 type="button"
-                                                className="text-darkSilver hover:text-primaryColor transition-colors p-1"
+                                                onClick={() => void handleDownloadReceipt(row.id)}
+                                                disabled={downloadingReceiptId === row.id}
+                                                className="text-darkSilver cursor-pointer hover:text-primaryColor transition-colors p-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-darkSilver"
                                                 aria-label="Télécharger le reçu"
+                                                title="Télécharger le reçu"
                                             >
-                                                <DownloadIconSVG />
+                                                <DownloadIconSVG className={downloadingReceiptId === row.id ? 'animate-pulse' : undefined} />
                                             </button>
                                         </td>
                                     </tr>
