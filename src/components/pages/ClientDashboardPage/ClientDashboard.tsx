@@ -190,7 +190,7 @@ export default function ClientDashboard() {
 
     const TABS: { key: TabKey; label: string }[] = [
         { key: 'all', label: 'Toutes' },
-        { key: 'open', label: 'Ouvertes' },
+        // { key: 'open', label: 'Ouvertes' },
         { key: 'devis', label: 'Devis reçus' },
         { key: 'accepted', label: 'Devis acceptés' },
         { key: 'closed', label: 'Fermées' },
