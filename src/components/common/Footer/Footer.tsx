@@ -53,7 +53,7 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
     const linkedinUrl = settings?.linkedin_link || getLinkedinUrl()
 
     return (
-        <footer className="bg-slate-900 px-[5%] pt-[60px] pb-9 text-[#ffffff73]">
+        <footer className="bg-slate-900 px-[5%] pt-15 pb-9 text-[#ffffff73]">
             <div className="grid grid-cols-1 gap-8 pb-12 mb-8 border-b border-white/[0.07] sm:grid-cols-2 sm:gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr]">
                 <div>
                     {/* Brand */}
@@ -61,7 +61,7 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                         <ImageComponent url={footerLogoUrl} object_contain img_title={`${marketplaceName} logo`} />
                     </Link>
                     {platformDescription && (
-                        <p className="text-sm leading-[1.7] max-w-[260px] mb-4">
+                        <p className="text-sm leading-[1.7] max-w-65 mb-4">
                             {platformDescription}
                         </p>
                     )}
