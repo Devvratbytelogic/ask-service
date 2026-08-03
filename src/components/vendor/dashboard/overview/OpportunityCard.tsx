@@ -407,20 +407,27 @@ export default function OpportunityCard({ lead, canPurchaseLeads }: { lead: IAva
             <ClientBlock client={lead?.contact_details} />
 
             {action && (
-                <div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
-                    <PrimaryButton
-                        label={isAccessingChat && action.action === 'contact' ? 'Ouverture…' : action.label}
-                        variant={action.variant}
-                        action={action.action}
-                        disabled={isButtonDisabled || (action.action === 'contact' && isAccessingChat)}
-                        onClick={handlePrimaryAction}
-                    />
-                    {!isLockedLead && (
-                        <DirectContactButton
-                            phone={clientPhone}
-                            disabled={isButtonDisabled}
-                            onClick={handleDirectContact}
+                <div className="flex flex-col gap-2" onClick={(event) => event.stopPropagation()}>
+                    <div className="flex items-center gap-2">
+                        <PrimaryButton
+                            label={isAccessingChat && action.action === 'contact' ? 'Ouverture…' : action.label}
+                            variant={action.variant}
+                            action={action.action}
+                            disabled={isButtonDisabled || (action.action === 'contact' && isAccessingChat)}
+                            onClick={handlePrimaryAction}
                         />
+                        {!isLockedLead && (
+                            <DirectContactButton
+                                phone={clientPhone}
+                                disabled={isButtonDisabled}
+                                onClick={handleDirectContact}
+                            />
+                        )}
+                    </div>
+                    {isButtonDisabled && action.action === 'unlock' && (
+                        <p className="text-[11px] font-medium text-amber-700 dark:text-amber-300 leading-snug">
+                            Déblocage disponible après vérification de votre compte.
+                        </p>
                     )}
                 </div>
             )}

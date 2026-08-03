@@ -611,7 +611,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         </>
                       ) : (
                         <>
-                          {isVendor ? "Retour à l'accueil" : 'Accéder à mon espace'}
+                          {isVendor ? 'Accéder à mon espace prestataire' : 'Accéder à mon espace'}
                           <FiArrowRight size={15} />
                         </>
                       )}

@@ -14,11 +14,11 @@ type KycAlertContent = {
 function getKycAlertContent(status: string): KycAlertContent {
     const normalized = status.toUpperCase()
 
-    if (normalized === 'PENDING') {
+    if (normalized === 'PENDING' || !normalized) {
         return {
             title: 'Vérification de compte en cours',
             description:
-                'Vos documents sont en cours d\'examen. Vous ne pouvez pas débloquer de prospects tant que votre compte n\'est pas activé.',
+                'Vos documents sont en cours d\'examen. Vous pourrez débloquer des prospects dès que votre compte aura été vérifié.',
             badge: 'En attente',
             showDocumentsLink: false,
         }
@@ -43,10 +43,21 @@ function getKycAlertContent(status: string): KycAlertContent {
     }
 }
 
-export default function VendorKycStatusAlert({ kycStatus }: { kycStatus?: string | null }) {
-    if (!kycStatus || kycStatus.toUpperCase() === 'ACTIVE') return null
+interface VendorKycStatusAlertProps {
+    kycStatus?: string | null
+    canPurchaseLeads?: boolean
+}
 
-    const { title, description, badge, showDocumentsLink } = getKycAlertContent(kycStatus)
+export default function VendorKycStatusAlert({
+    kycStatus,
+    canPurchaseLeads,
+}: VendorKycStatusAlertProps) {
+    const isActive = kycStatus?.toUpperCase() === 'ACTIVE'
+    const isBlocked = canPurchaseLeads === false || (!!kycStatus && !isActive)
+
+    if (!isBlocked) return null
+
+    const { title, description, badge, showDocumentsLink } = getKycAlertContent(kycStatus ?? '')
 
     return (
         <div

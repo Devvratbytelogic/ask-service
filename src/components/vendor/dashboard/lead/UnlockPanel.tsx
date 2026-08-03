@@ -239,17 +239,26 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             </div>
                         )
                     ) : (
-                        <button
-                            type="button"
-                            onClick={handleUnlockClick}
-                            disabled={!canPurchaseLeads}
-                            className="w-full py-3.75 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                        >
-                            <span className="flex">
-                                <LockPrimaryColorSVG className="w-3.75 h-3.75" />
-                            </span>
-                            Débloquer ce prospect
-                        </button>
+                        <div className="flex flex-col gap-2.5">
+                            <button
+                                type="button"
+                                onClick={handleUnlockClick}
+                                disabled={!canPurchaseLeads}
+                                className="w-full py-3.75 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                            >
+                                <span className="flex">
+                                    <LockPrimaryColorSVG className="w-3.75 h-3.75" />
+                                </span>
+                                Débloquer ce prospect
+                            </button>
+                            {!canPurchaseLeads && (
+                                <div className="px-3 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-[10px]">
+                                    <p className="text-[12px] font-medium text-amber-700 dark:text-amber-300 leading-[1.45] text-center">
+                                        Vous pourrez débloquer des prospects dès que votre compte aura été vérifié.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {!isUnlocked && (

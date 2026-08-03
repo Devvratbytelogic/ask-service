@@ -6,7 +6,6 @@ import { RootState } from '@/redux/appStore'
 import { closeModal } from '@/redux/slices/allModalSlice'
 import { Button, Checkbox, Spinner, Textarea } from '@heroui/react'
 import moment from 'moment'
-import 'moment/locale/fr'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 

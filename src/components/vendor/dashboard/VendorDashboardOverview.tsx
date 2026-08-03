@@ -77,7 +77,10 @@ export default function VendorDashboardOverview() {
                 </p>
             </div>
 
-            <VendorKycStatusAlert kycStatus={stats?.kyc_status} />
+            <VendorKycStatusAlert
+                kycStatus={stats?.kyc_status}
+                canPurchaseLeads={stats?.canPurchaseLeads}
+            />
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">

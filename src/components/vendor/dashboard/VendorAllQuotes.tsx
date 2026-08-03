@@ -5,7 +5,6 @@ import { generateLeadDetailRoutePath, getVendorDashboardRoutePath } from '@/rout
 import { Button } from '@heroui/react'
 import Link from 'next/link'
 import moment from 'moment'
-import 'moment/locale/fr'
 import { useGetVendorAllQuotesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllQuotes } from '@/types/allquotes'
 import SupportAlert from './SupportAlert'
