@@ -14,7 +14,7 @@ import FindLeadsCTA from './overview/FindLeadsCTA'
 import VendorKycStatusAlert from './VendorKycStatusAlert'
 import VendorPhoneUnverifiedAlert from './VendorPhoneUnverifiedAlert'
 import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
-import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetVendorAvailableLeadsByServiceCategoryQuery, useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
 import { useSearchParams } from 'next/navigation'
 
@@ -41,7 +41,7 @@ export default function VendorDashboardOverview() {
     const stats = response?.data?.summary;
 
     // Same query as VendorMenu: first locked lead for "Prospects disponibles"
-    const { data: lockedLeadsResponse } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+    const { data: lockedLeadsResponse } = useGetVendorAvailableLeadsQuery({
         page: 1,
         limit: 20,
         unlocked: false,
@@ -62,9 +62,7 @@ export default function VendorDashboardOverview() {
     if (isLoading) {
         return <VendorDashboardOverviewSkeleton />
     }
-    const firstLeadId = lockedLeadsResponse?.data?.data
-        ?.flatMap((group) => group.leads ?? [])
-        .find((lead) => lead._id)?._id
+    const firstLeadId = lockedLeadsResponse?.data?.items?.[0]?._id
 
     return (
         <div className="max-w-350 mx-auto px-7 py-7">

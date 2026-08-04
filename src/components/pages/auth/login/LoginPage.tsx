@@ -24,7 +24,7 @@ import {
   useResendEmailVerificationMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
-import { useLazyGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useLazyGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import { AuthResponseData, getIsClientFromAuthData } from '@/utils/authCookies'
@@ -124,7 +124,7 @@ export default function LoginPage({
   const [login, { isLoading }] = useLoginMutation()
   const [verifyEmail, { isLoading: isVerifyingOtp }] = useVerifyEmailMutation()
   const [resendEmailVerification, { isLoading: isResendingOtp }] = useResendEmailVerificationMutation()
-  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsByServiceCategoryQuery()
+  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsQuery()
 
   const isVendor = role === 'vendor'
   const isLoginBusy = isLoading || isRedirecting
@@ -182,9 +182,7 @@ export default function LoginPage({
           limit: 20,
           unlocked: false,
         }).unwrap()
-        const firstLeadId = response?.data?.data
-          ?.flatMap((group) => group.leads ?? [])
-          .find((lead) => lead._id)?._id
+        const firstLeadId = response?.data?.items?.[0]?._id
         if (firstLeadId) {
           return generateLeadDetailRoutePath(firstLeadId)
         }

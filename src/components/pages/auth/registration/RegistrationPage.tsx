@@ -25,7 +25,7 @@ import { addToast } from '@heroui/react'
 import {
   useGetAllServicesGroupedByParentCategoryQuery,
   useGetAllServicesDocumentsRequiredQuery,
-  useLazyGetVendorAvailableLeadsByServiceCategoryQuery,
+  useLazyGetVendorAvailableLeadsQuery,
 } from '@/redux/rtkQueries/clientSideGetApis'
 import {
   useSignupMutation,
@@ -115,7 +115,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   const [resendEmailVerification, { isLoading: isResendingEmail }] = useResendEmailVerificationMutation()
   const [vendorResendOtp, { isLoading: isResendingVendorOtp }] = useVendorResendOtpMutation()
   const [uploadVendorDocuments, { isLoading: isUploadingDocs }] = useUploadVendorDocumentsMutation()
-  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsByServiceCategoryQuery()
+  const [fetchAvailableLeads] = useLazyGetVendorAvailableLeadsQuery()
 
   // ── UI-only state ─────────────────────────────────────────────────────────
   // Skip profile choice when role is provided via URL (e.g. "Devenir Prestataire")
@@ -178,9 +178,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
         limit: 20,
         unlocked: false,
       }).unwrap()
-      const firstLeadId = response?.data?.data
-        ?.flatMap((group) => group.leads ?? [])
-        .find((lead) => lead._id)?._id
+      const firstLeadId = response?.data?.items?.[0]?._id
       if (firstLeadId) {
         return generateLeadDetailRoutePath(firstLeadId)
       }

@@ -345,6 +345,7 @@ export const {
     useLazyGetVendorTransactionReceiptQuery,
     useGetVendorDashboardDataQuery,
     useGetVendorAvailableLeadsQuery,
+    useLazyGetVendorAvailableLeadsQuery,
     useGetVendorAvailableLeadsByServiceCategoryQuery,
     useLazyGetVendorAvailableLeadsByServiceCategoryQuery,
     useGetVendorAllQuotesQuery,
