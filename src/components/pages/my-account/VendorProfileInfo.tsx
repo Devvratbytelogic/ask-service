@@ -51,11 +51,9 @@ function getProfileServiceIds(
     if (!service) return []
 
     const services = Array.isArray(service) ? service : [service]
-    const firstId = services
+    return services
         .map((item) => item._id ?? item.id)
-        .find((id): id is string => Boolean(id))
-
-    return firstId ? [firstId] : []
+        .filter((id): id is string => Boolean(id))
 }
 
 export default function VendorProfileInfo() {
@@ -409,23 +407,22 @@ export default function VendorProfileInfo() {
                         <label className="mb-1.5 block text-sm font-medium text-fontBlack">
                             Catégorie de service
                         </label>
-                        <ReactSelect<CategoryOption, false, CategoryGroup>
+                        <ReactSelect<CategoryOption, true, CategoryGroup>
                             instanceId="vendorProfileServiceCategory"
                             name="serviceCategory"
                             options={serviceOptionGroups}
-                            value={
-                                serviceOptions.find((opt) =>
-                                    values.serviceCategory.includes(opt.value),
-                                ) ?? null
-                            }
+                            isMulti
+                            value={serviceOptions.filter((opt) =>
+                                values.serviceCategory.includes(opt.value),
+                            )}
                             onChange={(selected) => {
                                 setFieldValue(
                                     'serviceCategory',
-                                    selected ? [selected.value] : [],
+                                    selected.map((opt) => opt.value),
                                 )
                             }}
                             onBlur={() => setFieldTouched('serviceCategory', true)}
-                            placeholder="— Choisir une catégorie —"
+                            placeholder="— Choisir une ou plusieurs catégories —"
                             isClearable
                             isLoading={isServicesLoading}
                             loadingMessage={() => 'Chargement…'}
