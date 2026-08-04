@@ -12,6 +12,7 @@ import OpportunityGroup from './overview/OpportunityGroup'
 import OpportunitySectionHeader from './overview/OpportunitySectionHeader'
 import FindLeadsCTA from './overview/FindLeadsCTA'
 import VendorKycStatusAlert from './VendorKycStatusAlert'
+import VendorPhoneUnverifiedAlert from './VendorPhoneUnverifiedAlert'
 import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
 import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
@@ -76,6 +77,8 @@ export default function VendorDashboardOverview() {
                     Bon retour · Gérez vos opportunités et suivez vos devis
                 </p>
             </div>
+
+            <VendorPhoneUnverifiedAlert />
 
             <VendorKycStatusAlert
                 kycStatus={stats?.kyc_status}

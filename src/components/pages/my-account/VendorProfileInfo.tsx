@@ -95,12 +95,9 @@ export default function VendorProfileInfo() {
     const handleVerifyPhone = () => {
         dispatch(
             openModal({
-                componentName: 'MobileOtpVerification',
+                componentName: 'VerifyPhoneOtpModal',
                 data: {
                     phoneNumber: profileData?.phone ?? values.phone ?? '',
-                    otpType: 'VERIFY_PHONE',
-                    stayOnPage: true,
-                    readonlyPhone: true,
                 },
                 modalSize: 'md',
             })
@@ -134,6 +131,10 @@ export default function VendorProfileInfo() {
             const lastName = lastNameParts.join(' ') || ''
             console.log('formValues', formValues);
 
+            const previousPhone = (profileData?.phone ?? '').trim()
+            const nextPhone = (formValues.phone ?? '').trim()
+            const phoneChanged = previousPhone !== nextPhone && nextPhone.length > 0
+
             const formData = new FormData()
             formData.append('first_name', firstName)
             formData.append('last_name', lastName)
@@ -163,6 +164,19 @@ export default function VendorProfileInfo() {
                 addToast({ title: 'Profil mis à jour avec succès', color: 'success', timeout: 2000 })
                 setProfilePicFile(null)
                 if (hadProfilePicUpload) setProfilePicRenderKey((k) => k + 1)
+
+                if (phoneChanged) {
+                    dispatch(
+                        openModal({
+                            componentName: 'VerifyPhoneOtpModal',
+                            data: {
+                                phoneNumber: nextPhone,
+                                skipToCodeEntry: true,
+                            },
+                            modalSize: 'md',
+                        }),
+                    )
+                }
             } catch {
                 // Error is handled by RTK Query / toast
             }

@@ -4,11 +4,15 @@ import OtpInput from "@/components/library/OtpInput"
 import { PhoneIconSVG } from "@/components/library/AllSVG"
 import { RootState } from "@/redux/appStore"
 import { closeModal } from "@/redux/slices/allModalSlice"
-import { useUpdateUserProfileInfoMutation } from "@/redux/rtkQueries/allPostApi"
+import {
+    useUpdateUserProfileInfoMutation,
+    useUpdateVendorProfileInfoMutation,
+} from "@/redux/rtkQueries/allPostApi"
 import { useResendPhoneOtpMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button } from "@heroui/react"
+import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
@@ -28,23 +32,29 @@ export default function VerifyPhoneOtpModal() {
     const dispatch = useDispatch()
     const router = useRouter()
     const { data } = useSelector((state: RootState) => state.allCommonModal)
+    const authRole = useSelector((state: RootState) => state.auth.userRole)
+    const role = (authRole || Cookies.get("user_role") || "").toLowerCase()
+    const isVendor = role === "vendor"
     const initialPhone = ((data?.phoneNumber as string) || "").trim()
+    const skipToCodeEntry = !!(data as { skipToCodeEntry?: boolean })?.skipToCodeEntry
 
     const [verifyPhone, { isLoading: isVerifying }] = useVerifyPhoneMutation()
     const [resendPhoneOtp, { isLoading: isSending }] = useResendPhoneOtpMutation()
-    const [updateUserProfileInfo, { isLoading: isUpdatingProfile }] = useUpdateUserProfileInfoMutation()
+    const [updateUserProfileInfo, { isLoading: isUpdatingUserProfile }] = useUpdateUserProfileInfoMutation()
+    const [updateVendorProfileInfo, { isLoading: isUpdatingVendorProfile }] =
+        useUpdateVendorProfileInfoMutation()
 
     const [phoneNumber, setPhoneNumber] = useState(initialPhone)
     const [savedPhone, setSavedPhone] = useState(initialPhone)
-    const [codeSent, setCodeSent] = useState(false)
+    const [codeSent, setCodeSent] = useState(skipToCodeEntry)
     const [otpValue, setOtpValue] = useState("")
-    const [resendCooldown, setResendCooldown] = useState(0)
+    const [resendCooldown, setResendCooldown] = useState(skipToCodeEntry ? RESEND_COOLDOWN_SEC : 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const trimmedPhone = phoneNumber.trim()
     const isPhoneValid = trimmedPhone.length >= 5
     const phoneChanged = trimmedPhone !== savedPhone
-    const isSendingCode = isSending || isUpdatingProfile
+    const isSendingCode = isSending || isUpdatingUserProfile || isUpdatingVendorProfile
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -60,7 +70,11 @@ export default function VerifyPhoneOtpModal() {
         try {
             // If the user changed the prefilled number, update profile first
             if (phoneChanged) {
-                await updateUserProfileInfo({ phone: trimmedPhone }).unwrap()
+                if (isVendor) {
+                    await updateVendorProfileInfo({ phone: trimmedPhone }).unwrap()
+                } else {
+                    await updateUserProfileInfo({ phone: trimmedPhone }).unwrap()
+                }
                 setSavedPhone(trimmedPhone)
             } else {
                 await resendPhoneOtp({ phone: trimmedPhone, type: "VERIFY_PHONE" }).unwrap()
