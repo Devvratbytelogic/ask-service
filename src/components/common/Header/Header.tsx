@@ -65,10 +65,10 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
             <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0 min-w-0">
                 {lightLogo || darkLogo ? (
                     <>
-                        <span className="w-28 sm:w-36 inline-flex items-center dark:hidden">
+                        <span className="h-12 sm:h-14 inline-flex items-center dark:hidden">
                             <ImageComponent url={lightLogo} img_title="logo image" object_contain />
                         </span>
-                        <span className="w-28 sm:w-36 hidden dark:inline-flex items-center">
+                        <span className="h-12 sm:h-14 hidden dark:inline-flex items-center">
                             <ImageComponent url={darkLogo} img_title="logo image" object_contain />
                         </span>
                     </>
