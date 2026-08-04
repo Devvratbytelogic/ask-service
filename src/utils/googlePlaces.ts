@@ -220,5 +220,5 @@ export async function fetchPlacePredictions(
     }),
   )
 
-  return enriched
+  return enriched.filter((option) => Boolean(option.postal))
 }
