@@ -25,11 +25,11 @@ export default function OpportunitySectionHeader({
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const { data: allServiceRequestCitiesData } = useGetAllServiceRequestCitiesQuery()
 
-    const serviceOptions = [
-        { value: '', label: 'Tous les services' },
-        ...(serviceCategoriesData?.data ?? []).map((cat) => ({
-            value: cat._id,
-            label: cat.title,
+    const serviceCategoryOptions = [
+        { value: 'all', label: 'Tous les services' },
+        ...(serviceCategoriesData?.data ?? [])?.flatMap((cat) => cat?.child_categories ?? []).map((cat) => ({
+            value: cat?._id,
+            label: cat?.title,
         })),
     ]
 
@@ -41,7 +41,7 @@ export default function OpportunitySectionHeader({
         })),
     ]
 
-    const selectedServiceOption = serviceOptions.find((o) => o.value === serviceFilter) ?? serviceOptions[0]
+    const selectedServiceOption = serviceCategoryOptions.find((o) => o.value === serviceFilter) ?? serviceCategoryOptions[0]
     const selectedCityOption = cityOptions.find((o) => o.value === cityFilter) ?? cityOptions[0]
 
     return (
@@ -58,16 +58,16 @@ export default function OpportunitySectionHeader({
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-                {/* <ReactSelect
+                <ReactSelect
                     instanceId="vendor-overview-service-filter"
-                    options={serviceOptions}
+                    options={serviceCategoryOptions}
                     value={selectedServiceOption}
                     onChange={(opt) => onServiceChange(opt?.value ?? 'Tous services')}
                     isSearchable={false}
                     styles={buildDashboardFilterSelectStyles()}
                     menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                     menuPosition="fixed"
-                /> */}
+                />
 
                 <ReactSelect
                     instanceId="vendor-overview-city-filter"

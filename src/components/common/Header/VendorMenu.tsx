@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useGetVendorAvailableLeadsByServiceCategoryQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import {
     generateLeadDetailRoutePath,
     getVendorDashboardRoutePath,
@@ -24,15 +24,13 @@ export default function VendorMenu({ onNavigate, className = '', layout = 'row' 
     const leadsFilter = searchParams.get('leads')
 
     // Same query as the "Prospects disponibles" dashboard card
-    const { data: response } = useGetVendorAvailableLeadsByServiceCategoryQuery({
+    const { data: response } = useGetVendorAvailableLeadsQuery({
         page: 1,
         limit: 20,
         unlocked: false,
     })
 
-    const firstLeadId = response?.data?.data
-        ?.flatMap((group) => group.leads ?? [])
-        .find((lead) => lead._id)?._id
+    const firstLeadId = response?.data?.items?.[0]?._id
 
     // Same href as DashboardStatCard: open the first available lead
     const prospectsHref = firstLeadId
