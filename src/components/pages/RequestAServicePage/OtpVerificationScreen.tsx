@@ -238,7 +238,7 @@ export default function OtpVerificationScreen({
           type="button"
           onClick={handleVerify}
           disabled={isVerifying || !otpFull}
-          className="mb-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
+          className="mb-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none py-2.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
           style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
         >
           {isVerifying ? (
@@ -257,7 +257,7 @@ export default function OtpVerificationScreen({
         <button
           type="button"
           onClick={onBack}
-          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border-[1.5px] border-appBorder bg-appCard py-3 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border-[1.5px] border-appBorder bg-appCard py-2.5 text-[14px] font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
           style={{ fontFamily: 'inherit' }}
         >
           <FiArrowLeft size={14} strokeWidth={2.5} />

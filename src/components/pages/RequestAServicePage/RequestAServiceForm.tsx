@@ -265,7 +265,7 @@ export default function RequestAServiceForm({
   )
   const [clientTypeTouched, setClientTypeTouched] = useState(false)
 
-  // ── Location (first field on dynamic step 1)
+  // ── Step 2 state (location)
   const [pincode, setPincode] = useState(() => data?.pincode ?? '')
   const [city, setCity] = useState(() => data?.city ?? '')
   const [address, setAddress] = useState('')
@@ -331,43 +331,25 @@ export default function RequestAServiceForm({
     })
   }, [isEditMode, data?.dynamic_answers, questionsList])
 
-  // Group questions by API `step`, sorted by `order` within each step
+  // Unique API step numbers, sorted
   const apiSteps = useMemo(
-    () =>
-      Array.from(new Set(questionsList.map((q) => q.step))).sort((a, b) => a - b),
+    () => Array.from(new Set(questionsList.map((q) => q.step))).sort((a, b) => a - b),
     [questionsList],
   )
 
-  const questionsByApiStep = useMemo(() => {
-    const map: Record<number, ListEntity[]> = {}
-    apiSteps.forEach((s) => {
-      map[s] = questionsList
-        .filter((q) => q.step === s)
-        .sort((a, b) => a.order - b.order)
-    })
-    return map
-  }, [questionsList, apiSteps])
+  // Steps: 1 service → 2 location → 3… questions → contact → summary
+  const contactStep = 3 + apiSteps.length
+  const summaryStep = contactStep + 1
+  const progress = Math.round((uiStep / summaryStep) * 100)
 
-  // ── Step mapping:
-  //   uiStep 1           → service + clientType
-  //   uiStep 2 … N+1     → API question groups (apiSteps[0] … apiSteps[N-1])
-  //   uiStep N+2         → contact details
-  //   uiStep N+3         → summary
-  const firstApiUiStep = 2
-  const totalUiSteps = 1 + apiSteps.length + 2
-  const contactUiStep = firstApiUiStep + apiSteps.length
-  const summaryUiStep = totalUiSteps
-  const progress = Math.round((uiStep / totalUiSteps) * 100)
+  // Questions for the current API step (uiStep 3, 4, …)
+  const apiStepIndex = uiStep - 3
+  const currentQuestions = useMemo(() => {
+    if (apiStepIndex < 0 || apiStepIndex >= apiSteps.length) return []
+    const step = apiSteps[apiStepIndex]
+    return questionsList.filter((q) => q.step === step).sort((a, b) => a.order - b.order)
+  }, [apiStepIndex, apiSteps, questionsList])
 
-  const currentApiStepIdx = uiStep - firstApiUiStep
-  const currentApiStep =
-    currentApiStepIdx >= 0 && currentApiStepIdx < apiSteps.length
-      ? apiSteps[currentApiStepIdx]
-      : null
-  const currentQuestions =
-    currentApiStep != null ? (questionsByApiStep[currentApiStep] ?? []) : []
-
-  // ── Navigation helpers
   function triggerShake() {
     setShakeStep(uiStep)
     setShakeKey((k) => k + 1)
@@ -389,42 +371,39 @@ export default function RequestAServiceForm({
         triggerShake()
         return
       }
-      navTo(uiStep + 1)
-    } else if (currentApiStep != null) {
-      const isFirstDynStep = currentApiStepIdx === 0
-      if (isFirstDynStep) setPincodeTouched(true)
-
-      const hasErr =
-        (isFirstDynStep && !pincode) ||
-        currentQuestions.some((q) => {
-          if (!q.is_required) return false
-          const val = answers[q.key]
-          return !val || (Array.isArray(val) ? val.length === 0 : val === '')
-        })
+    } else if (uiStep === 2) {
+      setPincodeTouched(true)
+      if (!pincode) {
+        triggerShake()
+        return
+      }
+    } else if (apiStepIndex >= 0 && apiStepIndex < apiSteps.length) {
       setTouchedFields((prev) => {
         const next = new Set(prev)
         currentQuestions.forEach((q) => next.add(q.key))
         return next
       })
+      const hasErr = currentQuestions.some((q) => {
+        if (!q.is_required) return false
+        const val = answers[q.key]
+        return !val || (Array.isArray(val) ? val.length === 0 : val === '')
+      })
       if (hasErr) {
         triggerShake()
         return
       }
-      navTo(uiStep + 1)
-    } else if (uiStep === contactUiStep) {
-      const allTouched = { firstName: true, lastName: true, phone: true, email: true, notes: true }
-      await contactFormik.setTouched(allTouched, true)
+    } else if (uiStep === contactStep) {
+      await contactFormik.setTouched(
+        { firstName: true, lastName: true, phone: true, email: true, notes: true },
+        true,
+      )
       const errors = await contactFormik.validateForm()
       if (Object.keys(errors).length > 0) {
         triggerShake()
         return
       }
-      navTo(uiStep + 1)
     }
-  }
-
-  function goPrev() {
-    navTo(uiStep - 1)
+    navTo(uiStep + 1)
   }
 
   // ── Submit (summary step) ──────────────────────────────────────────────────
@@ -572,21 +551,22 @@ export default function RequestAServiceForm({
     return undefined
   }
 
-  // ── Step header content
-  function getStepTitle(): string {
-    if (uiStep === 1) return 'Votre besoin'
-    if (uiStep === contactUiStep) return 'Vos coordonnées'
-    if (uiStep === summaryUiStep) return 'Récapitulatif'
-    return 'Vos informations'
-  }
-  function getStepDesc(): string {
-    if (uiStep === 1) return 'Sélectionnez le service et votre profil.'
-    if (uiStep === contactUiStep) return 'Comment les prestataires peuvent-ils vous contacter ?'
-    if (uiStep === summaryUiStep) return 'Vérifiez et confirmez votre demande.'
-    return `Étape ${uiStep} sur ${totalUiSteps}`
+  let stepTitle = 'Vos informations'
+  let stepDesc = `Étape ${uiStep} sur ${summaryStep}`
+  if (uiStep === 1) {
+    stepTitle = 'Votre besoin'
+    stepDesc = 'Sélectionnez le service et votre profil.'
+  } else if (uiStep === 2) {
+    stepTitle = 'Votre localisation'
+    stepDesc = 'Indiquez où le service doit être réalisé.'
+  } else if (uiStep === contactStep) {
+    stepTitle = 'Vos coordonnées'
+    stepDesc = 'Comment les prestataires peuvent-ils vous contacter ?'
+  } else if (uiStep === summaryStep) {
+    stepTitle = 'Récapitulatif'
+    stepDesc = 'Vérifiez et confirmez votre demande.'
   }
 
-  // ── Derived for summary
   const sumService = service
     ? (serviceOptions.find((o) => o.value === service)?.label ?? service)
     : '—'
@@ -643,7 +623,7 @@ export default function RequestAServiceForm({
           </div>
           <div>
             <div className="mb-0.5 flex items-center gap-1.5">
-              {Array.from({ length: totalUiSteps }).map((_, i) => (
+              {Array.from({ length: summaryStep }).map((_, i) => (
                 <div
                   key={i}
                   className={`h-1.5 rounded-full transition-all duration-300 ${i + 1 < uiStep
@@ -656,9 +636,9 @@ export default function RequestAServiceForm({
               ))}
             </div>
             <h3 className="text-2xl font-extrabold tracking-[-0.3px] text-appText">
-              {getStepTitle()}
+              {stepTitle}
             </h3>
-            <p className="mt-0.5 text-sm text-appTextSec">{getStepDesc()}</p>
+            <p className="mt-0.5 text-sm text-appTextSec">{stepDesc}</p>
           </div>
         </div>
       )}
@@ -759,7 +739,60 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
+              >
+                Continuer
+                <FiArrowRight size={16} strokeWidth={2.5} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ─── STEP 2: Location ─── */}
+        {!isSuccess && !flowScreen && uiStep === 2 && (
+          <div
+            key={`location-${shakeKey}`}
+            className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
+          >
+            <div className="mb-5">
+              <FieldLabel required>Adresse, ville ou code postal</FieldLabel>
+              <PostalCitySelect
+                value={pincode}
+                city={city}
+                address={address}
+                state={locationState}
+                country={country}
+                onChange={(location) => {
+                  setPincode(location.pincode)
+                  setCity(location.city)
+                  setAddress(location.address)
+                  setLocationState(location.state)
+                  setCountry(location.country)
+                }}
+                onBlur={() => setPincodeTouched(true)}
+                hasError={pincodeTouched && !pincode}
+                placeholder="Ex. Paris, 75001, 10 rue de Rivoli"
+              />
+              {pincodeTouched && !pincode && (
+                <p className="mt-1 text-[11px] text-red-500">Ce champ est obligatoire</p>
+              )}
+            </div>
+
+            <div className="mt-6 flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => navTo(uiStep - 1)}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                style={{ fontFamily: 'inherit' }}
+              >
+                <FiArrowLeft size={14} strokeWidth={2.5} />
+                Retour
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -770,7 +803,7 @@ export default function RequestAServiceForm({
         )}
 
         {/* ─── DYNAMIC QUESTION STEPS ─── */}
-        {!isSuccess && !flowScreen && uiStep >= firstApiUiStep && uiStep < contactUiStep && (
+        {!isSuccess && !flowScreen && uiStep >= 3 && uiStep < contactStep && (
           <div
             key={`step${uiStep}-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -799,60 +832,28 @@ export default function RequestAServiceForm({
                 </svg>
                 Chargement des questions…
               </div>
+            ) : currentQuestions.length === 0 ? (
+              <p className="py-6 text-center text-sm text-appTextSec">
+                Aucune question pour cette étape.
+              </p>
             ) : (
-              <>
-                {currentApiStepIdx === 0 && (
-                  <div className="mb-5">
-                    <FieldLabel required>Adresse, ville ou code postal</FieldLabel>
-                    <PostalCitySelect
-                      value={pincode}
-                      city={city}
-                      address={address}
-                      state={locationState}
-                      country={country}
-                      onChange={(location) => {
-                        setPincode(location.pincode)
-                        setCity(location.city)
-                        setAddress(location.address)
-                        setLocationState(location.state)
-                        setCountry(location.country)
-                      }}
-                      onBlur={() => setPincodeTouched(true)}
-                      hasError={pincodeTouched && !pincode}
-                      placeholder="Ex. Paris, 75001, 10 rue de Rivoli"
-                    />
-                    {pincodeTouched && !pincode && (
-                      <p className="mt-1 text-[11px] text-red-500">Ce champ est obligatoire</p>
-                    )}
-                  </div>
-                )}
-
-                {currentQuestions.length === 0 ? (
-                  currentApiStepIdx !== 0 && (
-                    <p className="py-6 text-center text-sm text-appTextSec">
-                      Aucune question pour cette étape.
-                    </p>
-                  )
-                ) : (
-                  currentQuestions.map((q) => (
-                    <DynamicQuestionField
-                      key={q._id}
-                      question={q}
-                      value={answers[q.key] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
-                      error={getFieldError(q)}
-                      onChange={(val) => handleAnswer(q.key, val)}
-                      onBlur={() => touchField(q.key)}
-                    />
-                  ))
-                )}
-              </>
+              currentQuestions.map((q) => (
+                <DynamicQuestionField
+                  key={q._id}
+                  question={q}
+                  value={answers[q.key] ?? (q.is_multiple || q.type === 'checkbox' ? [] : '')}
+                  error={getFieldError(q)}
+                  onChange={(val) => handleAnswer(q.key, val)}
+                  onBlur={() => touchField(q.key)}
+                />
+              ))
             )}
 
             <div className="mt-6 flex gap-2.5">
               <button
                 type="button"
-                onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                onClick={() => navTo(uiStep - 1)}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -862,7 +863,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={goNext}
                 disabled={isQuestionsLoading}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -873,7 +874,7 @@ export default function RequestAServiceForm({
         )}
 
         {/* ─── CONTACT STEP ─── */}
-        {!isSuccess && !flowScreen && uiStep === contactUiStep && (
+        {!isSuccess && !flowScreen && uiStep === contactStep && (
           <div
             key={`contact-${shakeKey}`}
             className={`animate-inscription-fade-up ${isShaking ? 'inscription-shake' : ''}`}
@@ -977,8 +978,8 @@ export default function RequestAServiceForm({
             <div className="mt-6 flex gap-2.5">
               <button
                 type="button"
-                onClick={goPrev}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5.5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                onClick={() => navTo(uiStep - 1)}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5.5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -998,7 +999,7 @@ export default function RequestAServiceForm({
         )}
 
         {/* ─── SUMMARY ─── */}
-        {!isSuccess && !flowScreen && uiStep === summaryUiStep && (
+        {!isSuccess && !flowScreen && uiStep === summaryStep && (
           <div
             key={`summary-${shakeKey}`}
             className="animate-inscription-fade-up"
@@ -1141,7 +1142,7 @@ export default function RequestAServiceForm({
             <div className="flex gap-2.5">
               <button
                 type="button"
-                onClick={goPrev}
+                onClick={() => navTo(uiStep - 1)}
                 disabled={isSubmitting}
                 className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
                 style={{ fontFamily: 'inherit' }}
@@ -1195,7 +1196,7 @@ export default function RequestAServiceForm({
                 void handleSubmit()
               }
             }}
-            onBack={() => { setFlowScreen(null); navTo(summaryUiStep) }}
+            onBack={() => { setFlowScreen(null); navTo(summaryStep) }}
           />
         )}
 
@@ -1214,7 +1215,7 @@ export default function RequestAServiceForm({
                 void handleSubmit()
               }
             }}
-            onBack={() => { setFlowScreen(null); navTo(summaryUiStep) }}
+            onBack={() => { setFlowScreen(null); navTo(summaryStep) }}
           />
         )}
 
@@ -1222,7 +1223,7 @@ export default function RequestAServiceForm({
         {!isSuccess && flowScreen === 'LOGIN_REQUIRED_EMAIL' && (
           <LoginRequiredScreen
             loginType="email"
-            onBack={() => navTo(summaryUiStep)}
+            onBack={() => navTo(summaryStep)}
           />
         )}
 
@@ -1230,7 +1231,7 @@ export default function RequestAServiceForm({
         {!isSuccess && flowScreen === 'LOGIN_REQUIRED_PHONE' && (
           <LoginRequiredScreen
             loginType="phone"
-            onBack={() => navTo(summaryUiStep)}
+            onBack={() => navTo(summaryStep)}
           />
         )}
       </div>
