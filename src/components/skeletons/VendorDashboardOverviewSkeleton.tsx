@@ -87,7 +87,11 @@ function OpportunityGroupSkeleton({ cardCount = 3 }: { cardCount?: number }) {
     )
 }
 
-export default function VendorDashboardOverviewSkeleton() {
+export default function VendorDashboardOverviewSkeleton({
+    showStatCards = true,
+}: {
+    showStatCards?: boolean
+}) {
     return (
         <div
             className="max-w-[1400px] mx-auto px-7 py-7"
@@ -100,12 +104,14 @@ export default function VendorDashboardOverviewSkeleton() {
                 <Bone className="h-3.5 w-56" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-                <StatCardSkeleton highlight />
-                <StatCardSkeleton />
-                <StatCardSkeleton />
-                <StatCardSkeleton />
-            </div>
+            {showStatCards && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
+                    <StatCardSkeleton highlight />
+                    <StatCardSkeleton />
+                    <StatCardSkeleton />
+                    <StatCardSkeleton />
+                </div>
+            )}
 
             <div className="flex items-center justify-between flex-wrap gap-3 mb-[18px]">
                 <div className="flex items-center gap-2.5 flex-wrap">

@@ -109,7 +109,7 @@ export default function LeadDetailView({ leadId }: Props) {
                 )}
             </section>
 
-            <div className="hidden lg:block">
+            <div className="block">
                 <UnlockPanel
                     leadId={leadId}
                     onSendQuoteClick={() => setShowSubmitQuoteForm(true)}
