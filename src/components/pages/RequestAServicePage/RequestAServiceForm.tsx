@@ -113,6 +113,7 @@ type RequestAServiceFormProps = {
   mode?: 'create' | 'edit'
   requestId?: string
   data?: ISingleRequestData
+  initialServiceId?: string
 }
 
 function mapClientType(clientType?: string): ClientType {
@@ -207,6 +208,7 @@ export default function RequestAServiceForm({
   mode = 'create',
   requestId,
   data,
+  initialServiceId,
 }: RequestAServiceFormProps = {}) {
   const isEditMode = mode === 'edit'
   const isClientAuthenticated = useSelector((state: RootState) => state.auth.isClientAuthenticated)
@@ -259,7 +261,9 @@ export default function RequestAServiceForm({
   const [shakeStep, setShakeStep] = useState<number | null>(null)
 
   // ── Step 1 state (service + clientType)
-  const [service, setService] = useState(() => getServiceCategoryId(data?.service_category))
+  const [service, setService] = useState(
+    () => getServiceCategoryId(data?.service_category) || initialServiceId || '',
+  )
   const [serviceTouched, setServiceTouched] = useState(false)
   const [clientType, setClientType] = useState<ClientType>(() =>
     mapClientType(data?.contact_details?.client_type),

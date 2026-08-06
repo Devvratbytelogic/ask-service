@@ -7,6 +7,11 @@ export const metadata: Metadata = {
     "Décrivez votre besoin en quelques secondes et recevez jusqu'à 5 devis de pros vérifiés sous 24h.",
 }
 
-export default function RequestAServiceRoute() {
-  return <RequestAServicePage />
+export default async function RequestAServiceRoute({
+  searchParams,
+}: {
+  searchParams: Promise<{ service?: string }>
+}) {
+  const { service } = await searchParams
+  return <RequestAServicePage initialServiceId={service} />
 }

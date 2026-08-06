@@ -86,7 +86,8 @@ export function getContactUsRoutePath() {
 export function getServiceProviderRoutePath() {
     return `/service-provider`;
 }
-export function getRequestAServiceRoutePath() {
+export function getRequestAServiceRoutePath(serviceId?: string) {
+    if (serviceId) return `/request-a-service?service=${encodeURIComponent(serviceId)}`;
     return `/request-a-service`;
 }
 export function getHelpCenterRoutePath() {

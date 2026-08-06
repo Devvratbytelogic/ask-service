@@ -7,7 +7,11 @@ const TRUST_PILLS = [
   'Données protégées',
 ] as const
 
-export default function RequestAServicePage() {
+type RequestAServicePageProps = {
+  initialServiceId?: string
+}
+
+export default function RequestAServicePage({ initialServiceId }: RequestAServicePageProps) {
   return (
     <section
       className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] py-8 sm:px-[5%] sm:py-12"
@@ -54,7 +58,7 @@ export default function RequestAServicePage() {
       </div>
 
       {/* ─── Multi-step form card ─── */}
-      <RequestAServiceForm />
+      <RequestAServiceForm initialServiceId={initialServiceId} />
     </section>
   )
 }
