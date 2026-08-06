@@ -99,7 +99,7 @@ export default function ReportProfileModal() {
                     minRows={4}
                     classNames={{
                         inputWrapper: 'custom_input_design rounded-xl border border-appBorder bg-appCard min-h-[100px]',
-                        input: 'text-fontBlack placeholder:text-[#9CA3AF]',
+                        input: 'text-appText placeholder:text-placeHolderText',
                     }}
                 />
                 <p className="mt-2 text-xs text-[#9CA3AF]">

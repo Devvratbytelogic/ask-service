@@ -40,6 +40,7 @@
   --amber-light: #FFFBEB;
   --pink-black: #12141D;
   --footer-silver: #B9B3B3;
+  color-scheme: light;
 }
 
 .dark {
@@ -73,6 +74,7 @@
   --amber-light: rgba(245, 158, 11, 0.12);
   --pink-black: #0d1117;
   --footer-silver: #94a3b8;
+  color-scheme: dark;
 }
 
 * {
@@ -240,35 +242,44 @@ body {
   height: 40px !important;
   width: 100% !important;
   border-radius: 8px !important;
-  border: 1px solid #e0e0e0 !important;
+  border: 1px solid var(--app-border) !important;
+  background-color: var(--app-card) !important;
+  color: var(--app-text) !important;
   transition: all 0.3s ease !important;
+}
+
+.react-tel-input .form-control::placeholder {
+  color: var(--placeholder-text) !important;
 }
 
 .react-tel-input .flag-dropdown {
   border-radius: 8px 0 0 8px !important;
-  border: 1px solid #e0e0e0 !important;
-  background-color: #f8f9fa !important;
+  border: 1px solid var(--app-border) !important;
+  background-color: var(--app-elevated) !important;
+}
+
+.react-tel-input .selected-flag,
+.react-tel-input .selected-flag:hover,
+.react-tel-input .selected-flag:focus {
+  background-color: transparent !important;
 }
 
 .react-tel-input .country-list {
   z-index: 9999 !important;
+  background-color: var(--app-card) !important;
+  border: 1px solid var(--app-border) !important;
+  color: var(--app-text) !important;
 }
 
-.dark .react-tel-input .form-control {
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  color: #f1f5f9 !important;
+.react-tel-input .country-list .country:hover,
+.react-tel-input .country-list .country.highlight {
+  background-color: var(--app-elevated) !important;
 }
 
-.dark .react-tel-input .flag-dropdown {
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.dark .react-tel-input .country-list {
-  background-color: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #f1f5f9 !important;
+.react-tel-input .country-list .search-box {
+  background-color: var(--app-surface) !important;
+  border: 1px solid var(--app-border) !important;
+  color: var(--app-text) !important;
 }
 
 /* Request a Service page — hero section background */

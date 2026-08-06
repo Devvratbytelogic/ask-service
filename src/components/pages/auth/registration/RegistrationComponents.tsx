@@ -224,7 +224,7 @@ export function DocUploadZone({ label, required, hint, file, error, accentColor,
           className={[
             'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[10px] border-[1.5px] border-dashed py-6 text-center transition-all',
             error
-              ? 'border-red-400 bg-red-50'
+              ? 'border-red-400 bg-red-light'
               : isDragging
                 ? 'scale-[1.01] border-primaryColor bg-blue-light'
                 : 'border-appBorder bg-appSurface hover:border-appBorder hover:bg-appCard',
@@ -236,9 +236,9 @@ export function DocUploadZone({ label, required, hint, file, error, accentColor,
         >
           <div
             className="flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-            style={{ background: isDragging ? accentColor : 'var(--color-slate-100)' }}
+            style={{ background: isDragging ? accentColor : 'var(--app-elevated)' }}
           >
-            <FiUpload size={16} color={isDragging ? 'white' : 'var(--color-slate-500)'} />
+            <FiUpload size={16} color={isDragging ? 'white' : 'var(--app-text-muted)'} />
           </div>
           <div>
             <p className="text-[13px] font-semibold text-appText">

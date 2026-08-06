@@ -1,9 +1,6 @@
 .custom_input_large_design {
-    @apply bg-appCard rounded-full border-1 border-appBorder px-[20px];
-}
-
-.custom_input_large_design input::placeholder {
-    @apply text-base text-placeHolderText;
+    @apply bg-appCard rounded-full border-1 border-appBorder px-[20px] text-appText;
+    @apply data-[hover=true]:bg-appCard group-data-[focus=true]:bg-appCard;
 }
 
 .custom_label_text {
@@ -11,11 +8,8 @@
 }
 
 .custom_input_design {
-    @apply bg-appCard rounded-[12px] border-1 border-appBorder py-[17px] 2xl:py-6 px-[19px] mt-[6px];
-}
-
-.custom_input_design input::placeholder {
-    @apply text-[13px] text-placeHolderText;
+    @apply bg-appCard rounded-[12px] border-1 border-appBorder py-[17px] 2xl:py-6 px-[19px] mt-[6px] text-appText;
+    @apply data-[hover=true]:bg-appCard group-data-[focus=true]:bg-appCard;
 }
 
 .custom_label_text_light {
@@ -23,25 +17,43 @@
 }
 
 .custom_input_design_dark {
-    @apply rounded-[12px] border-1 border-appBorder py-[17px] 2xl:py-6 px-[19px] mt-4 bg-appCard;
-}
-
-.custom_input_design_dark input::placeholder {
-    @apply text-[13px] text-appText;
+    @apply rounded-[12px] border-1 border-appBorder py-[17px] 2xl:py-6 px-[19px] mt-4 bg-appCard text-appText;
+    @apply data-[hover=true]:bg-appCard group-data-[focus=true]:bg-appCard;
 }
 
 .account_input_design {
-    @apply rounded-xl border border-appBorder bg-appCard! shadow-none min-h-11;
-
-    svg {
-        color: var(--app-text-muted);
-    }
+    @apply rounded-xl border border-appBorder bg-appCard! shadow-none min-h-11 text-appText;
+    @apply data-[hover=true]:bg-appCard! group-data-[focus=true]:bg-appCard!;
 }
 
 .custom_input_design,
 .custom_input_design_dark,
-.custom_input_large_design {
+.custom_input_large_design,
+.account_input_design {
     svg {
         color: var(--app-text-muted);
     }
+
+    input,
+    textarea {
+        @apply text-appText!;
+        caret-color: var(--app-text);
+        /* HeroUI applies bg-clip-text which can hide typed text against dark surfaces */
+        background-clip: border-box !important;
+        -webkit-background-clip: border-box !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        @apply text-placeHolderText!;
+    }
+}
+
+.custom_input_large_design input::placeholder {
+    @apply text-base;
+}
+
+.custom_input_design input::placeholder,
+.custom_input_design_dark input::placeholder {
+    @apply text-[13px];
 }

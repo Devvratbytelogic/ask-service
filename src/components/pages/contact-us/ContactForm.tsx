@@ -93,7 +93,7 @@ export default function ContactForm() {
             errorMessage={touched.message && errors.message}
             classNames={{
               inputWrapper: 'account_input_design pl-10 min-w-0',
-              input: 'text-fontBlack placeholder:text-placeHolderText',
+              input: 'text-appText placeholder:text-placeHolderText',
             }}
           />
         </div>

@@ -600,7 +600,7 @@ export default function LoginPage({
                       onFocus={(e) => {
                         if (!(touched.password && errors.password)) {
                           e.currentTarget.style.borderColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
-                          e.currentTarget.style.background = 'white'
+                          e.currentTarget.style.background = 'var(--app-card)'
                           e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
                         }
                       }}

@@ -165,7 +165,7 @@ export default function VerifyPhoneOtpModal() {
                                 }}
                                 placeholder="+33 6 12 34 56 78"
                                 autoComplete="tel"
-                                className="h-13 w-full rounded-xl border border-appBorder bg-white pl-11 pr-4 text-sm text-fontBlack outline-none transition-colors placeholder:text-placeHolderText focus:border-primaryColor focus:ring-2 focus:ring-primaryColor/20"
+                                className="h-13 w-full rounded-xl border border-appBorder bg-appSurface pl-11 pr-4 text-sm text-appText outline-none transition-colors placeholder:text-placeHolderText focus:border-primaryColor focus:bg-appCard focus:ring-2 focus:ring-primaryColor/20"
                             />
                         </div>
                     </div>

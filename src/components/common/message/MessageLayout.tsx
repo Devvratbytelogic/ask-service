@@ -391,7 +391,7 @@ export default function MessageLayout() {
                         e.preventDefault();
                         void handleSendMessage();
                       }}
-                      className="min-w-0 flex-1 bg-transparent text-sm text-fontBlack placeholder:text-placeHolderText focus:outline-none"
+                      className="min-w-0 flex-1 bg-transparent text-sm text-appText placeholder:text-placeHolderText focus:outline-none"
                     />
                   </div>
                   <Popover

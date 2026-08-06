@@ -811,11 +811,11 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                             components={{ Option: CategorySelectOption }}
                             formatOptionLabel={({ label, image }, { context }) =>
                               context === 'value' ? (
-                                <span style={{ fontSize: 12, fontFamily: 'inherit' }}>{label}</span>
+                                <span style={{ fontSize: 14, fontFamily: 'inherit', color: 'var(--app-text)' }}>{label}</span>
                               ) : (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                   <CategoryOptionImage label={label} image={image} />
-                                  <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
+                                  <span style={{ fontSize: 14, fontFamily: 'inherit', color: 'inherit' }}>{label}</span>
                                 </div>
                               )
                             }
@@ -1105,7 +1105,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                             digit
                               ? 'border-primaryColor bg-blue-light shadow-[0_0_0_3px_var(--color-primary-dim)]'
                               : otpError
-                                ? 'border-red-400 bg-red-50'
+                                ? 'border-red-400 bg-red-light'
                                 : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
                           ].join(' ')}
                           style={{ fontFamily: 'inherit' }}

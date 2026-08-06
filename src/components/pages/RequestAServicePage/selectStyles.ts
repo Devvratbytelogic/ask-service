@@ -74,7 +74,19 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
       padding: 0,
     }),
     valueContainer: (base) => ({ ...base, padding: '4px 14px', gap: 4 }),
-    dropdownIndicator: (base) => ({ ...base, color: 'var(--app-text-muted)', padding: '0 12px' }),
+    dropdownIndicator: (base, state) => ({
+      ...base,
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
+      padding: '0 12px',
+      ':hover': { color: 'var(--app-text)' },
+    }),
+    clearIndicator: (base, state) => ({
+      ...base,
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
+      padding: '0 4px',
+      cursor: 'pointer',
+      ':hover': { color: 'var(--app-text)' },
+    }),
     indicatorSeparator: (base) => ({
       ...base,
       backgroundColor: 'var(--app-border)',
@@ -233,10 +245,22 @@ export function buildServiceSelectStyles(
       ...base,
       padding: '4px 14px',
     }),
-    dropdownIndicator: (base) => ({
+    dropdownIndicator: (base, state) => ({
       ...base,
-      color: 'var(--app-text-muted)',
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
       padding: '0 12px',
+      ':hover': {
+        color: 'var(--app-text)',
+      },
+    }),
+    clearIndicator: (base, state) => ({
+      ...base,
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
+      padding: '0 4px',
+      cursor: 'pointer',
+      ':hover': {
+        color: 'var(--app-text)',
+      },
     }),
     indicatorSeparator: (base) => ({
       ...base,

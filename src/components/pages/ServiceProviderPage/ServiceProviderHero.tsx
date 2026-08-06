@@ -117,7 +117,7 @@ export default function ServiceProviderHero({ activeVendorsCount, activeRequests
                             { value: <>{averageRating}<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
                         ].map((stat) => (
                             <div key={stat.label} className="flex-1 px-7 py-6 text-center">
-                                <div className="text-8xl leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
+                                <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
                                     {stat.value}
                                 </div>
                                 <div className="mt-1 text-xs text-appTextMuted dark:text-white/40">{stat.label}</div>

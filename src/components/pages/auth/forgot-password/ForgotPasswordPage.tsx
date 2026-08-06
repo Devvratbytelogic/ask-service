@@ -259,7 +259,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                     onFocus={(e) => {
                       if (!(emailForm.touched.email && emailForm.errors.email)) {
                         e.currentTarget.style.borderColor = accentColor
-                        e.currentTarget.style.background = 'white'
+                        e.currentTarget.style.background = 'var(--app-card)'
                         e.currentTarget.style.boxShadow = `0 0 0 3px ${accentBorder}`
                       }
                     }}

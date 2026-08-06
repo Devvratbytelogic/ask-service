@@ -45,6 +45,12 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       fontSize: 14,
       fontFamily: 'inherit',
     }),
+    singleValue: (base) => ({
+      ...base,
+      color: 'var(--app-text)',
+      fontSize: 14,
+      fontFamily: 'inherit',
+    }),
     input: (base) => ({
       ...base,
       fontFamily: 'inherit',
@@ -57,11 +63,24 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
       ...base,
       padding: '4px 14px',
       gap: 4,
+      color: 'var(--app-text)',
     }),
-    dropdownIndicator: (base) => ({
+    dropdownIndicator: (base, state) => ({
       ...base,
-      color: 'var(--app-text-muted)',
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
       padding: '0 12px',
+      ':hover': {
+        color: 'var(--app-text)',
+      },
+    }),
+    clearIndicator: (base, state) => ({
+      ...base,
+      color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
+      padding: '0 4px',
+      cursor: 'pointer',
+      ':hover': {
+        color: 'var(--app-text)',
+      },
     }),
     indicatorSeparator: (base) => ({
       ...base,

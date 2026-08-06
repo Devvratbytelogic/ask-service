@@ -180,7 +180,7 @@ export default function SubmitQuoteForm({ leadId, onCancel }: SubmitQuoteFormPro
                             }}
                             classNames={{
                                 trigger: 'account_input_design rounded-xl',
-                                value: 'text-fontBlack',
+                                value: 'text-appText',
                             }}
                             aria-label="Durée de validité du devis"
                         >

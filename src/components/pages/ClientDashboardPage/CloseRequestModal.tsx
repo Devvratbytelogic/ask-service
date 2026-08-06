@@ -124,8 +124,8 @@ export default function CloseRequestModal() {
                             onValueChange={setReasonComment}
                             minRows={3}
                             classNames={{
-                                input: 'text-sm',
-                                inputWrapper: 'border border-appBorder rounded-xl bg-appCard',
+                                input: 'text-sm text-appText placeholder:text-placeHolderText',
+                                inputWrapper: 'border border-appBorder rounded-xl bg-appCard data-[hover=true]:bg-appCard',
                             }}
                         />
                     </div>

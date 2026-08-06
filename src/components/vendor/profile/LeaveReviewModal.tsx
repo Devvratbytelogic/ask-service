@@ -148,7 +148,7 @@ export default function LeaveReviewModal() {
                                 'data-[hover=true]:bg-appCard',
                                 'group-data-[focus=true]:bg-appCard',
                             ],
-                            input: 'text-fontBlack placeholder:text-[#9CA3AF]',
+                            input: 'text-appText placeholder:text-placeHolderText',
                         },
                     }}
                     listboxProps={{
@@ -179,11 +179,11 @@ export default function LeaveReviewModal() {
                     minRows={4}
                     classNames={{
                         inputWrapper: 'custom_input_design rounded-xl border border-appBorder bg-appCard min-h-[100px]',
-                        input: 'text-fontBlack placeholder:text-[#9CA3AF]',
+                        input: 'text-appText placeholder:text-placeHolderText',
                     }}
                 />
                 <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-[#9CA3AF]">
+                    <span className="text-xs text-appTextMuted">
                         Minimum {MIN_REVIEW_LENGTH} caractères ({charCount})
                     </span>
                     <div className="flex -space-x-2">

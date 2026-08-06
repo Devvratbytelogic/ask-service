@@ -28,7 +28,7 @@ export interface OtpInputProps {
 
 const defaultClassNames = {
     inputWrapper: "custom_input_design_dark w-12 h-12 min-w-0 flex justify-center !px-0",
-    input: "text-center text-lg font-semibold",
+    input: "text-center text-lg font-semibold text-appText",
 }
 
 export default function OtpInput({

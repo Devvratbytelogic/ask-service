@@ -122,7 +122,7 @@ const HomeBanner = () => {
                                         "data-[hover=true]:bg-transparent",
                                         "group-data-[focus=true]:bg-transparent",
                                     ],
-                                    input: "text-fontBlack text-base",
+                                    input: "text-appText text-base",
                                 },
                             }}
                             startContent={<FaLocationDot className="text-xl text-primaryColor shrink-0" />}

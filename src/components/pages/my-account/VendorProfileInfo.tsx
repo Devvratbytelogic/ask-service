@@ -433,11 +433,11 @@ export default function VendorProfileInfo() {
                             components={{ Option: CategorySelectOption }}
                             formatOptionLabel={({ label, image }, { context }) =>
                                 context === 'value' ? (
-                                    <span style={{ fontSize: 12, fontFamily: 'inherit' }}>{label}</span>
+                                    <span style={{ fontSize: 14, fontFamily: 'inherit', color: 'var(--app-text)' }}>{label}</span>
                                 ) : (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <CategoryOptionImage label={label} image={image} />
-                                        <span style={{ fontSize: 14, fontFamily: 'inherit' }}>{label}</span>
+                                        <span style={{ fontSize: 14, fontFamily: 'inherit', color: 'inherit' }}>{label}</span>
                                     </div>
                                 )
                             }
