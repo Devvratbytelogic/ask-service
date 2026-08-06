@@ -1,24 +1,25 @@
 import Link from 'next/link'
 import { FiSearch } from 'react-icons/fi'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
-import { getVendorDashboardRoutePath } from '@/routes/routes'
+import { getVendorDashboardRoutePath, getVendorLeadsListRoutePath } from '@/routes/routes'
 
 export default function LeadNotFound() {
     return (
         <section className="bg-appBg overflow-y-auto p-5">
             <div className="flex items-center gap-1.75 text-[12px] text-appTextMuted mb-4.5">
                 <Link
-                    href={getVendorDashboardRoutePath()}
-                    className="text-appTextMuted hover:text-appTextSec transition-colors flex items-center"
+                    href={getVendorLeadsListRoutePath()}
+                    className="text-appTextMuted hover:text-appTextSec transition-colors flex items-center lg:hidden"
                 >
-                    <ArrowLeftIconSVG size={13} />
+                    <ArrowLeftIconSVG size={13} /> Prospects
                 </Link>
                 <Link
                     href={getVendorDashboardRoutePath()}
-                    className="text-appTextMuted hover:text-appTextSec transition-colors"
+                    className="text-appTextMuted hover:text-appTextSec transition-colors items-center hidden lg:flex"
                 >
-                    Prospects
+                    <ArrowLeftIconSVG size={13} /> Prospects
                 </Link>
+
                 <span className="text-appTextMuted flex">
                     <ChevronRightIconSVG size={12} />
                 </span>
@@ -37,8 +38,15 @@ export default function LeadNotFound() {
                         Ce prospect n&apos;existe pas, a été retiré, ou vous n&apos;y avez plus accès.
                     </p>
                     <Link
+                        href={getVendorLeadsListRoutePath()}
+                        className="inline-flex lg:hidden items-center justify-center gap-2 rounded-xl bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline transition-opacity hover:opacity-90"
+                    >
+                        <ArrowLeftIconSVG size={14} />
+                        Retour aux prospects
+                    </Link>
+                    <Link
                         href={getVendorDashboardRoutePath()}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline transition-opacity hover:opacity-90"
+                        className="hidden lg:inline-flex items-center justify-center gap-2 rounded-xl bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline transition-opacity hover:opacity-90"
                     >
                         <ArrowLeftIconSVG size={14} />
                         Retour aux prospects

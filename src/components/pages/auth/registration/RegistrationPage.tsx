@@ -18,6 +18,7 @@ import {
   getDashboardPageRoutePathForRole,
   getPrivacyRoutePath,
   getTermsRoutePath,
+  getVendorLeadsListRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import AuthThemeToggle from '@/components/common/AuthThemeToggle'
@@ -173,6 +174,11 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
   const docFields = Array.isArray(docsResponse?.data?.documents) ? docsResponse.data.documents : []
 
   const getVendorPostRegistrationPath = useCallback(async (): Promise<string> => {
+    // Mobile: list of available leads. Desktop: first lead detail with sidebar.
+    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches
+    if (isMobile) {
+      return getVendorLeadsListRoutePath()
+    }
     try {
       const response = await fetchAvailableLeads({
         page: 1,

@@ -188,7 +188,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
                     {statusMessage && !isQuoteSent && !isAccepted && (
                         <div className="px-3 py-2.5 bg-linear-to-r from-orange-500/15 to-amber/10 border border-orange-500/30 rounded-[10px] flex items-center gap-2">
-                            <FiZap className="size-[18px] shrink-0 text-orange-500" aria-hidden />
+                            <FiZap className="size-4.5 shrink-0 text-orange-500" aria-hidden />
                             <p className="text-[12px] font-semibold text-[#FDBA74] leading-[1.4]">
                                 {statusMessage}
                             </p>

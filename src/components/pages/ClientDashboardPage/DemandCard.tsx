@@ -1,13 +1,12 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { useDispatch } from 'react-redux'
 import { FiClock } from 'react-icons/fi'
 import { IAllRequestsDataEntity } from '@/types/allRequests'
 import QuoteCard from './QuoteCard'
-import { LocationIconSVG, CalendarIconSVG, FileIconSVG, ClockCircleOutlineIconSVG, ChevronIconSVG } from '@/components/library/AllSVG'
+import { LocationIconSVG, CalendarIconSVG, ClockCircleOutlineIconSVG, ChevronIconSVG } from '@/components/library/AllSVG'
 import moment from 'moment'
 import { getEditRequestRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
@@ -57,24 +56,46 @@ const STATUS_CONFIG: Record<string, { classes: string; icon: React.ReactNode }> 
 }
 
 const MetaItem = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center gap-1.25 text-xs text-appTextSec capitalize">{children}</div>
+    <div className="flex items-center gap-1.25 text-xs text-appTextSec">{children}</div>
 )
+
+function MetaRow({
+    icon,
+    children,
+}: {
+    icon: React.ReactNode
+    children: React.ReactNode
+}) {
+    return (
+        <div className="flex items-start gap-1.5 text-[12px] text-appTextSec min-w-0">
+            <span className="text-appTextMuted flex shrink-0 mt-px">{icon}</span>
+            <span className="min-w-0 leading-snug">{children}</span>
+        </div>
+    )
+}
 
 export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardProps) {
     const dispatch = useDispatch()
     const [menuOpen, setMenuOpen] = useState(false)
     const [actionQuoteId, setActionQuoteId] = useState<string | null>(null)
     const [actionType, setActionType] = useState<'accept' | 'ignore' | null>(null)
-    const menuRef = useRef<HTMLDivElement>(null)
+    const menuRefDesktop = useRef<HTMLDivElement>(null)
+    const menuRefMobile = useRef<HTMLDivElement>(null)
     const [acceptQuote] = useAcceptQuoteMutation()
     const [ignoreQuote] = useIgnoreQuoteMutation()
 
     const statusCfg = STATUS_CONFIG[demand?.quotes_status]
-    // const postalCodeRaw = demand?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
     const cityAndPostalCode = demand?.city && demand?.pincode ? `${demand.city} - ${demand.pincode}` : ''
     const desiredDateRaw = demand?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
-    const timeSlotRaw = demand?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+    const timeSlotRaw = demand?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value?.trim() ?? ''
+    const scheduleLabel = [desiredDate, timeSlotRaw].filter(Boolean).join(' · ')
+    const createdRelative = demand?.createdAt
+        ? moment(demand.createdAt).locale('fr').fromNow()
+        : ''
+    const createdAbsolute = demand?.createdAt
+        ? moment(demand.createdAt).locale('fr').format('DD MMM YYYY [à] HH:mm')
+        : ''
 
     const isClosed = demand?.quotes_status === 'closed'
     const isAccepted = demand?.quotes_status === 'accepted'
@@ -86,9 +107,10 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
     useEffect(() => {
         if (!menuOpen) return
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setMenuOpen(false)
-            }
+            const target = event.target as Node
+            const inDesktop = menuRefDesktop.current?.contains(target)
+            const inMobile = menuRefMobile.current?.contains(target)
+            if (!inDesktop && !inMobile) setMenuOpen(false)
         }
         document.addEventListener('mousedown', handleClickOutside)
         return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -157,6 +179,70 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
 
     const viewBtnLabel = isClosed ? 'Historique' : isAccepted ? 'Voir le détail' : 'Voir les devis'
 
+    const serviceIcon = (
+        <div className="border border-appBorder w-11 h-11 rounded-[13px] overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
+            {demand?.service_category?.image ? (
+                <ImageComponent
+                    url={demand.service_category.image || ''}
+                    img_title={demand.service_category.title ?? ''}
+                    object_cover={true}
+                />
+            ) : (
+                <span className="text-[22px]">
+                    {demand?.service_category?.title?.charAt(0)}
+                </span>
+            )}
+        </div>
+    )
+
+    const renderActionsMenu = (ref: RefObject<HTMLDivElement | null>, buttonClassName: string) => {
+        if (!showActionsMenu) return null
+        return (
+            <div ref={ref} className="relative">
+                <button
+                    type="button"
+                    onClick={() => setMenuOpen((prev) => !prev)}
+                    className={buttonClassName}
+                    aria-label="Options"
+                    aria-haspopup="menu"
+                    aria-expanded={menuOpen}
+                >
+                    ···
+                </button>
+                {menuOpen && (
+                    <div
+                        role="menu"
+                        className="absolute right-0 top-full z-50 mt-1.5 min-w-47.5 rounded-md border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                    >
+                        {canEdit && (
+                            <Link
+                                href={getEditRequestRoutePath(demand._id)}
+                                role="menuitem"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setMenuOpen(false)
+                                }}
+                                className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
+                            >
+                                Modifier
+                            </Link>
+                        )}
+                        {canClose && (
+                            <button
+                                type="button"
+                                role="menuitem"
+                                onClick={handleCloseRequest}
+                                className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
+                            >
+                                Clôturer la demande
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     return (
         <div
             className={`bg-appCard rounded-2xl transition-all duration-250 cursor-pointer 
@@ -168,24 +254,10 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                 }`}
             onClick={onToggle}
         >
-            {/* Main row */}
-            <div className="p-5 grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto_auto] gap-3 md:gap-4 items-center">
-                {/* Service icon */}
-                <div className="border border-appBorder w-11 h-11 rounded-[13px] overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
-                    {demand?.service_category?.image ? (
-                        <ImageComponent
-                            url={demand.service_category.image || ''}
-                            img_title={demand.service_category.title ?? ''}
-                            object_cover={true}
-                        />
-                    ) : (
-                        <span className="text-[22px]">
-                            {demand?.service_category?.title?.charAt(0)}
-                        </span>
-                    )}
-                </div>
+            {/* Desktop layout — unchanged */}
+            <div className="hidden md:grid p-5 grid-cols-[auto_1fr_auto_auto] gap-4 items-center">
+                {serviceIcon}
 
-                {/* Content */}
                 <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                         <span
@@ -194,10 +266,12 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         >
                             {demand?.service_category?.title}
                         </span>
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-md ${statusCfg?.classes}`}>
-                            {statusCfg?.icon}
-                            {demand?.quotes_status_label}
-                        </span>
+                        {statusCfg && (
+                            <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.5px] px-2.5 py-1.5 rounded-md ${statusCfg.classes}`}>
+                                {statusCfg.icon}
+                                {demand?.quotes_status_label}
+                            </span>
+                        )}
                         {demand?.reference_no && (
                             <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2.5 py-1.5 rounded-md">
                                 <span className="text-appTextMuted">Réf.</span>
@@ -217,16 +291,16 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         </MetaItem>
                         <MetaItem>
                             <CalendarIconSVG />
-                            {desiredDate} · {timeSlotRaw}
+                            {desiredDate || '—'}{timeSlotRaw ? ` · ${timeSlotRaw}` : ''}
                         </MetaItem>
                         <MetaItem>
                             <ClockCircleOutlineIconSVG />
-                            Créée {moment(demand?.createdAt ?? '').locale('fr').fromNow()} ({moment(demand?.createdAt ?? '').locale('fr').format('DD MMM YYYY [à] HH:mm')})                        </MetaItem>
+                            Créée {createdRelative}{createdAbsolute ? ` (${createdAbsolute})` : ''}
+                        </MetaItem>
                     </div>
                 </div>
 
-                {/* Quotes count — hidden on mobile */}
-                <div className="hidden md:block shrink-0 text-center">
+                <div className="shrink-0 text-center">
                     <p
                         className={`text-[22px] font-extrabold leading-none ${isAccepted
                             ? 'text-[#6EE7B7]'
@@ -257,9 +331,8 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                     ) : null}
                 </div>
 
-                {/* Actions */}
                 <div
-                    className="col-span-full md:col-span-1 flex items-center gap-1.5 shrink-0"
+                    className="flex items-center gap-1.5 shrink-0"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <button
@@ -272,57 +345,119 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <ChevronIconSVG />
                         </span>
                     </button>
-                    {showActionsMenu && (
-                        <div ref={menuRef} className="relative">
-                            <button
-                                type="button"
-                                onClick={() => setMenuOpen((prev) => !prev)}
-                                className="w-8 h-8 rounded-md bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText"
-                                aria-label="Options"
-                                aria-haspopup="menu"
-                                aria-expanded={menuOpen}
-                            >
-                                ···
-                            </button>
-                            {menuOpen && (
-                                <div
-                                    role="menu"
-                                    className="absolute right-0 top-full z-50 mt-1.5 min-w-47.5 rounded-md border border-appBorder bg-appCard py-1 shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
-                                >
-                                    {canEdit && (
-                                        <Link
-                                            href={getEditRequestRoutePath(demand._id)}
-                                            role="menuitem"
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                setMenuOpen(false)
-                                            }}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appText no-underline cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
-                                        >
-                                            Modifier
-                                        </Link>
-                                    )}
-                                    {canClose && (
-                                        <button
-                                            type="button"
-                                            role="menuitem"
-                                            onClick={handleCloseRequest}
-                                            className="flex w-full items-center px-3.5 py-2.5 text-sm font-medium text-appTextSec cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-appCard/5"
-                                        >
-                                            Clôturer la demande
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                    {renderActionsMenu(
+                        menuRefDesktop,
+                        'w-8 h-8 rounded-md bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText',
                     )}
                 </div>
             </div>
 
-            {/* Expanded quotes panel */}
+            {/* Mobile layout only */}
+            <div className="md:hidden p-4">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                    <h3
+                        className={`text-[15px] font-extrabold tracking-[-0.2px] truncate min-w-0 ${isClosed ? 'text-appTextSec' : 'text-appText'
+                            }`}
+                    >
+                        {demand?.service_category?.title || '—'}
+                    </h3>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        {demand?.new_quotes_count && demand.new_quotes_count > 0 ? (
+                            <span className="text-[9px] font-bold text-[#FCD34D] bg-amber/10 border border-amber/20 px-1.5 py-0.5 rounded-sm uppercase tracking-[0.4px]">
+                                {demand.new_quotes_count} new
+                            </span>
+                        ) : null}
+                        {statusCfg && (
+                            <span className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-[0.4px] px-2 py-1 rounded-md ${statusCfg.classes}`}>
+                                {statusCfg.icon}
+                                {demand?.quotes_status_label}
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex gap-3">
+                    <div className="border border-appBorder w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-appBorder flex items-center justify-center">
+                        {demand?.service_category?.image ? (
+                            <ImageComponent
+                                url={demand.service_category.image || ''}
+                                img_title={demand.service_category.title ?? ''}
+                                object_cover={true}
+                            />
+                        ) : (
+                            <span className="text-lg font-bold text-appTextMuted">
+                                {demand?.service_category?.title?.charAt(0) ?? '—'}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                        {demand?.reference_no && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-appTextSec border border-appBorderSub bg-black/3 dark:bg-white/3 px-2 py-1 rounded-md">
+                                <span className="text-appTextMuted">Réf.</span>
+                                <span className="font-bold text-appText">{demand.reference_no}</span>
+                            </span>
+                        )}
+
+                        <MetaRow icon={<LocationIconSVG />}>
+                            {cityAndPostalCode || '—'}
+                        </MetaRow>
+
+                        {scheduleLabel && (
+                            <MetaRow icon={<CalendarIconSVG />}>
+                                {scheduleLabel}
+                            </MetaRow>
+                        )}
+
+                        {createdRelative && (
+                            <MetaRow icon={<ClockCircleOutlineIconSVG />}>
+                                Créée <span className="font-medium text-appTextSec">{createdRelative}</span>
+                                {createdAbsolute && (
+                                    <span className="text-appTextMuted"> · {createdAbsolute}</span>
+                                )}
+                            </MetaRow>
+                        )}
+                    </div>
+                </div>
+
+                <div
+                    className="mt-3.5 flex items-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        onClick={onToggle}
+                        className={`flex-1 flex items-center justify-center gap-1.5 h-10 px-3 rounded-lg border text-[12px] font-semibold cursor-pointer transition-all duration-200 ${viewBtnClasses}`}
+                    >
+                        {viewBtnLabel}
+                        <span className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+                            <ChevronIconSVG />
+                        </span>
+                    </button>
+
+                    <div className="shrink-0 h-10 min-w-11 px-2 rounded-lg border border-appBorderSub bg-black/2 dark:bg-white/3 flex flex-col items-center justify-center">
+                        <span
+                            className={`text-[13px] font-extrabold leading-none ${isAccepted
+                                ? 'text-[#6EE7B7]'
+                                : totalQuotesCount === 0
+                                    ? 'text-appTextMuted'
+                                    : 'text-appText'
+                                }`}
+                        >
+                            {totalQuotesCount}
+                        </span>
+                        <span className="text-[9px] text-appTextMuted leading-none mt-0.5">devis</span>
+                    </div>
+
+                    {renderActionsMenu(
+                        menuRefMobile,
+                        'w-10 h-10 rounded-lg bg-black/5 dark:bg-white/5 border border-appBorder text-appTextSec flex items-center justify-center text-sm cursor-pointer transition-all duration-200 hover:bg-black/8 dark:hover:bg-appOverlay-5 hover:text-appText',
+                    )}
+                </div>
+            </div>
+
             {isExpanded && (
-                <div className="border-t border-appBorderSub bg-appSurface px-5 py-4 animate-hero-fade-up">
-                    {/* Accepted banner — shown when a quote was accepted */}
+                <div className="border-t border-appBorderSub bg-appSurface px-4 py-4 md:px-5 animate-hero-fade-up">
                     {isAccepted && (() => {
                         const acceptedQuote = demand?.quotes?.find((q) => q?.status?.toLowerCase() === 'accepted')
                         if (!acceptedQuote) return null
@@ -343,24 +478,22 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         )
                     })()}
 
-                    {/* Panel header */}
                     {totalQuotesCount > 0 && (
-                        <div className="flex items-center justify-between mb-3.5">
+                        <div className="flex items-center justify-between mb-3.5 max-md:flex-col max-md:items-start max-md:gap-0.5">
                             <p className="text-sm font-bold text-appText">
                                 {totalQuotesCount} devis reçus
                                 {!isAccepted && ' · choisissez le meilleur professionnel'}
                             </p>
                             {!isAccepted && (
-                                <p className="text-sm text-appTextMuted">
+                                <p className="text-sm text-appTextMuted max-md:text-xs">
                                     Comparez et acceptez le devis qui vous convient
                                 </p>
                             )}
                         </div>
                     )}
 
-                    {/* Quotes grid */}
                     {totalQuotesCount > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-1.25">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-1.25 max-md:gap-2">
                             {(demand.quotes ?? []).filter((q): q is NonNullable<typeof q> => q != null).map((quote) => {
                                 const quoteId = quote._id ?? quote.quote_id
                                 if (!quoteId) return null
@@ -377,14 +510,14 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                                 )
                             })}
                         </div>
-                    ) :
-                        <div className="text-center py-6 text-appTextMuted text-sm">
+                    ) : (
+                        <div className="text-center py-6 text-appTextMuted text-sm max-md:text-[13px] max-md:py-5">
                             <div className="mb-2 flex justify-center text-2xl">
-                                <FiClock className="size-7" aria-hidden />
+                                <FiClock className="size-7 max-md:size-6" aria-hidden />
                             </div>
                             Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.
                         </div>
-                    }
+                    )}
                 </div>
             )}
         </div>

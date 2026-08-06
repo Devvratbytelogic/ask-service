@@ -94,7 +94,7 @@ export default function VendorDashboardOverviewSkeleton({
 }) {
     return (
         <div
-            className="max-w-[1400px] mx-auto px-7 py-7"
+            className="page_container"
             role="status"
             aria-live="polite"
             aria-label="Chargement du tableau de bord"

@@ -14,6 +14,7 @@ import {
   getForgotPasswordRoutePath,
   getLoginPageRoutePath,
   getRegistrationPageRoutePath,
+  getVendorLeadsListRoutePath,
 } from '@/routes/routes'
 import AuthMobileHeader from '@/components/common/AuthMobileHeader'
 import AuthThemeToggle from '@/components/common/AuthThemeToggle'
@@ -176,6 +177,11 @@ export default function LoginPage({
     const isVendorRole = String(roleValue ?? '').toLowerCase() === 'vendor'
 
     if (!fromCustomerTab && isVendorRole) {
+      // Mobile: list of available leads. Desktop: first lead detail with sidebar.
+      const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches
+      if (isMobile) {
+        return getVendorLeadsListRoutePath()
+      }
       try {
         const response = await fetchAvailableLeads({
           page: 1,

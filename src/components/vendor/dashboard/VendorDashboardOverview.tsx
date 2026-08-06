@@ -15,7 +15,7 @@ import VendorKycStatusAlert from './VendorKycStatusAlert'
 import VendorPhoneUnverifiedAlert from './VendorPhoneUnverifiedAlert'
 import VendorDashboardOverviewSkeleton from '@/components/skeletons/VendorDashboardOverviewSkeleton'
 import { useGetVendorAvailableLeadsByServiceCategoryQuery, useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath } from '@/routes/routes'
+import { generateLeadDetailRoutePath, getCreditsRoutePath, getVendorAllQuotesRoutePath, getVendorDashboardRoutePath, getVendorLeadsListRoutePath } from '@/routes/routes'
 import { useSearchParams } from 'next/navigation'
 
 export default function VendorDashboardOverview() {
@@ -31,6 +31,7 @@ export default function VendorDashboardOverview() {
     const [leadsPage, setLeadsPage] = useState(1)
     const [leadsLimit, setLeadsLimit] = useState(6)
     const [paginateServiceCategory, setPaginateServiceCategory] = useState('')
+    const [isMobile, setIsMobile] = useState(false)
 
     const { data: response, isLoading } = useGetVendorAvailableLeadsByServiceCategoryQuery({
         service: serviceFilter || undefined,
@@ -43,7 +44,7 @@ export default function VendorDashboardOverview() {
     const data = response?.data?.data;
     const stats = response?.data?.summary;
 
-    // Same query as VendorMenu: first locked lead for "Prospects disponibles"
+    // Desktop: first locked lead for sidebar detail. Mobile: list page.
     const { data: lockedLeadsResponse } = useGetVendorAvailableLeadsQuery(
         {
             page: 1,
@@ -52,6 +53,14 @@ export default function VendorDashboardOverview() {
         },
         { skip: !showStatCards },
     )
+
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 1023px)')
+        const update = () => setIsMobile(mq.matches)
+        update()
+        mq.addEventListener('change', update)
+        return () => mq.removeEventListener('change', update)
+    }, [])
 
     useEffect(() => {
         setCityFilter('')
@@ -68,10 +77,16 @@ export default function VendorDashboardOverview() {
     if (isLoading) {
         return <VendorDashboardOverviewSkeleton showStatCards={showStatCards} />
     }
+
     const firstLeadId = lockedLeadsResponse?.data?.items?.[0]?._id
+    const availableLeadsHref = isMobile
+        ? getVendorLeadsListRoutePath()
+        : firstLeadId
+            ? generateLeadDetailRoutePath(firstLeadId)
+            : getVendorDashboardRoutePath({ leads: 'locked' })
 
     return (
-        <div className="max-w-350 mx-auto px-7 py-7">
+        <div className="page_container">
             {/* Page header */}
             <div className="mb-7 animate-hero-fade-up">
                 <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
@@ -93,7 +108,7 @@ export default function VendorDashboardOverview() {
             {showStatCards && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
                     <DashboardStatCard icon={<FiUnlock className="text-trust-green" />} iconBg="rgba(16,185,129,0.15)" value={stats?.purchasedLeadsCount ?? 0} label="Opportunités actives" linkText="Voir mes opportunités actives" linkColor="text-[#6EE7B7]" href={getVendorDashboardRoutePath({ leads: 'unlocked' })} highlight={isUnlocked} />
-                    <DashboardStatCard icon={<FiSearch className="text-primaryColor" />} iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={firstLeadId ? generateLeadDetailRoutePath(firstLeadId) : getVendorDashboardRoutePath({ leads: 'locked' })} highlight={!isUnlocked} highlightColor="blue" />
+                    <DashboardStatCard icon={<FiSearch className="text-primaryColor" />} iconBg="rgba(27,79,255,0.15)" value={stats?.availableLeadsCount ?? 0} label="Prospects disponibles" linkText="Voir les prospects disponibles" linkColor="text-[#93C5FD]" href={availableLeadsHref} highlight={!isUnlocked} highlightColor="blue" />
                     <DashboardStatCard icon={<FiCreditCard className="text-amber" />} iconBg="rgba(245,158,11,0.15)" value={stats?.creditBalance ?? 0} label="Solde de crédits" linkText="Acheter des crédits" linkColor="text-amber" href={getCreditsRoutePath()} />
                     <DashboardStatCard icon={<FiClipboard className="text-[#8B5CF6]" />} iconBg="rgba(139,92,246,0.15)" value={stats?.quotesSentCount ?? 0} label="Devis envoyés" linkText="Voir en cours, gagnés…" linkColor="text-[#C4B5FD]" href={getVendorAllQuotesRoutePath()} />
                 </div>
@@ -132,7 +147,7 @@ export default function VendorDashboardOverview() {
             </>
 
             {/* Find new leads CTA */}
-            {isUnlocked ? <FindLeadsCTA availableLeadsCount={stats?.availableLeadsCount ?? 0} /> : null}
+            {isUnlocked ? <FindLeadsCTA availableLeadsCount={stats?.availableLeadsCount ?? 0} href={availableLeadsHref} /> : null}
         </div>
     )
 }

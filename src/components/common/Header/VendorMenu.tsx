@@ -6,6 +6,7 @@ import { useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGe
 import {
     generateLeadDetailRoutePath,
     getVendorDashboardRoutePath,
+    getVendorLeadsListRoutePath,
     getVendorMessageRoutePath,
 } from '@/routes/routes'
 
@@ -32,10 +33,13 @@ export default function VendorMenu({ onNavigate, className = '', layout = 'row' 
 
     const firstLeadId = response?.data?.items?.[0]?._id
 
-    // Same href as DashboardStatCard: open the first available lead
-    const prospectsHref = firstLeadId
-        ? generateLeadDetailRoutePath(firstLeadId)
-        : getVendorDashboardRoutePath({ leads: 'locked' })
+    // Mobile: lead list page. Desktop: first available lead (sidebar + detail).
+    const prospectsHref =
+        layout === 'stack'
+            ? getVendorLeadsListRoutePath()
+            : firstLeadId
+                ? generateLeadDetailRoutePath(firstLeadId)
+                : getVendorDashboardRoutePath({ leads: 'locked' })
 
     const links = [
         { label: 'Tableau de bord', shortLabel: 'Tableau', href: DASHBOARD_PATH },
@@ -43,7 +47,7 @@ export default function VendorMenu({ onNavigate, className = '', layout = 'row' 
         { label: 'Mes messages', shortLabel: 'Messages', href: getVendorMessageRoutePath() },
     ]
 
-    const isOnLeadPage = pathname.startsWith(`${DASHBOARD_PATH}/lead/`)
+    const isOnLeadPage = pathname === `${DASHBOARD_PATH}/lead` || pathname.startsWith(`${DASHBOARD_PATH}/lead/`)
     const isStack = layout === 'stack'
 
     return (

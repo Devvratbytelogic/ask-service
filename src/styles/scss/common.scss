@@ -7,6 +7,21 @@
     @apply p-4 md:px-[70px]
 }
 
+/* Shared horizontal shell — keeps header + page content aligned */
+.page_shell_x {
+    @apply w-full max-w-350 mx-auto px-4 sm:px-6 md:px-7;
+}
+
+/* Centered dashboard / page shell: fluid on mobile, capped on large screens */
+.page_container {
+    @apply w-full max-w-350 mx-auto px-4 py-5 sm:px-6 sm:py-6 md:px-7 md:py-7;
+}
+
+/* Header inner content — same max-width + x-padding as page_container */
+.header_container {
+    @apply w-full max-w-350 mx-auto px-4 sm:px-6 md:px-7 flex h-full items-center gap-2 sm:gap-3;
+}
+
 .main_body_margin_top {
     @apply mt-30;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, type ReactNode } from 'react'
 import Link from 'next/link'
-import ReactSelect from 'react-select'
+import ReactSelect, { type StylesConfig } from 'react-select'
 import { FiAlertTriangle, FiCheckCircle, FiClipboard, FiFolder, FiMail, FiSearch } from 'react-icons/fi'
 import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
@@ -55,25 +55,19 @@ function StatCard({
     value,
     valueColor,
     label,
-    linkText,
-    linkColor,
 }: StatConfig) {
     return (
-        <div className="bg-appCard border border-appBorder rounded-2xl px-5 py-4.5 transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+        <div className="bg-appCard border border-appBorder rounded-xl sm:rounded-2xl px-3.5 py-3.5 sm:px-5 sm:py-4.5 transition-all duration-250 hover:border-appBorder hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
             <div
-                className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[17px] mb-3"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center text-[15px] sm:text-[17px] mb-2.5 sm:mb-3"
                 style={{ background: iconBg }}
             >
                 {icon}
             </div>
-            <p className={`text-[30px] font-extrabold tracking-[-1px] leading-none mb-1 ${valueColor}`}>
+            <p className={`text-[24px] sm:text-[30px] font-extrabold tracking-[-1px] leading-none mb-1 ${valueColor}`}>
                 {value}
             </p>
-            <p className="text-xs text-appTextSec mb-2.5">{label}</p>
-            {/* <span className={`text-[11px] font-semibold flex items-center gap-[3px] ${linkColor}`}>
-                {linkText}
-                <ArrowIcon />
-            </span> */}
+            <p className="text-[11px] sm:text-xs text-appTextSec leading-snug">{label}</p>
         </div>
     )
 }
@@ -107,7 +101,17 @@ export default function ClientDashboard() {
         ]
     }, [allServiceRequestCitiesData])
 
-    const filterSelectStyles = useMemo(() => buildDashboardFilterSelectStyles(), [])
+    const filterSelectStyles = useMemo((): StylesConfig<FilterOption, false> => {
+        const baseStyles = buildDashboardFilterSelectStyles()
+        return {
+            ...baseStyles,
+            control: (base, state) => ({
+                ...(typeof baseStyles.control === 'function' ? baseStyles.control(base, state) : base),
+                width: '100%',
+                minWidth: 'unset',
+            }),
+        }
+    }, [])
 
     const [expandedId, setExpandedId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<TabKey>('all')
@@ -202,12 +206,12 @@ export default function ClientDashboard() {
     const selectedSortOption = SORT_OPTIONS.find((o) => o.value === sortFilter) ?? SORT_OPTIONS[0]
 
     return (
-        <div className="body_x_axis_padding">
+        <div className="page_container">
             <PhoneUnverifiedAlert />
             <EmailUnverifiedAlert />
             {showWelcomeMessage && (
-                <div className="mb-6 rounded-2xl border border-primaryColor/20 bg-primaryColor/5 px-5 py-4 animate-hero-fade-up">
-                    <p className="text-[17px] font-extrabold tracking-[-0.3px] text-appText">
+                <div className="mb-6 rounded-2xl border border-primaryColor/20 bg-primaryColor/5 px-4 py-3.5 sm:px-5 sm:py-4 animate-hero-fade-up">
+                    <p className="text-[16px] sm:text-[17px] font-extrabold tracking-[-0.3px] text-appText">
                         Welcome back{userName ? `, ${userName}` : ''}!
                     </p>
                     <p className="mt-0.5 text-sm text-appTextSec">
@@ -216,60 +220,62 @@ export default function ClientDashboard() {
                 </div>
             )}
             {/* Page header */}
-            <div className="flex items-start justify-between mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
+            <div className="flex items-start justify-between mb-5 sm:mb-7 flex-wrap gap-3.5 animate-hero-fade-up">
                 <div>
-                    <h1 className="text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
+                    <h1 className="text-[22px] sm:text-[26px] font-extrabold tracking-[-0.5px] text-appText mb-1">
                         Mes <span className="text-primaryColor">demandes</span>
                     </h1>
-                    <p className="text-sm text-appTextSec flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-appBorder">
+                    <p className="text-[13px] sm:text-sm text-appTextSec flex items-center gap-1.5 before:content-[''] before:w-1 before:h-1 before:rounded-full before:bg-appBorder">
                         Suivez vos demandes et gérez les devis reçus
                     </p>
                 </div>
             </div>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 mb-6 sm:mb-8">
                 {STATS.map((stat) => (
                     <StatCard key={stat.label} {...stat} />
                 ))}
             </div>
 
             {/* Section header + tabs */}
-            <div className="flex items-center justify-between flex-wrap gap-3 mb-4 animate-hero-fade-up">
-                <p className="text-[17px] font-extrabold text-appText tracking-[-0.3px]">
+            <div className="flex flex-col gap-3 mb-4 animate-hero-fade-up">
+                <p className="text-[16px] sm:text-[17px] font-extrabold text-appText tracking-[-0.3px]">
                     Toutes mes demandes
                 </p>
-                <div className="flex gap-0.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px] p-0.75">
-                    {TABS.map(({ key, label }) => (
-                        <button
-                            key={key}
-                            type="button"
-                            onClick={() => { setActiveTab(key); resetPage() }}
-                            className={`flex items-center gap-1.5 px-4 py-1.75 rounded-lg text-[13px] font-semibold cursor-pointer transition-all duration-200 ${activeTab === key
-                                ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
-                                : 'text-appTextSec hover:text-appText border border-transparent'
-                                }`}
-                        >
-                            {label}
-                            {TAB_COUNTS[key] > 0 && (
-                                <span
-                                    className={`text-[10px] font-extrabold px-1.5 py-px rounded-full ${activeTab === key
-                                        ? 'bg-primaryColor/20 text-primaryColor dark:text-[#93C5FD]'
-                                        : 'bg-black/8 dark:bg-white/8 text-appTextSec'
-                                        }`}
-                                >
-                                    {TAB_COUNTS[key]}
-                                </span>
-                            )}
-                        </button>
-                    ))}
+                <div className="overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <div className="inline-flex gap-0.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px] p-0.75">
+                        {TABS.map(({ key, label }) => (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => { setActiveTab(key); resetPage() }}
+                                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.75 rounded-lg text-[12px] sm:text-[13px] font-semibold cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 ${activeTab === key
+                                    ? 'bg-primaryColor/15 text-primaryColor border border-primaryColor/20'
+                                    : 'text-appTextSec hover:text-appText border border-transparent'
+                                    }`}
+                            >
+                                {label}
+                                {TAB_COUNTS[key] > 0 && (
+                                    <span
+                                        className={`text-[10px] font-extrabold px-1.5 py-px rounded-full ${activeTab === key
+                                            ? 'bg-primaryColor/20 text-primaryColor dark:text-[#93C5FD]'
+                                            : 'bg-black/8 dark:bg-white/8 text-appTextSec'
+                                            }`}
+                                    >
+                                        {TAB_COUNTS[key]}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Filter bar */}
-            <div className="flex gap-2 items-center flex-wrap mb-4 animate-hero-fade-up">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-2 items-stretch lg:items-center mb-4 animate-hero-fade-up">
                 {/* Search */}
-                <div className="relative flex-1 min-w-50">
+                <div className="relative w-full sm:col-span-2 lg:flex-1 lg:min-w-50">
                     <svg
                         className="absolute left-2.75 top-1/2 -translate-y-1/2 text-appTextMuted pointer-events-none"
                         width="14"
@@ -292,42 +298,48 @@ export default function ClientDashboard() {
                 </div>
 
                 {/* Service filter */}
-                <ReactSelect<FilterOption, false>
-                    instanceId="client-dashboard-service-filter"
-                    options={serviceCategoryOptions}
-                    value={selectedServiceOption}
-                    onChange={(opt) => { setServiceFilter(opt?.value ?? 'all'); resetPage() }}
-                    isSearchable={false}
-                    styles={filterSelectStyles}
-                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-                    menuPosition="fixed"
-                />
+                <div className="w-full lg:w-auto lg:min-w-40">
+                    <ReactSelect<FilterOption, false>
+                        instanceId="client-dashboard-service-filter"
+                        options={serviceCategoryOptions}
+                        value={selectedServiceOption}
+                        onChange={(opt) => { setServiceFilter(opt?.value ?? 'all'); resetPage() }}
+                        isSearchable={false}
+                        styles={filterSelectStyles}
+                        menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                        menuPosition="fixed"
+                    />
+                </div>
 
                 {/* City filter */}
-                <ReactSelect<FilterOption, false>
-                    instanceId="client-dashboard-city-filter"
-                    options={cityOptions}
-                    value={selectedCityOption}
-                    onChange={(opt) => { setCityFilter(opt?.value ?? 'all'); resetPage() }}
-                    isSearchable
-                    placeholder="Toutes les villes"
-                    noOptionsMessage={() => 'Aucune ville'}
-                    styles={filterSelectStyles}
-                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-                    menuPosition="fixed"
-                />
+                <div className="w-full lg:w-auto lg:min-w-40">
+                    <ReactSelect<FilterOption, false>
+                        instanceId="client-dashboard-city-filter"
+                        options={cityOptions}
+                        value={selectedCityOption}
+                        onChange={(opt) => { setCityFilter(opt?.value ?? 'all'); resetPage() }}
+                        isSearchable
+                        placeholder="Toutes les villes"
+                        noOptionsMessage={() => 'Aucune ville'}
+                        styles={filterSelectStyles}
+                        menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                        menuPosition="fixed"
+                    />
+                </div>
 
                 {/* Sort */}
-                <ReactSelect<FilterOption, false>
-                    instanceId="client-dashboard-sort-filter"
-                    options={SORT_OPTIONS}
-                    value={selectedSortOption}
-                    onChange={(opt) => { setSortFilter(opt?.value ?? ''); resetPage() }}
-                    isSearchable={false}
-                    styles={filterSelectStyles}
-                    menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-                    menuPosition="fixed"
-                />
+                <div className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-w-40">
+                    <ReactSelect<FilterOption, false>
+                        instanceId="client-dashboard-sort-filter"
+                        options={SORT_OPTIONS}
+                        value={selectedSortOption}
+                        onChange={(opt) => { setSortFilter(opt?.value ?? ''); resetPage() }}
+                        isSearchable={false}
+                        styles={filterSelectStyles}
+                        menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+                        menuPosition="fixed"
+                    />
+                </div>
             </div>
 
             {/* Demands list */}
@@ -364,23 +376,23 @@ export default function ClientDashboard() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4 mb-2">
-                    <p className="text-[13px] text-appTextMuted">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 mb-2">
+                    <p className="text-[12px] sm:text-[13px] text-appTextMuted">
                         Page <span className="font-semibold text-appText">{page}</span> sur{' '}
                         <span className="font-semibold text-appText">{totalPages}</span>
                         {' '}· <span className="font-semibold text-appText">{totalCount}</span> demandes
                     </p>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center justify-between sm:justify-end gap-1.5">
                         <button
                             type="button"
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page === 1}
-                            className="flex items-center gap-1 px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                            className="flex items-center gap-1 px-2.5 sm:px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[12px] sm:text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
                         >
                             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <path d="M15 18l-6-6 6-6" />
                             </svg>
-                            Précédent
+                            <span className="sm:inline hidden">Précédent</span>
                         </button>
 
                         <div className="flex items-center gap-1">
@@ -414,9 +426,9 @@ export default function ClientDashboard() {
                             type="button"
                             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages}
-                            className="flex items-center gap-1 px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
+                            className="flex items-center gap-1 px-2.5 sm:px-3 py-1.75 rounded-lg border border-appBorder bg-appCard text-[12px] sm:text-[13px] font-semibold text-appTextSec transition-all duration-200 hover:border-primaryColor/40 hover:text-primaryColor disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-appBorder disabled:hover:text-appTextSec"
                         >
-                            Suivant
+                            <span className="sm:inline hidden">Suivant</span>
                             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <path d="M9 18l6-6-6-6" />
                             </svg>
@@ -426,7 +438,7 @@ export default function ClientDashboard() {
             )}
 
             {/* New demand CTA */}
-            <div className="mt-3 bg-linear-to-br from-primaryColor/8 to-primaryColor/4 border border-dashed border-primaryColor/20 rounded-2xl px-7 py-7 text-center animate-hero-fade-up">
+            <div className="mt-3 bg-primaryColor/6 border border-dashed border-primaryColor/20 rounded-2xl px-4 py-5 sm:px-7 sm:py-7 text-center animate-hero-fade-up">
                 <h4 className="text-[15px] font-bold text-appText mb-1.5">
                     Besoin d&apos;un autre professionnel ?
                 </h4>
@@ -435,7 +447,7 @@ export default function ClientDashboard() {
                 </p>
                 <Link
                     href={getRequestAServiceRoutePath()}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-[10px] text-sm font-bold transition-all duration-250 hover:-translate-y-px shadow-[0_4px_16px_rgba(27,79,255,0.3)] hover:shadow-[0_6px_20px_rgba(27,79,255,0.4)]"
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-primaryColor text-white rounded-[10px] text-sm font-bold transition-all duration-250 hover:-translate-y-px shadow-[0_4px_16px_rgba(27,79,255,0.3)] hover:shadow-[0_6px_20px_rgba(27,79,255,0.4)]"
                 >
                     <svg
                         width="14"
