@@ -92,9 +92,8 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const accentBorder = isVendor ? 'rgba(245,158,11,0.2)' : 'rgba(27,79,255,0.2)'
   const roleIconBg = isVendor ? 'var(--color-amber-icon-bg)' : 'var(--color-primary-icon-bg)'
 
-  // Ends on dark app-surface (#111827) so the seam with the form pane disappears in dark mode
   const panelBackground =
-    'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 45%, #111827 100%)'
+    'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)'
 
   return (
     <div
@@ -108,14 +107,14 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
       <div
         className="sticky top-0 flex h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
-      {/* Decorative radial blobs — kept inward so they don't tint the right edge seam */}
+      {/* Decorative radial blobs — subtle overlays, kept as inline rgba */}
       <div
         className="pointer-events-none absolute"
         style={{
-          top: -120,
-          left: -40,
-          width: 360,
-          height: 360,
+          top: -100,
+          right: -80,
+          width: 400,
+          height: 400,
           borderRadius: '50%',
           background: 'radial-gradient(circle, var(--color-primary-icon-bg) 0%, transparent 65%)',
         }}
@@ -125,22 +124,20 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
         style={{
           bottom: -60,
           left: -60,
-          width: 280,
-          height: 280,
+          width: 300,
+          height: 300,
           borderRadius: '50%',
           background: 'radial-gradient(circle, var(--color-amber-icon-bg) 0%, transparent 65%)',
         }}
       />
 
-      {/* Grid overlay — fades out toward the form pane */}
+      {/* Grid overlay */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
             'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
-          maskImage: 'linear-gradient(to right, black 70%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to right, black 70%, transparent 100%)',
         }}
       />
 
