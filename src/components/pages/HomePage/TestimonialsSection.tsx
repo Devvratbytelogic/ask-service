@@ -2,6 +2,8 @@
 
 import { useGetTestimonialsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IAllTestimonialsData } from '@/types/testimonial'
+import { FaStar } from 'react-icons/fa6'
+import { HiSparkles } from 'react-icons/hi2'
 
 const AVATAR_COLORS = ['#1B4FFF', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#06B6D4']
 
@@ -14,7 +16,7 @@ function TestimonialCard({ t, index }: { t: IAllTestimonialsData; index: number 
         <article className="rounded-[20px] border-[1.5px] border-appBorderSub bg-appCard p-7 transition-all duration-200 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(27,79,255,0.1)]">
             <div className="mb-4 flex gap-[3px]">
                 {Array.from({ length: rating }).map((_, index) => (
-                    <span key={index} className="text-base text-amber-500">★</span>
+                    <FaStar key={index} className="size-4 text-amber-500" aria-hidden />
                 ))}
             </div>
 
@@ -48,7 +50,8 @@ export default function TestimonialsSection() {
         <section className="bg-appBg px-[5%] py-[100px]">
             <div className="mb-[60px] text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
-                    ✦ Témoignages
+                    <HiSparkles className="size-3.5" aria-hidden />
+                    Témoignages
                 </div>
                 <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-appText">
                     Ce qu&apos;ils en disent

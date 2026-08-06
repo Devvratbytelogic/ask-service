@@ -123,7 +123,9 @@ export default function VendorDashboardOverview() {
                 ))
                 ) : (
                     <div className="bg-appSurface border border-appBorder rounded-2xl p-8 text-center mb-4">
-                        <div className="text-[32px] mb-3">{isUnlocked ? '🔓' : '🔍'}</div>
+                        <div className="text-[32px] mb-3 flex justify-center text-appTextMuted">
+                            {isUnlocked ? <FiUnlock className="size-8" aria-hidden /> : <FiSearch className="size-8" aria-hidden />}
+                        </div>
                         <p className="text-[14px] text-appTextSec">{isUnlocked ? 'Aucune opportunité active pour ce filtre.' : 'Aucun prospect disponible pour ce filtre.'}</p>
                     </div>
                 )}

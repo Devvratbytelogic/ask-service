@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FiSearch } from 'react-icons/fi'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 
@@ -26,8 +27,8 @@ export default function LeadNotFound() {
 
             <div className="flex min-h-[min(420px,calc(100vh-140px))] items-center justify-center px-4 py-10">
                 <div className="w-full max-w-md rounded-2xl border border-appBorder bg-appCard px-6 py-8 text-center shadow-[0_8px_40px_rgba(0,0,0,0.06)]">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primaryColor/10 text-2xl">
-                        🔍
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primaryColor/10 text-2xl text-primaryColor">
+                        <FiSearch className="size-7" aria-hidden />
                     </div>
                     <h1 className="mb-2 text-[20px] font-extrabold tracking-[-0.3px] text-appText">
                         Prospect introuvable

@@ -2,6 +2,8 @@
 
 import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import Link from "next/link"
+import { FiBriefcase, FiSearch } from "react-icons/fi"
+import { HiSparkles } from "react-icons/hi2"
 
 export default function CtaSection() {
     return (
@@ -13,7 +15,8 @@ export default function CtaSection() {
 
             <div className="relative z-1">
                 <div className="mx-auto mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
-                    ✦ Rejoignez-nous
+                    <HiSparkles className="size-3.5" aria-hidden />
+                    Rejoignez-nous
                 </div>
 
                 <h2 className="mb-4 text-[clamp(32px,4vw,52px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText">
@@ -29,13 +32,15 @@ export default function CtaSection() {
                         href={getRequestAServiceRoutePath()}
                         className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-primaryColor px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(27,79,255,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-dark hover:shadow-[0_8px_24px_rgba(27,79,255,0.35)]"
                     >
-                        🔍 Je cherche un professionnel
+                        <FiSearch className="size-4 shrink-0" aria-hidden />
+                        Je cherche un professionnel
                     </Link>
                     <Link
                         href={getServiceProviderRoutePath()}
                         className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-amber-500 px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_16px_rgba(245,158,11,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-dark hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)]"
                     >
-                        💼 Je suis un professionnel
+                        <FiBriefcase className="size-4 shrink-0" aria-hidden />
+                        Je suis un professionnel
                     </Link>
                 </div>
             </div>

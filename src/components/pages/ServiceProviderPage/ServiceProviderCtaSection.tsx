@@ -4,6 +4,7 @@ import { openModal } from "@/redux/slices/allModalSlice"
 import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
+import { HiSparkles } from "react-icons/hi2"
 
 const ArrowIcon = () => (
     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -34,7 +35,8 @@ export default function ServiceProviderCtaSection() {
 
             <div className="relative z-1">
                 <div className="mx-auto mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-500/15 px-3.5 py-1.5 text-[11px] font-bold tracking-[1.2px] text-amber-500 uppercase">
-                    ✦ Rejoignez-nous
+                    <HiSparkles className="size-3.5" aria-hidden />
+                    Rejoignez-nous
                 </div>
 
                 <h2 className="mb-3.5 text-[clamp(30px,4vw,50px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText dark:text-white">

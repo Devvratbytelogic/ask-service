@@ -1,6 +1,11 @@
+import type { ReactNode } from 'react'
+import { FiClipboard, FiUnlock } from 'react-icons/fi'
+import { HiSparkles } from 'react-icons/hi2'
+import { MdOutlineHandshake } from 'react-icons/md'
+
 type Step = {
     label: string
-    icon: string
+    icon: ReactNode
     title: string
     description: string
 }
@@ -8,21 +13,21 @@ type Step = {
 const STEPS: Step[] = [
     {
         label: "Étape 01",
-        icon: "📋",
+        icon: <FiClipboard className="size-8" aria-hidden />,
         title: "Créez votre profil",
         description:
             "Inscrivez-vous en 2 minutes. Renseignez vos services, votre zone d'intervention et vos disponibilités. C'est gratuit.",
     },
     {
         label: "Étape 02",
-        icon: "🔓",
+        icon: <FiUnlock className="size-8" aria-hidden />,
         title: "Débloquez les contacts",
         description:
             "Consultez les demandes disponibles dans votre secteur. Utilisez vos crédits pour accéder aux coordonnées des clients qui vous intéressent.",
     },
     {
         label: "Étape 03",
-        icon: "🤝",
+        icon: <MdOutlineHandshake className="size-8" aria-hidden />,
         title: "Remportez le chantier",
         description:
             "Contactez le client, envoyez votre devis et remportez la mission. Votre réputation grandit avec chaque avis positif.",
@@ -40,7 +45,7 @@ function StepCard({ step }: { step: Step }) {
                 <span className="size-6 rounded-lg bg-amber-light dark:bg-amber-500/15" />
                 {step.label}
             </div>
-            <div className="mb-3.5 text-[32px]">{step.icon}</div>
+            <div className="mb-3.5 text-amber-500">{step.icon}</div>
             <h3 className="mb-2 text-lg font-extrabold tracking-[-0.3px] text-appText">
                 {step.title}
             </h3>
@@ -54,7 +59,8 @@ export default function ServiceProviderHowItWorks() {
         <section id="comment-ca-marche" className="bg-appSurface dark:bg-appBg px-[5%] py-[100px]">
             <div className="mb-[60px] text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-amber-light dark:bg-amber-500/15 px-3.5 py-1.5 text-[11px] font-bold tracking-[1.2px] text-amber-500 uppercase">
-                    ✦ Fonctionnement
+                    <HiSparkles className="size-3.5" aria-hidden />
+                    Fonctionnement
                 </div>
                 <h2 className="mb-3.5 text-[clamp(28px,3.5vw,42px)] leading-[1.12] font-extrabold tracking-[-0.8px] text-appText">
                     Commencez à trouver des clients en 3 étapes

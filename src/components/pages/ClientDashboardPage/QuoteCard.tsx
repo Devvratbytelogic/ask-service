@@ -2,6 +2,7 @@
 
 import moment from 'moment'
 import { useRouter } from 'next/navigation'
+import { FaRegStar, FaStar } from 'react-icons/fa6'
 import { QuotesEntity } from '@/types/allRequests'
 import { useUserAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { getMessageRoutePath } from '@/routes/routes'
@@ -77,8 +78,13 @@ export default function QuoteCard({ onAccept, onIgnore, onViewDetails, quoteData
                         <p className="text-[13px] font-bold text-appText leading-none mb-0.5">{vendorName}</p>
                         <p className="text-[11px] flex items-center gap-0.5">
                             {/* {rating !== null && ( */}
-                            <span className="text-amber">
-                                {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
+                            <span className="inline-flex items-center gap-0.5 text-amber">
+                                {Array.from({ length: fullStars }).map((_, i) => (
+                                    <FaStar key={`full-${i}`} className="size-3" aria-hidden />
+                                ))}
+                                {Array.from({ length: emptyStars }).map((_, i) => (
+                                    <FaRegStar key={`empty-${i}`} className="size-3" aria-hidden />
+                                ))}
                             </span>
                             {/* )} */}
                             <span className="text-appTextMuted ml-1">

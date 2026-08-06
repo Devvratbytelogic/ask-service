@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, type ReactNode } from 'react'
 import Link from 'next/link'
 import ReactSelect from 'react-select'
+import { FiAlertTriangle, FiCheckCircle, FiClipboard, FiFolder, FiMail, FiSearch } from 'react-icons/fi'
 import { getRequestAServiceRoutePath } from '@/routes/routes'
 import DemandCard from './DemandCard'
 import DemandListSkeleton from '@/components/skeletons/DemandCardSkeleton'
@@ -13,7 +14,7 @@ import EmailUnverifiedAlert from './EmailUnverifiedAlert'
 
 
 type StatConfig = {
-    icon: string
+    icon: ReactNode
     iconBg: string
     value: number
     valueColor: string
@@ -144,7 +145,7 @@ export default function ClientDashboard() {
 
     const STATS: StatConfig[] = [
         {
-            icon: '📋',
+            icon: <FiClipboard className="size-5 text-primaryColor" aria-hidden />,
             iconBg: 'rgba(27,79,255,0.15)',
             value: summary?.active_requests_count ?? 0,
             valueColor: 'text-primaryColor',
@@ -153,7 +154,7 @@ export default function ClientDashboard() {
             linkColor: 'text-primaryColor',
         },
         {
-            icon: '📩',
+            icon: <FiMail className="size-5 text-amber" aria-hidden />,
             iconBg: 'rgba(245,158,11,0.15)',
             value: summary?.quotes_received_count ?? 0,
             valueColor: 'text-amber',
@@ -162,7 +163,7 @@ export default function ClientDashboard() {
             linkColor: 'text-amber',
         },
         {
-            icon: '✅',
+            icon: <FiCheckCircle className="size-5 text-trust-green" aria-hidden />,
             iconBg: 'rgba(16,185,129,0.15)',
             value: summary?.quotes_accepted_count ?? 0,
             valueColor: 'text-trust-green',
@@ -171,7 +172,7 @@ export default function ClientDashboard() {
             linkColor: 'text-trust-green',
         },
         {
-            icon: '🗂️',
+            icon: <FiFolder className="size-5 text-appText" aria-hidden />,
             iconBg: 'rgba(0,0,0,0.06)',
             value: summary?.applications_closed_count ?? 0,
             valueColor: 'text-appText',
@@ -334,7 +335,9 @@ export default function ClientDashboard() {
                 <DemandListSkeleton count={5} />
             ) : isError ? (
                 <div className="text-center py-16 text-appTextMuted">
-                    <div className="text-4xl mb-3">⚠️</div>
+                    <div className="mb-3 flex justify-center text-4xl">
+                        <FiAlertTriangle className="size-10 text-amber" aria-hidden />
+                    </div>
                     <p className="text-sm">Une erreur est survenue. Veuillez réessayer.</p>
                 </div>
             ) : (
@@ -350,7 +353,9 @@ export default function ClientDashboard() {
                         ))
                     ) : (
                         <div className="text-center py-16 text-appTextMuted">
-                            <div className="text-4xl mb-3">🔍</div>
+                            <div className="mb-3 flex justify-center text-4xl">
+                                <FiSearch className="size-10" aria-hidden />
+                            </div>
                             <p className="text-sm">Aucune demande ne correspond à votre recherche.</p>
                         </div>
                     )}

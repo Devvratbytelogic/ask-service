@@ -1,5 +1,8 @@
 'use client'
 
+import { FaCoins } from 'react-icons/fa6'
+import { FiCheck, FiCheckCircle } from 'react-icons/fi'
+import { FaStar } from 'react-icons/fa6'
 import { CalendarOutlineIconSVG, CheckmarkIconSVG, ChevronRightIconSVG, HomeOutlineIconSVG, LightningBoltIconSVG, LocationPinIconSVG, MailOutlineIconSVG, PhoneOutlineIconSVG, StarOutlineIconSVG, StarRatingIconSVG, UserOutlineIconSVG, } from '@/components/library/AllSVG'
 import moment from 'moment'
 import { ISingleLeadAPIResponseData } from '@/types/singleLead'
@@ -105,7 +108,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             {/* Quality Bar */}
             <div className="px-5.5 py-1.25 bg-linear-to-r from-amber/8 to-amber/4 border-b border-amber/10 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                    <span className="text-base">⭐</span>
+                    <FaStar className="size-4 text-amber" aria-hidden />
                     <span className="text-sm text-appTextSec">Qualité du prospect :</span>
                     <div className="flex items-center gap-1.5 text-sm font-bold text-amber">
                         {lead?.lead_stars_label}
@@ -120,16 +123,17 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                         </div>
                     </div>
                 </div>
-                <span className="text-sm font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap">
-                    🪙 {lead?.creditsToUnlock} crédits
+                <span className="text-sm font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap inline-flex items-center gap-1">
+                    <FaCoins className="size-3.5 shrink-0" aria-hidden />
+                    {lead?.creditsToUnlock} crédits
                 </span>
             </div>
 
             {/* Needs Block */}
             <div className="px-5.5 py-4.5 border-b border-appBorderSub">
                 <div className="flex items-center gap-2 text-base font-extrabold text-appText mb-3.5">
-                    <div className="w-6.5 h-6.5 rounded-2xl bg-primaryColor/15 flex items-center justify-center text-base shrink-0">
-                        ✅
+                    <div className="w-6.5 h-6.5 rounded-2xl bg-primaryColor/15 flex items-center justify-center text-base shrink-0 text-primaryColor">
+                        <FiCheck className="size-3.5" strokeWidth={3} aria-hidden />
                     </div>
                     Besoins du client
                 </div>
@@ -180,8 +184,8 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
             {/* Client Info Block */}
             <div className="px-5.5 py-4.5">
                 <div className="flex items-center gap-2 text-base font-extrabold text-appText mb-3.5">
-                    <div className="w-6.5 h-6.5 rounded-2xl bg-trust-green/12 flex items-center justify-center text-base shrink-0">
-                        🔵
+                    <div className="w-6.5 h-6.5 rounded-2xl bg-trust-green/12 flex items-center justify-center text-base shrink-0 text-trust-green">
+                        <FiCheckCircle className="size-3.5" aria-hidden />
                     </div>
                     Client vérifié
                 </div>

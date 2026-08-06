@@ -1,11 +1,15 @@
+import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { FiBriefcase, FiCheckCircle, FiSearch, FiZap } from 'react-icons/fi'
+import { HiSparkles } from 'react-icons/hi2'
+import { MdOutlineGpsFixed } from 'react-icons/md'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import { getTermsRoutePath, getPrivacyRoutePath } from '@/routes/routes'
 
 type Role = 'customer' | 'vendor' | null
 
 interface BenefitItem {
-  icon: string
+  icon: ReactNode
   iconBg: string
   title: string
   desc: string
@@ -14,19 +18,19 @@ interface BenefitItem {
 // Icon backgrounds reference CSS vars added to globals.css
 const defaultBenefits: BenefitItem[] = [
   {
-    icon: '🎯',
+    icon: <MdOutlineGpsFixed className="size-4.5" aria-hidden />,
     iconBg: 'var(--color-primary-icon-bg)',
     title: 'Inscription gratuite',
     desc: 'Aucun frais pour créer votre compte',
   },
   {
-    icon: '✅',
+    icon: <FiCheckCircle className="size-4.5" aria-hidden />,
     iconBg: 'var(--color-green-icon-bg)',
     title: 'Plateforme sécurisée',
     desc: 'Vos données sont protégées',
   },
   {
-    icon: '⚡',
+    icon: <FiZap className="size-4.5" aria-hidden />,
     iconBg: 'var(--color-amber-icon-bg)',
     title: 'Accès immédiat',
     desc: 'Opérationnel en 2 minutes',
@@ -42,11 +46,11 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const isVendor = role === 'vendor'
   const hasRole = role !== null
 
-  const tagText = hasRole
+  const tagLabel = hasRole
     ? isVendor
-      ? '✦ Espace professionnel'
-      : '✦ Espace client'
-    : '✦ Rejoignez la plateforme'
+      ? 'Espace professionnel'
+      : 'Espace client'
+    : 'Rejoignez la plateforme'
 
   const titleContent = hasRole ? (
     isVendor ? (
@@ -74,7 +78,9 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
       : 'Postez vos besoins gratuitement et recevez plusieurs devis en moins de 24h.'
     : 'Créez votre compte en quelques minutes et accédez à tous les services de la plateforme.'
 
-  const roleIndicatorIcon = isVendor ? '💼' : '🔍'
+  const roleIndicatorIcon = isVendor
+    ? <FiBriefcase className="size-5" aria-hidden />
+    : <FiSearch className="size-5" aria-hidden />
   const roleIndicatorTitle = isVendor ? 'Compte prestataire' : 'Compte client'
   const roleIndicatorDesc = isVendor
     ? 'Validé sous 24h par notre équipe'
@@ -159,7 +165,8 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
               transition: 'all 0.3s',
             }}
           >
-            {tagText}
+            <HiSparkles className="size-3.5" aria-hidden />
+            {tagLabel}
           </div>
 
           {/* Headline */}
@@ -202,7 +209,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
                   }}
                 >
                   <div
-                    className="flex shrink-0 items-center justify-center rounded-[10px] text-[17px]"
+                    className="flex shrink-0 items-center justify-center rounded-[10px] text-white"
                     style={{ width: 34, height: 34, background: b.iconBg }}
                   >
                     {b.icon}
@@ -231,7 +238,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
               }}
             >
               <div
-                className="flex shrink-0 items-center justify-center rounded-[10px] text-lg"
+                className="flex shrink-0 items-center justify-center rounded-[10px] text-white"
                 style={{ width: 36, height: 36, background: roleIconBg }}
               >
                 {roleIndicatorIcon}

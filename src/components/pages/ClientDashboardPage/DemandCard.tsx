@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { FiClock } from 'react-icons/fi'
 import { IAllRequestsDataEntity } from '@/types/allRequests'
 import QuoteCard from './QuoteCard'
 import { LocationIconSVG, CalendarIconSVG, FileIconSVG, ClockCircleOutlineIconSVG, ChevronIconSVG } from '@/components/library/AllSVG'
@@ -378,7 +379,9 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                         </div>
                     ) :
                         <div className="text-center py-6 text-appTextMuted text-sm">
-                            <div className="text-2xl mb-2">⏳</div>
+                            <div className="mb-2 flex justify-center text-2xl">
+                                <FiClock className="size-7" aria-hidden />
+                            </div>
                             Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.
                         </div>
                     }

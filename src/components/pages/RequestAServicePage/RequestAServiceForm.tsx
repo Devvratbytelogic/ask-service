@@ -4,7 +4,8 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { useSelector } from 'react-redux'
 import { serviceRequestContactSchema } from '@/utils/validation'
-import { FiArrowLeft, FiArrowRight, FiCheck, FiInfo, FiPhone } from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiCheck, FiHome, FiInfo, FiPhone } from 'react-icons/fi'
+import { HiBuildingOffice2 } from 'react-icons/hi2'
 import ReactSelect, { components, type OptionProps } from 'react-select'
 import {
   useGetAllServicesGroupedByParentCategoryQuery,
@@ -572,9 +573,9 @@ export default function RequestAServiceForm({
     : '—'
   const sumType =
     clientType === 'Individual'
-      ? '🏠 Particulier'
+      ? 'Particulier'
       : clientType === 'Company'
-        ? '🏢 Entreprise'
+        ? 'Entreprise'
         : '—'
 
   const isShaking = shakeStep === uiStep
@@ -689,18 +690,18 @@ export default function RequestAServiceForm({
                   [
                     {
                       value: 'Individual' as const,
-                      emoji: '🏠',
+                      icon: <FiHome className="size-10" aria-hidden />,
                       label: 'Particulier',
                       desc: 'Pour votre domicile',
                     },
                     {
                       value: 'Company' as const,
-                      emoji: '🏢',
+                      icon: <HiBuildingOffice2 className="size-10" aria-hidden />,
                       label: 'Entreprise',
                       desc: 'Usage professionnel',
                     },
                   ] as const
-                ).map(({ value, emoji, label, desc }) => {
+                ).map(({ value, icon, label, desc }) => {
                   const isSelected = clientType === value
                   return (
                     <button
@@ -723,7 +724,7 @@ export default function RequestAServiceForm({
                         fontFamily: 'inherit',
                       }}
                     >
-                      <div className="mb-1.5 text-5xl">{emoji}</div>
+                      <div className="mb-1.5 flex justify-center text-primaryColor">{icon}</div>
                       <div className="text-sm font-bold text-appText">{label}</div>
                       <div className="mt-0.5 text-xs text-appTextSec">{desc}</div>
                     </button>

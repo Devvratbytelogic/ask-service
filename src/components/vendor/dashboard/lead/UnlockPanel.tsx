@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'nextjs-toploader/app'
 import { Spinner } from '@heroui/react'
+import { FaCoins } from 'react-icons/fa6'
+import { FiCheckCircle, FiZap } from 'react-icons/fi'
 import { ArrowSendIconSVG, CheckmarkIconSVG, ChatOutlineIconSVG, ClockCircleIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, } from '@/components/library/AllSVG'
 import { getCreditsRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
@@ -138,17 +140,19 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                                 </div>
                             ) : isQuoteSent || isAccepted ? (
                                 <div className="text-2xl font-extrabold text-trust-green tracking-[-1px] leading-none flex items-center justify-center gap-2">
-                                    ✅ Devis envoyé
+                                    <FiCheckCircle className="size-6 shrink-0" aria-hidden />
+                                    Devis envoyé
                                 </div>
                             ) : (
                                 <div className="text-2xl font-extrabold text-trust-green tracking-[-1px] leading-none flex items-center justify-center gap-2">
-                                    ✅ Prospect débloqué !
+                                    <FiCheckCircle className="size-6 shrink-0" aria-hidden />
+                                    Prospect débloqué !
                                 </div>
                             )
                         ) : (
                             <>
                                 <div className="text-[40px] font-extrabold text-appText tracking-[-1.5px] leading-none flex items-center justify-center gap-1.5">
-                                    <span className="text-[28px]">🪙</span>
+                                    <FaCoins className="size-7 shrink-0 text-amber" aria-hidden />
                                     {credits}
                                 </div>
                                 <div className="text-[12px] text-appTextMuted mt-1">
@@ -160,7 +164,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
                     <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-black/3 dark:bg-white/4 border border-appBorder rounded-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="shrink-0 text-[14px]">🪙</span>
+                            <FaCoins className="size-3.5 shrink-0 text-amber" aria-hidden />
                             <div className="flex flex-col min-w-0">
                                 <span className="text-[11px] text-appTextSec">Votre solde</span>
                                 <span className="text-[13px] font-bold text-amber whitespace-nowrap">{walletBalance} crédits</span>
@@ -184,7 +188,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
                     {statusMessage && !isQuoteSent && !isAccepted && (
                         <div className="px-3 py-2.5 bg-linear-to-r from-orange-500/15 to-amber/10 border border-orange-500/30 rounded-[10px] flex items-center gap-2">
-                            <span className="text-[18px] shrink-0">⚡</span>
+                            <FiZap className="size-[18px] shrink-0 text-orange-500" aria-hidden />
                             <p className="text-[12px] font-semibold text-[#FDBA74] leading-[1.4]">
                                 {statusMessage}
                             </p>

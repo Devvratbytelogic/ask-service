@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { FaStar } from 'react-icons/fa6'
 import { useGetTestimonialsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 
 const AVATAR_COLORS = ['#1B4FFF', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#06B6D4']
@@ -57,7 +58,7 @@ export default function LoginTestimonialSlider() {
                             >
                                 <div className="mb-2.5 flex gap-0.5">
                                     {Array.from({ length: rating }).map((_, star) => (
-                                        <span key={star} style={{ color: 'var(--color-amber)', fontSize: 14 }}>★</span>
+                                        <FaStar key={star} className="size-3.5" style={{ color: 'var(--color-amber)' }} aria-hidden />
                                     ))}
                                 </div>
 

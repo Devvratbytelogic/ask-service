@@ -13,6 +13,7 @@ import {
     getServiceProviderRoutePath,
     getCreditsRoutePath,
 } from "@/routes/routes"
+import { FaCoins } from "react-icons/fa6"
 import { ArrowRightIconSVG } from "@/components/library/AllSVG"
 import { usePathname } from "next/navigation"
 import CustomerMenu, { CUSTOMER_NAV_LINKS } from "./CustomerMenu"
@@ -167,7 +168,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                         onClick={closeMenu}
                                         className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all md:hidden"
                                     >
-                                        <span aria-hidden="true">🪙</span>
+                                        <FaCoins aria-hidden className="size-3.5 shrink-0 text-amber" />
                                         <span className="text-sm font-bold text-amber">
                                             Mes crédits
                                         </span>

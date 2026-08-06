@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from 'next/link'
-import { FiArrowRight } from 'react-icons/fi'
+import { FiArrowRight, FiCheck } from 'react-icons/fi'
 import { getClientDashboardPageRoutePath } from '@/routes/routes'
 
 const SUCCESS_STEPS = [
@@ -31,7 +31,7 @@ export default function RequestSentScreen({
   return (
     <div className="animate-inscription-fade-up py-3 text-center">
       <div className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full bg-green-light dark:bg-green-icon-bg text-[30px] text-trust-green">
-        ✓
+        <FiCheck className="size-8" strokeWidth={3} aria-hidden />
       </div>
 
       <h3 className="mb-2 text-[22px] font-extrabold tracking-[-0.4px] text-appText">

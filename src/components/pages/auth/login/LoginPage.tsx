@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle, FiArrowLeft } from 'react-icons/fi'
+import { FiEye, FiEyeOff, FiArrowRight, FiCheck, FiAlertCircle, FiArrowLeft, FiLock } from 'react-icons/fi'
 import { addToast } from '@heroui/react'
 import { yupRequiredEmail } from '@/utils/validation'
 import {
@@ -432,10 +432,10 @@ export default function LoginPage({
 
                 <div className="mb-6 flex justify-center">
                   <div
-                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-[28px]"
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-primaryColor"
                     style={{ background: accentDim }}
                   >
-                    🔐
+                    <FiLock className="size-7" aria-hidden />
                   </div>
                 </div>
 

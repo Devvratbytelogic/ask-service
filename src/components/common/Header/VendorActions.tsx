@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { FaCoins } from 'react-icons/fa6'
 import { getCreditsRoutePath } from '@/routes/routes'
 import NotificationsPopover from './NotificationsPopover'
 import ThemeToggle from '@/components/common/ThemeToggle'
@@ -28,7 +29,7 @@ export default function VendorActions({
                 title={`${credits} crédits`}
                 className="hidden md:flex items-center gap-1 lg:gap-1.5 max-w-36 lg:max-w-44 xl:max-w-none px-2 lg:px-3 xl:px-3.5 py-1.5 rounded-full bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all shrink-0"
             >
-                <span aria-hidden="true" className="shrink-0">🪙</span>
+                <FaCoins aria-hidden className="size-3.5 shrink-0 text-amber" />
                 <strong className="text-[13px] lg:text-[14px] font-extrabold text-amber leading-none truncate">
                     {credits}
                 </strong>

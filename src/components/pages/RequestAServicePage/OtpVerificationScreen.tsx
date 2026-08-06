@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
-import { FiArrowLeft } from 'react-icons/fi'
+import { FiArrowLeft, FiMail, FiSmartphone } from 'react-icons/fi'
 import {
   useVerifyPhoneMutation,
   useVerifyEmailMutation,
@@ -148,7 +148,9 @@ export default function OtpVerificationScreen({
 
   const isPhone = type === 'phone'
   const accentBg = isPhone ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)'
-  const icon = isPhone ? '📱' : '✉️'
+  const icon = isPhone
+    ? <FiSmartphone className="size-7 text-trust-green" aria-hidden />
+    : <FiMail className="size-7 text-amber" aria-hidden />
   const title = isPhone ? 'Vérifiez votre numéro' : 'Vérifiez votre e-mail'
   const subtitle = isPhone
     ? `Un code de vérification a été envoyé par SMS au ${contact}. Saisissez-le ci-dessous.`

@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from 'next/link'
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiLock } from 'react-icons/fi'
 import { getLoginPageRoutePath } from '@/routes/routes'
 
 interface LoginRequiredScreenProps {
@@ -19,10 +19,10 @@ export default function LoginRequiredScreen({ loginType, onBack }: LoginRequired
   return (
     <div className="animate-inscription-fade-up py-2 text-center">
       <div
-        className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full text-[28px]"
+        className="mx-auto mb-5 flex size-[68px] animate-inscription-pop-in items-center justify-center rounded-full text-[28px] text-primaryColor"
         style={{ background: 'rgba(27,79,255,0.12)' }}
       >
-        🔐
+        <FiLock className="size-7" aria-hidden />
       </div>
 
       <h3 className="mb-2 text-[20px] font-extrabold tracking-[-0.3px] text-appText">

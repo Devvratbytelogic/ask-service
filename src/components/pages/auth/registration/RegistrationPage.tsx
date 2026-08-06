@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
-import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi'
+import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiBriefcase, FiCheck, FiClock, FiLock, FiSearch, FiX } from 'react-icons/fi'
+import { HiOutlineLightBulb } from 'react-icons/hi2'
 import ReactSelect from 'react-select'
 import { CategoryOptionImage, CategorySelectOption } from './categorySelectShared'
 import { buildSelectStyles, type CategoryGroup, type CategoryOption } from './selectStyles'
@@ -564,7 +565,9 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         background: isVendor ? 'var(--color-amber-light)' : 'var(--color-green-light)',
                       }}
                     >
-                      {isVendor ? '⏳' : '✓'}
+                      {isVendor
+                        ? <FiClock className="size-7 text-amber" aria-hidden />
+                        : <FiCheck className="size-7 text-trust-green" strokeWidth={3} aria-hidden />}
                     </div>
                     <h3
                       className="mb-2 text-appText"
@@ -582,7 +585,8 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     </p>
                     {isVendor && (
                       <div className="mb-6 inline-flex items-center gap-2 rounded-full border-[1.5px] border-amber-200 bg-amber-light px-4 py-2 text-[13px] font-semibold text-amber-900">
-                        ⏳ Compte en attente de validation
+                        <FiClock className="size-4 shrink-0" aria-hidden />
+                        Compte en attente de validation
                       </div>
                     )}
                     <button
@@ -644,9 +648,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         }}
                       >
                         {values.role === 'customer' && (
-                          <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primaryColor text-[11px] font-bold text-white">✓</span>
+                          <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primaryColor text-[11px] font-bold text-white">
+                            <FiCheck className="size-3" strokeWidth={3} aria-hidden />
+                          </span>
                         )}
-                        <span className="mb-2.5 block text-[28px]">🔍</span>
+                        <span className="mb-2.5 flex justify-center text-primaryColor">
+                          <FiSearch className="size-7" aria-hidden />
+                        </span>
                         <div className="mb-1 text-[14px] font-bold text-appText">Je suis client</div>
                         <div className="text-[12px] leading-relaxed text-appTextSec">
                           Je cherche des professionnels pour mes besoins
@@ -665,9 +673,13 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                         }}
                       >
                         {values.role === 'vendor' && (
-                          <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[11px] font-bold text-white">✓</span>
+                          <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[11px] font-bold text-white">
+                            <FiCheck className="size-3" strokeWidth={3} aria-hidden />
+                          </span>
                         )}
-                        <span className="mb-2.5 block text-[28px]">💼</span>
+                        <span className="mb-2.5 flex justify-center text-amber">
+                          <FiBriefcase className="size-7" aria-hidden />
+                        </span>
                         <div className="mb-1 text-[14px] font-bold text-appText">Je suis pro</div>
                         <div className="text-[12px] leading-relaxed text-appTextSec">
                           Je propose mes services et cherche des clients
@@ -831,7 +843,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                                   className="cursor-pointer text-[15px] leading-none opacity-60 transition-opacity hover:opacity-100"
                                   aria-label={`Retirer ${z}`}
                                 >
-                                  ×
+                                  <FiX className="size-3.5" aria-hidden />
                                 </button>
                               </span>
                             ))}
@@ -1061,10 +1073,10 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     {/* Icon */}
                     <div className="mb-6 flex justify-center">
                       <div
-                        className="flex h-14 w-14 items-center justify-center rounded-2xl text-[28px]"
+                        className="flex h-14 w-14 items-center justify-center rounded-2xl text-primaryColor"
                         style={{ background: 'var(--color-primary-dim)' }}
                       >
-                        🔐
+                        <FiLock className="size-7" aria-hidden />
                       </div>
                     </div>
 
@@ -1183,9 +1195,12 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                       />
                     ))}
 
-                    <div className="mb-5 rounded-[10px] bg-amber-light px-4 py-3 text-[12px] leading-relaxed text-amber-900">
-                      💡 Vos documents sont chiffrés et uniquement utilisés pour la vérification de votre profil.
-                      Vous pouvez également les fournir plus tard depuis votre espace prestataire.
+                    <div className="mb-5 flex items-start gap-2 rounded-[10px] bg-amber-light px-4 py-3 text-[12px] leading-relaxed text-amber-900">
+                      <HiOutlineLightBulb className="mt-0.5 size-4 shrink-0" aria-hidden />
+                      <span>
+                        Vos documents sont chiffrés et uniquement utilisés pour la vérification de votre profil.
+                        Vous pouvez également les fournir plus tard depuis votre espace prestataire.
+                      </span>
                     </div>
 
                     <div className="flex gap-2.5">

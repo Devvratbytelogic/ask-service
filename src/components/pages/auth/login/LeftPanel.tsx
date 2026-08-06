@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { HiSparkles } from 'react-icons/hi2'
 import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import LoginTestimonialSlider from '@/components/pages/auth/login/LoginTestimonialSlider'
@@ -81,7 +82,8 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
               transition: 'all 0.3s',
             }}
           >
-            ✦ Bienvenue
+            <HiSparkles className="size-3.5" aria-hidden />
+            Bienvenue
           </div>
 
           {/* Headline */}

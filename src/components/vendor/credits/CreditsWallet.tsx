@@ -8,7 +8,7 @@ import type { IAllCreditsDataEntity } from '@/types/allCredits'
 import { addToast, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Select, SelectItem, Spinner } from '@heroui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { HiMinus, HiOutlineArrowDownTray, HiPlus } from 'react-icons/hi2'
+import { HiMinus, HiOutlineArrowDownTray, HiPlus, HiXMark } from 'react-icons/hi2'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import BillingInfoModal from './BillingInfoModal'
 import moment from 'moment'
@@ -319,7 +319,7 @@ export default function CreditsWallet() {
                         className="text-[#2E7D32]/60 hover:text-[#2E7D32] transition-colors"
                         aria-label="Fermer"
                     >
-                        ✕
+                        <HiXMark className="size-4" aria-hidden />
                     </button>
                 </div>
             )}
@@ -337,7 +337,7 @@ export default function CreditsWallet() {
                         className="text-[#C62828]/60 hover:text-[#C62828] transition-colors"
                         aria-label="Fermer"
                     >
-                        ✕
+                        <HiXMark className="size-4" aria-hidden />
                     </button>
                 </div>
             )}

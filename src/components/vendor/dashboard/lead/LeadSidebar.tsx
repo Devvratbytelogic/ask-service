@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import ReactSelect, { type StylesConfig } from 'react-select'
+import { FiSearch } from 'react-icons/fi'
 import { CalendarOutlineIconSVG, LocationPinIconSVG } from '@/components/library/AllSVG'
 import { buildDashboardFilterSelectStyles, type FilterOption } from '@/components/pages/ClientDashboardPage/selectStyles'
 import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -46,7 +47,7 @@ export default function LeadSidebar({ selectedId }: Props) {
 
     const serviceOptions = useMemo<FilterOption[]>(
         () => [
-            { value: '', label: '🔍 Tous les services' },
+            { value: '', label: 'Tous les services' },
             ...(serviceCategoriesData?.data ?? [])?.flatMap((cat) => cat?.child_categories ?? []).map((cat) => ({
                 value: cat?._id,
                 label: cat?.title,
@@ -93,6 +94,16 @@ export default function LeadSidebar({ selectedId }: Props) {
                         onChange={(opt) => setServiceFilter(opt?.value ?? '')}
                         isSearchable={false}
                         styles={sidebarSelectStyles}
+                        formatOptionLabel={(option) =>
+                            option.value === '' ? (
+                                <span className="inline-flex items-center gap-1.5">
+                                    <FiSearch className="size-3.5 shrink-0" aria-hidden />
+                                    {option.label}
+                                </span>
+                            ) : (
+                                option.label
+                            )
+                        }
                         menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
                         menuPosition="fixed"
                     />

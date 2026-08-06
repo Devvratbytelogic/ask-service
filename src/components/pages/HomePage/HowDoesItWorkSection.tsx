@@ -4,6 +4,8 @@ import { openModal } from "@/redux/slices/allModalSlice"
 import { getLoginPageRoutePath, getRequestAServiceRoutePath } from "@/routes/routes"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
+import { FiTool, FiUser } from "react-icons/fi"
+import { HiSparkles } from "react-icons/hi2"
 
 type Step = {
     num: number
@@ -119,7 +121,8 @@ export default function HowDoesItWorkSection() {
         <section id="comment-ca-marche" className="px-[5%] py-[100px] bg-appBg">
             <div className="mb-[60px] text-center">
                 <div className="mb-3.5 inline-flex items-center gap-1.5 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
-                    ✦ Fonctionnement
+                    <HiSparkles className="size-3.5" aria-hidden />
+                    Fonctionnement
                 </div>
                 <h2 className="mb-4 text-[clamp(28px,3vw,42px)] leading-[1.15] font-extrabold tracking-[-0.8px] text-appText">
                     Simple pour tout le monde
@@ -132,7 +135,8 @@ export default function HowDoesItWorkSection() {
             <div className="mt-[60px] grid grid-cols-1 gap-10 lg:grid-cols-2">
                 <div className="rounded-3xl border-[1.5px] border-appBorderSub bg-appCard p-10">
                     <div className="mb-7 inline-flex items-center gap-2 rounded-full bg-blue-light dark:bg-primaryColor/15 px-3 py-1.5 text-xs font-bold tracking-[1px] text-primaryColor uppercase">
-                        👤 Pour les clients
+                        <FiUser className="size-3.5" aria-hidden />
+                        Pour les clients
                     </div>
 
                     <div className="flex flex-col gap-6">
@@ -162,7 +166,8 @@ export default function HowDoesItWorkSection() {
 
                 <div className="rounded-3xl bg-linear-to-br from-[#1B0F00] to-[#2D1A00] p-10">
                     <div className="mb-7 inline-flex items-center gap-2 rounded-full bg-amber-500/20 px-3 py-1.5 text-xs font-bold tracking-[1px] text-amber-500 uppercase">
-                        🔧 Pour les professionnels
+                        <FiTool className="size-3.5" aria-hidden />
+                        Pour les professionnels
                     </div>
 
                     <div className="flex flex-col gap-6">

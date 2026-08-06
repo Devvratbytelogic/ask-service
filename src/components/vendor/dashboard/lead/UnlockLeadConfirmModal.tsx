@@ -1,6 +1,8 @@
 'use client'
 
 import moment from 'moment'
+import { FaCoins } from 'react-icons/fa6'
+import { FiUnlock } from 'react-icons/fi'
 import { CheckmarkIconSVG } from '@/components/library/AllSVG'
 import { useUnlockLeadMutation } from '@/redux/rtkQueries/allPostApi'
 import { RootState } from '@/redux/appStore'
@@ -49,8 +51,8 @@ export default function UnlockLeadConfirmModal() {
 
     return (
         <div className="p-7">
-            <div className="w-14 h-14 rounded-2xl bg-primaryColor/15 border border-primaryColor/20 flex items-center justify-center text-[26px] mb-4">
-                🔓
+            <div className="w-14 h-14 rounded-2xl bg-primaryColor/15 border border-primaryColor/20 flex items-center justify-center text-[26px] mb-4 text-primaryColor">
+                <FiUnlock className="size-7" aria-hidden />
             </div>
             <h3 className="text-[20px] font-extrabold text-appText mb-2 tracking-[-0.3px]">
                 Débloquer ce prospect ?
@@ -79,8 +81,9 @@ export default function UnlockLeadConfirmModal() {
                 </div>
                 <div className="flex justify-between items-center text-[13px] pt-2.5 mt-0.5 border-t border-appBorderSub">
                     <span className="text-appTextSec">Coût du déblocage</span>
-                    <span className="font-extrabold text-amber text-[16px]">
-                        🪙 {creditsToUnlock} crédits
+                    <span className="font-extrabold text-amber text-[16px] inline-flex items-center gap-1">
+                        <FaCoins className="size-3.5 shrink-0" aria-hidden />
+                        {creditsToUnlock} crédits
                     </span>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { FiUpload, FiFile, FiX } from 'react-icons/fi'
+import { FiUpload, FiFile, FiX, FiCheck } from 'react-icons/fi'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type Step = 1 | 2 | 3 | 4 | 5
@@ -70,7 +70,7 @@ export function ProgressSteps({ currentStep, isVendor }: { currentStep: Step; is
                       : 'bg-trust-green text-white'
                 }`}
               >
-                {state === 'done' ? '✓' : s.id}
+                {state === 'done' ? <FiCheck className="size-3.5" strokeWidth={3} aria-hidden /> : s.id}
               </div>
               <span
                 className={`hidden text-center text-[10px] font-medium transition-colors min-[480px]:block min-[901px]:text-[11px] ${

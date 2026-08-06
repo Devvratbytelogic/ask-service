@@ -1,6 +1,7 @@
 import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
 import { getGlobalSettings } from "@/utils/getGlobalSettings"
 import Link from "next/link"
+import { FiBriefcase, FiSearch } from "react-icons/fi"
 
 const CheckIcon = () => (
     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -59,8 +60,8 @@ export default async function HeroSection({ activeVendorsCount }: { activeVendor
                         href={getRequestAServiceRoutePath()}
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-appCard p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:border-primaryColor hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
                     >
-                        <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-blue-light dark:bg-primaryColor/15 text-[22px]">
-                            🔍
+                        <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-blue-light dark:bg-primaryColor/15 text-primaryColor">
+                            <FiSearch className="size-5.5" aria-hidden />
                         </div>
                         <h3 className="mb-1 text-[15px] font-bold text-appText">
                             Je cherche un professionnel
@@ -77,8 +78,8 @@ export default async function HeroSection({ activeVendorsCount }: { activeVendor
                         href={getServiceProviderRoutePath()}
                         className="group w-full cursor-pointer rounded-2xl border-2 border-transparent bg-appCard p-5 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:border-amber-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
                     >
-                        <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-amber-light dark:bg-amber/15 text-[22px]">
-                            💼
+                        <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-amber-light dark:bg-amber/15 text-amber-500">
+                            <FiBriefcase className="size-5.5" aria-hidden />
                         </div>
                         <h3 className="mb-1 text-[15px] font-bold text-appText">
                             Je suis un professionnel
