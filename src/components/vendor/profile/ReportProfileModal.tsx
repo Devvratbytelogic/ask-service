@@ -75,8 +75,8 @@ export default function ReportProfileModal() {
                         setReason(key ?? null)
                     }}
                     classNames={{
-                        trigger: 'border border-appBorder bg-appCard shadow-none',
-                        value: 'text-placeHolderText data-[placeholder=true]:text-[#9CA3AF]',
+                        trigger: 'border border-appBorder bg-appCard shadow-none data-[hover=true]:bg-appCard',
+                        value: 'text-appText data-[placeholder=true]:text-placeHolderText',
                         label: 'hidden',
                     }}
                     aria-label="Sélectionnez un motif"
@@ -102,7 +102,7 @@ export default function ReportProfileModal() {
                         input: 'text-appText placeholder:text-placeHolderText',
                     }}
                 />
-                <p className="mt-2 text-xs text-[#9CA3AF]">
+                <p className="mt-2 text-xs text-appTextMuted">
                     Minimum {MIN_DETAILS_LENGTH} caractères ({charCount}/{MIN_DETAILS_LENGTH})
                 </p>
             </div>

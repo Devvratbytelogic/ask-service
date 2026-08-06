@@ -28,19 +28,20 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
     <div
       className="relative flex h-full min-h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[900px]:hidden"
       style={{
-        background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)',
+        // Ends on dark app-surface (#111827) so the seam with the form pane disappears in dark mode
+        background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 45%, #111827 100%)',
         position: 'sticky',
         top: 0,
         width: 420,
         flexShrink: 0,
       }}
     >
-      {/* Decorative blobs */}
+      {/* Decorative blobs — kept inward so they don't tint the right edge seam */}
       <div
         className="pointer-events-none absolute"
         style={{
-          top: -100, right: -80,
-          width: 400, height: 400, borderRadius: '50%',
+          top: -120, left: -40,
+          width: 360, height: 360, borderRadius: '50%',
           background: 'radial-gradient(circle, var(--color-primary-icon-bg) 0%, transparent 65%)',
         }}
       />
@@ -48,18 +49,20 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
         className="pointer-events-none absolute"
         style={{
           bottom: -60, left: -60,
-          width: 300, height: 300, borderRadius: '50%',
+          width: 280, height: 280, borderRadius: '50%',
           background: 'radial-gradient(circle, var(--color-amber-icon-bg) 0%, transparent 65%)',
         }}
       />
 
-      {/* Grid overlay */}
+      {/* Grid overlay — fades out toward the form pane */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
             'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
+          maskImage: 'linear-gradient(to right, black 70%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, black 70%, transparent 100%)',
         }}
       />
 

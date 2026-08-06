@@ -145,7 +145,7 @@ export function StyledInput({
       <input
         {...props}
         className={[
-          'w-full rounded-[10px] px-4 py-3 text-[14px] text-appText outline-none transition-all',
+          'w-full rounded-[10px] px-4 py-3 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
           'border-[1.5px]',
           error
             ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'

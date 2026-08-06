@@ -76,6 +76,7 @@ const DynamicQuestionsStep = ({ questions, formik, setStepCount }: DynamicQuesti
                     classNames={{
                       trigger: ["custom_input_design"],
                       label: ["custom_label_text"],
+                      value: ["text-appText data-[placeholder=true]:text-placeHolderText"],
                     }}
                     isRequired={q.is_required}
                   >

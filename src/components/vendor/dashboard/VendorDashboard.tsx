@@ -266,7 +266,7 @@ export default function VendorDashboard() {
                                             'data-[hover=true]:bg-appCard',
                                             'group-data-[focus=true]:bg-appCard',
                                         ],
-                                        input: 'text-sm text-appText',
+                                        input: 'text-sm text-appText placeholder:text-placeHolderText',
                                     },
                                 }}
                                 listboxProps={{

@@ -134,7 +134,7 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     }),
     multiValueLabel: (base) => ({
       ...base,
-      color: 'var(--color-amber-dark)',
+      color: 'var(--color-amber)',
       fontSize: 12,
       fontWeight: 600,
       padding: '2px 4px 2px 8px',
@@ -142,13 +142,15 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     }),
     multiValueRemove: (base) => ({
       ...base,
-      color: 'var(--color-amber-dark)',
+      color: 'var(--color-amber)',
       borderRadius: '0 99px 99px 0',
       paddingRight: 6,
+      cursor: 'pointer',
       '&:hover': {
         backgroundColor: 'rgba(245,158,11,0.2)',
-        color: 'var(--color-amber-dark)',
+        color: 'var(--color-amber)',
       },
     }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
   }
 }

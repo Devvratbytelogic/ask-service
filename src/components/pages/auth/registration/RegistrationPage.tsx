@@ -934,7 +934,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           onChange={handleChange}
                           onBlur={handleBlur}
                           className={[
-                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
+                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
                             touched.password && errors.password
                               ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
                               : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',
@@ -977,7 +977,7 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                           onChange={handleChange}
                           onBlur={handleBlur}
                           className={[
-                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
+                            'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
                             touched.passwordConfirm && errors.passwordConfirm
                               ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
                               : 'border-appBorder bg-appSurface focus:border-primaryColor focus:bg-appCard focus:shadow-[0_0_0_3px_var(--color-primary-dim)]',

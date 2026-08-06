@@ -154,8 +154,8 @@ export default function OpportunityGroup({
                             className="min-w-18"
                             size="sm"
                             classNames={{
-                                trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none',
-                                value: 'text-[12px]',
+                                trigger: 'min-h-8 border border-appBorderSub bg-appSurface shadow-none data-[hover=true]:bg-appSurface',
+                                value: 'text-[12px] text-appText',
                             }}
                             aria-label="Prospects par page"
                         >

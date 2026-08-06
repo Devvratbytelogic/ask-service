@@ -646,8 +646,8 @@ export default function CreditsWallet() {
                                 }}
                                 className="min-w-24"
                                 classNames={{
-                                    trigger: 'min-h-9 border border-appBorder bg-appCard',
-                                    value: 'text-sm',
+                                    trigger: 'min-h-9 border border-appBorder bg-appCard data-[hover=true]:bg-appCard',
+                                    value: 'text-sm text-appText',
                                 }}
                                 aria-label="Éléments par page"
                             >

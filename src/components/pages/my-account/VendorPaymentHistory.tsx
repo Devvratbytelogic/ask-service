@@ -250,8 +250,8 @@ export default function VendorPaymentHistory() {
                                 }}
                                 className="w-full min-w-0"
                                 classNames={{
-                                    trigger: 'min-h-10 border border-appBorder shadow-none bg-appCard',
-                                    value: 'text-sm truncate',
+                                    trigger: 'min-h-10 border border-appBorder shadow-none bg-appCard data-[hover=true]:bg-appCard',
+                                    value: 'text-sm truncate text-appText data-[placeholder=true]:text-placeHolderText',
                                     innerWrapper: 'w-full',
                                 }}
                                 aria-label="Filtrer par statut"
@@ -400,8 +400,8 @@ export default function VendorPaymentHistory() {
                             }}
                             className="min-w-20"
                             classNames={{
-                                trigger: 'min-h-9 border border-appBorder shadow-none bg-appCard',
-                                value: 'text-sm',
+                                trigger: 'min-h-9 border border-appBorder shadow-none bg-appCard data-[hover=true]:bg-appCard',
+                                value: 'text-sm text-appText',
                             }}
                             aria-label="Éléments par page"
                         >

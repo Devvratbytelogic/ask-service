@@ -250,7 +250,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                     onChange={emailForm.handleChange}
                     onBlur={emailForm.handleBlur}
                     className={[
-                      'w-full rounded-[10px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all',
+                      'w-full rounded-[10px] border-[1.5px] py-3 px-4 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
                       emailForm.touched.email && emailForm.errors.email
                         ? 'border-red-500 bg-red-light'
                         : 'border-appBorder bg-appSurface hover:border-appBorder',
@@ -416,7 +416,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                       onChange={passwordForm.handleChange}
                       onBlur={passwordForm.handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
                         passwordForm.touched.password && passwordForm.errors.password
                           ? 'border-red-500 bg-red-light'
                           : 'border-appBorder bg-appSurface hover:border-appBorder',
@@ -451,7 +451,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
                       onChange={passwordForm.handleChange}
                       onBlur={passwordForm.handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
                         passwordForm.touched.confirmPassword && passwordForm.errors.confirmPassword
                           ? 'border-red-500 bg-red-light'
                           : 'border-appBorder bg-appSurface hover:border-appBorder',

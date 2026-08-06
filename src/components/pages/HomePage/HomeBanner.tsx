@@ -87,6 +87,7 @@ const HomeBanner = () => {
                             }}
                             classNames={{
                                 trigger: "custom_input_large_design btn_radius h-[60px]! min-h-[60px]!",
+                                value: "text-appText data-[placeholder=true]:text-placeHolderText",
                             }}
                             listboxProps={{
                                 emptyContent: "Aucun élément.",
@@ -122,7 +123,7 @@ const HomeBanner = () => {
                                         "data-[hover=true]:bg-transparent",
                                         "group-data-[focus=true]:bg-transparent",
                                     ],
-                                    input: "text-appText text-base",
+                                    input: "text-appText text-base placeholder:text-placeHolderText",
                                 },
                             }}
                             startContent={<FaLocationDot className="text-xl text-primaryColor shrink-0" />}

@@ -38,10 +38,18 @@ export function buildDashboardFilterSelectStyles(): StylesConfig<FilterOption, f
             padding: 0,
         }),
         valueContainer: (base) => ({ ...base, padding: '2px 12px' }),
-        dropdownIndicator: (base) => ({
+        dropdownIndicator: (base, state) => ({
             ...base,
-            color: 'var(--app-text-muted)',
+            color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
             padding: '0 8px',
+            ':hover': { color: 'var(--app-text)' },
+        }),
+        clearIndicator: (base, state) => ({
+            ...base,
+            color: state.isFocused ? 'var(--app-text-sec)' : 'var(--app-text-muted)',
+            padding: '0 4px',
+            cursor: 'pointer',
+            ':hover': { color: 'var(--app-text)' },
         }),
         indicatorSeparator: () => ({ display: 'none' }),
         menu: (base) => ({

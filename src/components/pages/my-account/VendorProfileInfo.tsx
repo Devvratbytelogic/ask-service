@@ -433,7 +433,7 @@ export default function VendorProfileInfo() {
                             components={{ Option: CategorySelectOption }}
                             formatOptionLabel={({ label, image }, { context }) =>
                                 context === 'value' ? (
-                                    <span style={{ fontSize: 14, fontFamily: 'inherit', color: 'var(--app-text)' }}>{label}</span>
+                                    <span style={{ fontSize: 12, fontFamily: 'inherit', color: 'inherit' }}>{label}</span>
                                 ) : (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <CategoryOptionImage label={label} image={image} />
@@ -622,7 +622,10 @@ export default function VendorProfileInfo() {
                                 const key = Array.from(keys)[0]
                                 if (key) setFieldValue('companySize', key)
                             }}
-                            classNames={{ trigger: 'account_input_design flex-1 min-h-10' }}
+                            classNames={{
+                                trigger: 'account_input_design flex-1 min-h-10',
+                                value: 'text-appText data-[placeholder=true]:text-placeHolderText',
+                            }}
                             aria-label="La taille de l'entreprise"
                             startContent={<UsersIconSVG />}
                         >

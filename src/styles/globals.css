@@ -282,6 +282,10 @@ body {
   color: var(--app-text) !important;
 }
 
+.react-tel-input .country-list .search-box::placeholder {
+  color: var(--placeholder-text) !important;
+}
+
 /* Request a Service page — hero section background */
 .page-hero-bg {
   background: linear-gradient(160deg, #F0F4FF 0%, #F8FAFC 60%, #FFF8ED 100%);
