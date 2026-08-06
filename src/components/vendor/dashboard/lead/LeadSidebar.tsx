@@ -80,7 +80,7 @@ export default function LeadSidebar({ selectedId }: Props) {
     }
 
     return (
-        <aside className="bg-appSurface border-r border-appBorder overflow-y-auto sticky top-14.5 h-[calc(100vh-58px)]">
+        <aside className="bg-appSurface lg:border-r border-appBorder overflow-y-auto sticky top-14.5 h-[calc(100vh-58px)] max-lg:static max-lg:h-auto max-lg:overflow-visible max-lg:min-w-0">
             <div className="p-4 pb-2.5">
                 <div className="text-[12px] font-bold uppercase tracking-[1px] text-appTextMuted mb-2.5">
                     Prospects disponibles
@@ -103,65 +103,67 @@ export default function LeadSidebar({ selectedId }: Props) {
                 {leads?.length} prospects disponibles
             </div>
 
-            {leads?.length > 0 && leads?.map((lead) => {
-                // const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
-                const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
+            <div className="max-lg:flex max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:overscroll-x-contain">
+                {leads?.length > 0 && leads?.map((lead) => {
+                    // const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
+                    const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
 
-                const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
-                const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
-                const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
-                const isNewToday = Boolean(lead?.createdAt && moment(lead.createdAt).isSame(moment(), 'day'))
-                return (
-                    <button
-                        key={lead?._id}
-                        type="button"
-                        onClick={() => handleSelect(lead?._id)}
-                        className={`w-full text-left px-3.5 py-3 border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-appCard/4 ${selectedId === lead?._id
-                            ? 'bg-amber/8 border-l-[3px] border-l-amber'
-                            : 'border-l-[3px] border-l-transparent'
-                            }`}
-                    >
-                        <div className="flex items-center justify-between mb-1.25 gap-2">
-                            <div className="text-[13px] font-bold text-appText flex items-center gap-1.25 min-w-0">
-                                {isNewToday && <LeadStatusBadge status="new" label="NEW" />}
-                                <span className="truncate">{lead?.service_category?.title}</span>
-                            </div>
-                            <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-1.75 py-0.5 rounded-full whitespace-nowrap shrink-0">
-                                {lead?.creditsToUnlock} pts
-                            </span>
-                        </div>
-                        <div className="flex flex-col gap-0.5">
-                            {lead?.createdAt && (
-                                <div className="flex items-center gap-1 text-[11px] text-appTextSec min-w-0">
-                                    <span className="text-appTextMuted shrink-0">Créé :</span>
-                                    <span className="font-semibold text-appText truncate">
-                                        {formatShortRelative(lead.createdAt)}
-                                    </span>
+                    const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
+                    const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
+                    const timeSlotRaw = lead?.dynamic_answers?.find((a) => a.key === 'time_slot')?.value ?? ''
+                    const isNewToday = Boolean(lead?.createdAt && moment(lead.createdAt).isSame(moment(), 'day'))
+                    return (
+                        <button
+                            key={lead?._id}
+                            type="button"
+                            onClick={() => handleSelect(lead?._id)}
+                            className={`w-full text-left px-3.5 py-3 max-lg:border-t border-b border-appBorderSub cursor-pointer transition-all duration-200 hover:bg-black/3 dark:hover:bg-appCard/4 max-lg:min-w-65 max-lg:w-65 max-lg:max-w-65 max-lg:shrink-0 max-lg:border-r ${selectedId === lead?._id
+                                ? 'bg-amber/8 border-l-[3px] border-l-amber'
+                                : 'border-l-[3px] border-l-transparent'
+                                }`}
+                        >
+                            <div className="flex items-center justify-between mb-1.25 gap-2">
+                                <div className="text-[13px] font-bold text-appText flex items-center gap-1.25 min-w-0">
+                                    {isNewToday && <LeadStatusBadge status="new" label="NEW" />}
+                                    <span className="truncate">{lead?.service_category?.title}</span>
                                 </div>
-                            )}
-                            <span className="text-[11px] font-medium text-appTextMuted">
-                                {lead?.additionalDetails ?? ''}
-                            </span>
-                            <div className="flex items-center gap-1 text-[11px] text-appTextSec">
-                                <span className="text-appTextMuted flex shrink-0">
-                                    <LocationPinIconSVG size={11} />
+                                <span className="text-[11px] font-bold text-amber bg-amber/12 border border-amber/20 px-1.75 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                                    {lead?.creditsToUnlock} pts
                                 </span>
-                                {cityAndPostalCode ?? '—'}
                             </div>
-                            <div className="flex items-center gap-1 text-[11px] text-appTextSec">
-                                <span className="text-appTextMuted flex shrink-0">
-                                    <CalendarOutlineIconSVG size={11} />
+                            <div className="flex flex-col gap-0.5">
+                                {lead?.createdAt && (
+                                    <div className="flex items-center gap-1 text-[11px] text-appTextSec min-w-0">
+                                        <span className="text-appTextMuted shrink-0">Créé :</span>
+                                        <span className="font-semibold text-appText truncate">
+                                            {formatShortRelative(lead.createdAt)}
+                                        </span>
+                                    </div>
+                                )}
+                                <span className="text-[11px] font-medium text-appTextMuted">
+                                    {lead?.additionalDetails ?? ''}
                                 </span>
-                                {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
+                                <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                                    <span className="text-appTextMuted flex shrink-0">
+                                        <LocationPinIconSVG size={11} />
+                                    </span>
+                                    {cityAndPostalCode ?? '—'}
+                                </div>
+                                <div className="flex items-center gap-1 text-[11px] text-appTextSec">
+                                    <span className="text-appTextMuted flex shrink-0">
+                                        <CalendarOutlineIconSVG size={11} />
+                                    </span>
+                                    {desiredDate ?? '—'} · {timeSlotRaw ?? '—'}
+                                </div>
                             </div>
-                        </div>
-                        <div className={`mt-1.75 px-2 py-1.25 rounded-md text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
-                            {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
-                            {lead?.lead_status_message ?? '—'}
-                        </div>
-                    </button>
-                )
-            })}
+                            <div className={`mt-1.75 px-2 py-1.25 rounded-md text-[11px] leading-[1.4] flex items-center gap-1 bg-red-500/10 text-red-400/80`}>
+                                {/* {lead?.parent_service_category?.title ?? '—'} · {lead?.contact_details?.client_type === 'Individual' ? 'B2C' : 'B2B'} */}
+                                {lead?.lead_status_message ?? '—'}
+                            </div>
+                        </button>
+                    )
+                })}
+            </div>
         </aside>
     )
 }

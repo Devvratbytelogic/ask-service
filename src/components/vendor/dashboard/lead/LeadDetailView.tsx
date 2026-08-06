@@ -42,10 +42,7 @@ export default function LeadDetailView({ leadId }: Props) {
     if (isLoading) {
         return (
             <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
-                <div className="hidden lg:block">
-                    <LeadSidebarSkeleton />
-                </div>
-
+                <LeadSidebarSkeleton />
                 <LeadDetailViewSkeleton />
             </div>
         )
@@ -53,10 +50,7 @@ export default function LeadDetailView({ leadId }: Props) {
     if (!data) {
         return (
             <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
-                <div className="hidden lg:block">
-                    <LeadSidebar selectedId={leadId} />
-                </div>
-
+                <LeadSidebar selectedId={leadId} />
                 <LeadNotFound />
             </div>
         )
@@ -64,9 +58,7 @@ export default function LeadDetailView({ leadId }: Props) {
 
     return (
         <div className="grid lg:grid-cols-[260px_1fr_320px] min-h-[calc(100vh-58px)]">
-            <div className="hidden lg:block">
-                <LeadSidebar selectedId={leadId} />
-            </div>
+            <LeadSidebar selectedId={leadId} />
 
             <section className="bg-appBg overflow-y-auto p-5">
                 <div className="flex items-center gap-1.75 text-[12px] text-appTextMuted mb-4.5">

@@ -94,14 +94,14 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
 
     if (isLoading || !lead) {
         return (
-            <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] flex items-center justify-center">
+            <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] flex items-center justify-center max-lg:static max-lg:h-auto max-lg:border-t">
                 <Spinner size="lg" color="primary" />
             </aside>
         )
     }
 
     return (
-        <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] overflow-y-auto space-y-3">
+        <aside className="bg-appBg border-l border-appBorder p-[18px_14px] sticky top-14.5 h-[calc(100vh-58px)] overflow-y-auto space-y-3 max-lg:static max-lg:h-auto max-lg:overflow-visible max-lg:border-t">
             <div className="bg-appCard border border-appBorder rounded-2xl overflow-hidden">
                 <div className="px-4.5 py-3.5 bg-linear-to-r from-primaryColor/15 to-amber/8 border-b border-appBorderSub flex items-center justify-between">
                     <div className="flex items-center gap-1.75 text-[13px] font-bold text-appText">
