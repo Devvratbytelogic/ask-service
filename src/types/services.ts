@@ -44,6 +44,7 @@ export interface IAllServicesGroupedByParentCategoryDataEntity {
     title: string;
     description: string;
     image?: string | null;
+    display_order: number;
     options?: (IAllServicesGroupedByParentCategoryOptionsEntity | null)[] | null;
     child_categories?: (IAllServicesGroupedByParentCategoryChildCategoriesEntity | null)[] | null;
 }
@@ -60,6 +61,7 @@ export interface IAllServicesGroupedByParentCategoryChildCategoriesEntity {
     image?: null;
     company_credit: number;
     credit: number;
+    display_order: number;
     options?: (IAllServicesGroupedByParentCategoryOptionsEntity | null)[] | null;
 }
 
