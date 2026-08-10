@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function PrivacyPage() {
     return (
-        <div className="min-h-screen bg-appBg body_x_axis_padding container_y_padding_lg w-full max-w-2xl md:max-w-none md:w-2/3 mx-auto space-y-10">
+        <div className="min-h-screen bg-appBg page_container w-full space-y-10">
             <section className="w-full">
                 <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-fontBlack mb-2 md:mb-4">
                     Politique de confidentialité – RGPD

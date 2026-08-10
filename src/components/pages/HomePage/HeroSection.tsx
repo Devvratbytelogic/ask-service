@@ -1,5 +1,4 @@
 import { getRequestAServiceRoutePath, getServiceProviderRoutePath } from "@/routes/routes"
-import { getGlobalSettings } from "@/utils/getGlobalSettings"
 import Link from "next/link"
 import { FiBriefcase, FiSearch } from "react-icons/fi"
 
@@ -15,28 +14,22 @@ const TRUST_ITEMS = [
     "Pros vérifiés",
 ] as const
 
-export function formatVerifiedProfessionalsLabel(count: number): string {
-    if (count <= 0) return "Professionnels vérifiés"
-    const formatted = new Intl.NumberFormat("fr-FR").format(count)
-    return `+${formatted} professionnels vérifiés`
-}
-
-export default async function HeroSection({ activeVendorsCount }: { activeVendorsCount: number }) {
+export default async function HeroSection() {
     return (
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#FAFBFF] via-[#F0F4FF] to-[#FFF8ED] dark:from-slate-900 dark:via-[#0f172a] dark:to-slate-900 px-[4%] py-8 text-center sm:px-[5%] sm:py-12">
             <div
                 aria-hidden
-                className="pointer-events-none absolute -top-[200px] -right-[200px] size-[700px] rounded-full bg-[radial-gradient(circle,rgba(27,79,255,0.06)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(27,79,255,0.12)_0%,transparent_70%)]"
+                className="pointer-events-none absolute -top-50 -right-50 size-175 rounded-full bg-[radial-gradient(circle,rgba(27,79,255,0.06)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(27,79,255,0.12)_0%,transparent_70%)]"
             />
             <div
                 aria-hidden
-                className="pointer-events-none absolute -bottom-[100px] -left-[100px] size-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.07)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(245,158,11,0.12)_0%,transparent_70%)]"
+                className="pointer-events-none absolute -bottom-25 -left-25 size-125 rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.07)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(245,158,11,0.12)_0%,transparent_70%)]"
             />
 
-            <div className="relative z-1 w-full max-w-[720px]">
+            <div className="relative z-1 w-full max-w-180">
                 <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-full border-[1.5px] border-blue-light dark:border-primaryColor/30 bg-appCard px-3.5 py-1.5 text-[13px] font-semibold text-primaryColor shadow-[0_2px_8px_rgba(27,79,255,0.1)]">
                     <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-trust-green" />
-                    {formatVerifiedProfessionalsLabel(activeVendorsCount)}
+                    Trouver des professionnels vérifiés
                 </div>
 
                 <h1 className="mb-5 animate-hero-fade-up text-[clamp(38px,4.5vw,56px)] leading-[1.1] font-extrabold tracking-[-1.5px] text-appText [animation-delay:0.1s]">
@@ -51,7 +44,7 @@ export default async function HeroSection({ activeVendorsCount }: { activeVendor
                     et professionnels
                 </h1>
 
-                <p className="mx-auto mb-9 max-w-[520px] animate-hero-fade-up text-[17px] leading-[1.65] text-appTextSec [animation-delay:0.2s]">
+                <p className="mx-auto mb-9 max-w-130 animate-hero-fade-up text-[17px] leading-[1.65] text-appTextSec [animation-delay:0.2s]">
                     Nettoyage, sécurité, jardinage et plus encore — trouvez le bon prestataire en quelques clics, ou développez votre activité en accédant à des leads qualifiés.
                 </p>
 

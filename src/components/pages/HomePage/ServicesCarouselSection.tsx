@@ -58,7 +58,7 @@ export default function ServicesCarouselSection() {
     const halfLength = carouselItems.length / 2
 
     return (
-        <section className="overflow-hidden border-y border-appBorderSub dark:border-white/6 bg-appCard dark:bg-appSurface py-8">
+        <section id="services" className="overflow-hidden border-y border-appBorderSub dark:border-white/6 bg-appCard dark:bg-appSurface py-8 scroll-mt-24">
             <p className="mb-4.5 text-center text-[11px] font-bold tracking-[1.5px] text-slate-300 dark:text-appTextSec uppercase">
                 Nos domaines d&apos;intervention
             </p>

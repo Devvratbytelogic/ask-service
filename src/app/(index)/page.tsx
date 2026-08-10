@@ -16,7 +16,7 @@ export default async function HomePage() {
   const averageResponseTime = globalSettings?.data?.average_time_to_receive_a_quote ?? 0
   return (
     <>
-      <HeroSection activeVendorsCount={activeVendorsCount} />
+      <HeroSection />
       <ServicesCarouselSection />
       <HowDoesItWorkSection />
       <StatsSection activeVendorsCount={activeVendorsCount} activeRequestsCount={activeRequestsCount} averageRating={averageRating} averageResponseTime={averageResponseTime} />

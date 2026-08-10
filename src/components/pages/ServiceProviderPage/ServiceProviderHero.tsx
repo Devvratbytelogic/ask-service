@@ -1,7 +1,6 @@
 "use client"
 import { getLoginPageRoutePath, getRegistrationPageRoutePath } from "@/routes/routes"
 import Link from "next/link"
-import { formatVerifiedProfessionalsLabel } from "../HomePage/HeroSection"
 
 const TRUST_ITEMS = [
     "Sans abonnement",
@@ -51,7 +50,7 @@ export default function ServiceProviderHero({ activeVendorsCount, activeRequests
             <div className="relative z-1 max-w-200">
                 <div className="mb-7 inline-flex animate-hero-fade-down items-center gap-2 rounded-3xl border border-amber-500/25 bg-amber-500/12 px-4 py-1.5 text-xs font-semibold text-amber-500">
                     <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-amber-500" />
-                    {formatVerifiedProfessionalsLabel(activeVendorsCount)}
+                    Trouver des professionnels vérifiés
                 </div>
 
                 <h1 className="mb-5 animate-hero-fade-up text-5xl leading-[1.05] font-extrabold tracking-[-2px] text-appText dark:text-white [animation-delay:0.1s]">

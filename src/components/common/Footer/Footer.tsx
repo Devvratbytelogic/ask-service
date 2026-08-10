@@ -2,9 +2,10 @@
 import ImageComponent from '@/components/library/ImageComponent'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
 import { BsFacebook, BsLinkedin } from 'react-icons/bs'
 import { FaXTwitter } from 'react-icons/fa6'
-import { useGetGlobalSettingsQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetGlobalSettingsQuery, useGetServiceCategoriesQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import {
     getCreateRequestRoutePath,
     getHelpCenterRoutePath,
@@ -18,6 +19,7 @@ import {
     getLinkedinUrl,
     getHomeRoutePath,
     getServiceProviderRoutePath,
+    getRequestAServiceRoutePath,
 } from '@/routes/routes'
 
 const MESSAGE_PATHS = [
@@ -36,13 +38,24 @@ const MESSAGE_PATHS = [
     getLinkedinUrl(),
 ]
 
+const FOOTER_SERVICES_LIMIT = 4
+const SERVICES_SECTION_HREF = `${getHomeRoutePath()}#services`
+
 const linkClass = "text-sm font-medium text-[#ffffff73] no-underline transition-colors duration-200 hover:text-white"
 
 
 export default function Footer({ footerLogoUrl, platformDescription, marketplaceName }: { footerLogoUrl: string, platformDescription: string, marketplaceName: string }) {
     const pathname = usePathname()
-    const { data: globalSettings, isLoading } = useGetGlobalSettingsQuery()
+    const { data: globalSettings } = useGetGlobalSettingsQuery()
+    const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const settings = globalSettings?.data
+
+    const footerServices = useMemo(
+        () => (serviceCategoriesData?.data ?? [])
+            .flatMap((category) => category.child_categories ?? [])
+            .slice(0, FOOTER_SERVICES_LIMIT),
+        [serviceCategoriesData?.data],
+    )
 
     if (!MESSAGE_PATHS.some((path) => pathname === path)) {
         return null
@@ -71,11 +84,18 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                 <div>
                     <h4 className="text-sm font-bold text-white uppercase tracking-[0.8px] mb-4">Services</h4>
                     <ul className="list-none p-0 m-0 flex flex-col gap-2">
-                        <li><Link href={getCreateRequestRoutePath()} className={linkClass}>Nettoyage</Link></li>
-                        <li><Link href={getCreateRequestRoutePath()} className={linkClass}>Sécurité</Link></li>
-                        <li><Link href={getCreateRequestRoutePath()} className={linkClass}>Jardinage</Link></li>
-                        <li><Link href={getCreateRequestRoutePath()} className={linkClass}>Déménagement</Link></li>
-                        <li><Link href={getCreateRequestRoutePath()} className={linkClass}>Plomberie</Link></li>
+                        {footerServices.map((service) => (
+                            <li key={service._id}>
+                                <Link href={getRequestAServiceRoutePath(service._id)} className={linkClass}>
+                                    {service.title}
+                                </Link>
+                            </li>
+                        ))}
+                        <li>
+                            <Link href={SERVICES_SECTION_HREF} className={linkClass}>
+                                Voir plus
+                            </Link>
+                        </li>
                     </ul>
                 </div>
 
@@ -84,7 +104,6 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                     <h4 className="text-sm font-bold text-white uppercase tracking-[0.8px] mb-4">Plateforme</h4>
                     <ul className="list-none p-0 m-0 flex flex-col gap-2">
                         <li><Link href={getHelpCenterRoutePath()} className={linkClass}>Comment ça marche</Link></li>
-                        <li><Link href={getContactUsRoutePath()} className={linkClass}>Annuaire pros</Link></li>
                         <li><Link href={getCreditsRoutePath()} className={linkClass}>Tarifs</Link></li>
                     </ul>
                 </div>
@@ -94,7 +113,7 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                     <h4 className="text-sm font-bold text-white uppercase tracking-[0.8px] mb-4">Légal</h4>
                     <ul className="list-none p-0 m-0 flex flex-col gap-2">
                         <li><Link href={getTermsRoutePath()} className={linkClass}>Mentions légales</Link></li>
-                        <li><Link href={getTermsRoutePath()} className={linkClass}>CGU</Link></li>
+                        {/* <li><Link href={getTermsRoutePath()} className={linkClass}>CGU</Link></li> */}
                         <li><Link href={getPrivacyRoutePath()} className={linkClass}>Confidentialité</Link></li>
                         <li><Link href={getCookiesRoutePath()} className={linkClass}>Cookies</Link></li>
                     </ul>
