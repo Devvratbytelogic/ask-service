@@ -60,8 +60,9 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
     const closeMenu = () => setMenuOpen(false)
 
     return (
+        <>
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 h-17 overflow-x-clip backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
+            className={`sticky top-0 left-0 right-0 z-50 h-17 backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             <div className="header_container relative">
                 {/*
@@ -142,110 +143,112 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                         aria-expanded={menuOpen}
                     >
                         <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'opacity-0' : ''}`} />
+                        {/* scale-x-0: iOS still paints opacity-0 middle bar as side dots on the X */}
+                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'scale-x-0 opacity-0' : ''}`} />
                         <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
                     </button>
                 </div>
 
-                {menuOpen && (
-                    <>
-                        <div
-                            className={`${mobileMenuBreakpoint}:hidden fixed inset-0 z-40`}
-                            onClick={closeMenu}
-                            aria-hidden="true"
-                        />
-                        <div className={`${mobileMenuBreakpoint}:hidden absolute top-full right-4 sm:right-6 md:right-7 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl shadow-lg z-50 py-2 px-2 border bg-appCard border-appBorder dark:border-white/10 max-h-[calc(100vh-5rem)] overflow-y-auto`}>
-                            {isAuth ? (
-                                <>
-                                    <div className="px-2 py-1">
-                                        <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-appTextSec">
-                                            Navigation
-                                        </p>
-                                        {isVendorUser ? (
-                                            <VendorMenu onNavigate={closeMenu} layout="stack" />
-                                        ) : (
-                                            CUSTOMER_NAV_LINKS.map(({ label, href }) => {
-                                                const isActive = pathname === href || pathname.startsWith(href + '/')
-                                                return (
-                                                    <Link
-                                                        key={href}
-                                                        href={href}
-                                                        onClick={closeMenu}
-                                                        className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
-                                                            ? 'text-primaryColor bg-primaryColor/10'
-                                                            : 'text-appText hover:bg-appOverlay-5'
-                                                            }`}
-                                                    >
-                                                        {label}
-                                                    </Link>
-                                                )
-                                            })
-                                        )}
-                                    </div>
-
-                                    {isVendorUser && (
-                                        <Link
-                                            href={getCreditsRoutePath()}
-                                            onClick={closeMenu}
-                                            className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all md:hidden"
-                                        >
-                                            <FaCoins aria-hidden className="size-3.5 shrink-0 text-amber" />
-                                            <span className="text-sm font-bold text-amber">
-                                                Mes crédits
-                                            </span>
-                                        </Link>
-                                    )}
-
-                                    {!isVendorUser && (
-                                        <Link
-                                            href={getRequestAServiceRoutePath()}
-                                            onClick={closeMenu}
-                                            className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primaryColor text-white text-sm font-bold hover:bg-blue-dark transition-colors lg:hidden"
-                                        >
-                                            Nouvelle demande
-                                        </Link>
-                                    )}
-
-                                    <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
-
-                                    <div className="flex items-center justify-between px-3 py-2">
-                                        <span className="text-xs font-semibold text-appTextSec">Thème</span>
-                                        <ThemeToggle />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex items-center justify-between px-3 py-2">
-                                        <span className="text-xs font-semibold text-appTextSec">Thème</span>
-                                        <ThemeToggle />
-                                    </div>
-
-                                    <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
-
-                                    <div className="flex flex-col gap-1 px-2 py-1">
-                                        <Link
-                                            href={loginHref}
-                                            onClick={closeMenu}
-                                            className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-appText hover:bg-appOverlay-5"
-                                        >
-                                            Connexion / Inscription
-                                        </Link>
-                                        {!isServiceProviderPage && (
-                                            <Link
-                                                href={getRegistrationPageRoutePath({ role: 'vendor' })}
-                                                onClick={closeMenu}
-                                                className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-primaryColor hover:bg-primaryColor/10"
-                                            >
-                                                Devenir Prestataire →
-                                            </Link>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </>
-                )}
             </div>
         </nav>
+        {menuOpen && (
+            <>
+                <div
+                    className={`${mobileMenuBreakpoint}:hidden fixed inset-0 z-40 bg-black/20`}
+                    onClick={closeMenu}
+                    aria-hidden="true"
+                />
+                <div className={`${mobileMenuBreakpoint}:hidden fixed top-17 right-4 z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl shadow-lg py-2 px-2 border bg-appCard border-appBorder dark:border-white/10 max-h-[calc(100vh-5.5rem)] overflow-y-auto overscroll-contain`}>
+                    {isAuth ? (
+                        <>
+                            <div className="px-2 py-1">
+                                <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-appTextSec">
+                                    Navigation
+                                </p>
+                                {isVendorUser ? (
+                                    <VendorMenu onNavigate={closeMenu} layout="stack" />
+                                ) : (
+                                    CUSTOMER_NAV_LINKS.map(({ label, href }) => {
+                                        const isActive = pathname === href || pathname.startsWith(href + '/')
+                                        return (
+                                            <Link
+                                                key={href}
+                                                href={href}
+                                                onClick={closeMenu}
+                                                className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
+                                                    ? 'text-primaryColor bg-primaryColor/10'
+                                                    : 'text-appText hover:bg-appOverlay-5'
+                                                    }`}
+                                            >
+                                                {label}
+                                            </Link>
+                                        )
+                                    })
+                                )}
+                            </div>
+
+                            {isVendorUser && (
+                                <Link
+                                    href={getCreditsRoutePath()}
+                                    onClick={closeMenu}
+                                    className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber/12 border border-amber/30 hover:bg-amber/20 transition-all md:hidden"
+                                >
+                                    <FaCoins aria-hidden className="size-3.5 shrink-0 text-amber" />
+                                    <span className="text-sm font-bold text-amber">
+                                        Mes crédits
+                                    </span>
+                                </Link>
+                            )}
+
+                            {!isVendorUser && (
+                                <Link
+                                    href={getRequestAServiceRoutePath()}
+                                    onClick={closeMenu}
+                                    className="mx-2 mb-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primaryColor text-white text-sm font-bold hover:bg-blue-dark transition-colors lg:hidden"
+                                >
+                                    Nouvelle demande
+                                </Link>
+                            )}
+
+                            <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
+
+                            <div className="flex items-center justify-between px-3 py-2">
+                                <span className="text-xs font-semibold text-appTextSec">Thème</span>
+                                <ThemeToggle />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex items-center justify-between px-3 py-2">
+                                <span className="text-xs font-semibold text-appTextSec">Thème</span>
+                                <ThemeToggle />
+                            </div>
+
+                            <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
+
+                            <div className="flex flex-col gap-1 px-2 py-1">
+                                <Link
+                                    href={loginHref}
+                                    onClick={closeMenu}
+                                    className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-appText hover:bg-appOverlay-5"
+                                >
+                                    Connexion / Inscription
+                                </Link>
+                                {!isServiceProviderPage && (
+                                    <Link
+                                        href={getRegistrationPageRoutePath({ role: 'vendor' })}
+                                        onClick={closeMenu}
+                                        className="flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-primaryColor hover:bg-primaryColor/10"
+                                    >
+                                        Devenir Prestataire →
+                                    </Link>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </>
+        )}
+        </>
     )
 }
