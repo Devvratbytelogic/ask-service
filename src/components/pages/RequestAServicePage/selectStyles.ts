@@ -68,7 +68,7 @@ export function buildDynSelectStyles<IsMulti extends boolean>(
     input: (base) => ({
       ...base,
       fontFamily: 'inherit',
-      fontSize: 14,
+      fontSize: 16, // ≥16px prevents iOS Safari focus zoom
       color: 'var(--app-text)',
       margin: 0,
       padding: 0,
@@ -236,7 +236,7 @@ export function buildServiceSelectStyles(
     input: (base) => ({
       ...base,
       fontFamily: 'inherit',
-      fontSize: 14,
+      fontSize: 16, // ≥16px prevents iOS Safari focus zoom
       color: 'var(--app-text)',
       margin: 0,
       padding: 0,

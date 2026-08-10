@@ -61,17 +61,37 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
 
     return (
         <nav
-            className={`sticky top-0 left-0 right-0 z-50 h-17 backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
+            className={`sticky top-0 left-0 right-0 z-50 h-17 overflow-x-clip backdrop-blur-md transition-shadow duration-300 border-b border-appBorder/60 dark:border-white/7 bg-appNav ${scrolled ? "shadow-[0_4px_24px_rgba(0,0,0,0.08)]" : "shadow-none"}`}
         >
             <div className="header_container relative">
-                <Link href={getHomeRoutePath()} className="flex items-center gap-1.5 shrink-0 min-w-0">
+                {/*
+                  Real iOS Safari expands Next/Image (width/height=1000 + w-full) inside flex,
+                  then object-contain centers the artwork — logo looks centered/right.
+                  Chrome DevTools does not reproduce that. Keep logo box w-fit + object-left.
+                */}
+                <Link
+                    href={getHomeRoutePath()}
+                    className="flex w-fit max-w-[min(9.5rem,calc(100%-3.25rem))] shrink-0 items-center sm:max-w-46 md:max-w-52"
+                >
                     {lightLogo || darkLogo ? (
                         <>
-                            <span className="h-12 sm:h-14 inline-flex items-center dark:hidden">
-                                <ImageComponent url={lightLogo} img_title="logo image" object_contain />
+                            <span className="inline-flex h-10 w-fit max-w-full items-center dark:hidden sm:h-12 md:h-14">
+                                <ImageComponent
+                                    url={lightLogo}
+                                    img_title="logo image"
+                                    object_contain
+                                    imgPriority
+                                    className="h-full w-auto max-w-full object-left"
+                                />
                             </span>
-                            <span className="h-12 sm:h-14 hidden dark:inline-flex items-center">
-                                <ImageComponent url={darkLogo} img_title="logo image" object_contain />
+                            <span className="hidden h-10 w-fit max-w-full items-center dark:inline-flex sm:h-12 md:h-14">
+                                <ImageComponent
+                                    url={darkLogo}
+                                    img_title="logo image"
+                                    object_contain
+                                    imgPriority
+                                    className="h-full w-auto max-w-full object-left"
+                                />
                             </span>
                         </>
                     ) : (

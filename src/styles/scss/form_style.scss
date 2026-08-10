@@ -36,7 +36,7 @@
 
     input,
     textarea {
-        @apply text-appText!;
+        @apply text-base! text-appText!;
         caret-color: var(--app-text);
         /* HeroUI applies bg-clip-text which can hide typed text against dark surfaces */
         background-clip: border-box !important;

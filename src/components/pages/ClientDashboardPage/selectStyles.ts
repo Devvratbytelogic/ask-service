@@ -32,7 +32,7 @@ export function buildDashboardFilterSelectStyles(): StylesConfig<FilterOption, f
         }),
         input: (base) => ({
             ...base,
-            fontSize: 13,
+            fontSize: 16, // ≥16px prevents iOS Safari focus zoom
             color: 'var(--app-text)',
             margin: 0,
             padding: 0,

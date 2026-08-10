@@ -54,7 +54,7 @@ export function buildSelectStyles(hasError: boolean): StylesConfig<CategoryOptio
     input: (base) => ({
       ...base,
       fontFamily: 'inherit',
-      fontSize: 14,
+      fontSize: 16, // ≥16px prevents iOS Safari focus zoom
       color: 'var(--app-text)',
       margin: 0,
       padding: 0,

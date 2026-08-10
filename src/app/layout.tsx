@@ -116,7 +116,7 @@ export default async function RootLayout({
           }}
         />
         <AppProviders>
-          <div className="flex min-h-screen flex-col bg-appBg text-appText">
+          <div className="flex min-h-screen flex-col overflow-x-clip bg-appBg text-appText">
             <ConditionalChrome>
               <Header logoUrl={logoUrl || ""} logoDarkUrl={logoDarkUrl || ""} vendorLogoUrl={vendorLogoUrl || ""} vendorLogoDarkUrl={vendorLogoDarkUrl || ""} isVendor={isVendor} isAuthenticated={initialIsAuthenticated} />
             </ConditionalChrome>

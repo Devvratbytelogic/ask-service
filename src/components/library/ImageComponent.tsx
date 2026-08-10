@@ -10,9 +10,18 @@ interface ImageComponentProps {
   object_cover?: boolean;
   object_contain?: boolean;
   imgPriority?: boolean;
+  /** Overrides default `w-full h-full` sizing (e.g. header logos on iOS Safari). */
+  className?: string;
 }
 
-export default function ImageComponent({ url, img_title, object_cover = true, object_contain = false }: ImageComponentProps) {
+export default function ImageComponent({
+  url,
+  img_title,
+  object_cover = true,
+  object_contain = false,
+  imgPriority = false,
+  className,
+}: ImageComponentProps) {
   const [hasError, setHasError] = useState(false);
   const resolvedUrl = useMemo(() => resolveImageSrc(url), [url]);
   const isLocalPreview = /^blob:|^data:/i.test(resolvedUrl);
@@ -22,6 +31,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
   }, [resolvedUrl]);
 
   const objectFitClass = object_contain ? 'object-contain' : object_cover ? 'object-cover' : '';
+  const sizeClass = className ?? 'w-full h-full';
   const fallbackLetters = img_title
     ? img_title
       .replace(/\s+/g, '')
@@ -32,7 +42,7 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
   if (hasError || !resolvedUrl) {
     return (
       <div
-        className={`w-full h-full flex items-center justify-center text-gray-600 font-semibold ${objectFitClass}`}
+        className={`flex items-center justify-center text-gray-600 font-semibold ${sizeClass} ${objectFitClass}`}
         aria-label={img_title || 'Image unavailable'}
       >
         {fallbackLetters}
@@ -46,7 +56,8 @@ export default function ImageComponent({ url, img_title, object_cover = true, ob
       width={1000}
       height={1000}
       alt={img_title || 'title not found'}
-      className={`w-full h-full ${objectFitClass}`}
+      className={`${sizeClass} ${objectFitClass}`}
+      priority={imgPriority}
       unoptimized={isLocalPreview}
       onError={() => setHasError(true)}
     />

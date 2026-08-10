@@ -544,7 +544,7 @@ export default function LoginPage({
                       onChange={(e) => { handleChange(e); setServerError('') }}
                       onBlur={handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-base text-appText outline-none transition-all placeholder:text-placeHolderText',
                         touched.email && errors.email
                           ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
                           : `border-appBorder bg-appSurface hover:border-appBorder focus:bg-appCard focus:shadow-[0_0_0_3px_${accentDim}]`,
@@ -591,7 +591,7 @@ export default function LoginPage({
                       onChange={(e) => { handleChange(e); setServerError('') }}
                       onBlur={handleBlur}
                       className={[
-                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-[14px] text-appText outline-none transition-all placeholder:text-placeHolderText',
+                        'w-full rounded-[10px] border-[1.5px] py-3 pl-4 pr-11 text-base text-appText outline-none transition-all placeholder:text-placeHolderText',
                         touched.password && errors.password
                           ? 'border-red-500 bg-red-light focus:shadow-[0_0_0_3px_rgba(239,68,68,0.1)]'
                           : 'border-appBorder bg-appSurface hover:border-appBorder',
