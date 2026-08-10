@@ -47,11 +47,21 @@ const STATUS_CONFIG: Record<string, { classes: string; icon: React.ReactNode }> 
     },
     ignore: {
         classes: 'bg-black/[0.05] dark:bg-white/[0.05] text-appTextSec border border-appBorderSub',
-        icon: null,
+        icon: (
+            <svg width="8" height="8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+            </svg>
+        ),
     },
     closed: {
         classes: 'bg-black/[0.05] dark:bg-white/[0.05] text-appTextSec border border-appBorderSub',
-        icon: null,
+        icon: (
+            <svg width="8" height="8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+        ),
     },
 }
 
@@ -515,7 +525,7 @@ export default function DemandCard({ demand, isExpanded, onToggle }: DemandCardP
                             <div className="mb-2 flex justify-center text-2xl">
                                 <FiClock className="size-7 max-md:size-6" aria-hidden />
                             </div>
-                            Votre demande a été transmise aux professionnels. Les devis arriveront sous 24h.
+                            Votre demande a été transmise aux professionnels.
                         </div>
                     )}
                 </div>
