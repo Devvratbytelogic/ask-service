@@ -2,6 +2,7 @@
 import ImageComponent from '@/components/library/ImageComponent'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'nextjs-toploader/app'
 import { useMemo } from 'react'
 import { BsFacebook, BsLinkedin } from 'react-icons/bs'
 import { FaXTwitter } from 'react-icons/fa6'
@@ -39,13 +40,15 @@ const MESSAGE_PATHS = [
 ]
 
 const FOOTER_SERVICES_LIMIT = 4
-const SERVICES_SECTION_HREF = `${getHomeRoutePath()}#services`
+const SERVICES_SECTION_ID = 'services'
+const HOME_PATH = getHomeRoutePath()
 
 const linkClass = "text-sm font-medium text-[#ffffff73] no-underline transition-colors duration-200 hover:text-white"
 
 
 export default function Footer({ footerLogoUrl, platformDescription, marketplaceName }: { footerLogoUrl: string, platformDescription: string, marketplaceName: string }) {
     const pathname = usePathname()
+    const router = useRouter()
     const { data: globalSettings } = useGetGlobalSettingsQuery()
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
     const settings = globalSettings?.data
@@ -56,6 +59,19 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
             .slice(0, FOOTER_SERVICES_LIMIT),
         [serviceCategoriesData?.data],
     )
+
+    const scrollToServices = () => {
+        document.getElementById(SERVICES_SECTION_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
+    const handleVoirPlus = () => {
+        if (pathname === HOME_PATH) {
+            scrollToServices()
+            return
+        }
+        router.push(HOME_PATH)
+        window.setTimeout(scrollToServices, 400)
+    }
 
     if (!MESSAGE_PATHS.some((path) => pathname === path)) {
         return null
@@ -92,9 +108,9 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                             </li>
                         ))}
                         <li>
-                            <Link href={SERVICES_SECTION_HREF} className={linkClass}>
+                            <button type="button" onClick={handleVoirPlus} className={`${linkClass} cursor-pointer bg-transparent border-0 p-0 text-left`}>
                                 Voir plus
-                            </Link>
+                            </button>
                         </li>
                     </ul>
                 </div>
