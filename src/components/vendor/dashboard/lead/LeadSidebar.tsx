@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import ReactSelect, { type StylesConfig } from 'react-select'
 import { FiSearch } from 'react-icons/fi'
+import { Pagination } from '@heroui/react'
 import { CalendarOutlineIconSVG, LocationPinIconSVG } from '@/components/library/AllSVG'
 import { buildDashboardFilterSelectStyles, type FilterOption } from '@/components/pages/ClientDashboardPage/selectStyles'
 import { useGetServiceCategoriesQuery, useGetVendorAvailableLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -11,6 +12,8 @@ import { generateLeadDetailRoutePath } from '@/routes/routes'
 import moment from 'moment'
 import LeadStatusBadge from './LeadStatusBadge'
 import LeadSidebarSkeleton from './LeadSidebarSkeleton'
+
+const PAGE_LIMIT = 10
 
 function formatShortRelative(date: string): string {
     const created = moment(date)
@@ -34,16 +37,20 @@ interface Props {
 
 export default function LeadSidebar({ selectedId }: Props) {
     const router = useRouter()
+    const asideRef = useRef<HTMLElement>(null)
     const [serviceFilter, setServiceFilter] = useState('')
+    const [page, setPage] = useState(1)
     const { data: serviceCategoriesData } = useGetServiceCategoriesQuery()
-    const { data: leadsData, isLoading: leadsLoading } = useGetVendorAvailableLeadsQuery({
+    const { data: leadsData, isLoading: leadsLoading, isFetching } = useGetVendorAvailableLeadsQuery({
         service: serviceFilter || undefined,
         unlocked: false,
-        limit: 20,
-        page: 1
+        limit: PAGE_LIMIT,
+        page,
     })
 
     const leads = leadsData?.data?.items ?? []
+    const totalPages = leadsData?.data?.totalPages ?? 0
+    const totalLeads = leadsData?.data?.total ?? leads.length
 
     const serviceOptions = useMemo<FilterOption[]>(
         () => [
@@ -70,6 +77,16 @@ export default function LeadSidebar({ selectedId }: Props) {
         }
     }, [])
 
+    const handleServiceChange = (value: string) => {
+        setServiceFilter(value)
+        setPage(1)
+    }
+
+    const handlePageChange = (nextPage: number) => {
+        setPage(nextPage)
+        asideRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
     const handleSelect = (id: string) => {
         if (id === selectedId) return
         router.push(generateLeadDetailRoutePath(id))
@@ -81,7 +98,10 @@ export default function LeadSidebar({ selectedId }: Props) {
     }
 
     return (
-        <aside className="bg-appSurface lg:border-r border-appBorder overflow-y-auto sticky top-14.5 h-[calc(100vh-58px)] max-lg:static max-lg:h-auto max-lg:overflow-visible max-lg:min-w-0">
+        <aside
+            ref={asideRef}
+            className="bg-appSurface lg:border-r border-appBorder overflow-y-auto sticky top-14.5 h-[calc(100vh-58px)] max-lg:static max-lg:h-auto max-lg:overflow-visible max-lg:min-w-0"
+        >
             <div className="p-4 pb-2.5">
                 <div className="text-[12px] font-bold uppercase tracking-[1px] text-appTextMuted mb-2.5">
                     Prospects disponibles
@@ -91,7 +111,7 @@ export default function LeadSidebar({ selectedId }: Props) {
                         instanceId="lead-sidebar-service-filter"
                         options={serviceOptions}
                         value={selectedServiceOption}
-                        onChange={(opt) => setServiceFilter(opt?.value ?? '')}
+                        onChange={(opt) => handleServiceChange(opt?.value ?? '')}
                         isSearchable={false}
                         styles={sidebarSelectStyles}
                         formatOptionLabel={(option) =>
@@ -111,10 +131,10 @@ export default function LeadSidebar({ selectedId }: Props) {
             </div>
 
             <div className="text-[11px] font-semibold text-appTextMuted px-3.5 mb-1.5">
-                {leads?.length} prospects disponibles
+                {totalLeads} prospects disponibles
             </div>
 
-            <div className="max-lg:flex max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:overscroll-x-contain">
+            <div className={`max-lg:flex max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:overscroll-x-contain ${isFetching ? 'opacity-60 pointer-events-none' : ''}`}>
                 {leads?.length > 0 && leads?.map((lead) => {
                     // const postalCodeRaw = lead?.dynamic_answers?.find((a) => a.key === 'postal_code')?.value ?? ''
                     const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
@@ -175,6 +195,27 @@ export default function LeadSidebar({ selectedId }: Props) {
                     )
                 })}
             </div>
+
+            {totalPages > 1 && (
+                <div className="flex justify-center py-4 px-3">
+                    <Pagination
+                        total={totalPages}
+                        page={page}
+                        onChange={handlePageChange}
+                        showControls
+                        color="primary"
+                        radius="full"
+                        size="sm"
+                        classNames={{
+                            cursor: 'bg-primaryColor text-white',
+                            item: 'cursor-pointer',
+                            prev: 'cursor-pointer',
+                            next: 'cursor-pointer',
+                            ellipsis: 'cursor-pointer',
+                        }}
+                    />
+                </div>
+            )}
         </aside>
     )
 }

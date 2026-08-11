@@ -7,7 +7,7 @@ import moment from 'moment'
 import { ArrowLeftIconSVG, ChevronRightIconSVG } from '@/components/library/AllSVG'
 import { getVendorDashboardRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
-import { useGetSingleLeadQuery } from '@/redux/rtkQueries/clientSideGetApis'
+import { useGetSingleLeadQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import LeadSidebar from './LeadSidebar'
 import LeadSidebarSkeleton from './LeadSidebarSkeleton'
 import LeadCard from './LeadCard'
@@ -28,9 +28,13 @@ export default function LeadDetailView({ leadId }: Props) {
     const submitQuoteFormRef = useRef<HTMLDivElement>(null)
 
     const { data: leadResponse, isLoading } = useGetSingleLeadQuery({ id: leadId })
+    const { data: dashboardData } = useGetVendorDashboardDataQuery()
     const data = leadResponse?.data
     const isUnlocked = data?.unlocked ?? false
     const creditsToUnlock = data?.creditsToUnlock ?? 0
+    const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
+    const isDocumentVerified = data?.document_verified ?? false
+    const canUnlock = canPurchaseLeads && isDocumentVerified
     const isNewToday = Boolean(data?.createdAt && moment(data.createdAt).isSame(moment(), 'day'))
 
     useEffect(() => {
@@ -44,6 +48,7 @@ export default function LeadDetailView({ leadId }: Props) {
     }, [leadId])
 
     const handleUnlock = () => {
+        if (!canUnlock) return
         dispatch(openModal({
             componentName: 'UnlockLeadConfirmModal',
             data: { leadId, creditsToUnlock },
@@ -108,6 +113,7 @@ export default function LeadDetailView({ leadId }: Props) {
                     <LeadCard
                         lead={data}
                         isUnlocked={isUnlocked}
+                        canUnlock={canUnlock}
                         onUnlock={handleUnlock}
                     />
 

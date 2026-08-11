@@ -12,6 +12,7 @@ import ImageComponent from '@/components/library/ImageComponent'
 interface Props {
     lead: ISingleLeadAPIResponseData | undefined
     isUnlocked: boolean
+    canUnlock?: boolean
     onUnlock: () => void
 }
 
@@ -48,7 +49,7 @@ function MetaChip({
     )
 }
 
-export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
+export default function LeadCard({ lead, isUnlocked, canUnlock = true, onUnlock }: Props) {
     const cityAndPostalCode = lead?.city && lead?.pincode ? `${lead.city} - ${lead.pincode}` : ''
     const desiredDateRaw = lead?.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? ''
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : ''
@@ -237,7 +238,7 @@ export default function LeadCard({ lead, isUnlocked, onUnlock }: Props) {
                             </span>
                             {lead?.lead_status_message ?? '—'}
                         </div>
-                        {!isUnlocked && (
+                        {!isUnlocked && canUnlock && (
                             <button
                                 type="button"
                                 onClick={onUnlock}

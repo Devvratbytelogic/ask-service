@@ -7,7 +7,7 @@ import { Spinner } from '@heroui/react'
 import { FaCoins } from 'react-icons/fa6'
 import { FiCheckCircle, FiZap } from 'react-icons/fi'
 import { ArrowSendIconSVG, CheckmarkIconSVG, ChatOutlineIconSVG, ClockCircleIconSVG, LockOpenGreenIconSVG, LockPrimaryColorSVG, } from '@/components/library/AllSVG'
-import { getCreditsRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
+import { getCreditsRoutePath, getVendorAccountRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetSingleLeadQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -67,8 +67,11 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
     const credits = lead?.creditsToUnlock ?? 0
     const walletBalance = dashboardData?.data?.creditBalance ?? 0
     const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
+    const isDocumentVerified = lead?.document_verified ?? false
+    const canUnlock = canPurchaseLeads && isDocumentVerified
 
     const handleUnlockClick = () => {
+        if (!canUnlock) return
         dispatch(openModal({
             componentName: 'UnlockLeadConfirmModal',
             data: { leadId, creditsToUnlock: credits },
@@ -247,7 +250,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             <button
                                 type="button"
                                 onClick={handleUnlockClick}
-                                disabled={!canPurchaseLeads}
+                                disabled={!canUnlock}
                                 className="w-full py-3.75 bg-linear-to-br from-primaryColor to-[#4F46E5] text-white rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-250 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(27,79,255,0.4),0_1px_0_rgba(255,255,255,0.1)_inset] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(27,79,255,0.5)] hover:brightness-105 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                             >
                                 <span className="flex">
@@ -255,11 +258,17 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                                 </span>
                                 Débloquer ce prospect
                             </button>
-                            {!canPurchaseLeads && (
-                                <div className="px-3 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-[10px]">
+                            {!canUnlock && (
+                                <div className="px-3 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-[10px] space-y-1.5">
                                     <p className="text-[12px] font-medium text-amber-700 dark:text-amber-300 leading-[1.45] text-center">
-                                        Vous pourrez débloquer des prospects dès que votre compte aura été vérifié.
+                                        Vos documents doivent être vérifiés avant de pouvoir débloquer ce prospect.
                                     </p>
+                                    <Link
+                                        href={getVendorAccountRoutePath('documents')}
+                                        className="block text-[12px] font-semibold text-amber-700 hover:text-amber-600 dark:text-amber-300 dark:hover:text-amber-200 text-center transition-colors"
+                                    >
+                                        Voir mes documents →
+                                    </Link>
                                 </div>
                             )}
                         </div>

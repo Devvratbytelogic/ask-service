@@ -11,7 +11,7 @@ import {
     CheckmarkIconSVG,
     LockPrimaryColorSVG,
 } from '@/components/library/AllSVG'
-import { getCreditsRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
+import { getCreditsRoutePath, getVendorAccountRoutePath, getVendorMessageRoutePath } from '@/routes/routes'
 import { openModal } from '@/redux/slices/allModalSlice'
 import { useVendorAccessChatMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetSingleLeadQuery, useGetVendorDashboardDataQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -57,8 +57,11 @@ export default function LeadMobileUnlockBar({ leadId, onSendQuoteClick }: Props)
     const credits = lead?.creditsToUnlock ?? 0
     const walletBalance = dashboardData?.data?.creditBalance ?? 0
     const canPurchaseLeads = dashboardData?.data?.canPurchaseLeads ?? false
+    const isDocumentVerified = lead?.document_verified ?? false
+    const canUnlock = canPurchaseLeads && isDocumentVerified
 
     const handleUnlockClick = () => {
+        if (!canUnlock) return
         dispatch(openModal({
             componentName: 'UnlockLeadConfirmModal',
             data: { leadId, creditsToUnlock: credits },
@@ -113,10 +116,18 @@ export default function LeadMobileUnlockBar({ leadId, onSendQuoteClick }: Props)
                     </div>
                 )}
 
-                {!canPurchaseLeads && !isUnlocked && (
-                    <p className="text-[11px] text-amber-700 dark:text-amber-300 text-center leading-snug">
-                        Compte en cours de vérification — déblocage bientôt disponible.
-                    </p>
+                {!canUnlock && !isUnlocked && (
+                    <div className="space-y-1">
+                        <p className="text-[11px] text-amber-700 dark:text-amber-300 text-center leading-snug">
+                            Vos documents doivent être vérifiés avant de pouvoir débloquer ce prospect.
+                        </p>
+                        <Link
+                            href={getVendorAccountRoutePath('documents')}
+                            className="block text-[11px] font-semibold text-amber-700 hover:text-amber-600 dark:text-amber-300 dark:hover:text-amber-200 text-center transition-colors"
+                        >
+                            Voir mes documents →
+                        </Link>
+                    </div>
                 )}
 
                 {isUnlocked ? (
@@ -161,7 +172,7 @@ export default function LeadMobileUnlockBar({ leadId, onSendQuoteClick }: Props)
                     <button
                         type="button"
                         onClick={handleUnlockClick}
-                        disabled={!canPurchaseLeads}
+                        disabled={!canUnlock}
                         className="w-full py-3.75 bg-primaryColor text-white rounded-2xl text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-55 disabled:cursor-not-allowed disabled:active:scale-100"
                     >
                         <LockPrimaryColorSVG className="w-3.75 h-3.75" />
