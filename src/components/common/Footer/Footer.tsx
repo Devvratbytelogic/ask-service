@@ -120,7 +120,7 @@ export default function Footer({ footerLogoUrl, platformDescription, marketplace
                     <h4 className="text-sm font-bold text-white uppercase tracking-[0.8px] mb-4">Plateforme</h4>
                     <ul className="list-none p-0 m-0 flex flex-col gap-2">
                         <li><Link href={getHelpCenterRoutePath()} className={linkClass}>Comment ça marche</Link></li>
-                        <li><Link href={getCreditsRoutePath()} className={linkClass}>Tarifs</Link></li>
+                        {/* <li><Link href={getCreditsRoutePath()} className={linkClass}>Tarifs</Link></li> */}
                     </ul>
                 </div>
 
