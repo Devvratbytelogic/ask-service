@@ -26,7 +26,7 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
 
   return (
     <div
-      className="relative flex h-full min-h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[900px]:hidden"
+      className="relative flex h-full min-h-screen flex-col overflow-y-auto overflow-x-hidden px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[900px]:hidden"
       style={{
         background: 'linear-gradient(160deg, var(--color-slate-900) 0%, #1B2040 55%, #1A1000 100%)',
         position: 'sticky',

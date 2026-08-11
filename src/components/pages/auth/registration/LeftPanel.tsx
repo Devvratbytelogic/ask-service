@@ -105,7 +105,7 @@ export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
       }}
     >
       <div
-        className="sticky top-0 flex h-screen flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="sticky top-0 flex h-screen overflow-x-hidden flex-col overflow-y-auto px-11 py-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
       {/* Decorative radial blobs — subtle overlays, kept as inline rgba */}
       <div
