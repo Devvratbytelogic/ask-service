@@ -37,8 +37,11 @@ export function getVendorMessageRoutePath() {
 export function getMessageRoutePath() {
     return `/client/message`;
 }
-export function getVendorProfileRoutePath(vendorId: string) {
-    return `/vendor-profile?vendorId=${vendorId}`;
+export function getVendorProfileRoutePath(vendorId: string, requestRef?: string | null) {
+    if (requestRef) {
+        return `/vendor-profile?vendorId=${vendorId}&requestRef=${encodeURIComponent(requestRef)}`
+    }
+    return `/vendor-profile?vendorId=${vendorId}`
 }
 export type MyAccountSection = 'profile' | 'security' | 'notifications'
 export type VendorAccountSection = MyAccountSection | 'documents' | 'reviews' | 'payment-history'

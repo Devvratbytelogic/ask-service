@@ -47,9 +47,10 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
     const isVerified = otherUser?.kyc_status === 'ACTIVE';
     const isVendor =
         !!otherUser && (otherUser.role?.name ?? '').toLowerCase() === 'vendor';
+    const requestRef = selectedChat?.quote_id?.service_request_id?.reference_no ?? null
     const vendorProfileHref =
         selectedChat && otherUser && isVendor && otherUser._id
-            ? getVendorProfileRoutePath(otherUser._id)
+            ? getVendorProfileRoutePath(otherUser._id, requestRef)
             : null;
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -123,9 +124,11 @@ export default function ChatHeader({ onBack, selectedChat, isOnline, isTyping }:
                                             Non vérifié
                                         </p>}
                                     {(rating != null || reviewCount != null) && (
-                                        <p className="inline-flex items-center gap-1 text-sm ">
+                                        <p className="inline-flex items-center gap-1 text-sm">
                                             <StarRatingIconSVG />
-                                            {rating ?? '—'} <span className="text-darkSilver">({reviewCount ?? 0})</span>
+                                            <span>Note {rating ?? '—'}</span>
+                                            <span className="text-darkSilver">·</span>
+                                            <span className="text-darkSilver">{reviewCount ?? 0} avis</span>
                                         </p>
                                     )}
                                 </>

@@ -5,7 +5,8 @@ import { useGetCreatedServicesQuery } from '@/redux/rtkQueries/clientSideGetApis
 import { closeModal } from '@/redux/slices/allModalSlice'
 import { addToast, Autocomplete, AutocompleteItem, Avatar, Button, Spinner, Textarea } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useSubmitReviewMutation } from '@/redux/rtkQueries/allPostApi'
 import { RootState } from '@/redux/appStore'
 
@@ -15,6 +16,7 @@ const MIN_REVIEW_LENGTH = 20
 
 export default function LeaveReviewModal() {
     const dispatch = useDispatch()
+    const searchParams = useSearchParams()
     const modalData = useSelector((state: RootState) => state.allCommonModal.data)
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
@@ -22,13 +24,25 @@ export default function LeaveReviewModal() {
     const [requestInput, setRequestInput] = useState('')
     const [reviewText, setReviewText] = useState('')
     const [submitReview, { isLoading: isSubmitting }] = useSubmitReviewMutation()
-    const vendorId = modalData?.vendorId
+    const vendorId = modalData?.vendorId as string | undefined
+    const requestRef = searchParams.get('requestRef')
 
     const { data, isLoading, isError } = useGetCreatedServicesQuery({
         page: 1,
         limit: CREATED_SERVICES_SELECT_LIMIT,
     })
     const requests = data?.data?.data ?? []
+
+    // Preselect request ID from URL (?requestRef=REQ-XXX)
+    useEffect(() => {
+        if (!requestRef || selectedServiceRequestId || requests.length === 0) return
+
+        const match = requests.find((r) => r.request_id === requestRef)
+        if (!match) return
+
+        setSelectedServiceRequestId(match._id)
+        setRequestInput(match.request_id)
+    }, [requestRef, requests, selectedServiceRequestId])
 
     const filteredRequests = useMemo(() => {
         const q = requestInput.trim().toLowerCase()

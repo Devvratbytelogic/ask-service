@@ -50,10 +50,11 @@ export default function VendorProfileSidebar({ profile, review }: VendorProfileS
                 </div>
 
                 {/* Rating */}
-                <div className="mb-4 flex items-center justify-center gap-1.5">
+                <div className="mb-4 flex items-center justify-center gap-1.5 text-sm">
                     <StarRatingIconSVG />
-                    {averageRating ? <span className="text-sm font-bold text-fontBlack">{averageRating}</span> : null}
-                    {totalReviews ? <span className="text-sm text-darkSilver">({totalReviews} notes)</span> : null}
+                    <span className="font-bold text-fontBlack">Note {averageRating || '—'}</span>
+                    <span className="text-darkSilver">·</span>
+                    <span className="text-darkSilver">{totalReviews} avis</span>
                 </div>
 
                 {/* Services */}
