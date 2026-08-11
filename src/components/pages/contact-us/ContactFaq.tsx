@@ -8,8 +8,10 @@ import type { IFaqItem } from '@/types/faqs'
 
 const FAQ_TAB_TYPES = [
   { key: 'general', label: 'Général' },
-  { key: 'payments', label: 'Paiement' },
-  { key: 'licensing', label: 'Abonnement' },
+  { key: 'clients', label: 'Clients' },
+  { key: 'providers', label: 'Prestataires' },
+  { key: 'registration-verification', label: 'Inscription & Vérification' },
+  { key: 'credits-leads', label: 'Crédits & Prospects' },
   { key: 'support', label: 'Assistance' },
 ] as const
 
@@ -91,7 +93,7 @@ export default function ContactFaq() {
       onSelectionChange={(key) => setActiveTab(key as string)}
       variant="light"
       classNames={{
-        base: 'w-full md:w-2/4 md:mx-auto flex justify-center items-center',
+        base: 'w-full md:mx-auto flex justify-center items-center',
         tabList: 'mb-6 gap-0 p-1 rounded-full bg-appElevated w-full flex w-full',
         tab: 'rounded-full p-6 text-sm font-normal text-darkSilver data-[selected=true]:text-fontBlack',
         cursor: 'rounded-full bg-appCard shadow-sm',
