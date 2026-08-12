@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input, Select, SelectItem, Textarea } from '@heroui/react'
 import PhoneField from '@/components/common/PhoneField'
-import { splitPhoneForApi } from '@/utils/formatPhone'
 import ReactSelect from 'react-select'
 import { BusinessNameIconSVG, CameraIconSVG, CheckGreenIconSVG, DocumentIconSVG, EnvelopeIconSVG, GlobeIconSVG, LocationSVG, MyLocationIconSVG, ProfileIconSVG, TimeIconSVG, UsersIconSVG } from '@/components/library/AllSVG'
 import { CategoryOptionImage, CategorySelectOption } from '@/components/pages/auth/registration/categorySelectShared'
@@ -121,14 +120,12 @@ export default function VendorProfileInfo() {
             const previousPhone = (profileData?.phone ?? '').trim()
             const nextPhone = (formValues.phone ?? '').trim()
             const phoneChanged = previousPhone !== nextPhone && nextPhone.length > 0
-            const nextParts = splitPhoneForApi(formValues.phone)
 
             const formData = new FormData()
             formData.append('first_name', firstName)
             formData.append('last_name', lastName)
             formData.append('email', formValues.email)
-            formData.append('phone', nextParts.phone)
-            formData.append('country_code', nextParts.country_code)
+            formData.append('phone', formValues.phone)
             formData.append('business_name', formValues.businessName)
             formData.append('address', formValues.businessAddress)
             formData.append('postal_code', formValues.postcode)

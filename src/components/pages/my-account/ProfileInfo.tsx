@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 import { addToast, Button, Input } from '@heroui/react'
 import PhoneField from '@/components/common/PhoneField'
 import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG } from '@/components/library/AllSVG'
-import { splitPhoneForApi } from '@/utils/formatPhone'
 import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -79,14 +78,12 @@ export default function ProfileInfo() {
                 const previousPhone = (profileData?.phone ?? '').trim()
                 const nextPhone = (formValues.phone ?? '').trim()
                 const phoneChanged = previousPhone !== nextPhone && nextPhone.length > 0
-                const nextParts = splitPhoneForApi(formValues.phone)
 
                 const formData = new FormData()
                 formData.append('first_name', formValues.firstName)
                 formData.append('last_name', formValues.lastName)
                 formData.append('email', formValues.email)
-                formData.append('phone', nextParts.phone)
-                formData.append('country_code', nextParts.country_code)
+                formData.append('phone', formValues.phone)
                 formData.append('address', formValues.streetAddress)
                 formData.append('postal_code', formValues.postcode)
                 formData.append('city', formValues.city)
