@@ -18,7 +18,9 @@ export default function PhoneUnverifiedAlert() {
     dispatch(
       openModal({
         componentName: 'VerifyPhoneOtpModal',
-        data: { phoneNumber: profile.phone ?? '' },
+        data: {
+          phoneNumber: profile.phone ?? '',
+        },
         modalSize: 'md',
       }),
     )

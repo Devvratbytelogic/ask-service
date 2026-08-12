@@ -8,8 +8,8 @@ import type { AuthResponseData } from "@/utils/authCookies"
 import { addToast, Button, Checkbox, Input } from "@heroui/react"
 import { useFormik } from "formik"
 import { useMemo, useState } from "react"
-import PhoneInput from "react-phone-input-2"
-import "react-phone-input-2/lib/style.css"
+import PhoneField from "@/components/common/PhoneField"
+import { splitPhoneForApi } from "@/utils/formatPhone"
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import { useDispatch, useSelector } from "react-redux"
 import * as Yup from "yup"
@@ -85,11 +85,19 @@ const CustomerSignInDetails = () => {
         enableReinitialize: true,
         validationSchema: signInValidationSchema,
         onSubmit: async (values) => {
-            const identifier = signInType === "email" ? values.email.trim() : values.phoneNumber
+            const phoneParts = splitPhoneForApi(values.phoneNumber)
+            const identifier = signInType === "email" ? values.email.trim() : phoneParts.phone
             if (!identifier || !values.password) return
             
             try {
-                const res = await login({ identifier, password: values.password, fcm_token: fcmToken ?? undefined }).unwrap()
+                const res = await login({
+                    identifier,
+                    password: values.password,
+                    fcm_token: fcmToken ?? undefined,
+                    ...(signInType === "phoneNumber" && phoneParts.country_code
+                        ? { country_code: phoneParts.country_code }
+                        : {}),
+                }).unwrap()
                 const responseData = res?.data as Record<string, unknown> | undefined
                 const flow = responseData?.flow as string | undefined
                 if (flow === 'EMAIL_VERIFICATION_REQUIRED') {
@@ -273,20 +281,11 @@ const CustomerSignInDetails = () => {
                                 <div className="w-full relative z-100">
                                     <p className="custom_label_text_light mb-1.5">Numéro de téléphone</p>
                                     <div className="mt-1.5">
-                                        <PhoneInput
-                                            country="fr"
-                                            countryCodeEditable={false}
-                                            enableSearch
+                                        <PhoneField
+                                            name="phoneNumber"
                                             value={values.phoneNumber}
                                             onChange={(value) => setFieldValue("phoneNumber", value)}
                                             onBlur={() => setFieldTouched("phoneNumber", true)}
-                                            inputProps={{
-                                                name: "phoneNumber",
-                                                "aria-label": "Numéro de téléphone",
-                                            }}
-                                            containerClass="!w-full"
-                                            inputClass="!w-full !rounded-[12px] !border-appBorder"
-                                            inputStyle={{ height: "52px" }}
                                         />
                                     </div>
                                     {touched.phoneNumber && errors.phoneNumber && (

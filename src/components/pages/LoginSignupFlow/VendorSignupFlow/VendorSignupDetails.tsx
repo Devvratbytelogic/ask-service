@@ -14,8 +14,8 @@ import { getTermsRoutePath, getPrivacyRoutePath, getProfilePathForRole } from "@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
-import PhoneInput from "react-phone-input-2"
-import "react-phone-input-2/lib/style.css"
+import PhoneField from "@/components/common/PhoneField"
+import { splitPhoneForApi } from "@/utils/formatPhone"
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5"
 import * as Yup from "yup"
 import { BiArrowBack } from "react-icons/bi"
@@ -97,11 +97,13 @@ const VendorSignupDetails = () => {
         validationSchema: vendorSignupValidationSchema,
         onSubmit: async (values) => {
             try {
+                const phoneParts = splitPhoneForApi(values.phoneNumber)
                 await vendorRegister({
                     first_name: values.firstName,
                     last_name: values.lastName,
                     email: values.email,
-                    phone: values.phoneNumber,
+                    phone: phoneParts.phone,
+                    country_code: phoneParts.country_code,
                     password: values.password,
                     business_name: values.businessName,
                     ...(fcmToken && { fcm_token: fcmToken }),
@@ -278,20 +280,11 @@ const VendorSignupDetails = () => {
                             <div className="w-full relative z-100">
                                 <p className="custom_label_text_light text-darkSilver font-medium mb-1.5">Téléphone</p>
                                 <div className="mt-1.5">
-                                    <PhoneInput
-                                        country="fr"
-                                        countryCodeEditable={false}
-                                        enableSearch
+                                    <PhoneField
+                                        name="phoneNumber"
                                         value={values.phoneNumber}
                                         onChange={(value) => setFieldValue("phoneNumber", value)}
                                         onBlur={() => setFieldTouched("phoneNumber", true)}
-                                        inputProps={{
-                                            name: "phoneNumber",
-                                            "aria-label": "Numéro de téléphone",
-                                        }}
-                                        containerClass="!w-full"
-                                        inputClass="!w-full !rounded-[12px] !border-appBorder"
-                                        inputStyle={{ height: "52px" }}
                                     />
                                 </div>
                                 {touched.phoneNumber && errors.phoneNumber && (

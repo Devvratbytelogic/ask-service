@@ -3,8 +3,7 @@
 import { Button, Input, Textarea } from "@heroui/react"
 import { FormikProps, FormikTouched } from "formik"
 import { FiInfo } from "react-icons/fi"
-import PhoneInput from "react-phone-input-2"
-import "react-phone-input-2/lib/style.css"
+import PhoneField from "@/components/common/PhoneField"
 import { RequestServiceFormValues } from "./RequestServiceFlowIndex"
 
 const CLIENT_TYPES = ["Individual", "Company"] as const
@@ -162,24 +161,12 @@ const ContactInformation = ({ formik, setStepCount, readOnly = false }: ContactI
             Numéro de téléphone <span className="text-danger">*</span>
           </p>
           <div className={`mt-1.5 ${readOnly ? "pointer-events-none opacity-80" : ""}`}>
-            <PhoneInput
-              country="fr"
-              countryCodeEditable={false}
-              enableSearch
+            <PhoneField
+              name="customerPhoneNumber"
               value={values.customerPhoneNumber}
               onChange={(value) => setFieldValue("customerPhoneNumber", value)}
               onBlur={() => setFieldTouched("customerPhoneNumber", true)}
-              inputProps={{
-                name: "customerPhoneNumber",
-                "aria-label": "Numéro de téléphone",
-                readOnly: readOnly,
-                disabled: readOnly,
-              }}
-              containerClass="!w-full"
-              inputClass="!w-full !rounded-[12px] !border-appBorder"
-              inputStyle={{ height: "52px" }}
-              dropdownClass="!z-[9999]"
-              dropdownStyle={{ zIndex: 9999 }}
+              disabled={readOnly}
             />
           </div>
           {touched.customerPhoneNumber && errors.customerPhoneNumber && (

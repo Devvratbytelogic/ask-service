@@ -18,7 +18,6 @@ import {
 } from '@/redux/rtkQueries/authApi'
 import { setAuthCookies, type AuthResponseData } from '@/utils/authCookies'
 import { setClientAuthenticated, setUserRole } from '@/redux/slices/authSlice'
-
 interface OtpVerificationScreenProps {
   type: 'phone' | 'email'
   contact: string
@@ -103,9 +102,13 @@ export default function OtpVerificationScreen({
     setOtpError(null)
     setIsVerifying(true)
     try {
+      const trimmedContact = contact.trim()
       const res: { data?: AuthResponseData } = type === 'phone'
-        ? await verifyPhone({ otp, phone: contact }).unwrap()
-        : await verifyEmail({ otp, email: contact }).unwrap()
+        ? await verifyPhone({
+            otp,
+            phone: trimmedContact,
+          }).unwrap()
+        : await verifyEmail({ otp, email: trimmedContact }).unwrap()
 
       // Persist token + user in cookies and update Redux auth state
       if (res?.data) {
@@ -131,10 +134,13 @@ export default function OtpVerificationScreen({
     setOtpError(null)
     setResendSuccess(false)
     try {
+      const trimmedContact = contact.trim()
       if (type === 'phone') {
-        await resendPhoneOtp({ phone: contact }).unwrap()
+        await resendPhoneOtp({
+          phone: trimmedContact,
+        }).unwrap()
       } else {
-        await resendEmailVerification({ email: contact }).unwrap()
+        await resendEmailVerification({ email: trimmedContact }).unwrap()
       }
       setCountdown(60)
       setResendSuccess(true)
@@ -147,14 +153,15 @@ export default function OtpVerificationScreen({
   }
 
   const isPhone = type === 'phone'
+  const trimmedContact = contact.trim()
   const accentBg = isPhone ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)'
   const icon = isPhone
     ? <FiSmartphone className="size-7 text-trust-green" aria-hidden />
     : <FiMail className="size-7 text-amber" aria-hidden />
   const title = isPhone ? 'Vérifiez votre numéro' : 'Vérifiez votre e-mail'
   const subtitle = isPhone
-    ? `Un code de vérification a été envoyé par SMS au ${contact}. Saisissez-le ci-dessous.`
-    : `Un code de vérification a été envoyé à ${contact}. Saisissez-le ci-dessous.`
+    ? `Un code de vérification a été envoyé par SMS au ${trimmedContact}. Saisissez-le ci-dessous.`
+    : `Un code de vérification a été envoyé à ${trimmedContact}. Saisissez-le ci-dessous.`
 
   return (
     <div className="animate-inscription-fade-up py-2 text-center">

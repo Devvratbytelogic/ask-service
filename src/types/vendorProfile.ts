@@ -14,6 +14,7 @@ export interface IVendorProfileInfoData {
     email: string;
     is_email_verified: boolean;
     phone: string;
+    country_code?: string | null;
     is_phone_verified: boolean;
     business_name?: string;
     response_time?: string;

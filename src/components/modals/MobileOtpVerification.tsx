@@ -6,13 +6,13 @@ import { closeModal, openModal } from "@/redux/slices/allModalSlice"
 import { useResendPhoneOtpMutation, useResendPhoneOtpGoogleLoginMutation, useVerifyPhoneMutation } from "@/redux/rtkQueries/authApi"
 import { setAuthAndRefetchProfile } from "@/redux/authOnSuccess"
 import type { AuthResponseData } from "@/utils/authCookies"
-import { addToast, Button, Input } from "@heroui/react"
+import { addToast, Button } from "@heroui/react"
+import PhoneField from "@/components/common/PhoneField"
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { getDashboardPathForRole } from "@/routes/routes"
 import { IoPencilOutline } from "react-icons/io5"
-import { formatPhoneWithCountryCode } from "@/utils/formatPhone"
 
 const OTP_LENGTH = 4
 const RESEND_COOLDOWN_SEC = 59
@@ -46,16 +46,23 @@ const MobileOtpVerification = () => {
     const [otpExpirySeconds, setOtpExpirySeconds] = useState(skipToCodeEntry ? OTP_EXPIRY_SEC : 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    const isPhoneValid = phoneNumber.trim().length >= 5
+    const trimmedPhone = phoneNumber.trim()
+    const isPhoneValid = trimmedPhone.length >= 5
 
     const handleSendCode = useCallback(async () => {
         if (!isPhoneValid) return
         setErrorMessage(null)
         try {
             if (googleLoginCompleted && email) {
-                await resendPhoneOtpGoogleLogin({ phone: phoneNumber, email }).unwrap()
+                await resendPhoneOtpGoogleLogin({
+                    phone: trimmedPhone,
+                    email,
+                }).unwrap()
             } else {
-                await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+                await resendPhoneOtp({
+                    phone: trimmedPhone,
+                    type: otpType,
+                }).unwrap()
             }
             setCodeSent(true)
             setOtpExpirySeconds(OTP_EXPIRY_SEC)
@@ -64,16 +71,22 @@ const MobileOtpVerification = () => {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to send code."
             setErrorMessage(message)
         }
-    }, [isPhoneValid, phoneNumber, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
+    }, [isPhoneValid, trimmedPhone, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
 
     const handleResend = useCallback(async () => {
         if (resendCooldown > 0) return
         setErrorMessage(null)
         try {
             if (googleLoginCompleted && email) {
-                await resendPhoneOtpGoogleLogin({ phone: phoneNumber, email }).unwrap()
+                await resendPhoneOtpGoogleLogin({
+                    phone: trimmedPhone,
+                    email,
+                }).unwrap()
             } else {
-                await resendPhoneOtp({ phone: phoneNumber, type: otpType }).unwrap()
+                await resendPhoneOtp({
+                    phone: trimmedPhone,
+                    type: otpType,
+                }).unwrap()
             }
             setResendCooldown(RESEND_COOLDOWN_SEC)
             setOtpExpirySeconds(OTP_EXPIRY_SEC)
@@ -81,7 +94,7 @@ const MobileOtpVerification = () => {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "Failed to resend code."
             setErrorMessage(message)
         }
-    }, [resendCooldown, phoneNumber, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
+    }, [resendCooldown, trimmedPhone, otpType, email, googleLoginCompleted, resendPhoneOtp, resendPhoneOtpGoogleLogin])
 
     useEffect(() => {
         if (resendCooldown <= 0) return
@@ -113,7 +126,10 @@ const MobileOtpVerification = () => {
         const toVerify = otp ?? otpValue
         setErrorMessage(null)
         try {
-            const res = await verifyPhone({ phone: phoneNumber, otp: toVerify }).unwrap()
+            const res = await verifyPhone({
+                phone: trimmedPhone,
+                otp: toVerify,
+            }).unwrap()
             const responseData = (res as { data?: unknown })?.data ?? res
 
             if (responseData && typeof responseData === "object") {
@@ -209,7 +225,7 @@ const MobileOtpVerification = () => {
             const message = (err as { data?: { message?: string }; error?: string })?.data?.message ?? (err as { error?: string })?.error ?? "The code you entered is incorrect. Please try again."
             setErrorMessage(message)
         }
-    }, [phoneNumber, otpValue, data, stayOnPage, dispatch, verifyPhone, router])
+    }, [trimmedPhone, otpValue, data, stayOnPage, dispatch, verifyPhone, router])
 
     const canVerify = otpValue.length === OTP_LENGTH
 
@@ -234,24 +250,15 @@ const MobileOtpVerification = () => {
                 <div className="space-y-2">
                     <p className="custom_label_text_light">Numéro de téléphone</p>
                     <div className="mt-1.5">
-                        <Input
-                            type="tel"
+                        <PhoneField
                             name="phoneNumber"
                             value={phoneNumber}
-                            onChange={(e) => {
+                            onChange={(value) => {
                                 if (readonlyPhone) return
-                                setPhoneNumber(e.target.value)
+                                setPhoneNumber(value)
                                 setErrorMessage(null)
                             }}
-                            isReadOnly={readonlyPhone}
-                            aria-label="Numéro de téléphone"
-                            placeholder="+33 6 12 34 56 78"
-                            classNames={{
-                                inputWrapper: readonlyPhone
-                                    ? 'rounded-[12px] border-appBorder bg-appElevated opacity-70'
-                                    : 'rounded-[12px] border-appBorder bg-appCard',
-                                input: 'text-appText placeholder:text-placeHolderText',
-                            }}
+                            disabled={readonlyPhone}
                         />
                     </div>
                 </div>
@@ -286,13 +293,7 @@ const MobileOtpVerification = () => {
                     numéro de téléphone
                     <div className="flex items-center gap-0.5">
                         <span className="text-primaryColor font-medium">
-                            {/* {(() => {
-                                const parts = formatPhoneWithCountryCode(phoneNumber)
-                                return parts.countryCode
-                                    ? <>{parts.countryCode} {parts.nationalNumber}</>
-                                    : phoneNumber
-                            })()} */}
-                            {phoneNumber ? phoneNumber : "—"}
+                            {trimmedPhone || "—"}
                         </span>
                         {!readonlyPhone && (
                             <button

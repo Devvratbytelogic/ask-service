@@ -16,6 +16,7 @@ import AppLoader from "@/components/common/AppLoader"
 import type { ListEntity } from "@/types/serviceQuestions"
 import type { ICreateServiceRequestPayload } from "@/types/serviceQuestions"
 import { validateEmail } from "@/utils/validation"
+import { splitPhoneForApi } from "@/utils/formatPhone"
 
 const baseInitialValues = {
     pincode: "",
@@ -253,6 +254,7 @@ const RequestServiceFlowIndex = () => {
                         // Fallback to empty if geocoding fails
                     }
                 }
+                const phoneParts = splitPhoneForApi(values.customerPhoneNumber)
                 const payload: ICreateServiceRequestPayload = {
                     service_category: data?.grandParentServiceId ?? "",
                     // child_category: "",
@@ -263,7 +265,8 @@ const RequestServiceFlowIndex = () => {
                         first_name: values.customerFirstName ?? "",
                         last_name: values.customerLastName ?? "",
                         client_type: values.clientType ?? "",
-                        phone: values.customerPhoneNumber ?? "",
+                        phone: phoneParts.phone,
+                        country_code: phoneParts.country_code,
                         email: values.customerEmail ?? "",
                     },
                 }

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
-import { FiMail, FiPhone, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiBriefcase, FiCheck, FiClock, FiLock, FiSearch, FiX } from 'react-icons/fi'
+import { FiMail, FiHome, FiEye, FiEyeOff, FiArrowRight, FiArrowLeft, FiBriefcase, FiCheck, FiClock, FiLock, FiSearch, FiX } from 'react-icons/fi'
 import { HiOutlineLightBulb } from 'react-icons/hi2'
 import ReactSelect from 'react-select'
 import { CategoryOptionImage, CategorySelectOption } from './categorySelectShared'
@@ -41,6 +41,8 @@ import { useUploadVendorDocumentsMutation } from '@/redux/rtkQueries/allPostApi'
 import { setAuthAndRefetchProfile } from '@/redux/authOnSuccess'
 import type { AuthResponseData } from '@/utils/authCookies'
 import { getFcmTokenFromCookie } from '@/firebase/getFcmTokenn'
+import { splitPhoneForApi } from '@/utils/formatPhone'
+import PhoneField from '@/components/common/PhoneField'
 import { type Step, getPasswordStrength, ProgressSteps, Field, StyledInput, DocUploadZone } from './RegistrationComponents'
 
 const registrationInitialValues = {
@@ -271,12 +273,15 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
     }
 
     try {
+      const phoneParts = splitPhoneForApi(values.telephone)
+
       if (isVendor) {
         await vendorRegister({
           first_name: values.prenom.trim(),
           last_name: values.nom.trim(),
           email: values.email.trim(),
-          phone: values.telephone,
+          phone: phoneParts.phone,
+          country_code: phoneParts.country_code,
           password: values.password,
           business_name: values.nomEntreprise,
           ...(values.siret && { siret: values.siret }),
@@ -289,7 +294,8 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
           first_name: values.prenom.trim(),
           last_name: values.nom.trim(),
           email: values.email.trim(),
-          phone: values.telephone,
+          phone: phoneParts.phone,
+          country_code: phoneParts.country_code,
           password: values.password,
           ...(fcmToken && { fcm_token: fcmToken }),
         }).unwrap()
@@ -743,16 +749,14 @@ export default function RegistrationPage({ logoUrl, logoDarkUrl, vendorLogoUrl, 
                     </Field>
 
                     <Field label="Téléphone" required errorMessage={touched.telephone && errors.telephone}>
-                      <StyledInput
-                        name="telephone" type="tel" inputMode="tel" placeholder="+33 6 12 34 56 78"
-                        value={values.telephone}
-                        onChange={(e) => {
-                          const sanitized = e.target.value.replace(/[^\d+\s\-().]/g, '')
-                          setFieldValue('telephone', sanitized)
-                        }}
-                        onBlur={handleBlur}
-                        error={!!(touched.telephone && errors.telephone)} icon={<FiPhone size={16} />}
-                      />
+                      <div className="mt-0.5">
+                        <PhoneField
+                          name="telephone"
+                          value={values.telephone}
+                          onChange={(value) => setFieldValue('telephone', value)}
+                          onBlur={() => setFieldTouched('telephone', true)}
+                        />
+                      </div>
                     </Field>
 
                     {isVendor && (

@@ -15,6 +15,7 @@ export interface IUserProfileInfoData {
   email: string;
   is_email_verified: boolean;
   phone?: string | null;
+  country_code?: string | null;
   is_phone_verified: boolean;
   otp?: null;
   otp_phone: string;

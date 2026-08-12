@@ -4,7 +4,9 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { useSelector } from 'react-redux'
 import { serviceRequestContactSchema } from '@/utils/validation'
-import { FiArrowLeft, FiArrowRight, FiCheck, FiHome, FiInfo, FiPhone } from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiCheck, FiHome, FiInfo } from 'react-icons/fi'
+import PhoneField from '@/components/common/PhoneField'
+import { splitPhoneForApi } from '@/utils/formatPhone'
 import { HiBuildingOffice2 } from 'react-icons/hi2'
 import ReactSelect, { components, type OptionProps } from 'react-select'
 import {
@@ -431,6 +433,7 @@ export default function RequestAServiceForm({
           : (answers[q.key] as string),
       }))
 
+    const phoneParts = splitPhoneForApi(contactFormik.values.phone)
     const payload: ICreateServiceRequestPayload = {
       service_category: service,
       note: contactFormik.values.notes,
@@ -439,7 +442,8 @@ export default function RequestAServiceForm({
         first_name: contactFormik.values.firstName,
         last_name: contactFormik.values.lastName,
         client_type: clientType,
-        phone: contactFormik.values.phone,
+        phone: phoneParts.phone,
+        country_code: phoneParts.country_code,
         email: contactFormik.values.email,
       },
       pincode,
@@ -923,21 +927,13 @@ export default function RequestAServiceForm({
             {/* Téléphone */}
             <div className="mb-5">
               <FieldLabel required>Numéro De Téléphone</FieldLabel>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-appTextMuted">
-                  <FiPhone size={16} />
-                </span>
-                <input
-                  type="tel"
+              <div className={isEditMode ? 'pointer-events-none opacity-80' : ''}>
+                <PhoneField
                   name="phone"
                   value={contactFormik.values.phone}
-                  onChange={contactFormik.handleChange}
-                  onBlur={contactFormik.handleBlur}
-                  placeholder="+33 6 12 34 56 78"
-                  readOnly={isEditMode}
+                  onChange={(value) => contactFormik.setFieldValue('phone', value)}
+                  onBlur={() => contactFormik.setFieldTouched('phone', true)}
                   disabled={isEditMode}
-                  className={`${inputCls(!!(contactFormik.touched.phone && contactFormik.errors.phone))} pl-9`}
-                  style={{ fontFamily: 'inherit' }}
                 />
               </div>
               {contactFormik.touched.phone && contactFormik.errors.phone && (
@@ -1094,7 +1090,11 @@ export default function RequestAServiceForm({
                     </svg>
                   }
                   label="Téléphone"
-                  value={contactFormik.values.phone}
+                  value={
+                    contactFormik.values.phone
+                      ? `+${contactFormik.values.phone.replace(/\D/g, '')}`
+                      : ''
+                  }
                 />
               )}
               {contactFormik.values.email && (

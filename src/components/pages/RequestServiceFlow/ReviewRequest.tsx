@@ -1,7 +1,6 @@
 "use client"
 
 import type { ListEntity } from "@/types/serviceQuestions"
-import { formatPhoneWithCountryCode, type FormattedPhone } from "@/utils/formatPhone"
 import { Button } from "@heroui/react"
 import { FormikProps } from "formik"
 import { FiCheck } from "react-icons/fi"
@@ -47,7 +46,10 @@ const ReviewRequest = ({
     const cards: {
       title: string
       step: number
-      rows: { label: string; value: string; phoneParts?: FormattedPhone | null }[]
+      rows: {
+        label: string
+        value: string
+      }[]
     }[] = []
     const dynamicRows = [...questionsList]
       .sort((a, b) => a.step - b.step || a.order - b.order)
@@ -82,10 +84,9 @@ const ReviewRequest = ({
         },
         {
           label: "Téléphone:",
-          value: values.customerPhoneNumber || "—",
-          phoneParts: values.customerPhoneNumber
-            ? formatPhoneWithCountryCode(values.customerPhoneNumber, "FR")
-            : null,
+          value: values.customerPhoneNumber
+            ? `+${values.customerPhoneNumber.replace(/\D/g, "")}`
+            : "—",
         },
         { label: "Email:", value: values.customerEmail || "—" },
         { label: "Détails:", value: values.serviceNote?.trim() || "—" },
@@ -136,21 +137,7 @@ const ReviewRequest = ({
               {card.rows.map((row) => (
                 <div key={row.label} className="flex gap-2 text-sm flex-wrap">
                   <dt className="text-darkSilver shrink-0">{row.label}</dt>
-                  <dd className="text-fontBlack wrap-break-word">
-                    {row.phoneParts ? (
-                      <>
-                        <span className="font-medium">{row.phoneParts.countryCode}</span>
-                        {row.phoneParts.nationalNumber && (
-                          <>
-                            {" "}
-                            <span>{row.phoneParts.nationalNumber}</span>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      row.value
-                    )}
-                  </dd>
+                  <dd className="text-fontBlack wrap-break-word">{row.value}</dd>
                 </div>
               ))}
             </dl>

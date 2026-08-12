@@ -2,6 +2,7 @@
 
 import OtpInput from "@/components/library/OtpInput"
 import { PhoneIconSVG } from "@/components/library/AllSVG"
+import PhoneField from "@/components/common/PhoneField"
 import { RootState } from "@/redux/appStore"
 import { closeModal } from "@/redux/slices/allModalSlice"
 import {
@@ -147,27 +148,17 @@ export default function VerifyPhoneOtpModal() {
                     </p>
 
                     <div className="mt-5 w-full">
-                        <label htmlFor="verify-phone-input" className="custom_label_text_light mb-1.5 block">
+                        <label className="custom_label_text_light mb-1.5 block">
                             Numéro de téléphone
                         </label>
-                        <div className="relative">
-                            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-primaryColor">
-                                <PhoneIconSVG />
-                            </span>
-                            <input
-                                id="verify-phone-input"
-                                type="tel"
-                                name="phoneNumber"
-                                value={phoneNumber}
-                                onChange={(e) => {
-                                    setPhoneNumber(e.target.value)
-                                    setErrorMessage(null)
-                                }}
-                                placeholder="+33 6 12 34 56 78"
-                                autoComplete="tel"
-                                className="h-13 w-full rounded-xl border border-appBorder bg-appSurface pl-11 pr-4 text-sm text-appText outline-none transition-colors placeholder:text-placeHolderText focus:border-primaryColor focus:bg-appCard focus:ring-2 focus:ring-primaryColor/20"
-                            />
-                        </div>
+                        <PhoneField
+                            name="phoneNumber"
+                            value={phoneNumber}
+                            onChange={(value) => {
+                                setPhoneNumber(value)
+                                setErrorMessage(null)
+                            }}
+                        />
                     </div>
 
                     {errorMessage && (

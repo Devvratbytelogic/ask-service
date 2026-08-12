@@ -3,7 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addToast, Button, Input } from '@heroui/react'
+import PhoneField from '@/components/common/PhoneField'
 import { CameraIconSVG, EnvelopeIconSVG, LocationSVG, MyLocationIconSVG } from '@/components/library/AllSVG'
+import { splitPhoneForApi } from '@/utils/formatPhone'
 import { useFormik } from 'formik'
 import { profileInfoValidationSchema } from '@/utils/validation'
 import { useGetUserProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
@@ -68,7 +70,7 @@ export default function ProfileInfo() {
         typeof profileData?.profile_pic === 'string' && profileData.profile_pic ? profileData.profile_pic : null
     const avatarSrc = profilePicPreviewUrl ?? existingProfilePicUrl
 
-    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, dirty } = useFormik({
+    const { values, errors, handleChange, handleBlur, handleSubmit, touched, resetForm, setFieldValue, setFieldTouched, dirty } = useFormik({
         initialValues,
         enableReinitialize: true,
         validationSchema: profileInfoValidationSchema,
@@ -77,12 +79,14 @@ export default function ProfileInfo() {
                 const previousPhone = (profileData?.phone ?? '').trim()
                 const nextPhone = (formValues.phone ?? '').trim()
                 const phoneChanged = previousPhone !== nextPhone && nextPhone.length > 0
+                const nextParts = splitPhoneForApi(formValues.phone)
 
                 const formData = new FormData()
                 formData.append('first_name', formValues.firstName)
                 formData.append('last_name', formValues.lastName)
                 formData.append('email', formValues.email)
-                formData.append('phone', formValues.phone)
+                formData.append('phone', nextParts.phone)
+                formData.append('country_code', nextParts.country_code)
                 formData.append('address', formValues.streetAddress)
                 formData.append('postal_code', formValues.postcode)
                 formData.append('city', formValues.city)
@@ -100,7 +104,7 @@ export default function ProfileInfo() {
                         openModal({
                             componentName: 'VerifyPhoneOtpModal',
                             data: {
-                                phoneNumber: nextPhone,
+                                phoneNumber: formValues.phone,
                                 skipToCodeEntry: true,
                             },
                             modalSize: 'md',
@@ -117,7 +121,9 @@ export default function ProfileInfo() {
         dispatch(
             openModal({
               componentName: 'VerifyPhoneOtpModal',
-              data: {phoneNumber: profileData?.phone ?? values.phone ?? '',},
+              data: {
+                phoneNumber: profileData?.phone ?? values.phone ?? '',
+              },
               modalSize: 'md',
             }),
           )
@@ -358,18 +364,15 @@ export default function ProfileInfo() {
                         </label>
                         <div className="flex gap-2 items-start">
                             <div className="flex-1 min-w-0">
-                                <Input
+                                <PhoneField
                                     name="phone"
-                                    type="tel"
                                     value={values.phone}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    isInvalid={!!(touched.phone && errors.phone)}
-                                    errorMessage={touched.phone && errors.phone}
-                                    classNames={{
-                                        inputWrapper: 'account_input_design',
-                                    }}
+                                    onChange={(value) => setFieldValue('phone', value)}
+                                    onBlur={() => setFieldTouched('phone', true)}
                                 />
+                                {touched.phone && errors.phone && (
+                                    <p className="text-danger text-tiny mt-1">{errors.phone}</p>
+                                )}
                             </div>
                             {!hasPendingChanges && profileData?.is_phone_verified === false && profileData?.phone !== null && (
                                 <Button size="sm" className="btn_radius btn_outline_blue shrink-0" onPress={handleVerifyPhone}>
