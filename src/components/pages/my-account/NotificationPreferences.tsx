@@ -202,7 +202,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                                 { key: 'new_leads_available' as const, title: 'Nouveaux prospects disponibles', description: 'Recevoir une notification lorsque de nouveaux prospects sont disponibles' },
                                 { key: 'quote_accepted' as const, title: 'Devis accepté', description: 'Recevoir une notification lorsqu\'un devis est accepté' },
                                 { key: 'messages' as const, title: 'Messages', description: 'Recevoir une notification pour les nouveaux messages' },
-                                { key: 'low_credit_balance' as const, title: 'Solde de crédits faible', description: 'Recevoir une notification lorsque votre solde de crédits est faible' },
+                                { key: 'low_credit_balance' as const, title: 'Solde de Points faible', description: 'Recevoir une notification lorsque votre solde de Points est faible' },
                                 { key: 'platform_updates' as const, title: 'Mises à jour de la plateforme', description: 'Recevoir des notifications sur les nouveautés et les mises à jour de la plateforme' },
                             ].map((item) => (
                                 <div
@@ -229,7 +229,7 @@ export default function NotificationPreferences({ variant = 'default' }: Notific
                             {[
                                 { key: 'new_leads' as const, title: 'Nouveaux prospects', description: 'Notifications du navigateur pour les nouveaux prospects' },
                                 { key: 'messages' as const, title: 'Messages', description: 'Notifications du navigateur pour les nouveaux messages' },
-                                { key: 'low_credits' as const, title: 'Crédits faibles', description: 'Recevoir une notification lorsque votre solde de crédits est faible' },
+                                { key: 'low_credits' as const, title: 'Points faibles', description: 'Recevoir une notification lorsque votre solde de Points est faible' },
                             ].map((item) => (
                                 <div
                                     key={item.key}

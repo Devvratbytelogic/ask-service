@@ -23,7 +23,7 @@ const STEPS: Step[] = [
         icon: <FiUnlock className="size-8" aria-hidden />,
         title: "Débloquez les contacts",
         description:
-            "Consultez les demandes disponibles dans votre secteur. Utilisez vos crédits pour accéder aux coordonnées des clients qui vous intéressent.",
+            "Consultez les demandes disponibles dans votre secteur. Utilisez vos Points pour accéder aux coordonnées des clients qui vous intéressent.",
     },
     {
         label: "Étape 03",

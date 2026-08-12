@@ -63,10 +63,10 @@ export default function TermsPage() {
                                 </tr>
                                 <tr className="border-b border-appBorderSub/60 align-top">
                                     <td className="py-2 pr-4 font-medium text-fontBlack">Prospect</td>
-                                    <td className="py-2">Demande de service qualifiée déposée par un Client, dont les coordonnées sont mises à disposition d&apos;un ou plusieurs Prestataires après achat de crédits.</td>
+                                    <td className="py-2">Demande de service qualifiée déposée par un Client, dont les coordonnées sont mises à disposition d&apos;un ou plusieurs Prestataires après achat de Points.</td>
                                 </tr>
                                 <tr className="border-b border-appBorderSub/60 align-top">
-                                    <td className="py-2 pr-4 font-medium text-fontBlack">Crédits</td>
+                                    <td className="py-2 pr-4 font-medium text-fontBlack">Points</td>
                                     <td className="py-2">Unités monétaires virtuelles achetées par les Prestataires et utilisées pour débloquer l&apos;accès aux coordonnées des Clients (Leads).</td>
                                 </tr>
                                 <tr className="border-b border-appBorderSub/60 align-top">
@@ -106,7 +106,7 @@ export default function TermsPage() {
                     </p>
                     <ul className="text-sm text-darkSilver/90 list-disc list-inside space-y-1 mb-3">
                         <li>met à disposition une infrastructure technique permettant aux Clients de déposer des demandes de services et aux Prestataires d&apos;y accéder ;</li>
-                        <li>commercialise des Leads auprès des Prestataires sous forme de crédits ;</li>
+                        <li>commercialise des Leads auprès des Prestataires sous forme de Points ;</li>
                         <li>n&apos;intervient à aucun titre dans la négociation, la rédaction, l&apos;exécution, la facturation ou le suivi des prestations conclues entre les parties.</li>
                     </ul>
                     <h3 className="text-base font-medium text-fontBlack mb-1">4.2 Limitation de responsabilité</h3>
@@ -165,13 +165,13 @@ export default function TermsPage() {
                         Le système de commercialisation des Leads fonctionne selon les modalités suivantes :
                     </p>
                     <ul className="text-sm text-darkSilver/90 list-disc list-inside space-y-1 mb-3">
-                        <li>Les Prestataires acquièrent des crédits (packs Standard, Business ou Premium) afin d&apos;accéder aux coordonnées des Clients ;</li>
-                        <li>Le prix en crédits d&apos;un Lead est calculé dynamiquement en fonction des caractéristiques de la demande (service, surface, durée, profil du client, urgence, budget estimé) ;</li>
+                        <li>Les Prestataires acquièrent des Points (packs Standard, Business ou Premium) afin d&apos;accéder aux coordonnées des Clients ;</li>
+                        <li>Le prix en Points d&apos;un Lead est calculé dynamiquement en fonction des caractéristiques de la demande (service, surface, durée, profil du client, urgence, budget estimé) ;</li>
                         <li>L&apos;achat d&apos;un Lead constitue l&apos;acquisition d&apos;une opportunité commerciale et non la garantie de conclusion d&apos;un contrat de prestation ;</li>
-                        <li>Aucun remboursement de crédits n&apos;est dû en cas d&apos;absence de réponse du Client, d&apos;annulation de la demande ou d&apos;absence de conversion commerciale, sauf disposition contraire expressément mentionnée dans les Conditions Générales de Vente.</li>
+                        <li>Aucun remboursement de Points n&apos;est dû en cas d&apos;absence de réponse du Client, d&apos;annulation de la demande ou d&apos;absence de conversion commerciale, sauf disposition contraire expressément mentionnée dans les Conditions Générales de Vente.</li>
                     </ul>
                     <p className="text-sm text-darkSilver/90 mb-3">
-                        Les crédits non utilisés restent disponibles sur le compte du Prestataire sans limitation de durée, sous réserve que le compte demeure actif et en règle.
+                        Les Points non utilisés restent disponibles sur le compte du Prestataire sans limitation de durée, sous réserve que le compte demeure actif et en règle.
                     </p>
                     <h3 className="text-base font-medium text-fontBlack mb-1">6.3 Obligations du Prestataire</h3>
                     <p className="text-sm text-darkSilver/90 mb-3">Le Prestataire s&apos;engage à :</p>
@@ -186,7 +186,7 @@ export default function TermsPage() {
                 <div>
                     <h2 className="text-lg font-semibold text-fontBlack mb-2">7. Modèle économique et tarification</h2>
                     <p className="text-sm text-darkSilver/90 mb-3">
-                        Ask Service est rémunérée exclusivement par la vente de Prospects et de packs de crédits aux Prestataires. La Plateforme ne perçoit aucune commission sur les prestations réalisées et ne prend aucune part dans la facturation entre Clients et Prestataires.
+                        Ask Service est rémunérée exclusivement par la vente de Prospects et de packs de Points aux Prestataires. La Plateforme ne perçoit aucune commission sur les prestations réalisées et ne prend aucune part dans la facturation entre Clients et Prestataires.
                     </p>
                     <p className="text-sm text-darkSilver/90">
                         Les prix sont accessibles dans l&apos;espace des prestataires et affichés hors taxes (HT). La TVA applicable est celle en vigueur le jour de la facturation. Ask Service se réserve le droit de modifier ses tarifs à tout moment, sous réserve d&apos;un préavis de trente (30) jours communiqué aux Prestataires par voie électronique.
@@ -297,7 +297,7 @@ export default function TermsPage() {
                         <li>décision judiciaire ou administrative l&apos;imposant.</li>
                     </ul>
                     <p className="text-sm text-darkSilver/90">
-                        En cas de résiliation pour manquement, les crédits restants sur le compte du Prestataire ne feront l&apos;objet d&apos;aucun remboursement, sauf décision contraire d&apos;Ask-Service.
+                        En cas de résiliation pour manquement, les Points restants sur le compte du Prestataire ne feront l&apos;objet d&apos;aucun remboursement, sauf décision contraire d&apos;Ask-Service.
                     </p>
                 </div>
 

@@ -11,7 +11,7 @@ const FAQ_TAB_TYPES = [
   { key: 'clients', label: 'Clients' },
   { key: 'providers', label: 'Prestataires' },
   { key: 'registration-verification', label: 'Inscription & Vérification' },
-  { key: 'credits-leads', label: 'Crédits & Prospects' },
+  { key: 'credits-leads', label: 'Points & Prospects' },
   { key: 'support', label: 'Assistance' },
 ] as const
 

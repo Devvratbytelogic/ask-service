@@ -308,7 +308,7 @@ export default function VendorPaymentHistory() {
                                         Montant payé
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
-                                        Crédits ajoutés
+                                        Points ajoutés
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-fontBlack">
                                         Statut

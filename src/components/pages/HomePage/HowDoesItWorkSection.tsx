@@ -43,7 +43,7 @@ const VENDOR_STEPS: Step[] = [
     },
     {
         num: 2,
-        title: "Déverrouillez avec des crédits",
+        title: "Déverrouillez avec des Points",
         description:
             "Utilisez vos points pour accéder aux coordonnées du client. Pas d'abonnement — vous ne payez que ce que vous utilisez.",
     },

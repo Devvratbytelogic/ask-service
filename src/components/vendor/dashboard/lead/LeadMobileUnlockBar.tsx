@@ -104,7 +104,7 @@ export default function LeadMobileUnlockBar({ leadId, onSendQuoteClick }: Props)
                             <FaCoins className="size-3.5 shrink-0 text-amber" aria-hidden />
                             <div className="min-w-0">
                                 <p className="text-[10px] text-appTextMuted leading-none mb-0.5">Votre solde</p>
-                                <p className="text-[13px] font-bold text-amber truncate">{walletBalance} crédits</p>
+                                <p className="text-[13px] font-bold text-amber truncate">{walletBalance} Points</p>
                             </div>
                         </div>
                         <Link
@@ -176,7 +176,7 @@ export default function LeadMobileUnlockBar({ leadId, onSendQuoteClick }: Props)
                         className="w-full py-3.75 bg-primaryColor text-white rounded-2xl text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-55 disabled:cursor-not-allowed disabled:active:scale-100"
                     >
                         <LockPrimaryColorSVG className="w-3.75 h-3.75" />
-                        Débloquer · {credits} crédits
+                        Débloquer · {credits} Points
                     </button>
                 )}
             </div>

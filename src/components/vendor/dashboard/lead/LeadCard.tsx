@@ -167,7 +167,7 @@ export default function LeadCard({ lead, isUnlocked, canUnlock = true, onUnlock 
                     </div>
                     <span className="text-sm font-extrabold text-amber bg-amber/12 border border-amber/20 px-3 py-1 rounded-full whitespace-nowrap inline-flex items-center gap-1 shrink-0">
                         <FaCoins className="size-3.5 shrink-0" aria-hidden />
-                        {lead?.creditsToUnlock} crédits
+                        {lead?.creditsToUnlock} Points
                     </span>
                 </div>
 

@@ -159,7 +159,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                                     {credits}
                                 </div>
                                 <div className="text-[12px] text-appTextMuted mt-1">
-                                    crédits à déduire de votre wallet
+                                    Points à déduire de votre wallet
                                 </div>
                             </>
                         )}
@@ -170,7 +170,7 @@ export default function UnlockPanel({ leadId, onSendQuoteClick }: Props) {
                             <FaCoins className="size-3.5 shrink-0 text-amber" aria-hidden />
                             <div className="flex flex-col min-w-0">
                                 <span className="text-[11px] text-appTextSec">Votre solde</span>
-                                <span className="text-[13px] font-bold text-amber whitespace-nowrap">{walletBalance} crédits</span>
+                                <span className="text-[13px] font-bold text-amber whitespace-nowrap">{walletBalance} Points</span>
                             </div>
                         </div>
                         <Link

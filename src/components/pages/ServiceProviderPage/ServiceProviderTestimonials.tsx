@@ -20,7 +20,7 @@ const TESTIMONIALS: Testimonial[] = [
     },
     {
         quote:
-            "Le système de crédits est parfait. On ne paie que pour les contacts qui nous intéressent vraiment. Notre équipe a gagné 3 nouveaux clients réguliers ce mois.",
+            "Le système de Points est parfait. On ne paie que pour les contacts qui nous intéressent vraiment. Notre équipe a gagné 3 nouveaux clients réguliers ce mois.",
         name: "Pascale T.",
         role: "Société de nettoyage · Paris · 23 missions",
         initial: "P",

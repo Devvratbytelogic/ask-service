@@ -59,7 +59,7 @@ export default function UnlockLeadConfirmModal() {
             </h3>
             <p className="text-[13px] text-appTextSec leading-[1.65] mb-4">
                 Vous accéderez immédiatement aux coordonnées complètes du client.{' '}
-                {creditsToUnlock} crédits seront déduits de votre wallet.
+                {creditsToUnlock} Points seront déduits de votre wallet.
             </p>
 
             <div className="bg-black/3 dark:bg-white/4 border border-appBorder rounded-3xl p-3.5 mb-4 flex flex-col gap-2">
@@ -77,13 +77,13 @@ export default function UnlockLeadConfirmModal() {
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                     <span className="text-appTextSec">Votre solde</span>
-                    <span className="font-semibold text-appText">{walletBalance} crédits</span>
+                    <span className="font-semibold text-appText">{walletBalance} Points</span>
                 </div>
                 <div className="flex justify-between items-center text-[13px] pt-2.5 mt-0.5 border-t border-appBorderSub">
                     <span className="text-appTextSec">Coût du déblocage</span>
                     <span className="font-extrabold text-amber text-[16px] inline-flex items-center gap-1">
                         <FaCoins className="size-3.5 shrink-0" aria-hidden />
-                        {creditsToUnlock} crédits
+                        {creditsToUnlock} Points
                     </span>
                 </div>
             </div>
@@ -108,7 +108,7 @@ export default function UnlockLeadConfirmModal() {
                     ) : (
                         <>
                             <CheckmarkIconSVG size={14} />
-                            Confirmer · {creditsToUnlock} crédits
+                            Confirmer · {creditsToUnlock} Points
                         </>
                     )}
                 </button>

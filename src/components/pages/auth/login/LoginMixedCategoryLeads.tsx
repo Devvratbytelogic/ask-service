@@ -109,7 +109,7 @@ function LeadSlide({ lead }: { lead: IMixedCategoryLeadEntity }) {
                     Coordonnées verrouillées
                 </span>
                 <span className="text-[12px] font-extrabold" style={{ color: 'var(--color-amber)' }}>
-                    {lead.creditsToUnlock} crédits
+                    {lead.creditsToUnlock} Points
                 </span>
             </div>
         </div>

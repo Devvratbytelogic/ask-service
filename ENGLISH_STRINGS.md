@@ -186,7 +186,7 @@ All user-facing English strings translated to French across the project.
 
 | English | French |
 |---------|--------|
-| Credits | Crédits |
+| Credits | Points |
 | to unlock | pour débloquer |
 
 ---

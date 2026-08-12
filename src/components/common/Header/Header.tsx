@@ -195,7 +195,7 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                 >
                                     <FaCoins aria-hidden className="size-3.5 shrink-0 text-amber" />
                                     <span className="text-sm font-bold text-amber">
-                                        Mes crédits
+                                        Mes Points
                                     </span>
                                 </Link>
                             )}

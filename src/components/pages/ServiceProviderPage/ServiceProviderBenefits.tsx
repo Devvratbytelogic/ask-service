@@ -21,7 +21,7 @@ const BENEFITS: Benefit[] = [
         icon: <FiCreditCard className="size-5" aria-hidden />,
         title: "Aucun abonnement",
         description:
-            "Rechargez votre portefeuille à la demande. Vos crédits n'expirent jamais.",
+            "Rechargez votre portefeuille à la demande. Vos Points n'expirent jamais.",
     },
     {
         icon: <FiZap className="size-5" aria-hidden />,
