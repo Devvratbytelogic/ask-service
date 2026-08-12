@@ -11,7 +11,10 @@ type KycAlertContent = {
     showDocumentsLink: boolean
 }
 
-function getKycAlertContent(status: string): KycAlertContent {
+function getKycAlertContent(
+    status: string,
+    documentVerificationMessage?: string | null,
+): KycAlertContent {
     const normalized = status.toUpperCase()
 
     if (normalized === 'PENDING' || !normalized) {
@@ -35,8 +38,9 @@ function getKycAlertContent(status: string): KycAlertContent {
     }
 
     return {
-        title: 'Compte non vérifié',
+        title: 'Documents non vérifiés',
         description:
+            documentVerificationMessage?.trim() ||
             'Vos documents doivent être vérifiés avant de pouvoir débloquer des prospects. Complétez votre vérification pour accéder à toutes les fonctionnalités.',
         badge: 'Non actif',
         showDocumentsLink: true,
@@ -46,18 +50,28 @@ function getKycAlertContent(status: string): KycAlertContent {
 interface VendorKycStatusAlertProps {
     kycStatus?: string | null
     canPurchaseLeads?: boolean
+    documentVerified?: boolean
+    documentVerificationMessage?: string | null
 }
 
 export default function VendorKycStatusAlert({
     kycStatus,
     canPurchaseLeads,
+    documentVerified,
+    documentVerificationMessage,
 }: VendorKycStatusAlertProps) {
     const isActive = kycStatus?.toUpperCase() === 'ACTIVE'
-    const isBlocked = canPurchaseLeads === false || (!!kycStatus && !isActive)
+    const isBlocked =
+        canPurchaseLeads === false ||
+        documentVerified === false ||
+        (!!kycStatus && !isActive)
 
     if (!isBlocked) return null
 
-    const { title, description, badge, showDocumentsLink } = getKycAlertContent(kycStatus ?? '')
+    const { title, description, badge, showDocumentsLink } = getKycAlertContent(
+        kycStatus ?? '',
+        documentVerificationMessage,
+    )
 
     return (
         <div

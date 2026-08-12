@@ -101,6 +101,8 @@ export default function VendorDashboardOverview() {
 
             <VendorKycStatusAlert
                 kycStatus={stats?.kyc_status}
+                documentVerified={stats?.document_verified}
+                documentVerificationMessage={stats?.document_verification_message}
                 canPurchaseLeads={stats?.canPurchaseLeads}
             />
 
