@@ -3,6 +3,7 @@ import { HiSparkles } from 'react-icons/hi2'
 import { getPrivacyRoutePath, getRegistrationPageRoutePath, getTermsRoutePath } from '@/routes/routes'
 import AuthPanelLogo from '@/components/common/AuthPanelLogo'
 import LoginTestimonialSlider from '@/components/pages/auth/login/LoginTestimonialSlider'
+import LoginMixedCategoryLeads from '@/components/pages/auth/login/LoginMixedCategoryLeads'
 
 type Role = 'customer' | 'vendor'
 
@@ -103,7 +104,7 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
             {descText}
           </p>
 
-          <LoginTestimonialSlider />
+          {isVendor ? <LoginMixedCategoryLeads /> : <LoginTestimonialSlider />}
 
           {/* Stats mini bar */}
           <div

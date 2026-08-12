@@ -27,6 +27,7 @@ import { IVendorDetailsAPIResponse } from '@/types/vendorDetails';
 import { IAllCitiesAPIResponse } from '@/types/allCities';
 import { ISingleRequestAPIResponse } from '@/types/singleRequest';
 import { IAvailableLeadByCategoryAPIResponse } from '@/types/availableLeadByCategory';
+import { IMixedCategoryLeadsAPIResponse } from '@/types/mixedCategoryLeads';
 
 export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
     endpoints: (builder) => ({
@@ -166,6 +167,13 @@ export const clientSideGetApis = rtkQuerieSetup.injectEndpoints({
                 ...(arg && typeof arg === 'object' && Object.keys(arg).length > 0 && { params: arg }),
             }),
             providesTags: ['VendorAvailableLeads'],
+        }),
+        getMixedCategoryLeads: builder.query<IMixedCategoryLeadsAPIResponse, { limit?: number } | void>({
+            query: (arg) => ({
+                url: `/vendor/mixed-category-leads`,
+                method: 'GET',
+                ...(arg?.limit != null && { params: { limit: arg.limit } }),
+            }),
         }),
         getVendorAllQuotes: builder.query<IAllQuotesAPIResponse, void>({
             query: () => ({
@@ -348,6 +356,7 @@ export const {
     useLazyGetVendorAvailableLeadsQuery,
     useGetVendorAvailableLeadsByServiceCategoryQuery,
     useLazyGetVendorAvailableLeadsByServiceCategoryQuery,
+    useGetMixedCategoryLeadsQuery,
     useGetVendorAllQuotesQuery,
     useGetSingleLeadQuery,
     useGetVendorDashboardTransactionHistoryQuery,
