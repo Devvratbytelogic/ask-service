@@ -2,22 +2,25 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { FaStar } from 'react-icons/fa6'
-import { HiOutlineLockClosed, HiOutlineMapPin } from 'react-icons/hi2'
+import { FiCheckCircle } from 'react-icons/fi'
+import { HiOutlineMapPin } from 'react-icons/hi2'
 import moment from 'moment'
 import { useGetMixedCategoryLeadsQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import type { IMixedCategoryLeadEntity } from '@/types/mixedCategoryLeads'
+import { MailOutlineIconSVG, PhoneOutlineIconSVG, UserOutlineIconSVG } from '@/components/library/AllSVG'
 import ImageComponent from '@/components/library/ImageComponent'
 
 function LeadSlide({ lead }: { lead: IMixedCategoryLeadEntity }) {
     const cityLabel = [lead.city, lead.pincode].filter(Boolean).join(' · ') || lead.cityOrPostalCode || '—'
     const desiredDateRaw = lead.dynamic_answers?.find((a) => a.key === 'desired_date')?.value ?? lead.desiredDate
     const desiredDate = desiredDateRaw ? moment(desiredDateRaw).locale('fr').format('DD MMM YYYY') : null
-    const previewAnswers = (lead.dynamic_answers ?? []).filter((a) => a.key !== 'desired_date').slice(0, 2)
+    const clientName =
+        [lead.contact_details?.first_name, lead.contact_details?.last_name].filter(Boolean).join(' ') || '—'
     const stars = lead.lead_stars ?? 0
 
     return (
-        <div className="w-full shrink-0 p-5">
-            <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="w-full shrink-0 px-4 py-4">
+            <div className="mb-2.5 flex items-start justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
                     <div
                         className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg"
@@ -72,7 +75,7 @@ function LeadSlide({ lead }: { lead: IMixedCategoryLeadEntity }) {
                 </div>
             )}
 
-            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="inline-flex items-center gap-1 text-[12px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
                     <HiOutlineMapPin className="size-3.5 shrink-0" aria-hidden />
                     {cityLabel}
@@ -84,33 +87,51 @@ function LeadSlide({ lead }: { lead: IMixedCategoryLeadEntity }) {
                 )}
             </div>
 
-            {previewAnswers.length > 0 && (
-                <div className="mb-3 space-y-1">
-                    {previewAnswers.map((answer) => (
-                        <p key={answer._id} className="truncate text-[12px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                            <span style={{ color: 'rgba(255,255,255,0.28)' }}>{answer.label}: </span>
-                            {answer.type === 'date' && answer.value
-                                ? moment(answer.value).locale('fr').format('DD MMM YYYY')
-                                : answer.value || '—'}
-                        </p>
-                    ))}
-                </div>
-            )}
-
             <div
-                className="flex items-center justify-between gap-2 rounded-xl px-3 py-2"
+                className="rounded-xl px-3 py-2.5"
                 style={{
                     background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.07)',
+                    border: '1px solid rgba(255,255,255,0.08)',
                 }}
             >
-                <span className="inline-flex items-center gap-1.5 text-[11px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                    <HiOutlineLockClosed className="size-3.5" aria-hidden />
-                    Coordonnées verrouillées
-                </span>
-                <span className="text-[12px] font-extrabold" style={{ color: 'var(--color-amber)' }}>
-                    {lead.creditsToUnlock} Points
-                </span>
+                <div className="mb-2 flex items-center gap-1.5">
+                    <span
+                        className="flex size-4 shrink-0 items-center justify-center rounded-full"
+                        style={{ background: 'rgba(16,185,129,0.22)', color: '#6EE7B7' }}
+                    >
+                        <FiCheckCircle className="size-2.5" aria-hidden />
+                    </span>
+                    <span className="text-[12px] font-bold text-white">Client vérifié</span>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                        <span className="flex w-3.5 shrink-0 justify-center" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                            <UserOutlineIconSVG size={13} />
+                        </span>
+                        <span className="truncate text-[12px] select-none" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                            {clientName}
+                        </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                        <div className="flex min-w-0 items-center gap-2">
+                            <span className="flex w-3.5 shrink-0 justify-center" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                <PhoneOutlineIconSVG size={13} />
+                            </span>
+                            <span className="truncate text-[12px] select-none" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                {lead.contact_details?.phone ?? '—'}
+                            </span>
+                        </div>
+                        <div className="flex min-w-0 items-center gap-2">
+                            <span className="flex w-3.5 shrink-0 justify-center" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                <MailOutlineIconSVG size={13} />
+                            </span>
+                            <span className="truncate text-[12px] select-none" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                {lead.contact_details?.email ?? '—'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
