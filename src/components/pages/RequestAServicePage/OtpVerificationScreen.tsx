@@ -154,14 +154,17 @@ export default function OtpVerificationScreen({
 
   const isPhone = type === 'phone'
   const trimmedContact = contact.trim()
+  const displayContact = isPhone
+    ? (trimmedContact.startsWith('+') ? trimmedContact : `+${trimmedContact.replace(/\D/g, '')}`)
+    : trimmedContact
   const accentBg = isPhone ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)'
   const icon = isPhone
     ? <FiSmartphone className="size-7 text-trust-green" aria-hidden />
     : <FiMail className="size-7 text-amber" aria-hidden />
   const title = isPhone ? 'Vérifiez votre numéro' : 'Vérifiez votre e-mail'
   const subtitle = isPhone
-    ? `Un code de vérification a été envoyé par SMS au ${trimmedContact}. Saisissez-le ci-dessous.`
-    : `Un code de vérification a été envoyé à ${trimmedContact}. Saisissez-le ci-dessous.`
+    ? `Un code de vérification a été envoyé par SMS au ${displayContact}. Saisissez-le ci-dessous.`
+    : `Un code de vérification a été envoyé à ${displayContact}. Saisissez-le ci-dessous.`
 
   return (
     <div className="animate-inscription-fade-up py-2 text-center">

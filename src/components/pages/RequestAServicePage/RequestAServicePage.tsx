@@ -14,7 +14,7 @@ type RequestAServicePageProps = {
 export default function RequestAServicePage({ initialServiceId }: RequestAServicePageProps) {
   return (
     <section
-      className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] py-8 sm:px-[5%] sm:py-12"
+      className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] pt-8 pb-24 sm:px-[5%] sm:pt-12 sm:pb-32"
     >
       {/* ─── Page header ─── */}
       <div className="mb-12 max-w-145 animate-hero-fade-down text-center">
