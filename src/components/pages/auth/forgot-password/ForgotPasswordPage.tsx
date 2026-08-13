@@ -19,7 +19,7 @@ import {
   useVendorNewPasswordMutation,
   useVerifyEmailMutation,
 } from '@/redux/rtkQueries/authApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getFcmTokenFromCookie } from '@/firebase/getFcmTokenn'
 import { setResetTokenForNextRequest } from '@/utils/authCookies'
 
@@ -52,13 +52,27 @@ const passwordSchema = Yup.object<PasswordFormValues>({
     .required('Ce champ est obligatoire'),
 })
 
+type Role = 'customer' | 'vendor'
+
 interface ForgotPasswordPageProps {
   logoUrl?: string | null
+  logoDarkUrl?: string | null
+  vendorLogoUrl?: string | null
+  vendorLogoDarkUrl?: string | null
 }
 
-export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps = {}) {
+export default function ForgotPasswordPage({
+  logoUrl,
+  logoDarkUrl,
+  vendorLogoUrl,
+  vendorLogoDarkUrl,
+}: ForgotPasswordPageProps = {}) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const fcmToken = getFcmTokenFromCookie()
+  const roleParam = searchParams.get('role')
+  const role: Role = roleParam === 'vendor' ? 'vendor' : 'customer'
+  const isVendorBranding = role === 'vendor'
 
   const [step, setStep] = useState<Step>('enter-email')
   const [email, setEmail] = useState('')
@@ -77,11 +91,13 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
   const [vendorNewPassword, { isLoading: isSubmittingVendor }] = useVendorNewPasswordMutation()
 
   const isSubmittingPassword = isSubmittingUser || isSubmittingVendor
-  const accentColor = 'var(--color-primaryColor)'
-  const accentTextColor = 'white'
-  const accentShadow = 'rgba(27,79,255,0.28)'
-  const accentDim = 'var(--color-primary-dim)'
-  const accentBorder = 'rgba(27,79,255,0.25)'
+  const activeLogoUrl = isVendorBranding ? vendorLogoUrl : logoUrl
+  const activeLogoDarkUrl = isVendorBranding ? vendorLogoDarkUrl : logoDarkUrl
+  const accentColor = isVendorBranding ? 'var(--color-amber)' : 'var(--color-primaryColor)'
+  const accentTextColor = isVendorBranding ? 'var(--color-slate-900)' : 'white'
+  const accentShadow = isVendorBranding ? 'rgba(245,158,11,0.3)' : 'rgba(27,79,255,0.28)'
+  const accentDim = isVendorBranding ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
+  const accentBorder = isVendorBranding ? 'rgba(245,158,11,0.25)' : 'rgba(27,79,255,0.25)'
 
   const emailForm = useFormik<EmailFormValues>({
     initialValues: { email: '' },
@@ -128,7 +144,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
             color: 'success',
             timeout: 3000,
           })
-          router.push(getLoginPageRoutePath())
+          router.push(getLoginPageRoutePath({ role }))
         } finally {
           if (resetToken) setResetTokenForNextRequest(null)
         }
@@ -209,12 +225,12 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
       className="flex min-h-screen max-[900px]:flex-col"
       style={{ display: 'grid', gridTemplateColumns: '420px 1fr' }}
     >
-      <LeftPanel role="customer" logoUrl={logoUrl} />
+      <LeftPanel role={role} logoUrl={activeLogoDarkUrl} />
 
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />
         <div className="w-full" style={{ maxWidth: 440 }}>
-          <AuthMobileHeader logoUrl={logoUrl} />
+          <AuthMobileHeader logoUrl={activeLogoUrl} accentColor={accentColor} />
           <div className="mb-8 text-center">
             <h3
               className="mb-1.5 text-appText"
@@ -505,7 +521,7 @@ export default function ForgotPasswordPage({ logoUrl }: ForgotPasswordPageProps 
           <p className="mt-6 text-center text-[13px] text-appTextSec">
             Mot de passe retrouvé ?{' '}
             <Link
-              href={getLoginPageRoutePath()}
+              href={getLoginPageRoutePath({ role })}
               className="font-semibold no-underline hover:underline"
               style={{ color: accentColor }}
             >

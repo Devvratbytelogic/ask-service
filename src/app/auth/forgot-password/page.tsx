@@ -10,6 +10,16 @@ export const metadata: Metadata = {
 export default async function ForgotPasswordRoute() {
   const globalSettings = await getGlobalSettings()
   const logoUrl = globalSettings?.data?.logo ?? null
+  const logoDarkUrl = globalSettings?.data?.footer_logo ?? null
+  const vendorLogoUrl = globalSettings?.data?.vendor_logo ?? null
+  const vendorLogoDarkUrl = globalSettings?.data?.vendor_dark_logo ?? null
 
-  return <ForgotPasswordPage logoUrl={logoUrl} />
+  return (
+    <ForgotPasswordPage
+      logoUrl={logoUrl}
+      logoDarkUrl={logoDarkUrl}
+      vendorLogoUrl={vendorLogoUrl}
+      vendorLogoDarkUrl={vendorLogoDarkUrl}
+    />
+  )
 }

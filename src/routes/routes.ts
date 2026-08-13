@@ -122,8 +122,9 @@ export function getLoginPageRoutePath(params?: { role?: 'vendor' | 'customer' })
     return role ? `/auth/login?role=${role}` : `/auth/login`;
 }
 
-export function getForgotPasswordRoutePath() {
-    return `/auth/forgot-password`;
+export function getForgotPasswordRoutePath(params?: { role?: 'vendor' | 'customer' }) {
+    const role = params?.role
+    return role ? `/auth/forgot-password?role=${role}` : `/auth/forgot-password`;
 }
 
 export function getClientDashboardPageRoutePath() {

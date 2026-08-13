@@ -653,7 +653,7 @@ export default function LoginPage({
                   </div>
 
                   <Link
-                    href={getForgotPasswordRoutePath()}
+                    href={getForgotPasswordRoutePath({ role })}
                     className="text-[13px] font-semibold no-underline transition-opacity hover:opacity-75"
                     style={{ color: accentColor }}
                   >
