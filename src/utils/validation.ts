@@ -143,11 +143,10 @@ export const vendorProfileInfoValidationSchema = Yup.object({
     businessAddress: Yup.string().required('Ce champ est obligatoire'),
     postcode: Yup.string().required('Ce champ est obligatoire'),
     city: Yup.string().required('Ce champ est obligatoire'),
-    vatNumber: Yup.string().required('Ce champ est obligatoire'),
-    companyRegistrationNumber: Yup.string().required('Ce champ est obligatoire'),
-    yearsOfActivity: Yup.string().required("Ce champ est obligatoire"),
-    // companySize: Yup.string().required('La taille de l\'entreprise est requise'),
-    aboutCompany: Yup.string().required("Ce champ est obligatoire"),
+    vatNumber: Yup.string(),
+    companyRegistrationNumber: Yup.string(),
+    yearsOfActivity: Yup.string(),
+    aboutCompany: Yup.string(),
     websiteLink: Yup.string()
         .trim()
         .test('empty-or-url', 'URL invalide', (value) => {
