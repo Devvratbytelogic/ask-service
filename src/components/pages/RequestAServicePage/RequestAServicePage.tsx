@@ -14,10 +14,10 @@ type RequestAServicePageProps = {
 export default function RequestAServicePage({ initialServiceId }: RequestAServicePageProps) {
   return (
     <section
-      className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] pt-8 pb-24 sm:px-[5%] sm:pt-12 sm:pb-32"
+      className="page-hero-bg flex min-h-screen w-full min-w-0 flex-col items-center overflow-x-hidden px-[4%] pt-8 pb-24 sm:px-[5%] sm:pt-12 sm:pb-32"
     >
       {/* ─── Page header ─── */}
-      <div className="mb-12 max-w-145 animate-hero-fade-down text-center">
+      <div className="mb-12 w-full min-w-0 max-w-145 animate-hero-fade-down text-center">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border-[1.5px] border-blue-light bg-appCard px-3.5 py-1.5 text-[12px] font-semibold text-primaryColor shadow-[0_2px_8px_rgba(27,79,255,0.1)]">
           <span className="size-1.5 shrink-0 animate-hero-pulse rounded-full bg-trust-green" />
           Gratuit &amp; sans engagement
@@ -58,7 +58,9 @@ export default function RequestAServicePage({ initialServiceId }: RequestAServic
       </div>
 
       {/* ─── Multi-step form card ─── */}
-      <RequestAServiceForm initialServiceId={initialServiceId} />
+      <div className="w-full min-w-0 max-w-155">
+        <RequestAServiceForm initialServiceId={initialServiceId} />
+      </div>
     </section>
   )
 }

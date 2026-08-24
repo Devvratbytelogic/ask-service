@@ -18,14 +18,14 @@ export default function EditRequest({ requestId }: { requestId: string }) {
   if (isError || !request) {
     return (
       <section className="page-hero-bg flex min-h-screen flex-col items-center justify-center px-[4%] py-8">
-        <div className="max-w-[480px] rounded-[24px] border border-appBorder bg-appCard p-8 text-center shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
+        <div className="max-w-120 rounded-3xl border border-appBorder bg-appCard p-8 text-center shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
           <h1 className="mb-2 text-[22px] font-extrabold text-appText">Demande introuvable</h1>
           <p className="mb-6 text-[14px] text-appTextSec">
             Cette demande n&apos;existe pas ou vous n&apos;y avez pas accès.
           </p>
           <Link
             href={getClientDashboardPageRoutePath()}
-            className="inline-flex items-center gap-2 rounded-[12px] bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline"
+            className="inline-flex items-center gap-2 rounded-xl bg-primaryColor px-5 py-3 text-[14px] font-semibold text-white no-underline"
           >
             <FiArrowLeft size={14} />
             Retour à mes demandes
@@ -37,8 +37,8 @@ export default function EditRequest({ requestId }: { requestId: string }) {
 
 
   return (
-    <section className="page-hero-bg flex min-h-screen flex-col items-center px-[4%] py-8 sm:px-[5%] sm:py-12">
-      <div className="mb-8 w-full max-w-[620px]">
+    <section className="page-hero-bg flex min-h-screen w-full min-w-0 flex-col items-center overflow-x-hidden px-[4%] py-8 sm:px-[5%] sm:py-12">
+      <div className="mb-8 w-full max-w-155">
         <Link
           href={getClientDashboardPageRoutePath()}
           className="inline-flex items-center gap-1.5 text-[13px] font-medium text-appTextSec no-underline transition-colors hover:text-primaryColor"
@@ -48,7 +48,7 @@ export default function EditRequest({ requestId }: { requestId: string }) {
         </Link>
       </div>
 
-      <div className="mb-10 max-w-[580px] animate-hero-fade-down text-center">
+      <div className="mb-10 max-w-145 animate-hero-fade-down text-center">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border-[1.5px] border-blue-light bg-appCard px-3.5 py-1.5 text-[12px] font-semibold text-primaryColor shadow-[0_2px_8px_rgba(27,79,255,0.1)]">
           <span className="size-1.5 shrink-0 rounded-full bg-primaryColor" />
           Modification
@@ -71,11 +71,13 @@ export default function EditRequest({ requestId }: { requestId: string }) {
         )}
       </div>
 
-      <RequestAServiceForm
-        mode="edit"
-        requestId={requestId}
-        data={request}
-      />
+      <div className="w-full min-w-0 max-w-155">
+        <RequestAServiceForm
+          mode="edit"
+          requestId={requestId}
+          data={request}
+        />
+      </div>
     </section>
   )
 }

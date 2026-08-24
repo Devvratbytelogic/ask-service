@@ -99,12 +99,12 @@ function SummaryRow({
   value: string
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-appBorderSub px-4 py-3 last:border-b-0">
-      <span className="flex shrink-0 items-center gap-2 text-[13px] text-appTextSec">
-        {icon}
-        {label}
+    <div className="flex flex-col gap-1 border-b border-appBorderSub px-3 py-3 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-4">
+      <span className="flex min-w-0 items-start gap-2 text-[13px] leading-snug text-appTextSec">
+        <span className="mt-0.5 shrink-0">{icon}</span>
+        <span className="min-w-0 wrap-break-word">{label}</span>
       </span>
-      <span className="max-w-[55%] wrap-break-word text-right text-[13px] font-semibold text-appText">
+      <span className="min-w-0 wrap-break-word pl-6 text-[13px] leading-snug font-semibold text-appText sm:max-w-[55%] sm:pl-0 sm:text-right">
         {value}
       </span>
     </div>
@@ -608,7 +608,7 @@ export default function RequestAServiceForm({
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      className="w-full max-w-155 overflow-hidden rounded-3xl border border-appBorder bg-appCard"
+      className="w-full min-w-0 max-w-155 overflow-hidden rounded-3xl border border-appBorder bg-appCard"
       style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
     >
       {/* Progress bar */}
@@ -626,12 +626,12 @@ export default function RequestAServiceForm({
 
       {/* Step header */}
       {!isSuccess && !flowScreen && (
-        <div className="flex items-center gap-3.5 px-8 pt-7">
+        <div className="flex items-start gap-3 px-4 pt-5 sm:items-center sm:gap-3.5 sm:px-8 sm:pt-7">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-3xl bg-blue-light dark:bg-[rgba(27,79,255,0.2)] text-[15px] font-extrabold text-primaryColor">
             {uiStep}
           </div>
-          <div>
-            <div className="mb-0.5 flex items-center gap-1.5">
+          <div className="min-w-0 flex-1">
+            <div className="mb-0.5 flex flex-wrap items-center gap-1.5">
               {Array.from({ length: summaryStep }).map((_, i) => (
                 <div
                   key={i}
@@ -644,7 +644,7 @@ export default function RequestAServiceForm({
                 />
               ))}
             </div>
-            <h3 className="text-2xl font-extrabold tracking-[-0.3px] text-appText">
+            <h3 className="text-xl font-extrabold tracking-[-0.3px] text-appText sm:text-2xl">
               {stepTitle}
             </h3>
             <p className="mt-0.5 text-sm text-appTextSec">{stepDesc}</p>
@@ -653,7 +653,7 @@ export default function RequestAServiceForm({
       )}
 
       {/* Form body */}
-      <div className="px-8 pb-8 pt-6">
+      <div className="min-w-0 px-4 pb-6 pt-5 sm:px-8 sm:pb-8 sm:pt-6">
 
         {/* ─── STEP 1: Service + client type ─── */}
         {!isSuccess && !flowScreen && uiStep === 1 && (
@@ -788,11 +788,11 @@ export default function RequestAServiceForm({
               )}
             </div>
 
-            <div className="mt-6 flex gap-2.5">
+            <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row">
               <button
                 type="button"
                 onClick={() => navTo(uiStep - 1)}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface sm:w-auto"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -801,7 +801,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 sm:flex-1"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -858,11 +858,11 @@ export default function RequestAServiceForm({
               ))
             )}
 
-            <div className="mt-6 flex gap-2.5">
+            <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row">
               <button
                 type="button"
                 onClick={() => navTo(uiStep - 1)}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface sm:w-auto"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -872,7 +872,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={goNext}
                 disabled={isQuestionsLoading}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-2.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:opacity-60 sm:flex-1"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Continuer
@@ -976,11 +976,11 @@ export default function RequestAServiceForm({
               />
             </div>
 
-            <div className="mt-6 flex gap-2.5">
+            <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row">
               <button
                 type="button"
                 onClick={() => navTo(uiStep - 1)}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5.5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface"
+                className="flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5.5 py-2.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface sm:w-auto"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -989,7 +989,7 @@ export default function RequestAServiceForm({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 sm:flex-1"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 Vérifier ma demande
@@ -1003,9 +1003,9 @@ export default function RequestAServiceForm({
         {!isSuccess && !flowScreen && uiStep === summaryStep && (
           <div
             key={`summary-${shakeKey}`}
-            className="animate-inscription-fade-up"
+            className="min-w-0 animate-inscription-fade-up"
           >
-            <div className="mb-5 overflow-hidden rounded-3xl border border-appBorderSub bg-appSurface">
+            <div className="mb-5 min-w-0 overflow-hidden rounded-3xl border border-appBorderSub bg-appSurface">
               <SummaryRow
                 icon={
                   <svg
@@ -1144,12 +1144,12 @@ export default function RequestAServiceForm({
               </div>
             )}
 
-            <div className="flex gap-2.5">
+            <div className="flex flex-col-reverse gap-2.5 sm:flex-row">
               <button
                 type="button"
                 onClick={() => navTo(uiStep - 1)}
                 disabled={isSubmitting}
-                className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50"
+                className="flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-3xl border-[1.5px] border-appBorder bg-appCard px-5 py-3.5 text-sm font-medium text-appTextSec transition-all hover:border-appBorder dark:hover:border-slate-600 hover:bg-appSurface disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
                 style={{ fontFamily: 'inherit' }}
               >
                 <FiArrowLeft size={14} strokeWidth={2.5} />
@@ -1159,7 +1159,7 @@ export default function RequestAServiceForm({
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-3xl border-none py-3.5 text-center text-base font-semibold text-white transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(27,79,255,0.28)] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 sm:flex-1"
                 style={{ background: 'var(--color-primaryColor)', fontFamily: 'inherit' }}
               >
                 {isSubmitting ? (
