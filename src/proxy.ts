@@ -7,6 +7,9 @@ const USER_DASHBOARD_PATH = '/client/dashboard';
 /** Paths that require auth token; children are blocked too (e.g. /vendor/dashboard). */
 const PROTECTED_PATH_PREFIXES = ['/create-request', '/my-account', '/client', '/vendor'] as const;
 
+/** Guest-only auth pages; logged-in users are redirected to their dashboard. */
+const AUTH_PATH_PREFIXES = ['/auth'] as const;
+
 /** User-only paths; vendors cannot access these. */
 const USER_PATH_PREFIXES = ['/create-request', '/my-account', '/client'] as const;
 
@@ -40,6 +43,12 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
+    // Logged-in clients and vendors cannot open login / registration / forgot-password
+    if (isLoggedIn && matchesPathPrefix(pathname, AUTH_PATH_PREFIXES)) {
+        const redirectPath = isVendor ? VENDOR_DASHBOARD_PATH : USER_DASHBOARD_PATH;
+        return NextResponse.redirect(new URL(redirectPath, request.url));
+    }
+
     // View-based access: client view cannot access vendor routes; vendor view cannot access user routes
     if (isLoggedIn) {
         if (isVendor && matchesPathPrefix(pathname, USER_PATH_PREFIXES)) {
@@ -59,5 +68,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/client/:path*', '/vendor/:path*'],
+    matcher: ['/', '/create-request/:path*', '/my-account/:path*', '/client/:path*', '/vendor/:path*', '/auth/:path*'],
 };
