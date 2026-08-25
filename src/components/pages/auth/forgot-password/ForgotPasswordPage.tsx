@@ -59,6 +59,9 @@ interface ForgotPasswordPageProps {
   logoDarkUrl?: string | null
   vendorLogoUrl?: string | null
   vendorLogoDarkUrl?: string | null
+  activeVendorsCount?: number
+  activeClientsCount?: number
+  averageRating?: number
 }
 
 export default function ForgotPasswordPage({
@@ -66,6 +69,9 @@ export default function ForgotPasswordPage({
   logoDarkUrl,
   vendorLogoUrl,
   vendorLogoDarkUrl,
+  activeVendorsCount,
+  activeClientsCount,
+  averageRating,
 }: ForgotPasswordPageProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -225,7 +231,13 @@ export default function ForgotPasswordPage({
       className="flex min-h-screen max-[900px]:flex-col"
       style={{ display: 'grid', gridTemplateColumns: '420px 1fr' }}
     >
-      <LeftPanel role={role} logoUrl={activeLogoDarkUrl} />
+      <LeftPanel
+        role={role}
+        logoUrl={activeLogoDarkUrl}
+        activeVendorsCount={activeVendorsCount}
+        activeClientsCount={activeClientsCount}
+        averageRating={averageRating}
+      />
 
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">
         <AuthThemeToggle />

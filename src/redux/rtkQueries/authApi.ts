@@ -91,6 +91,14 @@ export const authApi = rtkQuerieSetup.injectEndpoints({
             }),
         }),
 
+        setPassword: builder.mutation({
+            query: (formData: { token: string; password: string; confirm_password: string }) => ({
+                url: `/user/set-password`,
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+
         signup: builder.mutation({
             query: (formData) => ({
                 url: `/user/signup`,
@@ -153,6 +161,7 @@ export const {
     useResendEmailVerificationMutation,
     useForgotPasswordMutation,
     useNewPasswordMutation,
+    useSetPasswordMutation,
     useSignupMutation,
     useGoogleLoginMutation,
 

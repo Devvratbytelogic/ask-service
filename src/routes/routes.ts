@@ -127,6 +127,12 @@ export function getForgotPasswordRoutePath(params?: { role?: 'vendor' | 'custome
     return role ? `/auth/forgot-password?role=${role}` : `/auth/forgot-password`;
 }
 
+export function getResetPasswordRoutePath(params?: { token?: string }) {
+    return params?.token
+        ? `/reset-password?token=${encodeURIComponent(params.token)}`
+        : `/reset-password`
+}
+
 export function getClientDashboardPageRoutePath() {
     return '/client/dashboard';
 }
