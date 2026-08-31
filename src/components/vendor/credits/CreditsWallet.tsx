@@ -431,7 +431,7 @@ export default function CreditsWallet() {
                                             </span>
                                         )}
                                         <p className="mt-3 font-bold text-xl text-fontBlack">{pkg.totalPrice} €</p>
-                                        <p className="text-xs text-darkSilver">{pkg.unitPrice} € par point</p>
+                                        {/* <p className="text-xs text-darkSilver">{pkg.unitPrice} € par point</p> */}
                                         <div className="mt-1.5 space-y-0.5 text-left text-xs text-darkSilver border-t border-appBorder pt-1.5">
                                             <div className="flex justify-between gap-4">
                                                 <span>Prix HT</span>

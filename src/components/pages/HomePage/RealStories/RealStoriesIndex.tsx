@@ -52,7 +52,7 @@ const RealStoriesIndex = () => {
                 <p className="text-darkSilver text-base xl:text-lg tracking-[-0.48px] text-center w-11/12 md:w-2/3 mx-auto">Des clients et des professionnels vérifiés expliquent comment la plateforme les aide à mieux travailler ensemble.</p>
             </div>
             <div className="relative w-11/12 mx-auto overflow-hidden">
-                <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 pb-10 md:pb-20 w-full">
+                <div className="flex flex-col lg:flex-row gap-4 xl:gap-8 pb-10 md:pb-20 w-full">
                     {isLoading ? (
                         [0, 1, 2].map((colIndex) => (
                             <div key={`skeleton_col_${colIndex}`} className="flex-1 min-w-0 flex flex-col gap-4">

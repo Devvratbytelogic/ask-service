@@ -65,13 +65,13 @@ const NavbarComponent = () => {
             {/* Mobile hamburger button */}
             <button
                 type="button"
-                className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-appOverlay-5 transition-colors"
                 onClick={() => setMenuOpen(prev => !prev)}
                 aria-label="Menu"
             >
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block h-0.5 w-5 bg-fontBlack rounded transition-all duration-300 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 bg-appText rounded transition-all duration-300 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                <span className={`block h-0.5 w-5 bg-appText rounded transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block h-0.5 w-5 bg-appText rounded transition-all duration-300 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
             </button>
 
             {/* Mobile dropdown menu */}

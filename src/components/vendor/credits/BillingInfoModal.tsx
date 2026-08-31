@@ -11,7 +11,7 @@ const billingValidationSchema = Yup.object({
     businessAddress: Yup.string().required('L\'adresse de l\'entreprise est obligatoire'),
     postcode: Yup.string().required('Le code postal est obligatoire'),
     city: Yup.string().required('La ville est obligatoire'),
-    vatNumber: Yup.string().required('Le numéro de TVA est obligatoire'),
+    vatNumber: Yup.string(),
     companyRegistrationNumber: Yup.string().required('Le numéro de SIREN est obligatoire'),
 })
 
@@ -169,7 +169,7 @@ export default function BillingInfoModal({ isOpen, onClose, onConfirm, initialVa
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <label className="mb-1.5 block text-sm font-medium text-fontBlack">
-                                        Numéro de TVA <span className="text-danger">*</span>
+                                        Numéro de TVA
                                     </label>
                                     <Input
                                         name="vatNumber"

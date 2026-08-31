@@ -21,7 +21,7 @@ export default function PhoneField({
   return (
     <PhoneInput
       country="fr"
-      enableSearch
+      disableDropdown
       countryCodeEditable={false}
       value={value}
       onChange={onChange}

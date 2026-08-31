@@ -367,7 +367,7 @@ export default function RequestAServiceForm({
     setFlowScreen(null)
     setSubmitError(null)
     setUiStep(n)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   async function goNext() {

@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
   images: {
+    unoptimized: false,
+
+    formats: ["image/webp"],
+
     remotePatterns: [
       {
         protocol: "https",
@@ -13,6 +16,9 @@ const nextConfig: NextConfig = {
         hostname: "*",
       },
     ],
+  },
+  experimental: {
+    serverActions: {},
   },
 };
 

@@ -142,10 +142,10 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                         aria-label="Menu"
                         aria-expanded={menuOpen}
                     >
-                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-appText ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
                         {/* scale-x-0: iOS still paints opacity-0 middle bar as side dots on the X */}
-                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? 'scale-x-0 opacity-0' : ''}`} />
-                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-fontBlack dark:bg-appBorder ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-appText ${menuOpen ? 'scale-x-0 opacity-0' : ''}`} />
+                        <span className={`block h-0.5 w-5 rounded transition-all duration-300 bg-appText ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
                     </button>
                 </div>
 
