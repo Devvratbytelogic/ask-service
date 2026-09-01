@@ -46,7 +46,7 @@ export default function LeadSidebar({ selectedId }: Props) {
         unlocked: false,
         limit: PAGE_LIMIT,
         page,
-    })
+    }, { pollingInterval: 10000 })
 
     const leads = leadsData?.data?.items ?? []
     const totalPages = leadsData?.data?.totalPages ?? 0
