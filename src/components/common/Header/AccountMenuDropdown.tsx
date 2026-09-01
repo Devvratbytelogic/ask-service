@@ -18,6 +18,9 @@ import { useDispatch } from 'react-redux'
 
 interface AccountMenuDropdownProps {
     isVendorView: boolean
+    /** `dropdown` = desktop avatar menu. `inline` = items inside the mobile hamburger. */
+    variant?: 'dropdown' | 'inline'
+    onNavigate?: () => void
 }
 
 const menuItemClassName =
@@ -38,7 +41,11 @@ function getProfileHandle(firstName?: string, lastName?: string, email?: string)
     return email?.split('@')[0] ?? ''
 }
 
-export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdownProps) {
+export default function AccountMenuDropdown({
+    isVendorView,
+    variant = 'dropdown',
+    onNavigate,
+}: AccountMenuDropdownProps) {
     const [menuOpen, setMenuOpen] = useState(false)
     const dispatch = useDispatch()
 
@@ -57,8 +64,13 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
     const profilePath = isVendorView ? getVendorAccountRoutePath('profile') : getMyAccountRoutePath('profile')
     const settingsPath = isVendorView ? getVendorAccountRoutePath('security') : getMyAccountRoutePath('security')
 
-    function handleSwitchAccount() {
+    function closeAndNavigate() {
         setMenuOpen(false)
+        onNavigate?.()
+    }
+
+    function handleSwitchAccount() {
+        closeAndNavigate()
         // Keep user_role as Vendor; toggle is_client to switch between client and prestataire views
         const switchToClient = isVendorView
         setIsClientCookie(switchToClient)
@@ -68,8 +80,59 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
             : getVendorDashboardPageRoutePath()
     }
 
+    const accountActions = (
+        <>
+            {variant === 'dropdown' && (
+                <Link
+                    href={profilePath}
+                    onClick={closeAndNavigate}
+                    className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
+                >
+                    <MenuIcon><ProfileIconSVG /></MenuIcon>
+                    <span>Profil</span>
+                </Link>
+            )}
+            <Link
+                href={variant === 'inline' ? profilePath : settingsPath}
+                onClick={closeAndNavigate}
+                className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
+            >
+                <MenuIcon><HiOutlineCog6Tooth className="size-4" /></MenuIcon>
+                <span>Paramètres</span>
+            </Link>
+            {showAccountSwitch &&
+                <>
+                    <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
+
+                    <button
+                        type="button"
+                        onClick={handleSwitchAccount}
+                        className={`${menuItemClassName} text-primaryColor hover:bg-primaryColor/10`}
+                    >
+                        <MenuIcon><DocumentIconSVG className="size-4" /></MenuIcon>
+                        <span>{isVendorView ? 'Passer en compte client' : 'Passer en compte prestataire'}</span>
+                    </button>
+                </>}
+
+            <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
+
+            <button
+                type="button"
+                onClick={() => clearAllCookiesAndReload(getHomeRoutePath())}
+                className={`${menuItemClassName} text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10`}
+            >
+                <MenuIcon><SignOutIconSVG /></MenuIcon>
+                <span>Déconnexion</span>
+            </button>
+        </>
+    )
+
+    if (variant === 'inline') {
+        return <div className="px-2 py-1">{accountActions}</div>
+    }
+
     return (
-        <div className="relative">
+        <div className="relative hidden lg:block">
             <button
                 type="button"
                 aria-label="Account menu"
@@ -101,46 +164,7 @@ export default function AccountMenuDropdown({ isVendorView }: AccountMenuDropdow
 
                         <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
 
-                        <Link
-                            href={profilePath}
-                            onClick={() => setMenuOpen(false)}
-                            className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
-                        >
-                            <MenuIcon><ProfileIconSVG /></MenuIcon>
-                            <span>Profil</span>
-                        </Link>
-                        <Link
-                            href={settingsPath}
-                            onClick={() => setMenuOpen(false)}
-                            className={`${menuItemClassName} text-appText hover:bg-appOverlay-5`}
-                        >
-                            <MenuIcon><HiOutlineCog6Tooth className="size-4" /></MenuIcon>
-                            <span>Paramètres</span>
-                        </Link>
-                        {showAccountSwitch &&
-                            <>
-                                <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
-
-                                <button
-                                    type="button"
-                                    onClick={handleSwitchAccount}
-                                    className={`${menuItemClassName} text-primaryColor hover:bg-primaryColor/10`}
-                                >
-                                    <MenuIcon><DocumentIconSVG className="size-4" /></MenuIcon>
-                                    <span>{isVendorView ? 'Passer en compte client' : 'Passer en compte prestataire'}</span>
-                                </button>
-                            </>}
-
-                        <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
-
-                        <button
-                            type="button"
-                            onClick={() => clearAllCookiesAndReload(getHomeRoutePath())}
-                            className={`${menuItemClassName} text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10`}
-                        >
-                            <MenuIcon><SignOutIconSVG /></MenuIcon>
-                            <span>Déconnexion</span>
-                        </button>
+                        {accountActions}
                     </div>
                 </>
             )}

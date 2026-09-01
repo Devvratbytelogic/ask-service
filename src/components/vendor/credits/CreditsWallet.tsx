@@ -154,7 +154,7 @@ export default function CreditsWallet() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // Fallback: handle redirect-based return (popup blocked)
+    // Stripe Checkout returns here with ?stripe_payment_status=&session_id=
     useEffect(() => {
         const rawStripeStatus = searchParams.get('stripe_payment_status') ?? ''
         if (rawStripeStatus) {
@@ -219,47 +219,14 @@ export default function CreditsWallet() {
             if (!paymentUrl) throw new Error('No payment URL returned')
             localStorage.setItem('stripe_package_id', pkg.id)
 
-            // Open Stripe checkout in a centered popup
-            const w = 600, h = 700
-            const left = window.screenX + (window.outerWidth - w) / 2
-            const top = window.screenY + (window.outerHeight - h) / 2
-            const popup = window.open(paymentUrl, 'stripe_checkout', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`)
-
-            if (!popup) {
-                // Popup was blocked — fall back to same-tab redirect
-                window.location.href = paymentUrl
-                return
-            }
-
-            // Poll until Stripe redirects back to our domain
-            const timer = setInterval(() => {
-                if (!popup || popup.closed) {
-                    clearInterval(timer)
-                    setSelectedPackageId(null)
-                    return
-                }
-                try {
-                    const popupUrl = popup.location.href
-                    if (popupUrl.includes('stripe_payment_status=')) {
-                        clearInterval(timer)
-                        const params = new URL(popupUrl).searchParams
-                        popup.close()
-                        setSelectedPackageId(null)
-                        handleStripeResult(
-                            params.get('stripe_payment_status') ?? '',
-                            params.get('session_id')
-                        )
-                    }
-                } catch {
-                    // Still on Stripe's domain (cross-origin) — keep polling
-                }
-            }, 500)
+            // Same-tab redirect. A popup cannot be closed after Stripe Checkout because
+            // Stripe sets Cross-Origin-Opener-Policy, which severs access to the child window.
+            window.location.assign(paymentUrl)
         } catch (err) {
             console.error(err)
             setSelectedPackageId(null)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stripePayment, handleStripeResult])
+    }, [stripePayment])
 
     const handlePurchase = (pkg: CreditPackageDisplay) => {
         setPendingPackage(pkg)

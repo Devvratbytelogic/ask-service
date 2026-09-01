@@ -20,6 +20,7 @@ import CustomerMenu, { CUSTOMER_NAV_LINKS } from "./CustomerMenu"
 import VendorMenu from "./VendorMenu"
 import CustomerActions from "./CustomerActions"
 import VendorActions from "./VendorActions"
+import AccountMenuDropdown from "./AccountMenuDropdown"
 import ThemeToggle from "@/components/common/ThemeToggle"
 import type { RootState } from "@/redux/appStore"
 import { getIsClient } from "@/utils/authCookies"
@@ -168,22 +169,24 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                 {isVendorUser ? (
                                     <VendorMenu onNavigate={closeMenu} layout="stack" />
                                 ) : (
-                                    CUSTOMER_NAV_LINKS.map(({ label, href }) => {
-                                        const isActive = pathname === href || pathname.startsWith(href + '/')
-                                        return (
-                                            <Link
-                                                key={href}
-                                                href={href}
-                                                onClick={closeMenu}
-                                                className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
-                                                    ? 'text-primaryColor bg-primaryColor/10'
-                                                    : 'text-appText hover:bg-appOverlay-5'
-                                                    }`}
-                                            >
-                                                {label}
-                                            </Link>
-                                        )
-                                    })
+                                    CUSTOMER_NAV_LINKS
+                                        .filter(({ href }) => href !== getRequestAServiceRoutePath())
+                                        .map(({ label, href }) => {
+                                            const isActive = pathname === href || pathname.startsWith(href + '/')
+                                            return (
+                                                <Link
+                                                    key={href}
+                                                    href={href}
+                                                    onClick={closeMenu}
+                                                    className={`flex items-center w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
+                                                        ? 'text-primaryColor bg-primaryColor/10'
+                                                        : 'text-appText hover:bg-appOverlay-5'
+                                                        }`}
+                                                >
+                                                    {label}
+                                                </Link>
+                                            )
+                                        })
                                 )}
                             </div>
 
@@ -216,6 +219,14 @@ export default function Header({ logoUrl, logoDarkUrl, vendorLogoUrl, vendorLogo
                                 <span className="text-xs font-semibold text-appTextSec">Thème</span>
                                 <ThemeToggle />
                             </div>
+
+                            <div className="my-1 border-t border-appBorder/60 dark:border-white/10" />
+
+                            <AccountMenuDropdown
+                                isVendorView={isVendorUser}
+                                variant="inline"
+                                onNavigate={closeMenu}
+                            />
                         </>
                     ) : (
                         <>
