@@ -92,9 +92,9 @@ interface LoginPageProps {
   logoDarkUrl?: string | null
   vendorLogoUrl?: string | null
   vendorLogoDarkUrl?: string | null
-  activeVendorsCount?: number
-  activeClientsCount?: number
-  averageRating?: number
+  // activeVendorsCount?: number
+  // activeClientsCount?: number
+  // averageRating?: number
 }
 
 export default function LoginPage({
@@ -102,9 +102,9 @@ export default function LoginPage({
   logoDarkUrl,
   vendorLogoUrl,
   vendorLogoDarkUrl,
-  activeVendorsCount,
-  activeClientsCount,
-  averageRating,
+  // activeVendorsCount,
+  // activeClientsCount,
+  // averageRating,
 }: LoginPageProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -378,7 +378,8 @@ export default function LoginPage({
 
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel role={role} logoUrl={activeLogoDarkUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} />
+      {/* <LeftPanel role={role} logoUrl={activeLogoDarkUrl} activeVendorsCount={activeVendorsCount} activeClientsCount={activeClientsCount} averageRating={averageRating} /> */}
+      <LeftPanel role={role} logoUrl={activeLogoDarkUrl} />
 
       {/* ─── Right panel ─── */}
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">

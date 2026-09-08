@@ -5,76 +5,140 @@ type Stat = {
     description: ReactNode
 }
 
+// Live platform stats — restore when data reaches the minimum threshold:
+// export default function StatsSection({ activeVendorsCount, activeRequestsCount, averageRating, averageResponseTime }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number, averageResponseTime: number }) {
+//     const STATS: Stat[] = [
+//         {
+//             value: (
+//                 <>
+//                     {activeVendorsCount}
+//                     <span className="text-primaryColor">+</span>
+//                 </>
+//             ),
+//             description: (
+//                 <>
+//                     Professionnels actifs
+//                     <br />
+//                     sur la plateforme
+//                 </>
+//             ),
+//         },
+//         {
+//             value: (
+//                 <>
+//                     {activeRequestsCount}
+//                     <span className="text-primaryColor">+</span>
+//                 </>
+//             ),
+//             description: (
+//                 <>
+//                     Demandes traitées
+//                     <br />
+//                     avec succès
+//                 </>
+//             ),
+//         },
+//         {
+//             value: (
+//                 <>
+//                     {averageRating}
+//                     <span className="text-primaryColor">/5</span>
+//                 </>
+//             ),
+//             description: (
+//                 <>
+//                     Note de satisfaction
+//                     <br />
+//                     client moyenne
+//                 </>
+//             ),
+//         },
+//         {
+//             value: (
+//                 <>
+//                     {averageResponseTime}
+//                     <span className="text-primaryColor">h</span>
+//                 </>
+//             ),
+//             description: (
+//                 <>
+//                     Délai moyen pour
+//                     <br />
+//                     recevoir un devis
+//                 </>
+//             ),
+//         },
+//     ]
 
+const STATS: Stat[] = [
+    {
+        value: (
+            <>
+                0
+                <span className="text-primaryColor">€</span>
+            </>
+        ),
+        description: (
+            <>
+                Pour déposer
+                <br />
+                une demande
+            </>
+        ),
+    },
+    {
+        value: (
+            <>
+                100
+                <span className="text-primaryColor">%</span>
+            </>
+        ),
+        description: (
+            <>
+                Libre de choisir
+                <br />
+                votre professionnel
+            </>
+        ),
+    },
+    {
+        value: (
+            <>
+                0
+                <span className="text-amber-500">€</span>
+            </>
+        ),
+        description: (
+            <>
+                Inscription prestataire
+                <br />
+                gratuite
+            </>
+        ),
+    },
+    {
+        value: (
+            <>
+                0
+                <span className="text-amber-500">%</span>
+            </>
+        ),
+        description: (
+            <>
+                Commission sur
+                <br />
+                les prestations
+            </>
+        ),
+    },
+]
 
-export default function StatsSection({ activeVendorsCount, activeRequestsCount, averageRating, averageResponseTime }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number, averageResponseTime: number }) {
-    const STATS: Stat[] = [
-        {
-            value: (
-                <>
-                    {activeVendorsCount}
-                    <span className="text-primaryColor">+</span>
-                </>
-            ),
-            description: (
-                <>
-                    Professionnels actifs
-                    <br />
-                    sur la plateforme
-                </>
-            ),
-        },
-        {
-            value: (
-                <>
-                    {activeRequestsCount}
-                    <span className="text-primaryColor">+</span>
-                </>
-            ),
-            description: (
-                <>
-                    Demandes traitées
-                    <br />
-                    avec succès
-                </>
-            ),
-        },
-        {
-            value: (
-                <>
-                    {averageRating}
-                    <span className="text-primaryColor">/5</span>
-                </>
-            ),
-            description: (
-                <>
-                    Note de satisfaction
-                    <br />
-                    client moyenne
-                </>
-            ),
-        },
-        {
-            value: (
-                <>
-                    {averageResponseTime}
-                    <span className="text-primaryColor">h</span>
-                </>
-            ),
-            description: (
-                <>
-                    Délai moyen pour
-                    <br />
-                    recevoir un devis
-                </>
-            ),
-        },
-    ]
+export default function StatsSection() {
     return (
         <section className="relative overflow-hidden bg-slate-900 px-[5%] py-20">
             <div
                 aria-hidden
-                className="pointer-events-none absolute -top-[100px] left-1/2 h-[400px] w-[800px] -translate-x-1/2 bg-[radial-gradient(ellipse,rgba(27,79,255,0.2)_0%,transparent_70%)]"
+                className="pointer-events-none absolute -top-25 left-1/2 h-100 w-200 -translate-x-1/2 bg-[radial-gradient(ellipse,rgba(27,79,255,0.2)_0%,transparent_70%)]"
             />
 
             <div className="relative z-1 grid grid-cols-2 gap-0.5 lg:grid-cols-4">

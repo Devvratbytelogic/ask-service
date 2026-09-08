@@ -42,17 +42,17 @@ function getRtkErrorMessage(error: unknown): string {
 interface ResetPasswordPageProps {
   logoUrl?: string | null
   logoDarkUrl?: string | null
-  activeVendorsCount?: number
-  activeClientsCount?: number
-  averageRating?: number
+  // activeVendorsCount?: number
+  // activeClientsCount?: number
+  // averageRating?: number
 }
 
 export default function ResetPasswordPage({
   logoUrl,
   logoDarkUrl,
-  activeVendorsCount,
-  activeClientsCount,
-  averageRating,
+  // activeVendorsCount,
+  // activeClientsCount,
+  // averageRating,
 }: ResetPasswordPageProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -95,12 +95,16 @@ export default function ResetPasswordPage({
 
   return (
     <div className="grid min-h-screen grid-cols-1 overflow-x-hidden min-[901px]:grid-cols-[420px_1fr]">
-      <LeftPanel
+      {/* <LeftPanel
         role="customer"
         logoUrl={logoDarkUrl}
         activeVendorsCount={activeVendorsCount}
         activeClientsCount={activeClientsCount}
         averageRating={averageRating}
+      /> */}
+      <LeftPanel
+        role="customer"
+        logoUrl={logoDarkUrl}
       />
 
       <div className="relative flex min-h-screen flex-col items-center bg-appSurface px-4 py-6 min-[901px]:justify-center min-[901px]:px-[5%] min-[901px]:py-12">

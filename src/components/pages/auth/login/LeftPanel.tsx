@@ -10,12 +10,13 @@ type Role = 'customer' | 'vendor'
 interface LeftPanelProps {
   role: Role
   logoUrl?: string | null
-  activeVendorsCount?: number
-  activeClientsCount?: number
-  averageRating?: number
+  // activeVendorsCount?: number
+  // activeClientsCount?: number
+  // averageRating?: number
 }
 
-export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeClientsCount, averageRating }: LeftPanelProps) {
+// export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeClientsCount, averageRating }: LeftPanelProps) {
+export default function LeftPanel({ role, logoUrl }: LeftPanelProps) {
   const isVendor = role === 'vendor'
   const accentColor = isVendor ? 'var(--color-amber)' : 'var(--color-primaryColor)'
   const accentBg = isVendor ? 'var(--color-amber-dim)' : 'var(--color-primary-dim)'
@@ -115,11 +116,23 @@ export default function LeftPanel({ role, logoUrl, activeVendorsCount, activeCli
               border: '1px solid rgba(255,255,255,0.07)',
             }}
           >
-            {[
+            {/* {[
               { val: activeVendorsCount, sup: '+', label: 'Pros actifs' },
               { val: activeClientsCount, sup: '+', label: 'Demandes' },
               { val: averageRating, sup: '', label: 'Satisfaction' },
-            ].map((s, i) => (
+            ].map((s, i) => ( */}
+            {(isVendor
+              ? [
+                  { val: '0', sup: '€', label: "Pour s'inscrire" },
+                  { val: '24', sup: 'h', label: 'Validation rapide' },
+                  { val: '100', sup: '%', label: 'Libre de choisir' },
+                ]
+              : [
+                  { val: '0', sup: '€', label: 'Demande gratuite' },
+                  { val: '24', sup: 'h', label: 'Pour recevoir des devis' },
+                  { val: '100', sup: '%', label: 'Libre de choisir' },
+                ]
+            ).map((s, i) => (
               <div
                 key={s.label}
                 className="flex-1 py-3.5 text-center"

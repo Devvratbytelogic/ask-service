@@ -27,7 +27,8 @@ const InfoIcon = () => (
     </svg>
 )
 
-export default function ServiceProviderHero({ activeVendorsCount, activeRequestsCount, averageRating }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number }) {
+// export default function ServiceProviderHero({ activeVendorsCount, activeRequestsCount, averageRating }: { activeVendorsCount: number, activeRequestsCount: number, averageRating: number }) {
+export default function ServiceProviderHero() {
     const scrollToHowItWorks = () => {
         document.getElementById("comment-ca-marche")?.scrollIntoView({ behavior: "smooth" })
     }
@@ -111,9 +112,12 @@ export default function ServiceProviderHero({ activeVendorsCount, activeRequests
                 <div className="relative z-1 mt-16 animate-hero-fade-up [animation-delay:0.5s]">
                     <div className="mx-auto flex max-w-145 flex-col divide-y divide-slate-100 dark:divide-white/7 rounded-3xl border border-appBorder dark:border-white/8 bg-appCard dark:bg-white/4 backdrop-blur-md sm:flex-row sm:divide-x sm:divide-y-0">
                         {[
-                            { value: <>{activeVendorsCount}<span className="text-amber-500">+</span></>, label: "Pros actifs" },
-                            { value: <>{activeRequestsCount}<span className="text-amber-500">+</span></>, label: "Leads traités" },
-                            { value: <>{averageRating}<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
+                            // { value: <>{activeVendorsCount}<span className="text-amber-500">+</span></>, label: "Pros actifs" },
+                            // { value: <>{activeRequestsCount}<span className="text-amber-500">+</span></>, label: "Leads traités" },
+                            // { value: <>{averageRating}<span className="text-amber-500">/5</span></>, label: "Satisfaction" },
+                            { value: <>0<span className="text-amber-500">€</span></>, label: "Pour s'inscrire" },
+                            { value: <>24<span className="text-amber-500">h</span></>, label: "Validation rapide" },
+                            { value: <>100<span className="text-amber-500">%</span></>, label: "Libre de choisir" },
                         ].map((stat) => (
                             <div key={stat.label} className="flex-1 px-7 py-6 text-center">
                                 <div className="text-[32px] leading-none font-extrabold tracking-[-1px] text-appText dark:text-white">
