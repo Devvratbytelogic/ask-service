@@ -261,6 +261,11 @@ export default function RequestAServiceForm({
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [shakeKey, setShakeKey] = useState(0)
   const [shakeStep, setShakeStep] = useState<number | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
 
   // ── Step 1 state (service + clientType)
   const [service, setService] = useState(
@@ -608,6 +613,7 @@ export default function RequestAServiceForm({
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
+      ref={cardRef}
       className="w-full min-w-0 max-w-155 overflow-hidden rounded-3xl border border-appBorder bg-appCard"
       style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
     >
