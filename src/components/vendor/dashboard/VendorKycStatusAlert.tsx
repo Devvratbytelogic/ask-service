@@ -20,7 +20,7 @@ function getKycAlertContent(
     if (normalized === 'PENDING' || !normalized) {
         return {
             title: 'Vérification de compte en cours',
-            description:
+            description: documentVerificationMessage?.trim() ||
                 'Vos documents sont en cours d\'examen. Vous pourrez débloquer des prospects dès que votre compte aura été vérifié.',
             badge: 'En attente',
             showDocumentsLink: false,
@@ -30,7 +30,7 @@ function getKycAlertContent(
     if (normalized === 'REJECTED') {
         return {
             title: 'Vérification de compte refusée',
-            description:
+            description: documentVerificationMessage?.trim() ||
                 'Votre vérification a été refusée. Veuillez mettre à jour vos documents pour activer votre compte et débloquer des prospects.',
             badge: 'Action requise',
             showDocumentsLink: true,
@@ -39,8 +39,7 @@ function getKycAlertContent(
 
     return {
         title: 'Documents non vérifiés',
-        description:
-            documentVerificationMessage?.trim() ||
+        description: documentVerificationMessage?.trim() ||
             'Vos documents doivent être vérifiés avant de pouvoir débloquer des prospects. Complétez votre vérification pour accéder à toutes les fonctionnalités.',
         badge: 'Non actif',
         showDocumentsLink: true,
