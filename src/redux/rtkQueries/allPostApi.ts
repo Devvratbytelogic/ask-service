@@ -178,7 +178,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
         body: payload,
       }),
     }),
-    purchaseCredits: builder.mutation<unknown, { package_id?: string; transactionId?: string }>({
+    purchaseCredits: builder.mutation<unknown, { session_id: string }>({
       query: (payload) => ({
         url: `/vendor/credits/purchase`,
         method: 'POST',
@@ -221,7 +221,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       invalidatesTags: ['VendorChats'],
     }),
 
-    stripePayment: builder.mutation({
+    stripePayment: builder.mutation<{ data?: { payment_url?: string } }, { package_id: string }>({
       query: (body) => ({
         url: `/vendor/stipe-checkout`,
         method: 'POST',

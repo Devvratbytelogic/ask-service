@@ -130,13 +130,11 @@ export default function CreditsWallet() {
 
         if (stripeStatus === 'success' && sessionId && !verifyCalledRef.current) {
             verifyCalledRef.current = true
-            const packageId = localStorage.getItem('stripe_package_id')
             setIsVerifying(true)
             verifyStripePayment({ transactionId: sessionId })
                 .unwrap()
-                .then(() => purchaseCredits({ transactionId: sessionId, ...(packageId ? { package_id: packageId } : {}) }).unwrap())
+                .then(() => purchaseCredits({ session_id: sessionId }).unwrap())
                 .then(() => {
-                    localStorage.removeItem('stripe_package_id')
                     setPaymentStatus('success')
                     addToast({ title: 'Paiement vérifié ! Les points ont été ajoutés à votre compte.', color: 'success', timeout: 5000 })
                 })
@@ -214,10 +212,9 @@ export default function CreditsWallet() {
     const initiateStripeCheckout = useCallback(async (pkg: CreditPackageDisplay) => {
         try {
             setSelectedPackageId(pkg.id)
-            const result = await stripePayment({ amount: parseFloat(pkg.totalPrice)}).unwrap() as { data?: { payment_url?: string } }
+            const result = await stripePayment({ package_id: pkg.id }).unwrap()
             const paymentUrl = result?.data?.payment_url
             if (!paymentUrl) throw new Error('No payment URL returned')
-            localStorage.setItem('stripe_package_id', pkg.id)
 
             // Same-tab redirect. A popup cannot be closed after Stripe Checkout because
             // Stripe sets Cross-Origin-Opener-Policy, which severs access to the child window.
