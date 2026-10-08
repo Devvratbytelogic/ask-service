@@ -123,11 +123,9 @@ export default function MessageLayout() {
   }, [targetChatId, chats, selectedChatId]);
 
   const userId = getUserId() ?? selectedChat?.users?.find((u) => u.itsMe)?._id ?? '';
-  const userDisplayName = isVendor ? 'Vendor' : 'User';
 
   const { emitNewMessage, addSentMessageToCache, emitMessageSeen, emitTyping, emitStopTyping, isOtherTyping, onlineUsers } = useChatSocket({
     userId,
-    userDisplayName,
     selectedChatId,
     isVendor,
   });

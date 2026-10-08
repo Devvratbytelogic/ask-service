@@ -4,7 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { io, type Socket } from 'socket.io-client';
 import { clientSideGetApis } from '@/redux/rtkQueries/clientSideGetApis';
+import { clearAuthCookies, getAuthToken } from '@/utils/authCookies';
 import { SOCKET_URL } from '@/utils/config';
+import { getLoginPageRoutePath } from '@/routes/routes';
 import type { AppDispatch } from '@/redux/appStore';
 import type { MessagesEntity } from '@/types/allChatsMessages';
 import type { LatestMessage } from '@/types/allChatList';
@@ -14,7 +16,7 @@ export interface SocketMessage {
   _id?: string;
   sender?: { _id?: string; first_name?: string; last_name?: string; profile_pic?: string };
   content?: string;
-  chat?: { _id?: string } | string;
+  chat?: { _id?: string; users?: Array<string | { _id?: string }> } | string;
   type?: string;
   media_url?: string | null;
   createdAt?: string;
@@ -84,7 +86,6 @@ function normalizeToLatestMessage(msg: SocketMessage): LatestMessage {
 
 export interface UseChatSocketOptions {
   userId: string | undefined;
-  userDisplayName: string;
   selectedChatId: string | null;
   isVendor: boolean;
 }
@@ -99,9 +100,10 @@ const MESSAGE_RECEIVED_ALT = 'message received';
 const NEW_MESSAGE_EVENT = 'new message';
 const DISCONNECT_DELAY_MS = 200;
 
-export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendor }: UseChatSocketOptions) {
+export function useChatSocket({ userId, selectedChatId, isVendor }: UseChatSocketOptions) {
   const dispatch = useDispatch<AppDispatch>();
   const socketRef = useRef<Socket | null>(null);
+  const socketReadyRef = useRef(false);
   const joinedChatIdRef = useRef<string | null>(null);
   const selectedChatIdRef = useRef<string | null>(selectedChatId);
   const disconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -116,11 +118,11 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
 
   const emitNewMessage = useCallback((payload: NewMessagePayload) => {
     const socket = socketRef.current;
-    if (socket?.connected) {
-      socket.emit(NEW_MESSAGE_EVENT, payload);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[ChatSocket] Emitted new message', payload.content);
-      }
+    if (!socket?.connected) return;
+    // Server broadcasts from message.chat.users, which send-msg already returns.
+    socket.emit(NEW_MESSAGE_EVENT, payload);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ChatSocket] Emitted new message', payload.content);
     }
   }, []);
 
@@ -227,28 +229,41 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
         socket.removeAllListeners();
         socket.disconnect();
       }
-      socket = io(SOCKET_URL, { transports: ['websocket'], autoConnect: true });
+      socket = io(SOCKET_URL, {
+        transports: ['websocket'],
+        autoConnect: true,
+        auth: { token: getAuthToken() ?? '' },
+      });
       socketRef.current = socket;
     } else {
       socket.off('connect');
+      socket.off('connected');
       socket.off(MESSAGE_RECEIVED_EVENT);
       socket.off(MESSAGE_RECEIVED_ALT);
       socket.off('connect_error');
     }
 
-    socket.on('connect', () => {
-      socket.emit('setup', { id: userId, name: userDisplayName });
+    const joinSelectedChat = () => {
       const chatId = selectedChatIdRef.current;
-      if (chatId) {
-        joinedChatIdRef.current = chatId;
-        socket.emit('join chat', chatId);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[ChatSocket] Connected and joined chat', chatId);
-        }
+      if (!chatId) return;
+      joinedChatIdRef.current = chatId;
+      socket.emit('join chat', chatId);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[ChatSocket] Joined chat', chatId);
       }
+    };
+
+    socket.on('connect', () => {
+      socketReadyRef.current = false;
+      socket.emit('setup');
       if (process.env.NODE_ENV === 'development') {
         console.log('[ChatSocket] Connected to', SOCKET_URL);
       }
+    });
+
+    socket.on('connected', () => {
+      socketReadyRef.current = true;
+      joinSelectedChat();
     });
 
     const handleMessageReceived = (message: SocketMessage) => {
@@ -366,7 +381,15 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     };
     socket.on('message:seen:update', handleMessageSeenUpdate);
 
+    let authRedirected = false;
     socket.on('connect_error', (err) => {
+      if (err.message === 'Unauthorized' && !authRedirected) {
+        authRedirected = true;
+        socket.disconnect();
+        clearAuthCookies();
+        window.location.href = getLoginPageRoutePath(isVendor ? { role: 'vendor' } : { role: 'customer' });
+        return;
+      }
       if (process.env.NODE_ENV === 'development') {
         console.warn('[ChatSocket] Connection error', err.message);
       }
@@ -412,6 +435,11 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
     socket.on('user:online', handleUserOnline);
     socket.on('user:offline', handleUserOffline);
 
+    if (socket.connected) {
+      socketReadyRef.current = false;
+      socket.emit('setup');
+    }
+
     return () => {
       socket.off(MESSAGE_RECEIVED_EVENT, handleMessageReceived);
       socket.off(MESSAGE_RECEIVED_ALT, handleMessageReceived);
@@ -425,11 +453,12 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
         socket.removeAllListeners();
         socket.disconnect();
         socketRef.current = null;
+        socketReadyRef.current = false;
         joinedChatIdRef.current = null;
         disconnectTimeoutRef.current = null;
       }, DISCONNECT_DELAY_MS);
     };
-  }, [userId, userDisplayName, isVendor, dispatch]);
+  }, [userId, isVendor, dispatch]);
 
   useEffect(() => {
     setIsOtherTyping(false);
@@ -438,7 +467,7 @@ export function useChatSocket({ userId, userDisplayName, selectedChatId, isVendo
 
   useEffect(() => {
     const socket = socketRef.current;
-    if (!socket?.connected || !selectedChatId) return;
+    if (!socket?.connected || !socketReadyRef.current || !selectedChatId) return;
     if (joinedChatIdRef.current === selectedChatId) return;
     joinedChatIdRef.current = selectedChatId;
     socket.emit('join chat', selectedChatId);

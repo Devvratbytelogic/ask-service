@@ -195,7 +195,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       // No invalidatesTags: cache is updated manually in useChatSocket.addSentMessageToCache
     }),
-    userAccessChat: builder.mutation({
+    userAccessChat: builder.mutation<{ data?: { _id?: string } }, { userId: string; quote_id: string }>({
       query: (body) => ({
         url: `/user/access-chat`,
         method: 'POST',
@@ -212,7 +212,7 @@ export const postApi = rtkQuerieSetup.injectEndpoints({
       }),
       // No invalidatesTags: cache is updated manually in useChatSocket.addSentMessageToCache
     }),
-    vendorAccessChat: builder.mutation({
+    vendorAccessChat: builder.mutation<{ data?: { _id?: string } }, { userId: string; quote_id: string }>({
       query: (body) => ({
         url: `/vendor/access-chat`,
         method: 'POST',
