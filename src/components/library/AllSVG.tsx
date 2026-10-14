@@ -568,6 +568,17 @@ export function VendorPaymentHistoryIconSVG() {
         </svg>
     )
 }
+export function VendorReferralIconSVG() {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M16.6668 10V17.5H3.3335V10" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M18.3332 6.66699H1.6665V10.0003H18.3332V6.66699Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 17.5V6.66699" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 6.66634C10 6.66634 9.16667 2.49967 6.66667 2.49967C4.16667 2.49967 3.33333 4.16634 4.58333 5.41634C5.83333 6.66634 10 6.66634 10 6.66634Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 6.66634C10 6.66634 10.8333 2.49967 13.3333 2.49967C15.8333 2.49967 16.6667 4.16634 15.4167 5.41634C14.1667 6.66634 10 6.66634 10 6.66634Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    )
+}
 export function BusinessNameIconSVG() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">

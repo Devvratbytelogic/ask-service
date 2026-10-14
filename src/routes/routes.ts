@@ -44,7 +44,7 @@ export function getVendorProfileRoutePath(vendorId: string, requestRef?: string 
     return `/vendor-profile?vendorId=${vendorId}`
 }
 export type MyAccountSection = 'profile' | 'security' | 'notifications'
-export type VendorAccountSection = MyAccountSection | 'documents' | 'reviews' | 'payment-history'
+export type VendorAccountSection = MyAccountSection | 'documents' | 'reviews' | 'payment-history' | 'referral'
 
 export function getVendorAccountRoutePath(section: VendorAccountSection = 'profile') {
     return `/vendor/dashboard/account/${section}`;

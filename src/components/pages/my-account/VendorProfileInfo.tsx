@@ -10,6 +10,7 @@ import { CategoryOptionImage, CategorySelectOption } from '@/components/pages/au
 import { buildSelectStyles, type CategoryGroup, type CategoryOption } from '@/components/pages/auth/registration/selectStyles'
 import { useFormik } from 'formik'
 import { vendorProfileInfoValidationSchema } from '@/utils/validation'
+import VendorReferral from '@/components/pages/my-account/VendorReferral'
 import { useUpdateVendorProfileInfoMutation } from '@/redux/rtkQueries/allPostApi'
 import { useGetAllServicesGroupedByParentCategoryQuery, useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
 import { openModal } from '@/redux/slices/allModalSlice'
@@ -669,6 +670,8 @@ export default function VendorProfileInfo() {
                     />
                 </div>
             </form>
+
+            <VendorReferral compact />
         </>
     )
 }

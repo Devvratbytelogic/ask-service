@@ -1,6 +1,6 @@
 'use client'
 
-import { MenuIconSVG, NotificationsIconSVG, ProfileIconSVG, SecurityIconSVG, VendorDocumentIconSVG, VendorPaymentHistoryIconSVG, VendorReviewIconSVG } from '@/components/library/AllSVG'
+import { MenuIconSVG, NotificationsIconSVG, ProfileIconSVG, SecurityIconSVG, VendorDocumentIconSVG, VendorPaymentHistoryIconSVG, VendorReferralIconSVG, VendorReviewIconSVG } from '@/components/library/AllSVG'
 import { getMyAccountRoutePath, getVendorAccountRoutePath } from '@/routes/routes'
 import { Drawer, DrawerBody, DrawerContent, DrawerHeader } from '@heroui/react'
 import Link from 'next/link'
@@ -19,6 +19,7 @@ export type NavId =
     | 'documents'
     | 'reviews'
     | 'payment-history'
+    | 'referral'
     | 'messages'
 
 export type NavItem = { id?: NavId; label: string; icon: React.ComponentType; href: string }
@@ -36,6 +37,7 @@ export const vendorNavItems: NavItem[] = [
     { id: 'documents', label: 'Mes Documents', icon: VendorDocumentIconSVG, href: getVendorAccountRoutePath('documents') },
     { id: 'reviews', label: 'Mes Avis', icon: VendorReviewIconSVG, href: getVendorAccountRoutePath('reviews') },
     { id: 'payment-history', label: 'Mes Paiements', icon: VendorPaymentHistoryIconSVG, href: getVendorAccountRoutePath('payment-history') },
+    { id: 'referral', label: 'Parrainage', icon: VendorReferralIconSVG, href: getVendorAccountRoutePath('referral') },
 ]
 
 interface AccountSidebarProps {

@@ -8,6 +8,7 @@ const VALID_SECTIONS: VendorAccountSection[] = [
     'documents',
     'reviews',
     'payment-history',
+    'referral',
 ]
 
 export default async function LegacyVendorAccountRedirectPage({
