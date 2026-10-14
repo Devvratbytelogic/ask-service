@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { addToast, Button, Spinner } from '@heroui/react'
 import { FiCheck, FiCopy } from 'react-icons/fi'
 import { useGetVendorProfileInfoQuery } from '@/redux/rtkQueries/clientSideGetApis'
-import { getRegistrationPageRoutePath, getVendorAccountRoutePath } from '@/routes/routes'
+import { getVendorAccountRoutePath } from '@/routes/routes'
+import { APP_URL } from '@/utils/config'
 
 const STEPS = [
     {
@@ -49,22 +50,17 @@ function CopyButton({
 
 export default function VendorReferral({ compact = false }: { compact?: boolean }) {
     const { data, isLoading } = useGetVendorProfileInfoQuery()
-    const [origin, setOrigin] = useState('')
     const [copied, setCopied] = useState(false)
 
     const vendorId = data?.data?._id ?? data?.data?.id ?? ''
     const code = useMemo(() => (vendorId ? referralCodeFromId(vendorId) : ''), [vendorId])
 
-    useEffect(() => {
-        setOrigin(window.location.origin)
-    }, [])
-
     const link = useMemo(() => {
-        if (!code || !origin) return ''
-        const url = new URL(getRegistrationPageRoutePath({ role: 'vendor' }), origin)
-        url.searchParams.set('ref', code)
+        if (!code || !APP_URL) return ''
+        const url = new URL(APP_URL)
+        url.searchParams.set('code', code)
         return url.toString()
-    }, [code, origin])
+    }, [code])
 
     const copyLink = async () => {
         if (!link) return
